@@ -10,13 +10,17 @@ import {
   Button,
   useDisclosure,
 } from "@nextui-org/react";
+import { useCookies } from "react-cookie";
 
 export default function ModalConsetimento() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [cookieConsetiment, setCookieConsetiment] = useCookies(['cookieAceito']);
 
   useEffect(() => {
-    onOpen();
-  }, [onOpen]);
+    if(!cookieConsetiment.cookieAceito) {
+      onOpen();
+    }
+  }, [onOpen, cookieConsetiment]);
 
   return (
     <>
@@ -78,6 +82,7 @@ export default function ModalConsetimento() {
                   color="success"
                   variant="solid"
                   onPress={onClose}
+                  onClick={() => setCookieConsetiment("cookieAceito", true)}
                 >
                   Aceitar
                 </Button>

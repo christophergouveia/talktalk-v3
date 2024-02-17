@@ -35,7 +35,7 @@ export default function Home({}) {
       </Marquee>
       <section className="flex items-center justify-center mt-44 px-3">
         <div className="text-center">
-          <h1 className="sm:text-6xl text-2xl font-bold mb-4 bg-gradient-to-r from-[#38A3F5] to-[#6F90F2] leading-normal text-transparent bg-clip-text">
+          <h1 className="sm:text-6xl text-2xl font-bold mb-4 bg-gradient-to-r from-[#38A3F5] to-[#6F90F2] !leading-[1.2] text-transparent bg-clip-text">
             TalkTalk! Uma ferramenta inovadora que permite a tradução instantânea de mensagens em tempo real
           </h1>
           <p className="text-xl mb-8">
