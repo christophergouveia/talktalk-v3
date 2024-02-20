@@ -11,7 +11,7 @@ export default function Footer({}) {
     setTheme(tema);
   };
   return (
-    <section className="mt-4 pb-4 text-center text-gray-500">
+    <section className="mt-6 pb-4 text-center text-gray-500">
       <span>
         2024&copy; Todos os direitos reservados. Desenvolvido por Kaike Sathler
         e Christopher Gouveia.

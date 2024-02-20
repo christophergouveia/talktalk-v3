@@ -40,7 +40,7 @@ export default function NavBar() {
       <NavbarContent className="flex gap-4" justify="center">
         <NavbarBrand>
           {/* <p className="font-bold text-inherit">TalkTalk!</p> */}
-          <Image src="logo.png" width={70} alt="Logotipo do website" />
+          <Image src="/logo.png" width={70} alt="Logotipo do website" />
         </NavbarBrand>
         {listaItems.map((item) => {
           return (
