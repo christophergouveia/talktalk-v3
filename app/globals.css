@@ -1,3 +1,51 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.setinha::before {
+  content: "";
+  position: absolute;
+  right: 2px;
+  top: -3px;
+  width: 0;
+  height: 0;
+  border: 7px solid;
+  border-color: #38a3f5 #38a3f5 transparent transparent;
+}
+
+.setinha-own::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: -5px;
+  width: 0;
+  height: 0;
+  border: 10px solid;
+}
+
+.messageList::-webkit-scrollbar {
+  width: 10px !important;
+}
+
+.messageList::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.messageList::-webkit-scrollbar-thumb {
+  background: #555 !important;
+  border-radius: 5px !important;
+}
+
+
+.textarea-message::-webkit-scrollbar {
+    width: 10px !important;
+  }
+  
+.textarea-message::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+  
+.textarea-message::-webkit-scrollbar-thumb {
+    background: #555 !important;
+    border-radius: 5px !important;
+  }
