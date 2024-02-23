@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import React from "react";
 import NotFound from "@/app/not-found";
 import Avatar from "react-avatar";
 import { ScrollShadow, Select, SelectItem } from "@nextui-org/react";
@@ -9,6 +9,7 @@ import { IoSettingsSharp } from "react-icons/io5";
 import { FaArrowRightArrowLeft } from "react-icons/fa6";
 import MessageList from "@/app/components/chatComponent/messageListComponent";
 import Message from "@/app/components/chatComponent/messageComponent";
+import ChatComponent from "@/app/components/chatComponent/chatComponent";
 
 const linguagens = [
   { label: "Português", value: "pt_br", description: "Português Brasil" },
@@ -20,6 +21,14 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
     label: string;
     value: string;
   } | null>({ label: "Português", value: "pt_br" });
+
+  const languageOptions = React.useMemo(function languageOptions() {
+    return linguagens.map((idioma) => (
+      <SelectItem key={idioma.value} value={idioma.value}>
+        {idioma.label}
+      </SelectItem>
+    ));
+  }, []);
 
   if (params.codigo.length < 4) {
     return <NotFound />;
@@ -59,11 +68,7 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
               size="sm"
               multiple={false}
             >
-              {linguagens.map((idioma) => (
-                <SelectItem key={idioma.value} value={idioma.value}>
-                  {idioma.label}
-                </SelectItem>
-              ))}
+              {languageOptions}
             </Select>
             <FaArrowRightArrowLeft
               size={32}
@@ -106,11 +111,80 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
                       ownMessage={false}
                       sender="Christopher"
                       date={Date.now()}
+                      key={i}
                     >
-                      Oi teste
+                      Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                      Tempora quae delectus laboriosam non fugit similique unde
+                      esse. Distinctio, nobis officia? Fuga, quam labore itaque
+                      nisi quas mollitia dolores assumenda eum, nobis
+                      perferendis voluptas beatae aut quis. Magni mollitia
+                      numquam officia delectus illum suscipit quisquam,
+                      assumenda porro blanditiis nostrum iste nihil et esse
+                      pariatur quo quibusdam rem magnam quis exercitationem!
+                      Praesentium qui mollitia nesciunt magni, nemo, cumque
+                      similique repudiandae vitae sunt rem nostrum quasi.
+                      Architecto, reprehenderit facilis. Molestias
+                      exercitationem commodi ipsa similique fugiat, quis sed
+                      quae officia at temporibus eius a reiciendis tempora dicta
+                      itaque illum aperiam fugit quibusdam ut numquam! Suscipit
+                      aliquam doloribus fuga distinctio aut exercitationem nihil
+                      harum explicabo vel. Velit dolor ipsum nisi dolores quasi
+                      pariatur quo, eius reprehenderit provident rerum officiis
+                      laudantium perferendis a molestias praesentium nostrum
+                      aliquam libero veritatis officia accusamus! Error, ullam
+                      reiciendis expedita laudantium porro quia molestias quidem
+                      in voluptas deleniti sequi aliquam unde assumenda illum ad
+                      fuga id omnis veniam ipsum a voluptates adipisci, sed quam
+                      beatae! Expedita nostrum pariatur accusantium, suscipit,
+                      assumenda nulla reiciendis fugit repellat qui vitae animi
+                      autem, distinctio incidunt? Quasi pariatur vero fugiat
+                      cumque quos culpa soluta fuga adipisci eos nostrum vitae
+                      expedita aperiam magnam minus ab consequuntur, dicta
+                      placeat quia, non ipsa perferendis atque repellat,
+                      praesentium qui. Sint, quod. Iure ipsam, itaque officiis
+                      labore ad suscipit quis, iste reiciendis maxime quaerat,
+                      eligendi eveniet dicta sit provident expedita rerum
+                      commodi incidunt ut? Facere nam ratione voluptatum, veniam
+                      placeat officiis.
                     </Message>
-                    <Message ownMessage={true} sender="Kaike" date={Date.now()}>
-                      Oi teste
+                    <Message
+                      ownMessage={true}
+                      sender="Kaike"
+                      date={Date.now()}
+                    >
+                      Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                      Tempora quae delectus laboriosam non fugit similique unde
+                      esse. Distinctio, nobis officia? Fuga, quam labore itaque
+                      nisi quas mollitia dolores assumenda eum, nobis
+                      perferendis voluptas beatae aut quis. Magni mollitia
+                      numquam officia delectus illum suscipit quisquam,
+                      assumenda porro blanditiis nostrum iste nihil et esse
+                      pariatur quo quibusdam rem magnam quis exercitationem!
+                      Praesentium qui mollitia nesciunt magni, nemo, cumque
+                      similique repudiandae vitae sunt rem nostrum quasi.
+                      Architecto, reprehenderit facilis. Molestias
+                      exercitationem commodi ipsa similique fugiat, quis sed
+                      quae officia at temporibus eius a reiciendis tempora dicta
+                      itaque illum aperiam fugit quibusdam ut numquam! Suscipit
+                      aliquam doloribus fuga distinctio aut exercitationem nihil
+                      harum explicabo vel. Velit dolor ipsum nisi dolores quasi
+                      pariatur quo, eius reprehenderit provident rerum officiis
+                      laudantium perferendis a molestias praesentium nostrum
+                      aliquam libero veritatis officia accusamus! Error, ullam
+                      reiciendis expedita laudantium porro quia molestias quidem
+                      in voluptas deleniti sequi aliquam unde assumenda illum ad
+                      fuga id omnis veniam ipsum a voluptates adipisci, sed quam
+                      beatae! Expedita nostrum pariatur accusantium, suscipit,
+                      assumenda nulla reiciendis fugit repellat qui vitae animi
+                      autem, distinctio incidunt? Quasi pariatur vero fugiat
+                      cumque quos culpa soluta fuga adipisci eos nostrum vitae
+                      expedita aperiam magnam minus ab consequuntur, dicta
+                      placeat quia, non ipsa perferendis atque repellat,
+                      praesentium qui. Sint, quod. Iure ipsam, itaque officiis
+                      labore ad suscipit quis, iste reiciendis maxime quaerat,
+                      eligendi eveniet dicta sit provident expedita rerum
+                      commodi incidunt ut? Facere nam ratione voluptatum, veniam
+                      placeat officiis.
                     </Message>
                   </>
                 );
@@ -134,20 +208,3 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
     </div>
   );
 }
-
-function ChatComponent({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
-  return <div className={className}>{children}</div>;
-}
-
-ChatComponent.Header = ChatComponent;
-ChatComponent.Body = ChatComponent;
-ChatComponent.Footer = ChatComponent;
-ChatComponent.Avatars = ChatComponent;
-ChatComponent.LanguageOptions = ChatComponent;
-ChatComponent.Settings = ChatComponent;

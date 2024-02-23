@@ -8,7 +8,6 @@ import {
   NavbarContent,
   NavbarItem,
   Link,
-  Button,
   NavbarMenu,
   Image,
 } from "@nextui-org/react";
@@ -23,7 +22,7 @@ export default function NavBar() {
       href: "/",
     },
     {
-      name: "Sobre nós",
+      name: "Sobre a ferramenta",
       href: "/sobre",
     },
     {
@@ -39,13 +38,12 @@ export default function NavBar() {
 
       <NavbarContent className="flex gap-4" justify="center">
         <NavbarBrand>
-          {/* <p className="font-bold text-inherit">TalkTalk!</p> */}
           <Image src="/logo.png" width={70} alt="Logotipo do website" />
         </NavbarBrand>
         {listaItems.map((item) => {
           return (
-            <NavbarItem className="sm:block hidden" isActive={pathname === item.href} key={item.href}>
-              <Link className="text-slate-400" href={item.href}>{item.name}</Link>
+            <NavbarItem className={`sm:block hidden ${(pathname === item.href) ? "border-b-1 border-b-sky-600 h-full leading-[calc(4rem)]" : ""}`} key={item.href}>
+              <Link className={`text-slate-400 ${(pathname === item.href) ? "!text-sky-600" : ""}`} href={item.href}>{item.name}</Link>
             </NavbarItem>
           );
         })}

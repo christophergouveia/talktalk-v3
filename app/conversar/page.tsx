@@ -1,20 +1,122 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { SetStateAction, useEffect, useState } from "react";
-import Peer, { DataConnection } from "peerjs";
+import Peer from "peerjs";
 import Image from "next/image";
 import { Button, Input } from "@nextui-org/react";
 import Avatar from "react-avatar";
 import ColorPicker from "../components/colorPicker";
+import * as yup from "yup";
+import { prisma } from "@/prisma/prisma";
+
+interface ErrorInputs {
+  errorApelido: boolean;
+  errorApelidoMessage: string;
+  errorCodigo: boolean;
+  errorCodigoMessage: string;
+}
+
+const InputsSchema = yup.object().shape({
+  apelido: yup
+    .string()
+    .required("Insira um apelido válido.")
+    .min(4, "É necessário que o apelido contenha no mínimo 4 caracteres.")
+    .max(32, "É necessário que o apelido contenha no máximo 32 caracteres."),
+  codigo: yup
+    .string()
+    .required("Insira um código válido.")
+    .min(4, "É necessário que o código contenha no mínimo 4 caracteres.")
+    .max(6, "É necessário que o código contenha no máximo 6 caracteres."),
+});
 
 export default function ConversarHome() {
-  const [conn, setConn] = useState<DataConnection | null>(null);
-  const [value, setValue] = useState("");
+  const [apelido, setApelido] = useState("");
+  const [codigo, setCodigo] = useState("");
   const [color, setColor] = useState("#0dffff");
+  const [errorInputs, setErrorInputs] = useState<ErrorInputs>(
+    {} as ErrorInputs
+  );
 
   const handleColorChange = (newColor: SetStateAction<string>) => {
     setColor(newColor);
   };
+
+  const handleEntrarSala = async () => {
+    try {
+      const response = await fetch('/api/salas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ codigo: codigo }),
+      });
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error('Erro: ', error);
+    }
+  };
+
+  const handleCriarSala = () => {
+    prisma.salas.create({
+      data: {
+        codigoSala: codigo
+      }
+    })
+  }
+
+  const validarApelido = async () => {
+    try {
+      await InputsSchema.pick(["apelido"]).validate({
+        apelido: apelido,
+      });
+      setErrorInputs((prevState) => ({
+        ...prevState,
+        errorApelido: false,
+        errorApelidoMessage: "",
+      }));
+      handleCriarSala();
+    } catch (error) {
+      setErrorInputs((prevState) => ({
+        ...prevState,
+        errorApelido: true,
+        errorApelidoMessage: (error as Error).message,
+      }));
+    }
+  };
+
+  const validarCodigo = async () => {
+    try {
+      await InputsSchema.pick(["codigo"]).validate({
+        codigo: codigo,
+      });
+      setErrorInputs((prevState) => ({
+        ...prevState,
+        errorCodigo: false,
+        errorCodigoMessage: "",
+      }));
+      handleEntrarSala();
+    } catch (error) {
+      setErrorInputs((prevState) => ({
+        ...prevState,
+        errorCodigo: true,
+        errorCodigoMessage: (error as Error).message,
+      }));
+    }
+  };
+
+  useEffect(() => {
+    if(errorInputs.errorApelido) {
+      validarApelido();
+    }
+  }, [apelido]);
+  
+  useEffect(() => {
+    if(errorInputs.errorCodigo) {
+      validarCodigo();
+    }
+  }, [codigo]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -38,7 +140,7 @@ export default function ConversarHome() {
         </div>
         <section className="w-2/3 h-fit shadow-lg dark:shadow-none dark:border dark:border-gray-400 rounded-lg m-auto">
           <div className="flex flex-col p-4 gap-3 items-center justify-center">
-            {value.trim().length == 0 ? (
+            {apelido.trim().length == 0 ? (
               <Image
                 src="https://images.vexels.com/media/users/3/147103/isolated/preview/e9bf9a44d83e00b1535324b0fda6e91a-cone-de-linha-de-perfil-do-instagram.png"
                 alt="Logo de perfil"
@@ -48,7 +150,13 @@ export default function ConversarHome() {
               />
             ) : (
               <div className="flex gap-3 items-center">
-                <Avatar className="[text-shadow:_0_1px_1px_rgb(0_0_0_/_40%)]" name={value} maxInitials={2} color={color} round />
+                <Avatar
+                  className="[text-shadow:_0_1px_1px_rgb(0_0_0_/_40%)]"
+                  name={apelido}
+                  maxInitials={2}
+                  color={color}
+                  round
+                />
                 <ColorPicker onColorChange={handleColorChange} />
               </div>
             )}
@@ -59,24 +167,48 @@ export default function ConversarHome() {
                 label="Apelido"
                 placeholder="Escolha um apelido"
                 maxLength={32}
-                value={value}
-                onValueChange={setValue}
+                value={apelido}
+                onValueChange={setApelido}
+                isInvalid={errorInputs.errorApelido}
               />
+              {errorInputs.errorApelido && (
+                <span className="text-danger">
+                  * {errorInputs.errorApelidoMessage}
+                </span>
+              )}
             </form>
             <form className="flex gap-4 items-center">
               <div className="flex flex-col gap-3">
-                <Input
-                  type="name"
-                  size="lg"
-                  label="Código da sala"
-                  placeholder="Digite o código da sala"
-                />
-                <Button color="success" className="font-semibold">
+                <div>
+                  <Input
+                    type="name"
+                    size="lg"
+                    label="Código da sala"
+                    placeholder="Digite o código da sala"
+                    value={codigo}
+                    onValueChange={setCodigo}
+                    isInvalid={errorInputs.errorCodigo}
+                  />
+                  {errorInputs.errorCodigo && (
+                    <span className="text-danger">
+                      * {errorInputs.errorCodigoMessage}
+                    </span>
+                  )}
+                </div>
+                <Button
+                  color="success"
+                  className="font-semibold"
+                  onClick={validarCodigo}
+                >
                   ENTRAR NA SALA
                 </Button>
               </div>
               <span className="text-xl font-bold">OU</span>
-              <Button color="warning" className="font-semibold">
+              <Button
+                color="warning"
+                className="font-semibold"
+                onClick={validarApelido}
+              >
                 CRIAR UMA SALA
               </Button>
             </form>

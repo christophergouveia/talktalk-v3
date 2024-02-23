@@ -11,7 +11,7 @@ export default function Footer({}) {
     setTheme(tema);
   };
   return (
-    <section className="mt-6 pb-4 text-center text-gray-500">
+    <footer className="mt-6 pb-4 pt-4 text-center text-gray-500">
       <span>
         2024&copy; Todos os direitos reservados. Desenvolvido por Kaike Sathler
         e Christopher Gouveia.
@@ -21,6 +21,6 @@ export default function Footer({}) {
         <Button isIconOnly radius="full" onClick={() => toggleTheme("dark")}><FaMoon /></Button>
         <Button isIconOnly radius="full" onClick={() => toggleTheme("light")}><FaSun /></Button>
       </ButtonGroup>
-    </section>
+    </footer>
   );
 }
