@@ -1,8 +1,7 @@
 import { nextui } from "@nextui-org/react";
 import type { Config } from "tailwindcss";
-import withMT from "@material-tailwind/react/utils/withMT";
 
-const config: Config = withMT({
+const config: Config = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -16,6 +15,6 @@ const config: Config = withMT({
   },
   darkMode: "class",
   plugins: [nextui()],
-}) as Config;
+} as Config;
 
 export default config;

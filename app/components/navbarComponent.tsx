@@ -36,7 +36,7 @@ export default function NavBar() {
         <NavbarMenuToggle />
       </NavbarContent>
 
-      <NavbarContent className="flex gap-4" justify="center">
+      <NavbarContent className="navbar-content flex gap-4" justify="center">
         <NavbarBrand>
           <Image src="/logo.png" width={70} alt="Logotipo do website" />
         </NavbarBrand>

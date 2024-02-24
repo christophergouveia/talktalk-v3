@@ -8,7 +8,8 @@ import { Button, Input } from "@nextui-org/react";
 import Avatar from "react-avatar";
 import ColorPicker from "../components/colorPicker";
 import * as yup from "yup";
-import { prisma } from "@/prisma/prisma";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 interface ErrorInputs {
   errorApelido: boolean;
@@ -37,34 +38,48 @@ export default function ConversarHome() {
   const [errorInputs, setErrorInputs] = useState<ErrorInputs>(
     {} as ErrorInputs
   );
+  const router = useRouter();
 
   const handleColorChange = (newColor: SetStateAction<string>) => {
     setColor(newColor);
   };
 
   const handleEntrarSala = async () => {
-    try {
-      const response = await fetch('/api/salas', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ codigo: codigo }),
+    const response = await fetch("/api/salas", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ codigo: codigo }),
+    });
+    const data = await response.json();
+    if (data.sala != null) {
+      router.push(`/conversar/${codigo}`);
+    } else {
+      console.log("erro");
+      toast("Essa sala não existe.", {
+        type: "error",
       });
-      const data = await response.json();
-      console.log(data);
-    } catch (error) {
-      console.error('Erro: ', error);
     }
   };
 
-  const handleCriarSala = () => {
-    prisma.salas.create({
-      data: {
-        codigoSala: codigo
-      }
-    })
-  }
+  const handleCriarSala = async () => {
+    const response = await fetch("/api/criarSala", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ codigo: codigo }),
+    });
+    const data = await response.json();
+    if (data.sala != null) {
+      router.push(`/conversar/${codigo}`);
+    } else {
+      toast("Ocorreu um erro ao criar a sala.", {
+        type: "error",
+      });
+    }
+  };
 
   const validarApelido = async () => {
     try {
@@ -107,13 +122,13 @@ export default function ConversarHome() {
   };
 
   useEffect(() => {
-    if(errorInputs.errorApelido) {
+    if (errorInputs.errorApelido) {
       validarApelido();
     }
   }, [apelido]);
-  
+
   useEffect(() => {
-    if(errorInputs.errorCodigo) {
+    if (errorInputs.errorCodigo) {
       validarCodigo();
     }
   }, [codigo]);
@@ -129,21 +144,22 @@ export default function ConversarHome() {
 
   return (
     <>
-      <div className="flex flex-col mt-12 gap-4 items-center justify-center">
+      <div className="flex flex-col mt-12 gap-4 items-center justify-center h-full">
         <div className="text-3xl w-[60%] mx-auto font-bold text-center">
           <h1>Quer começar um bate-papo com alguém? Entrou no lugar certo!</h1>
-          <h3 className="!text-xl font-light">
+          <h3 className="!text-xl font-normal">
             Caso queira entrar em alguma sala, preencha o campo indicado com o
             código que o seu amigo lhe passou (ou entre no link diretamente).
             Caso queira criar uma sala, clique em &quot;criar sala&quot;
           </h3>
         </div>
-        <section className="w-2/3 h-fit shadow-lg dark:shadow-none dark:border dark:border-gray-400 rounded-lg m-auto">
+        <section className="w-2/3 shadow-lg dark:shadow-none dark:border dark:border-gray-400 rounded-lg m-auto">
           <div className="flex flex-col p-4 gap-3 items-center justify-center">
             {apelido.trim().length == 0 ? (
               <Image
                 src="https://images.vexels.com/media/users/3/147103/isolated/preview/e9bf9a44d83e00b1535324b0fda6e91a-cone-de-linha-de-perfil-do-instagram.png"
                 alt="Logo de perfil"
+                aria-label="Avatar com a(s) inicial/iniciais do apelido"
                 className="rounded-full mx-auto dark:bg-white bg-slate-300 p-2"
                 width={128}
                 height={128}
