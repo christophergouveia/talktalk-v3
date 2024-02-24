@@ -44,21 +44,20 @@ export default function SobrePage() {
           </div>
         </div>
       </section>
-      <section className="grid grid-cols-4 gap-4">
-        <div className="">
-         <CardComponent imageSrc="/images/Conversation-s.png" titleButton="suddhsuds">
+      <section className=" h-80 grid grid-cols-3 gap-4 m-4">
+         {/* <CardComponent imageSrc="/images/Conversation-s.png" titleButton="suddhsuds">
           <h1>Olá Mundo</h1>
-         </CardComponent>
-         <CardComponent imageSrc="/images/Conversation-s.png" titleButton="suddhsuds">
-          <h1>Olá Mundo</h1>
-         </CardComponent>
-         <CardComponent imageSrc="/images/Conversation-s.png" titleButton="suddhsuds">
-          <h1>Olá Mundo</h1>
-         </CardComponent>
-         <CardComponent imageSrc="/images/Conversation-s.png" titleButton="suddhsuds">
-          <h1>Olá Mundo</h1>
-         </CardComponent>
-        </div>
+         </CardComponent> */}
+         <div className="w-50 h-50 bg-slate-500">oi</div>
+         <div className="w-50 h-50 bg-slate-500 ">oi</div>
+         <div className="w-50 h-50 bg-slate-500">oi</div>
+         <div className="w-50 h-50 bg-slate-500">oi</div>
+         <div className="w-50 h-50 bg-slate-500">oi</div>
+         <div className="w-50 h-50 bg-slate-500">oi</div>
+         <div className="w-50 h-50 bg-slate-500 col-span-2 ">oi</div>
+         <div className="w-50 h-50 bg-slate-500">oi</div>
+         <div className="w-50 h-50 bg-slate-500">oi</div>
+         
       </section>
     </>
   );

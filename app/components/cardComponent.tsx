@@ -13,7 +13,7 @@ import { ReactNode } from "react";
 export default function CardComponent({ children, imageSrc, titleButton } : { children: ReactNode, imageSrc: string, titleButton: string }) {
   return (
     <>
-      <Card className="mt-6 w-96" placeholder={undefined}>
+      <Card className=" w-96" placeholder={undefined}>
         <CardHeader placeholder={undefined}>
           <Image
             src={imageSrc}
