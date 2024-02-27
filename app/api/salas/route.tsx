@@ -9,7 +9,7 @@ export async function POST(req: Request) {
         codigoSala: codigo,
       },
     });
-    return new Response(JSON.stringify({ sala }), { status:  200 });
+    return new Response(JSON.stringify({ sala }), { status: 200 });
   } catch (error) {
     return new Response(JSON.stringify({ error: "Ocorreu um erro enquanto buscava a sala." }), { status:  500 });
   }

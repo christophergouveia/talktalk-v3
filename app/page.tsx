@@ -46,10 +46,10 @@ export default function Home({}) {
       <section className="flex items-center justify-center px-3 h-full">
         <div className="text-center flex justify-center items-center">
           <div>
-          <h1 className={`sm:text-8xl text-2xl font-extrabold mb-4 bg-gradient-to-r from-[#38A3F5] to-[#6Fe3F2] !leading-[1.2] text-transparent bg-clip-text`}>
+          <h1 className={`sm:text-6xl text-2xl font-extrabold mb-4 bg-gradient-to-r from-[#38A3F5] to-[#6Fe3F2] !leading-[1.2] text-transparent bg-clip-text`}>
             TalkTalk !
           </h1>
-          <p className="text-2xl mb-8 text-gray-600 dark:text-gray-500">
+          <p className="text-xl mb-8 text-gray-600 dark:text-gray-500">
             Agora com essa ferramenta, converse com aquele seu amigo que não fala o mesmo idioma que você, e tenha uma comunicação eficiente
           </p>
           <div className="flex gap-4 justify-center mb-12">

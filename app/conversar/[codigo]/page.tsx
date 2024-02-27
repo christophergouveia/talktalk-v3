@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import NotFound from "@/app/not-found";
 import Avatar from "react-avatar";
 import { ScrollShadow, Select, SelectItem } from "@nextui-org/react";
@@ -10,6 +10,8 @@ import { FaArrowRightArrowLeft } from "react-icons/fa6";
 import MessageList from "@/app/components/chatComponent/messageListComponent";
 import Message from "@/app/components/chatComponent/messageComponent";
 import ChatComponent from "@/app/components/chatComponent/chatComponent";
+import { usePeerConnection } from '@/app/peerRooms/peerConnection';
+import Peer from "peerjs";
 
 const linguagens = [
   { label: "Português", value: "pt_br", description: "Português Brasil" },
@@ -22,6 +24,9 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
     value: string;
   } | null>({ label: "Português", value: "pt_br" });
 
+  const [pessoasConectadas, setPessoasConectadas] = React.useState<number>(0);
+  const [showErrorModal, setShowErrorModal] = React.useState(false);
+
   const languageOptions = React.useMemo(function languageOptions() {
     return linguagens.map((idioma) => (
       <SelectItem key={idioma.value} value={idioma.value}>
@@ -30,8 +35,39 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
     ));
   }, []);
 
+  // const { peer, connectionCount } = usePeerConnection({
+  //   onPeopleCountChange: (count) => {
+  //     setPessoasConectadas(count);
+  //     if (count >=  2) {
+  //       setShowErrorModal(true);
+  //     }
+  //   },
+  //   codigo: params.codigo
+  // });
+
+  const peer = new Peer();
+
+  peer.connect("abc123")
+
+  peer.on("connection", () => {
+    console.log("conectou")
+  })
+
+  peer.on("open", () => {
+    console.log("abriu");
+  })
+
   if (params.codigo.length < 4) {
     return <NotFound />;
+  }
+
+  if (showErrorModal) {
+    return (
+      <div>
+        <h2>Sala Cheia</h2>
+        <p>Desculpe, mas a sala já está cheia. Por favor, tente novamente mais tarde.</p>
+      </div>
+    );
   }
 
   function updateLanguage(value: string) {
@@ -43,6 +79,7 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
       });
     }
   }
+
 
   return (
     <div className="flex items-center justify-center mt-6 h-full">
@@ -104,91 +141,6 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
         <ChatComponent.Body>
           <ScrollShadow size={100}>
             <MessageList>
-              {Array.from({ length: 50 }, (_, i) => {
-                return (
-                  <>
-                    <Message
-                      ownMessage={false}
-                      sender="Christopher"
-                      date={Date.now()}
-                      key={i}
-                    >
-                      Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                      Tempora quae delectus laboriosam non fugit similique unde
-                      esse. Distinctio, nobis officia? Fuga, quam labore itaque
-                      nisi quas mollitia dolores assumenda eum, nobis
-                      perferendis voluptas beatae aut quis. Magni mollitia
-                      numquam officia delectus illum suscipit quisquam,
-                      assumenda porro blanditiis nostrum iste nihil et esse
-                      pariatur quo quibusdam rem magnam quis exercitationem!
-                      Praesentium qui mollitia nesciunt magni, nemo, cumque
-                      similique repudiandae vitae sunt rem nostrum quasi.
-                      Architecto, reprehenderit facilis. Molestias
-                      exercitationem commodi ipsa similique fugiat, quis sed
-                      quae officia at temporibus eius a reiciendis tempora dicta
-                      itaque illum aperiam fugit quibusdam ut numquam! Suscipit
-                      aliquam doloribus fuga distinctio aut exercitationem nihil
-                      harum explicabo vel. Velit dolor ipsum nisi dolores quasi
-                      pariatur quo, eius reprehenderit provident rerum officiis
-                      laudantium perferendis a molestias praesentium nostrum
-                      aliquam libero veritatis officia accusamus! Error, ullam
-                      reiciendis expedita laudantium porro quia molestias quidem
-                      in voluptas deleniti sequi aliquam unde assumenda illum ad
-                      fuga id omnis veniam ipsum a voluptates adipisci, sed quam
-                      beatae! Expedita nostrum pariatur accusantium, suscipit,
-                      assumenda nulla reiciendis fugit repellat qui vitae animi
-                      autem, distinctio incidunt? Quasi pariatur vero fugiat
-                      cumque quos culpa soluta fuga adipisci eos nostrum vitae
-                      expedita aperiam magnam minus ab consequuntur, dicta
-                      placeat quia, non ipsa perferendis atque repellat,
-                      praesentium qui. Sint, quod. Iure ipsam, itaque officiis
-                      labore ad suscipit quis, iste reiciendis maxime quaerat,
-                      eligendi eveniet dicta sit provident expedita rerum
-                      commodi incidunt ut? Facere nam ratione voluptatum, veniam
-                      placeat officiis.
-                    </Message>
-                    <Message
-                      ownMessage={true}
-                      sender="Kaike"
-                      date={Date.now()}
-                    >
-                      Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                      Tempora quae delectus laboriosam non fugit similique unde
-                      esse. Distinctio, nobis officia? Fuga, quam labore itaque
-                      nisi quas mollitia dolores assumenda eum, nobis
-                      perferendis voluptas beatae aut quis. Magni mollitia
-                      numquam officia delectus illum suscipit quisquam,
-                      assumenda porro blanditiis nostrum iste nihil et esse
-                      pariatur quo quibusdam rem magnam quis exercitationem!
-                      Praesentium qui mollitia nesciunt magni, nemo, cumque
-                      similique repudiandae vitae sunt rem nostrum quasi.
-                      Architecto, reprehenderit facilis. Molestias
-                      exercitationem commodi ipsa similique fugiat, quis sed
-                      quae officia at temporibus eius a reiciendis tempora dicta
-                      itaque illum aperiam fugit quibusdam ut numquam! Suscipit
-                      aliquam doloribus fuga distinctio aut exercitationem nihil
-                      harum explicabo vel. Velit dolor ipsum nisi dolores quasi
-                      pariatur quo, eius reprehenderit provident rerum officiis
-                      laudantium perferendis a molestias praesentium nostrum
-                      aliquam libero veritatis officia accusamus! Error, ullam
-                      reiciendis expedita laudantium porro quia molestias quidem
-                      in voluptas deleniti sequi aliquam unde assumenda illum ad
-                      fuga id omnis veniam ipsum a voluptates adipisci, sed quam
-                      beatae! Expedita nostrum pariatur accusantium, suscipit,
-                      assumenda nulla reiciendis fugit repellat qui vitae animi
-                      autem, distinctio incidunt? Quasi pariatur vero fugiat
-                      cumque quos culpa soluta fuga adipisci eos nostrum vitae
-                      expedita aperiam magnam minus ab consequuntur, dicta
-                      placeat quia, non ipsa perferendis atque repellat,
-                      praesentium qui. Sint, quod. Iure ipsam, itaque officiis
-                      labore ad suscipit quis, iste reiciendis maxime quaerat,
-                      eligendi eveniet dicta sit provident expedita rerum
-                      commodi incidunt ut? Facere nam ratione voluptatum, veniam
-                      placeat officiis.
-                    </Message>
-                  </>
-                );
-              })}
             </MessageList>
           </ScrollShadow>
         </ChatComponent.Body>

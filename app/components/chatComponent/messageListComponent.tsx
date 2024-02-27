@@ -2,7 +2,7 @@ import { ScrollShadow } from "@nextui-org/react"
 import { ReactNode } from "react"
 
 export default function MessageList({ children, className } : {
-    children: ReactNode,
+    children?: ReactNode,
     className?: string
 }) {
     return (

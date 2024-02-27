@@ -1,8 +1,8 @@
+import { gerarCodigoAleatorio } from "@/app/utils/randomCode";
 import { prisma } from "@/prisma/prisma";
 
 export async function POST(req: Request) {
-  const codigo = JSON.parse(await req.text()).codigo;
-
+  const codigo = gerarCodigoAleatorio();
   try {
     const sala = await prisma.salas.create({
       data: {

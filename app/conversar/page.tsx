@@ -2,10 +2,10 @@
 "use client";
 
 import { SetStateAction, useEffect, useState } from "react";
+import Avatar from "react-avatar";
 import Peer from "peerjs";
 import Image from "next/image";
 import { Button, Input } from "@nextui-org/react";
-import Avatar from "react-avatar";
 import ColorPicker from "../components/colorPicker";
 import * as yup from "yup";
 import { toast } from "react-toastify";
@@ -38,6 +38,7 @@ export default function ConversarHome() {
   const [errorInputs, setErrorInputs] = useState<ErrorInputs>(
     {} as ErrorInputs
   );
+  const [isLoading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const handleColorChange = (newColor: SetStateAction<string>) => {
@@ -45,6 +46,7 @@ export default function ConversarHome() {
   };
 
   const handleEntrarSala = async () => {
+    await setLoading(true);
     const response = await fetch("/api/salas", {
       method: "POST",
       headers: {
@@ -54,9 +56,14 @@ export default function ConversarHome() {
     });
     const data = await response.json();
     if (data.sala != null) {
+      if(data.sala.pessoasConectadas == 2) {
+        return toast("Já tem 2 usuários conversando nessa sala.", {
+          type: "error"
+        })
+      }
       router.push(`/conversar/${codigo}`);
     } else {
-      console.log("erro");
+      await setLoading(false);
       toast("Essa sala não existe.", {
         type: "error",
       });
@@ -64,17 +71,18 @@ export default function ConversarHome() {
   };
 
   const handleCriarSala = async () => {
+    await setLoading(true);
     const response = await fetch("/api/criarSala", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ codigo: codigo }),
     });
     const data = await response.json();
     if (data.sala != null) {
-      router.push(`/conversar/${codigo}`);
+      router.push(`/conversar/${data.sala.codigoSala}`);
     } else {
+      await setLoading(false);
       toast("Ocorreu um erro ao criar a sala.", {
         type: "error",
       });
@@ -215,6 +223,7 @@ export default function ConversarHome() {
                   color="success"
                   className="font-semibold"
                   onClick={validarCodigo}
+                  isLoading={isLoading}
                 >
                   ENTRAR NA SALA
                 </Button>
@@ -224,6 +233,7 @@ export default function ConversarHome() {
                 color="warning"
                 className="font-semibold"
                 onClick={validarApelido}
+                isLoading={isLoading}
               >
                 CRIAR UMA SALA
               </Button>
