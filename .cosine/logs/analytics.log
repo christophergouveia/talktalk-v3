@@ -1,0 +1,5 @@
+
+INFO [2024-02-28T22:18:49.007Z]: extension_initialized
+INFO [2024-02-28T22:18:49.008Z]: {"timeToInit":17198,"agent":"cosine-vscode","version":"1.1.2","package":"@cosine/analytics","token":"1803ee20efed77dfecbf705fb8dc4c18","mp_lib":"node","$lib_version":"0.17.0"}
+INFO [2024-02-28T23:18:59.068Z]: extension_initialized
+INFO [2024-02-28T23:18:59.069Z]: {"timeToInit":15117,"agent":"cosine-vscode","version":"1.1.2","package":"@cosine/analytics","token":"1803ee20efed77dfecbf705fb8dc4c18","mp_lib":"node","$lib_version":"0.17.0"}

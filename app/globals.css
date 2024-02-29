@@ -36,16 +36,33 @@
   border-radius: 5px !important;
 }
 
-
 .textarea-message::-webkit-scrollbar {
-    width: 10px !important;
-  }
-  
+  width: 10px !important;
+}
+
 .textarea-message::-webkit-scrollbar-track {
-    background: transparent !important;
-  }
-  
+  background: transparent !important;
+}
+
 .textarea-message::-webkit-scrollbar-thumb {
-    background: #555 !important;
-    border-radius: 5px !important;
-  }
+  background: #555 !important;
+  border-radius: 5px !important;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  padding: 20px;
+  border-radius: 10px;
+}

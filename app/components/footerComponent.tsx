@@ -11,12 +11,11 @@ export default function Footer({}) {
     setTheme(tema);
   };
   return (
-    <footer className="mt-6 pb-4 pt-4 text-center text-gray-500">
+    <footer className="mt-6 py-4 sm:px-0 px-2 text-center text-gray-500 flex flex-col gap-2">
       <span>
-        2024&copy; Todos os direitos reservados. Desenvolvido por Kaike Sathler
+        Copyright&copy; 2024 Todos os direitos reservados. Desenvolvido por Kaike Sathler
         e Christopher Gouveia.
       </span>
-      <br />
       <ButtonGroup>
         <Button isIconOnly radius="full" onClick={() => toggleTheme("dark")}><FaMoon /></Button>
         <Button isIconOnly radius="full" onClick={() => toggleTheme("light")}><FaSun /></Button>

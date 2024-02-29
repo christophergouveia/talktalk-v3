@@ -1,4 +1,4 @@
-import {  Wheel } from '@uiw/react-color';
+import {  Colorful } from '@uiw/react-color';
 import { useState, useEffect } from 'react';
 
 export default function ColorPicker({ onColorChange } : any) {
@@ -8,8 +8,10 @@ export default function ColorPicker({ onColorChange } : any) {
   }, [hex, onColorChange]);
 
   return (
-    <Wheel
+    <Colorful
       color={hex}
+      disableAlpha
+      className='lg:scale-100 scale-80'
       onChange={(color) => {
         setHex(color.hex);
       }}

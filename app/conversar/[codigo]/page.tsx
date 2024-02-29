@@ -10,8 +10,8 @@ import { FaArrowRightArrowLeft } from "react-icons/fa6";
 import MessageList from "@/app/components/chatComponent/messageListComponent";
 import Message from "@/app/components/chatComponent/messageComponent";
 import ChatComponent from "@/app/components/chatComponent/chatComponent";
-import { usePeerConnection } from '@/app/peerRooms/peerConnection';
-import Peer from "peerjs";
+import socket from "@/app/components/socket";
+import updateSala from "@/app/utils/roomUtils/updateSala";
 
 const linguagens = [
   { label: "Português", value: "pt_br", description: "Português Brasil" },
@@ -19,6 +19,7 @@ const linguagens = [
 ];
 
 export default function RoomPage({ params }: { params: { codigo: string } }) {
+  console.log("teste")
   const [linguaSelecionada, setLinguaSelecionada] = React.useState<{
     label: string;
     value: string;
@@ -26,6 +27,26 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
 
   const [pessoasConectadas, setPessoasConectadas] = React.useState<number>(0);
   const [showErrorModal, setShowErrorModal] = React.useState(false);
+  
+  useEffect(() => {
+    socket.connect();
+    socket.on("connect", () => {
+      console.log("Conectado ao servidor");
+      setPessoasConectadas((prevCount) => {
+        const newCount = prevCount + 1;
+        updateSala(newCount, params.codigo);
+        return newCount;
+      });
+    });
+    socket.on("disconnect", () => {
+      console.log("Desconectado do servidor");
+      setPessoasConectadas((prevCount) => {
+        const newCount = prevCount - 1;
+        updateSala(newCount, params.codigo);
+        return newCount;
+      });
+    });
+  }, [params.codigo]);
 
   const languageOptions = React.useMemo(function languageOptions() {
     return linguagens.map((idioma) => (
@@ -35,28 +56,6 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
     ));
   }, []);
 
-  // const { peer, connectionCount } = usePeerConnection({
-  //   onPeopleCountChange: (count) => {
-  //     setPessoasConectadas(count);
-  //     if (count >=  2) {
-  //       setShowErrorModal(true);
-  //     }
-  //   },
-  //   codigo: params.codigo
-  // });
-
-  const peer = new Peer();
-
-  peer.connect("abc123")
-
-  peer.on("connection", () => {
-    console.log("conectou")
-  })
-
-  peer.on("open", () => {
-    console.log("abriu");
-  })
-
   if (params.codigo.length < 4) {
     return <NotFound />;
   }
@@ -65,7 +64,10 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
     return (
       <div>
         <h2>Sala Cheia</h2>
-        <p>Desculpe, mas a sala já está cheia. Por favor, tente novamente mais tarde.</p>
+        <p>
+          Desculpe, mas a sala já está cheia. Por favor, tente novamente mais
+          tarde.
+        </p>
       </div>
     );
   }
@@ -79,7 +81,6 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
       });
     }
   }
-
 
   return (
     <div className="flex items-center justify-center mt-6 h-full">
@@ -140,8 +141,7 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
         </ChatComponent.Header>
         <ChatComponent.Body>
           <ScrollShadow size={100}>
-            <MessageList>
-            </MessageList>
+            <MessageList></MessageList>
           </ScrollShadow>
         </ChatComponent.Body>
         <ChatComponent.Footer className="border-t-2 border-t-slate-600 flex items-center p-3">

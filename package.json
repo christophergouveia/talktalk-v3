@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"next dev\" \"node server/index.js\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -21,6 +21,7 @@
     "prop-types": "^15.8.1",
     "react": "^18",
     "react-avatar": "^5.0.3",
+    "react-awesome-reveal": "^4.2.8",
     "react-cookie": "^7.0.2",
     "react-dom": "^18",
     "react-fast-marquee": "^1.6.4",
@@ -36,6 +37,7 @@
     "@types/react-color": "^3.0.11",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
+    "concurrently": "^8.2.2",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
     "postcss": "^8",

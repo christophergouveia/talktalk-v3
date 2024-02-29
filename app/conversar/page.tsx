@@ -1,15 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState, useCallback } from "react";
 import Avatar from "react-avatar";
-import Peer from "peerjs";
-import Image from "next/image";
 import { Button, Input } from "@nextui-org/react";
 import ColorPicker from "../components/colorPicker";
 import * as yup from "yup";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import socket from "../components/socket";
+import { CreateRoomModal } from "../components/modalConsetiment";
+import { FaUserCircle } from "react-icons/fa";
 
 interface ErrorInputs {
   errorApelido: boolean;
@@ -41,55 +42,75 @@ export default function ConversarHome() {
   const [isLoading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  const handleColorChange = (newColor: SetStateAction<string>) => {
+  const handleColorChange = useCallback((newColor: SetStateAction<string>) => {
     setColor(newColor);
-  };
+  }, []);
 
-  const handleEntrarSala = async () => {
-    await setLoading(true);
-    const response = await fetch("/api/salas", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ codigo: codigo }),
-    });
-    const data = await response.json();
-    if (data.sala != null) {
-      if(data.sala.pessoasConectadas == 2) {
-        return toast("Já tem 2 usuários conversando nessa sala.", {
-          type: "error"
-        })
+  const handleEntrarSala = useCallback(async () => {
+    if(!validarCodigo()) {
+      return false;
+    }
+    setLoading(true);
+    try {
+      const response = await fetch("/api/salas", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ codigo: codigo }),
+      });
+      const data = await response.json();
+      if (data.sala != null) {
+        if (data.sala.pessoasConectadas == 2) {
+          return toast("Já tem 2 usuários conversando nessa sala.", {
+            type: "error",
+          });
+        }
+        // router.push(`/conversar/${codigo}`);
+      } else {
+        toast("Essa sala não existe.", {
+          type: "error",
+        });
       }
-      router.push(`/conversar/${codigo}`);
-    } else {
-      await setLoading(false);
-      toast("Essa sala não existe.", {
+    } catch (error) {
+      toast("Ocorreu um erro ao entrar na sala.", {
         type: "error",
       });
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [codigo, router]);
 
-  const handleCriarSala = async () => {
-    await setLoading(true);
-    const response = await fetch("/api/criarSala", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    if (data.sala != null) {
-      router.push(`/conversar/${data.sala.codigoSala}`);
-    } else {
-      await setLoading(false);
+  const handleCriarSala = useCallback(async () => {
+    if(!validarApelido()) {
+      return false;
+    }
+    setLoading(true);
+    try {
+      const response = await fetch("/api/criarSala", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (data.sala != null) {
+        router.push(`/conversar/${data.sala.codigoSala}`);
+      } else {
+        toast("Ocorreu um erro ao criar a sala.", {
+          type: "error",
+        });
+      }
+    } catch (error) {
       toast("Ocorreu um erro ao criar a sala.", {
         type: "error",
       });
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [router]);
 
-  const validarApelido = async () => {
+  const validarApelido = useCallback(async () => {
     try {
       await InputsSchema.pick(["apelido"]).validate({
         apelido: apelido,
@@ -99,17 +120,18 @@ export default function ConversarHome() {
         errorApelido: false,
         errorApelidoMessage: "",
       }));
-      handleCriarSala();
+      return true;
     } catch (error) {
       setErrorInputs((prevState) => ({
         ...prevState,
         errorApelido: true,
         errorApelidoMessage: (error as Error).message,
       }));
+      return false;
     }
-  };
+  }, [apelido, handleCriarSala]);
 
-  const validarCodigo = async () => {
+  const validarCodigo = useCallback(async () => {
     try {
       await InputsSchema.pick(["codigo"]).validate({
         codigo: codigo,
@@ -119,63 +141,49 @@ export default function ConversarHome() {
         errorCodigo: false,
         errorCodigoMessage: "",
       }));
-      handleEntrarSala();
+      return true;
+      // handleEntrarSala();
     } catch (error) {
       setErrorInputs((prevState) => ({
         ...prevState,
         errorCodigo: true,
         errorCodigoMessage: (error as Error).message,
       }));
+      return false;
     }
-  };
+  }, [codigo, handleEntrarSala]);
 
   useEffect(() => {
     if (errorInputs.errorApelido) {
       validarApelido();
     }
-  }, [apelido]);
+  }, [apelido, errorInputs.errorApelido, validarApelido]);
 
   useEffect(() => {
     if (errorInputs.errorCodigo) {
       validarCodigo();
     }
-  }, [codigo]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const peer = new Peer();
-      peer.on("connection", (connection) => {
-        console.log("Conexão recebida:", connection);
-      });
-    }
-  }, []);
+  }, [codigo, errorInputs.errorCodigo, validarCodigo]);
 
   return (
     <>
       <div className="flex flex-col mt-12 gap-4 items-center justify-center h-full">
-        <div className="text-3xl w-[60%] mx-auto font-bold text-center">
+        <div className="lg:text-3xl text-xl lg:w-[60%] w-full mx-auto font-bold text-center">
           <h1>Quer começar um bate-papo com alguém? Entrou no lugar certo!</h1>
-          <h3 className="!text-xl font-normal">
+          <h3 className="!text-xl font-normal lg:block hidden">
             Caso queira entrar em alguma sala, preencha o campo indicado com o
             código que o seu amigo lhe passou (ou entre no link diretamente).
             Caso queira criar uma sala, clique em &quot;criar sala&quot;
           </h3>
         </div>
-        <section className="w-2/3 shadow-lg dark:shadow-none dark:border dark:border-gray-400 rounded-lg m-auto">
+        <section className="lg:w-1/2 mx-2 w-fit shadow-lg dark:shadow-none dark:border dark:border-gray-400 rounded-lg m-auto">
           <div className="flex flex-col p-4 gap-3 items-center justify-center">
             {apelido.trim().length == 0 ? (
-              <Image
-                src="https://images.vexels.com/media/users/3/147103/isolated/preview/e9bf9a44d83e00b1535324b0fda6e91a-cone-de-linha-de-perfil-do-instagram.png"
-                alt="Logo de perfil"
-                aria-label="Avatar com a(s) inicial/iniciais do apelido"
-                className="rounded-full mx-auto dark:bg-white bg-slate-300 p-2"
-                width={128}
-                height={128}
-              />
+              <FaUserCircle className="text-9xl text-gray-400" />
             ) : (
-              <div className="flex gap-3 items-center">
+              <div className="flex lg:flex-row flex-col gap-3 items-center">
                 <Avatar
-                  className="[text-shadow:_0_1px_1px_rgb(0_0_0_/_40%)]"
+                  className="[text-shadow:_0_1px_1px_rgb(0_0_0_/_100%)]"
                   name={apelido}
                   maxInitials={2}
                   color={color}
@@ -201,7 +209,7 @@ export default function ConversarHome() {
                 </span>
               )}
             </form>
-            <form className="flex gap-4 items-center">
+            <form className="flex lg:flex flex-col gap-4 items-center">
               <div className="flex flex-col gap-3">
                 <div>
                   <Input
@@ -222,7 +230,7 @@ export default function ConversarHome() {
                 <Button
                   color="success"
                   className="font-semibold"
-                  onClick={validarCodigo}
+                  onClick={handleEntrarSala}
                   isLoading={isLoading}
                 >
                   ENTRAR NA SALA
@@ -232,7 +240,7 @@ export default function ConversarHome() {
               <Button
                 color="warning"
                 className="font-semibold"
-                onClick={validarApelido}
+                onClick={handleCriarSala}
                 isLoading={isLoading}
               >
                 CRIAR UMA SALA
@@ -241,6 +249,7 @@ export default function ConversarHome() {
           </div>
         </section>
       </div>
+    <CreateRoomModal aberto={isLoading} />
     </>
   );
 }
