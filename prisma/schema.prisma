@@ -15,6 +15,7 @@ model Salas {
   id Int @id @default(autoincrement())
   codigoSala String @unique
   pessoasConectadas Int @default(0)
+  dadosAvatares String
   mensagens Mensagens[]
 }
 

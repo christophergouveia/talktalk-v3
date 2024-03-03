@@ -38,7 +38,7 @@ export default function NavBar() {
 
       <NavbarContent className="navbar-content flex gap-4" justify="center">
         <NavbarBrand>
-          <Image src="/logo.png" width={70} alt="Logotipo do website" />
+          <Image src="/images/icon/logo-vector.svg" width={70} alt="Logotipo do website" />
         </NavbarBrand>
         {listaItems.map((item) => {
           return (

@@ -12,6 +12,8 @@ import Message from "@/app/components/chatComponent/messageComponent";
 import ChatComponent from "@/app/components/chatComponent/chatComponent";
 import socket from "@/app/components/socket";
 import updateSala from "@/app/utils/roomUtils/updateSala";
+import { useRouter } from "next/navigation";
+import CryptoJS from "crypto-js";
 
 const linguagens = [
   { label: "Português", value: "pt_br", description: "Português Brasil" },
@@ -19,27 +21,49 @@ const linguagens = [
 ];
 
 export default function RoomPage({ params }: { params: { codigo: string } }) {
-  console.log("teste")
   const [linguaSelecionada, setLinguaSelecionada] = React.useState<{
     label: string;
     value: string;
   } | null>({ label: "Português", value: "pt_br" });
 
+  const router = useRouter();
+
   const [pessoasConectadas, setPessoasConectadas] = React.useState<number>(0);
   const [showErrorModal, setShowErrorModal] = React.useState(false);
-  
+
+  const [dadosAvatares, setDadosAvatares] = React.useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchSala() {
+      const response = await fetch("/api/salas", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ codigo: params.codigo }),
+      });
+      const data = await response.json();
+      if (data.error) {
+        setShowErrorModal(true);
+        return;
+      }
+      const sala = data.sala;
+      setDadosAvatares(CryptoJS.AES.decrypt(sala.dadosAvatares, "8b556a77-565b-487e-bd09-7ec4a3531a56").toString(CryptoJS.enc.Utf8));
+      console.log(CryptoJS.AES.decrypt(sala.dadosAvatares, "8b556a77-565b-487e-bd09-7ec4a3531a56").toString(CryptoJS.enc.Utf8))
+    }
+    fetchSala();
+  });
+
   useEffect(() => {
     socket.connect();
-    socket.on("connect", () => {
-      console.log("Conectado ao servidor");
+    socket.on("client-connected", (socketId: string) => {
       setPessoasConectadas((prevCount) => {
         const newCount = prevCount + 1;
         updateSala(newCount, params.codigo);
         return newCount;
       });
     });
-    socket.on("disconnect", () => {
-      console.log("Desconectado do servidor");
+    socket.on("client-disconnected", (socketId: string) => {
       setPessoasConectadas((prevCount) => {
         const newCount = prevCount - 1;
         updateSala(newCount, params.codigo);
@@ -62,9 +86,9 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
 
   if (showErrorModal) {
     return (
-      <div>
-        <h2>Sala Cheia</h2>
-        <p>
+      <div className="text-center">
+        <h2 className="text-2xl font-bold">Sala Cheia</h2>
+        <p className="text-gray-600 mt-2">
           Desculpe, mas a sala já está cheia. Por favor, tente novamente mais
           tarde.
         </p>
@@ -89,8 +113,8 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
           <ChatComponent.Avatars className={"p-2"}>
             <div className="flex items-center gap-2">
               <Avatar name="Christopher" round size="2.5rem" />
-              <span>e</span>
-              <Avatar name="Kaike" round size="2.5rem" />
+              {/* <span>e</span>
+              <Avatar name="Kaike" round size="2.5rem" /> */}
             </div>
           </ChatComponent.Avatars>
           <ChatComponent.LanguageOptions className="w-full items-center justify-center gap-2 lg:flex hidden">

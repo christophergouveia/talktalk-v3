@@ -92,6 +92,7 @@ export default function ConversarHome() {
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ apelido: apelido, cor: color })
       });
       const data = await response.json();
       if (data.sala != null) {

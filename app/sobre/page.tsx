@@ -12,16 +12,16 @@ export default function SobrePage() {
         <div className="flex max-w-screen-xl px-4 py-8 mx-auto xl:gap-8 gap-4 lg:py-16">
           <div className="mr-auto place-self-center lg:col-span-7">
             <h1 className="max-w-3xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white">
-              Sua&nbsp;
+              Sua{" "}
               <span
                 className={
                   "bg-clip-text text-transparent bg-gradient-to-r from-[#786FF2] to-[#A46FF2]"
                 }
               >
-                privacidade.
+                privacidade,
               </span>
               <br />
-              Nossa&nbsp;
+              nossa{" "}
               <span
                 className={
                   "bg-clip-text text-transparent bg-gradient-to-r from-[#6F90F2] to-[#38A3F5]"
@@ -102,7 +102,7 @@ function CardContent({
 }: CardProps) {
   return (
     <div className="lg:w-1/3 md:w-1/2 px-3 mb-6 ">
-      <div className="bg-white dark:bg-transparent border-1 dark:border-neutral-800 border-[#38A3F5] rounded-lg dark:shadow-none shadow-lg p-6">
+      <div className="bg-white dark:bg-transparent border-1 dark:border-neutral-800 border-sky-100 rounded-lg dark:shadow-none shadow-lg p-6">
         <div className="flex relative w-full">
           <Image
             src={srcImagem}
@@ -136,7 +136,7 @@ function CardContent({
             return (
               <span
                 key={index}
-                className="inline-block bg-gray-200 py-1 px-2 rounded-full mr-2 [&:not(:last-child)]:mr-2"
+                className="inline-block bg-gray-100 dark:bg-neutral-800 py-1 px-2 rounded-full mr-2 [&:not(:last-child)]:mr-2"
               >
                 {value}
               </span>
