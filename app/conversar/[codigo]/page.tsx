@@ -1,18 +1,18 @@
 "use client";
 
-import React, { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import NotFound from "@/app/not-found";
 import Avatar from "react-avatar";
-import { ScrollShadow, Select, SelectItem } from "@nextui-org/react";
+import { Button, ScrollShadow, Select, SelectItem } from "@nextui-org/react";
 import { Textarea } from "@nextui-org/react";
 import { IoSettingsSharp } from "react-icons/io5";
 import { FaArrowRightArrowLeft } from "react-icons/fa6";
+import { IoIosSend } from "react-icons/io";
 import MessageList from "@/app/components/chatComponent/messageListComponent";
 import Message from "@/app/components/chatComponent/messageComponent";
 import ChatComponent from "@/app/components/chatComponent/chatComponent";
 import socket from "@/app/components/socket";
 import updateSala from "@/app/utils/roomUtils/updateSala";
-import { useRouter } from "next/navigation";
 import CryptoJS from "crypto-js";
 
 const linguagens = [
@@ -20,18 +20,17 @@ const linguagens = [
   { label: "Inglês", value: "en_us", description: "English (USA)" },
 ];
 
+interface dadosAvatares {
+  apelido: string;
+  cor: string;
+}
+
 export default function RoomPage({ params }: { params: { codigo: string } }) {
-  const [linguaSelecionada, setLinguaSelecionada] = React.useState<{
-    label: string;
-    value: string;
-  } | null>({ label: "Português", value: "pt_br" });
+  const [linguaSelecionada, setLinguaSelecionada] = useState<{ label: string; value: string } | null>({ label: "Português", value: "pt_br" });
+  const [pessoasConectadas, setPessoasConectadas] = useState<number>(0);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [dadosAvatares, setDadosAvatares] = useState<dadosAvatares>({ apelido: "", cor: "" });
 
-  const router = useRouter();
-
-  const [pessoasConectadas, setPessoasConectadas] = React.useState<number>(0);
-  const [showErrorModal, setShowErrorModal] = React.useState(false);
-
-  const [dadosAvatares, setDadosAvatares] = React.useState<string | null>(null);
 
   useEffect(() => {
     async function fetchSala() {
@@ -48,15 +47,21 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
         return;
       }
       const sala = data.sala;
-      setDadosAvatares(CryptoJS.AES.decrypt(sala.dadosAvatares, "8b556a77-565b-487e-bd09-7ec4a3531a56").toString(CryptoJS.enc.Utf8));
-      console.log(CryptoJS.AES.decrypt(sala.dadosAvatares, "8b556a77-565b-487e-bd09-7ec4a3531a56").toString(CryptoJS.enc.Utf8))
+      const bytes = CryptoJS.AES.decrypt(
+        sala.dadosAvatares,
+        process.env.NEXT_PUBLIC_SECRET_UUID || "kachris123!"
+      );
+      var dados = bytes.toString(CryptoJS.enc.Utf8);
+      setDadosAvatares({
+        apelido: dados.split("|")[0],
+        cor: dados.split("|")[1],
+      });
     }
     fetchSala();
-  });
 
-  useEffect(() => {
     socket.connect();
     socket.on("client-connected", (socketId: string) => {
+      socket.emit("join-room", { room: params.codigo, socketId });
       setPessoasConectadas((prevCount) => {
         const newCount = prevCount + 1;
         updateSala(newCount, params.codigo);
@@ -64,6 +69,7 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
       });
     });
     socket.on("client-disconnected", (socketId: string) => {
+      socket.emit("exit-room", { room: params.codigo, socketId });
       setPessoasConectadas((prevCount) => {
         const newCount = prevCount - 1;
         updateSala(newCount, params.codigo);
@@ -72,12 +78,16 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
     });
   }, [params.codigo]);
 
-  const languageOptions = React.useMemo(function languageOptions() {
+  const languageOptions = useMemo(function languageOptions() {
     return linguagens.map((idioma) => (
       <SelectItem key={idioma.value} value={idioma.value}>
         {idioma.label}
       </SelectItem>
     ));
+  }, []);
+
+  const sendMessage = useMemo(function sendMessage() {
+    
   }, []);
 
   if (params.codigo.length < 4) {
@@ -112,7 +122,13 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
         <ChatComponent.Header className="bg-slate-300 dark:bg-slate-600 flex justify-between w-full">
           <ChatComponent.Avatars className={"p-2"}>
             <div className="flex items-center gap-2">
-              <Avatar name="Christopher" round size="2.5rem" />
+              <Avatar
+                name={dadosAvatares.apelido}
+                color={dadosAvatares.cor.replace(";", "")}
+                round
+                size="2.5rem"
+                className="[text-shadow:_0_1px_1px_rgb(0_0_0_/_100%)]"
+              />
               {/* <span>e</span>
               <Avatar name="Kaike" round size="2.5rem" /> */}
             </div>
@@ -168,17 +184,20 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
             <MessageList></MessageList>
           </ScrollShadow>
         </ChatComponent.Body>
-        <ChatComponent.Footer className="border-t-2 border-t-slate-600 flex items-center p-3">
+        <ChatComponent.Footer className="border-t-2 border-t-slate-600 flex items-center p-3 gap-3">
           <Textarea
             label=""
             placeholder="Digite uma mensagem..."
+            minRows={1}
+            maxRows={3}
             classNames={{
-              input: "textarea-message",
+              input: "textarea-message p-2",
             }}
             size="sm"
-            maxRows={4}
-            rows={1}
           />
+          <Button isIconOnly onClick={sendMessage}>
+            <IoIosSend className={"text-2xl"} />
+          </Button>
         </ChatComponent.Footer>
       </section>
     </div>

@@ -25,8 +25,8 @@ export default function Message({
       <div
         className={`w-fit ${ownMessage ? "self-end" : ""} p-3 m-2 rounded-lg ${
           ownMessage
-            ? "bg-slate-300 dark:bg-slate-600 "
-            : "bg-gradient-to-r from-[#38A3F5] to-[#6F90F2]"
+            ? "bg-gradient-to-r from-[#38A3F5] to-[#6F90F2]"
+            : "bg-slate-300 dark:bg-slate-600"
         } relative text-justify w-[calc(100%-4rem)] ${className}`}
       >
         {children}

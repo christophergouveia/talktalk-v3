@@ -2,6 +2,7 @@ import CryptoJS from 'crypto-js';
 
 export function encryptAvatarData(apelido: string, cor: string): string {
     const data = `${apelido}|${cor};`;
-    const encryptedData = CryptoJS.AES.encrypt(data, "8b556a77-565b-487e-bd09-7ec4a3531a56").toString(CryptoJS.format.OpenSSL);
+    const secretUUID = process.env.NEXT_PUBLIC_SECRET_UUID || 'kachris123!';
+    const encryptedData = CryptoJS.AES.encrypt(data, secretUUID).toString();
     return encryptedData;
 }

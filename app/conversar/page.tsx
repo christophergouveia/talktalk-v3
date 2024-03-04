@@ -109,7 +109,7 @@ export default function ConversarHome() {
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  }, [apelido, codigo]);
 
   const validarApelido = useCallback(async () => {
     try {
