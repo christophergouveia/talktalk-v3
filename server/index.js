@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const http = require("http").createServer(app);
 const { Server } = require("socket.io");
+const CryptoJS = require("crypto-js");
 
 const origin = process.env.NEXT_PUBLIC_VERCEL_URL;
 const io = new Server(http, {
@@ -11,25 +12,17 @@ const io = new Server(http, {
   },
 });
 
-io.on('connection', (socket) => {
-  console.log('Um novo usuário entrou no site: ', socket.id);
-  io.emit("client-connected", socket.id);
+const users = {};
 
-  socket.on("join-room", (roomId, userId) => {
-    console.log("Usuário entrou na sala: ", roomId);
-    socket.join(roomId);
-    // socket.to(roomId).broadcast.emit("user-connected", userId);
+io.on("connection", (socket) => {
+  console.log("Usuário conectado! SocketID: " + socket.id);
+  socket.on("sendMessage", (message, socketId, room) => {
+    console.log("Mensagem recebida: " + message);
+    io.in(room.toString()).emit("message", { message: message, socketId: socketId });
   });
-
-  socket.on("exit-room", (roomId, userId) => {
-    console.log("Usuário saiu da sala: ", roomId);
-    socket.leave(roomId);
-    // socket.to(roomId).broadcast.emit("user-exited", userId);
-  })
-
-  socket.on('disconnect', () => {
-    console.log('Um usuário saiu do site');
-    io.emit("client-disconnected", socket.id);
+  socket.on("join-room", (room) => {
+    console.log("Usuário entrou na sala: " + room, socket.id);
+    socket.join(room.toString());
   });
 });
 

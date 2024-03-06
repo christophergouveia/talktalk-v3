@@ -10,7 +10,6 @@
   width: 0;
   height: 0;
   border: 7px solid;
-  border-color: #38a3f5 #38a3f5 transparent transparent;
 }
 
 .setinha-own::after {

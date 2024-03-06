@@ -12,16 +12,16 @@ datasource db {
 }
 
 model Salas {
-  id Int @id @default(autoincrement())
-  codigoSala String @unique
+  codigoSala String @id @unique
   pessoasConectadas Int @default(0)
   dadosAvatares String
+  socketIds String @default("")
   mensagens Mensagens[]
 }
 
 model Mensagens {
   id Int @id @default(autoincrement())
-  idSala Int
+  codigoSala String
   mensagemCriptografada String
-  sala Salas @relation(fields: [idSala], references: [id])
+  sala Salas @relation(fields: [codigoSala], references: [codigoSala])
 }

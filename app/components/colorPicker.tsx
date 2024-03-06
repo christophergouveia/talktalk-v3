@@ -1,8 +1,8 @@
 import {  Colorful } from '@uiw/react-color';
 import { useState, useEffect } from 'react';
 
-export default function ColorPicker({ onColorChange } : any) {
-  const [hex, setHex] = useState("#0dffff");
+export default function ColorPicker({ onColorChange, initialHex = "#0dffff" } : { onColorChange: (hex: string) => void, initialHex?: string }) {
+  const [hex, setHex] = useState(initialHex);
   useEffect(() => {
     onColorChange(hex);
   }, [hex, onColorChange]);

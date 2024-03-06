@@ -9,25 +9,29 @@ export default function SobrePage() {
   return (
     <div>
       <section className="bg-blue-50 dark:bg-zinc-900">
-        <div className="flex max-w-screen-xl px-4 py-8 mx-auto xl:gap-8 gap-4 lg:py-16">
+        <div className="flex max-w-screen-xl px-4 py-8 mx-auto xl:gap-8 gap-4 lg:py-16 items-center sm:items-normal">
           <div className="mr-auto place-self-center lg:col-span-7">
-            <h1 className="max-w-3xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white">
-              Sua{" "}
-              <span
-                className={
-                  "bg-clip-text text-transparent bg-gradient-to-r from-[#786FF2] to-[#A46FF2]"
-                }
-              >
-                privacidade,
+            <h1 className="max-w-3xl mb-4 sm:text-4xl text-[8vw] font-extrabold tracking-tight leading-none md:text-4xl xl:text-5xl text-center sm:text-start dark:text-white">
+              <span className={"whitespace-nowrap"}>
+                Sua{" "}
+                <span
+                  className={
+                    "bg-clip-text text-transparent bg-gradient-to-r from-[#786FF2] to-[#A46FF2]"
+                  }
+                >
+                  privacidade,
+                </span>
               </span>
               <br />
-              nossa{" "}
-              <span
-                className={
-                  "bg-clip-text text-transparent bg-gradient-to-r from-[#6F90F2] to-[#38A3F5]"
-                }
-              >
-                responsabilidade.
+              <span className={"whitespace-nowrap"}>
+                nossa{" "}
+                <span
+                  className={
+                    "bg-clip-text text-transparent bg-gradient-to-r from-[#6F90F2] to-[#38A3F5]"
+                  }
+                >
+                  responsabilidade.
+                </span>
               </span>
             </h1>
             <p className="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
@@ -46,10 +50,15 @@ export default function SobrePage() {
           </div>
         </div>
       </section>
+      <section>
+        <div className="flex p-4 mt-8 items-center justify-center">
+          <h1 className="sm:text-3xl text-[8vw] font-extrabold tracking-tight leading-none md:text-3xl xl:text-5xl text-center dark:text-white">Como surgiu a ideia da ferramenta?</h1>
+        </div>
+      </section>
       <section className="py-12 dark:bg-neutral-900">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl text-center font-heading mb-12 font-bold text-s">
-            Desenvolvedores da ferramenta
+          <h2 className="text-2xl sm:text-3xl text-center font-heading mb-12 font-bold text-s">
+            Desenvolvedores
           </h2>
           <div className="flex flex-wrap -mx-3 itens-center justify-center sm:">
             <CardContent

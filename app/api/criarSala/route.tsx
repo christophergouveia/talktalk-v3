@@ -1,6 +1,6 @@
 import { gerarCodigoAleatorio } from "@/app/utils/randomCode";
 import { encryptAvatarData } from "@/app/utils/roomUtils/encryptAvatarData";
-import { prisma } from "@/prisma/prisma";
+import prisma from "@/prisma/prisma";
 
 export async function POST(req: Request) {
   const codigo = gerarCodigoAleatorio();

@@ -1,4 +1,4 @@
-export default async function updateSala(pessoasConectadas: number, codigo: string) {
+export default async function updateSala(pessoasConectadas: number, codigo: string, socketIds?: string) {
     const response = await fetch('/api/updateSala', {
         method: 'PATCH',
         headers: {
@@ -6,7 +6,8 @@ export default async function updateSala(pessoasConectadas: number, codigo: stri
         },
         body: JSON.stringify({
             codigo: codigo,
-            pessoasConectadas: pessoasConectadas
+            pessoasConectadas: pessoasConectadas,
+            socketIds: socketIds || '',
         }),
     });
 

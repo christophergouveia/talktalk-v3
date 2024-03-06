@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, MouseEventHandler } from "react";
 import NotFound from "@/app/not-found";
 import Avatar from "react-avatar";
 import { Button, ScrollShadow, Select, SelectItem } from "@nextui-org/react";
@@ -11,9 +11,9 @@ import { IoIosSend } from "react-icons/io";
 import MessageList from "@/app/components/chatComponent/messageListComponent";
 import Message from "@/app/components/chatComponent/messageComponent";
 import ChatComponent from "@/app/components/chatComponent/chatComponent";
-import socket from "@/app/components/socket";
 import updateSala from "@/app/utils/roomUtils/updateSala";
 import CryptoJS from "crypto-js";
+import { io, Socket } from "socket.io-client";
 
 const linguagens = [
   { label: "Português", value: "pt_br", description: "Português Brasil" },
@@ -25,12 +25,24 @@ interface dadosAvatares {
   cor: string;
 }
 
-export default function RoomPage({ params }: { params: { codigo: string } }) {
-  const [linguaSelecionada, setLinguaSelecionada] = useState<{ label: string; value: string } | null>({ label: "Português", value: "pt_br" });
-  const [pessoasConectadas, setPessoasConectadas] = useState<number>(0);
-  const [showErrorModal, setShowErrorModal] = useState(false);
-  const [dadosAvatares, setDadosAvatares] = useState<dadosAvatares>({ apelido: "", cor: "" });
+interface MessageType {
+  message: string;
+  senderId: string;
+}
 
+export default function RoomPage({ params }: { params: { codigo: string } }) {
+  const [linguaSelecionada, setLinguaSelecionada] = useState<{
+    label: string;
+    value: string;
+  } | null>({ label: "Português", value: "pt_br" });
+  const [socketClient, setSocketClient] = useState<Socket | null>(null);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [dadosAvatares, setDadosAvatares] = useState<dadosAvatares>({
+    apelido: "",
+    cor: "",
+  });
+  const [mensagem, setMensagem] = useState<string>("");
+  const [mensagens, setMensagens] = useState<MessageType[]>([]);
 
   useEffect(() => {
     async function fetchSala() {
@@ -49,7 +61,7 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
       const sala = data.sala;
       const bytes = CryptoJS.AES.decrypt(
         sala.dadosAvatares,
-        process.env.NEXT_PUBLIC_SECRET_UUID || "kachris123!"
+        process.env.NEXT_PUBLIC_SECRET_UUID || ""
       );
       var dados = bytes.toString(CryptoJS.enc.Utf8);
       setDadosAvatares({
@@ -58,25 +70,30 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
       });
     }
     fetchSala();
-
-    socket.connect();
-    socket.on("client-connected", (socketId: string) => {
-      socket.emit("join-room", { room: params.codigo, socketId });
-      setPessoasConectadas((prevCount) => {
-        const newCount = prevCount + 1;
-        updateSala(newCount, params.codigo);
-        return newCount;
-      });
-    });
-    socket.on("client-disconnected", (socketId: string) => {
-      socket.emit("exit-room", { room: params.codigo, socketId });
-      setPessoasConectadas((prevCount) => {
-        const newCount = prevCount - 1;
-        updateSala(newCount, params.codigo);
-        return newCount;
-      });
-    });
   }, [params.codigo]);
+
+  useEffect(() => {
+    const URL = "http://localhost:3001";
+    const socket = io(URL, { autoConnect: true });
+    setSocketClient(socket);
+  }, []);
+
+  useEffect(() => {
+    socketClient?.emit("join-room", params.codigo);
+    socketClient?.on("teste", () => {
+      console.log("deu certo!");
+    });
+    socketClient?.on("message", (message) => {
+      console.log(message);
+      setMensagens((mensagens) => [
+        ...mensagens,
+        {
+          message: message.message,
+          senderId: message.socketId,
+        },
+      ]);
+    });
+  }, [socketClient, params.codigo]);
 
   const languageOptions = useMemo(function languageOptions() {
     return linguagens.map((idioma) => (
@@ -86,9 +103,23 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
     ));
   }, []);
 
-  const sendMessage = useMemo(function sendMessage() {
-    
-  }, []);
+  const sendMessage = () => {
+    // socket.emit(
+    //   "new-message",
+    //   CryptoJS.AES.encrypt(
+    //     mensagem,
+    //     process.env.NEXT_PUBLIC_SECRET_UUID || ""
+    //   ).toString(),
+    //   params.codigo,
+    //   socket.id
+    // );
+    socketClient?.emit(
+      "sendMessage",
+      mensagem,
+      socketClient?.id,
+      params.codigo
+    );
+  };
 
   if (params.codigo.length < 4) {
     return <NotFound />;
@@ -104,6 +135,10 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
         </p>
       </div>
     );
+  }
+
+  if (typeof window == null) {
+    return <></>;
   }
 
   function updateLanguage(value: string) {
@@ -181,10 +216,21 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
         </ChatComponent.Header>
         <ChatComponent.Body>
           <ScrollShadow size={100}>
-            <MessageList></MessageList>
+            <MessageList>
+              {mensagens.map((message, index) => (
+                <Message
+                  key={index}
+                  date={Date.now()}
+                  ownMessage={message.senderId == socketClient?.id}
+                  sender={dadosAvatares.apelido}
+                >
+                  {message.message.toString()}
+                </Message>
+              ))}
+            </MessageList>
           </ScrollShadow>
         </ChatComponent.Body>
-        <ChatComponent.Footer className="border-t-2 border-t-slate-600 flex items-center p-3 gap-3">
+        <ChatComponent.Footer className="border-t-2 border-t-slate-400 flex items-center p-3 gap-3">
           <Textarea
             label=""
             placeholder="Digite uma mensagem..."
@@ -193,9 +239,11 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
             classNames={{
               input: "textarea-message p-2",
             }}
+            onChange={(e) => setMensagem(e.target.value)}
             size="sm"
           />
-          <Button isIconOnly onClick={sendMessage}>
+
+          <Button isIconOnly onClick={() => sendMessage()}>
             <IoIosSend className={"text-2xl"} />
           </Button>
         </ChatComponent.Footer>

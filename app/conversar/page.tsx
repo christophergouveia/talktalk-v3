@@ -177,7 +177,7 @@ export default function ConversarHome() {
             Caso queira criar uma sala, clique em &quot;criar sala&quot;
           </h3>
         </div>
-        <section className="lg:w-1/2 mx-2 w-fit shadow-lg dark:shadow-none dark:border dark:border-gray-400 rounded-lg m-auto">
+        <section className="lg:w-1/2 w-[calc(100%-2rem)] mx-2 shadow-lg dark:shadow-none dark:border dark:border-gray-400 rounded-lg m-auto">
           <div className="flex flex-col p-4 gap-3 items-center justify-center">
             {apelido.trim().length == 0 ? (
               <FaUserCircle className="text-9xl text-gray-400" />

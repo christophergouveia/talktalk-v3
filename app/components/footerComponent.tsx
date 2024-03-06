@@ -4,6 +4,8 @@ import { Button, ButtonGroup } from "@nextui-org/react";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 import { FaMoon, FaSun } from "react-icons/fa";
+import Image from "next/image";
+import ImagemTimbrado from "@/public/images/assis-horizontal.png";
 
 export default function Footer({ props }: { props: { commitSha: string } }) {
   const { theme, setTheme } = useTheme();
@@ -18,12 +20,8 @@ export default function Footer({ props }: { props: { commitSha: string } }) {
       .then((data) => setCommitSha(data.commitSha));
   }, []);
 
-  useEffect(() => {
-    console.log(commitSha);
-  }, [commitSha]);
-
   return (
-    <footer className="mt-6 py-4 sm:px-0 px-2 text-center text-gray-500 flex flex-col gap-2">
+    <footer className="relative mt-6 py-4 sm:px-0 px-2 text-center text-gray-500 flex flex-col gap-2">
       <span>
         Copyright&copy; 2024 Todos os direitos reservados. Desenvolvido por
         Kaike Sathler e Christopher Gouveia.
@@ -36,7 +34,8 @@ export default function Footer({ props }: { props: { commitSha: string } }) {
           <FaSun />
         </Button>
       </ButtonGroup>
-      <span>SHA do commit: {commitSha}</span>
+      <Image className="w-[19rem] sticky left-2 bottom-2" src={ImagemTimbrado} alt="Logotipo do Instituto Federal do Paraná" width={500}  />
+      <span className="absolute right-2 bottom-2 dark:text-gray-300/10 text-gray-600/20 text-sm -z-10">{commitSha}</span>
     </footer>
   );
 }
