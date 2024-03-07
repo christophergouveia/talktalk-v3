@@ -34,7 +34,7 @@ export default function Footer({ props }: { props: { commitSha: string } }) {
           <FaSun />
         </Button>
       </ButtonGroup>
-      <Image className="w-[19rem] sticky left-2 bottom-2" src={ImagemTimbrado} alt="Logotipo do Instituto Federal do Paraná" width={500}  />
+      <Image className="w-[19rem] ml-2 mb-2" src={ImagemTimbrado} alt="Logotipo do Instituto Federal do Paraná" width={500}  />
       <span className="absolute right-2 bottom-2 dark:text-gray-300/10 text-gray-600/20 text-sm -z-10">{commitSha}</span>
     </footer>
   );

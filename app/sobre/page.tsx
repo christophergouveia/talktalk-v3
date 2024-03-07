@@ -3,7 +3,7 @@
 import { Button } from "@nextui-org/react";
 import Image from "next/image";
 import { ReactNode } from "react";
-import { FaFacebook, FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaFacebook, FaGithub, FaLinkedin, MdOutlineTranslate  } from "react-icons/fa";
 
 export default function SobrePage() {
   return (
@@ -51,9 +51,28 @@ export default function SobrePage() {
         </div>
       </section>
       <section>
-        <div className="flex p-4 mt-8 items-center justify-center">
-          <h1 className="sm:text-3xl text-[8vw] font-extrabold tracking-tight leading-none md:text-3xl xl:text-5xl text-center dark:text-white">Como surgiu a ideia da ferramenta?</h1>
-        </div>
+          <div className="grid grid-cols-3 p-6 gap-8">
+            <div className=" row-span-4 border rounded shadow-lg p-5 text-justify">
+              <h1 className="text-[#6F90F2] text-3xl m-2 font-bold">Idealização</h1>
+              <p> Surgiu a partir da ideia de facilitar a comunicação entre duas pessoas que falam idiomas distintos e não conseguem ter uma conversa eficiente.</p>
+            </div>
+            <div className="border row-span-8 col-span-1  rounded shadow-lg p-5 text-justify">
+            <h1 className="text-[#6F90F2] text-3xl m-2 font-bold">Proplemática</h1>
+              <p> Surgiu a partir da ideia de facilitar a comunicação entre duas pessoas que falam idiomas distintos e não conseguem ter uma conversa eficiente.</p>
+            </div>
+            <div className=" row-span-3 border rounded bg-gradient-to-r from-[#786FF2] to-[#A46FF2] p-5 text-justify">
+            <h1 className="text-white text-3xl m-2 font-bold">Motivação</h1>
+              <p> Surgiu a partir da ideia de facilitar a comunicação entre duas pessoas que falam idiomas distintos e não conseguem ter uma conversa eficiente.</p>
+            </div>
+            <div className=" row-span-3 border rounded   p-5 text-justify bg-gradient-to-r from-[#6F90F2] to-[#38A3F5]">
+            <h1 className="text-white text-3xl m-2 font-bold ">Solução</h1>
+              <p> Surgiu a partir da ideia de facilitar a comunicação entre duas pessoas que falam idiomas distintos e não conseguem ter uma conversa eficiente.</p>
+            </div>
+            <div className=" row-span-3 border rounded shadow-lg p-5 text-justify">
+            <h1 className="text-[#6F90F2] text-3xl m-2 font-bold">Por que essas Cores?</h1>
+              <p> Surgiu a partir da ideia de facilitar a comunicação entre duas pessoas que falam idiomas distintos e não conseguem ter uma conversa eficiente.</p>
+            </div>
+          </div>
       </section>
       <section className="py-12 dark:bg-neutral-900">
         <div className="container mx-auto px-4">
