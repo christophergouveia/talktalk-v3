@@ -65,3 +65,19 @@
   padding: 20px;
   border-radius: 10px;
 }
+
+.imagem-animation {
+  animation: shakeY 5s infinite linear;
+}
+
+@keyframes shakeY {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(15px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

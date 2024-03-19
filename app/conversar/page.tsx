@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import socket from "../components/socket";
 import { CreateRoomModal } from "../components/modalConsetiment";
 import { FaUserCircle } from "react-icons/fa";
+import updateDadosAvatares from "../utils/roomUtils/updateSala/updateDadosAvatares";
 
 interface ErrorInputs {
   errorApelido: boolean;
@@ -66,7 +67,8 @@ export default function ConversarHome() {
             type: "error",
           });
         }
-        // router.push(`/conversar/${codigo}`);
+        updateDadosAvatares({ apelido: apelido, cor: color }, codigo, true);
+        router.push(`/conversar/${codigo}`);
       } else {
         toast("Essa sala não existe.", {
           type: "error",

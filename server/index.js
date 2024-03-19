@@ -16,6 +16,9 @@ const users = {};
 
 io.on("connection", (socket) => {
   console.log("Usuário conectado! SocketID: " + socket.id);
+  socket.on("disconnect", () => {
+    io.in(room.toString()).emit("user-disconnected");
+  })
   socket.on("sendMessage", (message, socketId, room) => {
     console.log("Mensagem recebida: " + message);
     io.in(room.toString()).emit("message", { message: message, socketId: socketId });
@@ -23,6 +26,7 @@ io.on("connection", (socket) => {
   socket.on("join-room", (room) => {
     console.log("Usuário entrou na sala: " + room, socket.id);
     socket.join(room.toString());
+    io.in(room.toString()).emit("user-connected");
   });
 });
 

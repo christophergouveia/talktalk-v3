@@ -14,6 +14,8 @@ import ChatComponent from "@/app/components/chatComponent/chatComponent";
 import updateSala from "@/app/utils/roomUtils/updateSala";
 import CryptoJS from "crypto-js";
 import { io, Socket } from "socket.io-client";
+import updateDadosAvatares from "@/app/utils/roomUtils/updateSala/updateDadosAvatares";
+import fetchRoomData from "@/app/utils/roomUtils/fetchRoomData";
 
 const linguagens = [
   { label: "Português", value: "pt_br", description: "Português Brasil" },
@@ -37,12 +39,13 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
   } | null>({ label: "Português", value: "pt_br" });
   const [socketClient, setSocketClient] = useState<Socket | null>(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
-  const [dadosAvatares, setDadosAvatares] = useState<dadosAvatares>({
-    apelido: "",
-    cor: "",
-  });
+  const [dadosAvatares, setDadosAvatares] = useState<dadosAvatares[]>([
+    { apelido: "", cor: "" },
+    { apelido: "", cor: "" }
+  ]);
   const [mensagem, setMensagem] = useState<string>("");
   const [mensagens, setMensagens] = useState<MessageType[]>([]);
+  const [pessoasConectadas, setPessoasConectadas] = useState(0);
 
   useEffect(() => {
     async function fetchSala() {
@@ -64,21 +67,22 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
         process.env.NEXT_PUBLIC_SECRET_UUID || ""
       );
       var dados = bytes.toString(CryptoJS.enc.Utf8);
-      setDadosAvatares({
-        apelido: dados.split("|")[0],
-        cor: dados.split("|")[1],
-      });
+      // setDadosAvatares({
+      //   apelido: dados.split("|")[0],
+      //   cor: dados.split("|")[1],
+      // });
+      console.log(dados)
     }
     fetchSala();
   }, [params.codigo]);
 
   useEffect(() => {
-    const URL = "http://localhost:3001";
-    const socket = io(URL, { autoConnect: true });
-    setSocketClient(socket);
-  }, []);
-
-  useEffect(() => {
+    socketClient?.on("user-connected", () => {
+      setPessoasConectadas(prevCount => prevCount + 1);
+     });
+     socketClient?.on("user-disconnected", () => {
+      setPessoasConectadas(prevCount => prevCount - 1);
+     });
     socketClient?.emit("join-room", params.codigo);
     socketClient?.on("teste", () => {
       console.log("deu certo!");
@@ -94,6 +98,15 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
       ]);
     });
   }, [socketClient, params.codigo]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const dadosNovos = await fetchRoomData(params.codigo);
+      console.log(dadosNovos);
+    };
+
+    fetchData();
+  }, [pessoasConectadas, params.codigo, socketClient?.id, dadosAvatares]);
 
   const languageOptions = useMemo(function languageOptions() {
     return linguagens.map((idioma) => (
@@ -157,15 +170,16 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
         <ChatComponent.Header className="bg-slate-300 dark:bg-slate-600 flex justify-between w-full">
           <ChatComponent.Avatars className={"p-2"}>
             <div className="flex items-center gap-2">
-              <Avatar
-                name={dadosAvatares.apelido}
-                color={dadosAvatares.cor.replace(";", "")}
-                round
-                size="2.5rem"
-                className="[text-shadow:_0_1px_1px_rgb(0_0_0_/_100%)]"
-              />
-              {/* <span>e</span>
-              <Avatar name="Kaike" round size="2.5rem" /> */}
+              {dadosAvatares.map((avatar, index) => (
+                <Avatar
+                  key={index}
+                  name={avatar.apelido}
+                  color={avatar.cor.replace(";", "")}
+                  round
+                  size="2.5rem"
+                  className="[text-shadow:_0_1px_1px_rgb(0_0_0_/_100%)]"
+                />
+              ))}
             </div>
           </ChatComponent.Avatars>
           <ChatComponent.LanguageOptions className="w-full items-center justify-center gap-2 lg:flex hidden">
@@ -222,7 +236,7 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
                   key={index}
                   date={Date.now()}
                   ownMessage={message.senderId == socketClient?.id}
-                  sender={dadosAvatares.apelido}
+                  sender={dadosAvatares[0].apelido}
                 >
                   {message.message.toString()}
                 </Message>

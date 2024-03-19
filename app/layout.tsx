@@ -13,9 +13,13 @@ export const metadata: Metadata = {
   description: "Ferramenta de tradução via bate-papo em tempo real",
   authors: [
     {
-      name: "KaChris",
-      url: "",
+      name: "Kaike da Silva Sathler",
+      url: "http://lattes.cnpq.br/2952383935652833",
     },
+    {
+      name: "Christopher Rodrigues Gouveia",
+      url: "http://lattes.cnpq.br/3214554816480546",
+    }
   ],
 };
 

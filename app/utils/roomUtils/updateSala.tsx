@@ -1,17 +1,23 @@
-export default async function updateSala(pessoasConectadas: number, codigo: string, socketIds?: string) {
+export default async function updateSala(pessoasConectadas: number, codigo: string, socketIds = '', dadosAvatar = {}) {
+    if (!codigo) {
+        throw new Error('Código da sala não fornecido');
+    }
+
     const response = await fetch('/api/updateSala', {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            codigo: codigo,
-            pessoasConectadas: pessoasConectadas,
-            socketIds: socketIds || '',
+            codigo,
+            pessoasConectadas,
+            socketIds,
+            dadosAvatar
         }),
     });
 
     if (!response.ok) {
-        console.error('Erro ao atualizar a sala', response.statusText);
+        const errorData = await response.json();
+        throw new Error(`Erro ao atualizar a sala: ${response.statusText}, ${errorData.error}`);
     }
 }
