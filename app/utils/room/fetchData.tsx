@@ -1,5 +1,5 @@
 export default function fetchRoomData(codigo: string) {
-  return fetch("/api/salas", {
+  return fetch("/api/fetchRooms", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

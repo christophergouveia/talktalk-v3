@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+.dark,
+[data-theme="dark"] {
+  --nextui-background: 19.2% 21.2% 22%;
+}
+
 .setinha::before {
   content: "";
   position: absolute;
@@ -59,6 +64,22 @@
   justify-content: center;
   align-items: center;
   backdrop-filter: blur(5px);
+}
+
+.Card_content__sobre {
+  @apply flex p-4 border rounded;
+}
+
+.Card_content__title {
+  @apply font-bold text-lg m-2;
+}
+
+.Card_content__image {
+  @apply flex flex-col gap-2 w-max justify-center;
+}
+
+.alt_card__image {
+  @apply self-end text-[12px] opacity-70;
 }
 
 .modal-content {

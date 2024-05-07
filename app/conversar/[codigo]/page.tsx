@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, MouseEventHandler } from "react";
+import { useEffect, useMemo, useState } from "react";
 import NotFound from "@/app/not-found";
 import Avatar from "react-avatar";
 import { Button, ScrollShadow, Select, SelectItem } from "@nextui-org/react";
@@ -11,26 +11,15 @@ import { IoIosSend } from "react-icons/io";
 import MessageList from "@/app/components/chatComponent/messageListComponent";
 import Message from "@/app/components/chatComponent/messageComponent";
 import ChatComponent from "@/app/components/chatComponent/chatComponent";
-import updateSala from "@/app/utils/roomUtils/updateSala";
 import CryptoJS from "crypto-js";
-import { io, Socket } from "socket.io-client";
-import updateDadosAvatares from "@/app/utils/roomUtils/updateSala/updateDadosAvatares";
-import fetchRoomData from "@/app/utils/roomUtils/fetchRoomData";
+import { Socket, io } from "socket.io-client";
+import fetchRoomData from "@/app/utils/room/fetchData";
+import { dadosAvatares, MessageType } from "@/app/models/chatScheme";
 
 const linguagens = [
   { label: "Português", value: "pt_br", description: "Português Brasil" },
   { label: "Inglês", value: "en_us", description: "English (USA)" },
 ];
-
-interface dadosAvatares {
-  apelido: string;
-  cor: string;
-}
-
-interface MessageType {
-  message: string;
-  senderId: string;
-}
 
 export default function RoomPage({ params }: { params: { codigo: string } }) {
   const [linguaSelecionada, setLinguaSelecionada] = useState<{
@@ -41,7 +30,7 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [dadosAvatares, setDadosAvatares] = useState<dadosAvatares[]>([
     { apelido: "", cor: "" },
-    { apelido: "", cor: "" }
+    { apelido: "", cor: "" },
   ]);
   const [mensagem, setMensagem] = useState<string>("");
   const [mensagens, setMensagens] = useState<MessageType[]>([]);
@@ -49,7 +38,7 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
 
   useEffect(() => {
     async function fetchSala() {
-      const response = await fetch("/api/salas", {
+      const response = await fetch("/api/fetchRooms", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,35 +47,22 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
       });
       const data = await response.json();
       if (data.error) {
-        setShowErrorModal(true);
-        return;
+        return setShowErrorModal(true);
+      } else {
+        setSocketClient(io("http://localhost:3001/"))
       }
-      const sala = data.sala;
-      const bytes = CryptoJS.AES.decrypt(
-        sala.dadosAvatares,
-        process.env.NEXT_PUBLIC_SECRET_UUID || ""
-      );
-      var dados = bytes.toString(CryptoJS.enc.Utf8);
-      // setDadosAvatares({
-      //   apelido: dados.split("|")[0],
-      //   cor: dados.split("|")[1],
-      // });
-      console.log(dados)
     }
     fetchSala();
   }, [params.codigo]);
 
   useEffect(() => {
     socketClient?.on("user-connected", () => {
-      setPessoasConectadas(prevCount => prevCount + 1);
-     });
-     socketClient?.on("user-disconnected", () => {
-      setPessoasConectadas(prevCount => prevCount - 1);
-     });
-    socketClient?.emit("join-room", params.codigo);
-    socketClient?.on("teste", () => {
-      console.log("deu certo!");
+      setPessoasConectadas((prevCount) => prevCount + 1);
     });
+    socketClient?.on("user-disconnected", () => {
+      setPessoasConectadas((prevCount) => prevCount - 1);
+    });
+    socketClient?.emit("join-room", params.codigo);
     socketClient?.on("message", (message) => {
       console.log(message);
       setMensagens((mensagens) => [
@@ -104,7 +80,6 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
       const dadosNovos = await fetchRoomData(params.codigo);
       console.log(dadosNovos);
     };
-
     fetchData();
   }, [pessoasConectadas, params.codigo, socketClient?.id, dadosAvatares]);
 
@@ -117,15 +92,6 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
   }, []);
 
   const sendMessage = () => {
-    // socket.emit(
-    //   "new-message",
-    //   CryptoJS.AES.encrypt(
-    //     mensagem,
-    //     process.env.NEXT_PUBLIC_SECRET_UUID || ""
-    //   ).toString(),
-    //   params.codigo,
-    //   socket.id
-    // );
     socketClient?.emit(
       "sendMessage",
       mensagem,

@@ -1,5 +1,5 @@
 import prisma from "@/prisma/prisma";
-import { encryptAvatarData } from '../../utils/roomUtils/encryptAvatarData';
+import { encryptAvatarData } from '../../utils/room/encryptData';
 import CryptoJS from "crypto-js";
 
 interface dataInterface {

@@ -8,17 +8,9 @@ import ColorPicker from "../components/colorPicker";
 import * as yup from "yup";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import socket from "../components/socket";
 import { CreateRoomModal } from "../components/modalConsetiment";
 import { FaUserCircle } from "react-icons/fa";
-import updateDadosAvatares from "../utils/roomUtils/updateSala/updateDadosAvatares";
-
-interface ErrorInputs {
-  errorApelido: boolean;
-  errorApelidoMessage: string;
-  errorCodigo: boolean;
-  errorCodigoMessage: string;
-}
+import { ErrorInputs } from "../models/inputScheme";
 
 const InputsSchema = yup.object().shape({
   apelido: yup
@@ -48,7 +40,7 @@ export default function ConversarHome() {
   }, []);
 
   const handleEntrarSala = useCallback(async () => {
-    if(!validarCodigo()) {
+    if (!validarCodigo()) {
       return false;
     }
     setLoading(true);
@@ -67,7 +59,6 @@ export default function ConversarHome() {
             type: "error",
           });
         }
-        updateDadosAvatares({ apelido: apelido, cor: color }, codigo, true);
         router.push(`/conversar/${codigo}`);
       } else {
         toast("Essa sala não existe.", {
@@ -84,17 +75,17 @@ export default function ConversarHome() {
   }, [codigo, router]);
 
   const handleCriarSala = useCallback(async () => {
-    if(!validarApelido()) {
+    if (!validarApelido()) {
       return false;
     }
     setLoading(true);
     try {
-      const response = await fetch("/api/criarSala", {
+      const response = await fetch("/api/createRoom", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ apelido: apelido, cor: color })
+        body: JSON.stringify({ apelido: apelido, cor: color }),
       });
       const data = await response.json();
       if (data.sala != null) {
@@ -179,7 +170,7 @@ export default function ConversarHome() {
             Caso queira criar uma sala, clique em &quot;criar sala&quot;
           </h3>
         </div>
-        <section className="lg:w-1/2 w-[calc(100%-2rem)] mx-2 shadow-lg dark:shadow-none dark:border dark:border-gray-400 rounded-lg m-auto">
+        <section className="lg:w-1/2 w-[calc(100%-2rem)] mx-2 shadow-lg dark:shadow-none rounded-lg m-auto">
           <div className="flex flex-col p-4 gap-3 items-center justify-center">
             {apelido.trim().length == 0 ? (
               <FaUserCircle className="text-9xl text-gray-400" />
@@ -252,7 +243,7 @@ export default function ConversarHome() {
           </div>
         </section>
       </div>
-    <CreateRoomModal aberto={isLoading} />
+      <CreateRoomModal aberto={isLoading} />
     </>
   );
 }

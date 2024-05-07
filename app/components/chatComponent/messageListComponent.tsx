@@ -1,3 +1,5 @@
+"use client"
+
 import { ScrollShadow } from "@nextui-org/react"
 import { ReactNode } from "react"
 

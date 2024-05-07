@@ -6,22 +6,32 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "foreignKeys"
 }
 
 model Salas {
-  codigoSala String @id @unique
-  pessoasConectadas Int @default(0)
-  dadosAvatares String
-  socketIds String @default("")
-  mensagens Mensagens[]
+  codigoSala        String           @id @unique
+  pessoasConectadas Int              @default(0)
+  criadorId         String?
+  mensagens         Mensagens[]
+  Salas_Usuarios    Salas_Usuarios[]
+}
+
+model Salas_Usuarios {
+  codigoSala String
+  userId String
+  apelido String
+  cor String
+  sala   Salas  @relation(fields: [codigoSala], references: [codigoSala])
+
+  @@id([codigoSala, userId])
 }
 
 model Mensagens {
-  id Int @id @default(autoincrement())
-  codigoSala String
+  id                    Int    @id @default(autoincrement())
+  codigoSala            String
   mensagemCriptografada String
-  sala Salas @relation(fields: [codigoSala], references: [codigoSala])
+  sala                  Salas  @relation(fields: [codigoSala], references: [codigoSala])
 }

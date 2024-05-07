@@ -3,12 +3,9 @@
 import { Button } from "@nextui-org/react";
 import Image from "next/image";
 import { ReactNode } from "react";
-import {
-  FaFacebook,
-  FaGithub,
-  FaLinkedin
-} from "react-icons/fa";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 import { Glow, GlowCapture } from "@codaworks/react-glow";
+import SVGInternet from "@/public/images/pictures/Home-bro.svg";
 
 export default function SobrePage() {
   return (
@@ -16,7 +13,7 @@ export default function SobrePage() {
       <section className="bg-blue-100 dark:bg-zinc-900">
         <div className="flex max-w-screen-xl px-4 py-8 mx-auto xl:gap-8 gap-4 lg:py-16 items-center sm:items-normal">
           <div className="mr-auto place-self-center lg:col-span-7">
-            <h1 className="max-w-3xl mb-4 sm:text-4xl text-[8vw] font-extrabold tracking-tight leading-none md:text-4xl xl:text-5xl text-center sm:text-start dark:text-white">
+            <h1 className="max-w-3xl mb-4 sm:text-4xl text-[8vw] font-extrabold tracking-tight leading-none md:text-4xl xl:text-6xl text-center sm:text-start dark:text-white">
               <span className={"whitespace-nowrap"}>
                 Sua{" "}
                 <span
@@ -44,76 +41,102 @@ export default function SobrePage() {
               mensagens do usuário criptografadas e seguras.
             </p>
           </div>
-          <div className="hidden lg:mt-0 lg:col-span-5 lg:flex">
+          <div className="hidden lg:mt-0 lg:col-span-8 lg:flex">
             <Image
-              src="/images/Conversation-s.png"
+              src="/images/pictures/Conversation-s.png"
               alt={"Foto do Hero"}
               width={450}
               height={450}
-              className="w-full h-full imagem-animation"
+              className="w-[85%] h-full imagem-animation"
             />
           </div>
         </div>
       </section>
-      <Image
-        src="/images/svg/wave.svg"
-        alt={"Foto wave"}
-        width={100}
-        height={100}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
         className="w-full h-full li -mt-2"
-        />
-      <section>
-        <GlowCapture>
-          <div className="grid grid-cols-3 p-6 gap-8">
-          <Glow color='purple'>
-            <div className=" row-span-4 border rounded shadow-lg p-4 text-justify glow:bg-purple-400/50">
-              <h1 className="text-[#6F90F2] text-3xl m-2 font-bold glow:text-red-800">
-                Idealização
-              </h1>
-              <p>
-                {" "}
-                Surgiu a partir da ideia de facilitar a comunicação entre duas
-                pessoas que falam idiomas distintos e não conseguem ter uma
-                conversa eficiente.
-              </p>
+        viewBox="0 0 1440 320"
+      >
+        <path
+          className="fill-blue-100 dark:fill-zinc-900"
+          fill-opacity="1"
+          d="M0,192L80,176C160,160,320,128,480,128C640,128,800,160,960,165.3C1120,171,1280,149,1360,138.7L1440,128L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"
+        ></path>
+      </svg>
+      <section className="w-[80%] m-auto">
+        <h1 className="text-3xl mb-4 font-bold text-center">
+          O que diferencia a nossa ferramenta para as outras ferramentas?
+        </h1>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="Card_content__sobre">
+            <div className="flex-col">
+              <h2 className="Card_content__title">Variedade de línguas</h2>
+              <h3>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum,
+                porro ea. Facere cupiditate ut consequatur amet, vero odio neque
+                autem illo libero fuga magnam facilis voluptatibus accusamus
+                distinctio? Quas, nobis.
+              </h3>
             </div>
-            </Glow>
-            <div className="border row-span-8 col-span-1  rounded shadow-lg p-5 text-justify">
-              <h1 className="text-[#6F90F2] text-3xl m-2 font-bold">
-                Problemática
-              </h1>
-              <p></p>
-            </div>
-            <div className=" row-span-3 border rounded bg-gradient-to-r from-[#786FF2] to-[#A46FF2] p-5 text-justify">
-              <h1 className="text-white text-3xl m-2 font-bold">Motivação</h1>
-              <p>
-                {" "}
-                A nossa dificuldade de se comunicar com os intercambistas que
-                estão no IFPR Câmpus Assis Chateaubriand.
-              </p>
-            </div>
-            <div className=" row-span-3 border rounded   p-5 text-justify bg-gradient-to-r from-[#6F90F2] to-[#38A3F5]">
-              <h1 className="text-white text-3xl m-2 font-bold ">Solução</h1>
-              <p></p>
-            </div>
-            <div className=" row-span-3 border rounded shadow-lg p-5 text-justify">
-              <h1 className="text-[#6F90F2] text-3xl m-2 font-bold">
-                Por que essas Cores?
-              </h1>
-              <p>
-                {" "}
-                As paletas de cores foram escolhidas utilizando um gerador de
-                paletas de cores, Adobe Color, que cria cores com base na teoria
-                de cores usando harmonias para gerar uma paleta. Utilizamos a
-                cor de base azul pela expressão de confiança e segurança que ela
-                traz ao nosso site, além de ser uma cor que significa, muitas
-                das vezes, a calma e paz. As demais cores foram geradas pelo
-                gerador de cores, mas trazendo significado de harmonia entre
-                elas.{" "}
-              </p>
+            <div className="Card_content__image">
+              <Image src={SVGInternet} alt="Online illustrations by Storyset" />
+              <span className="alt_card__image">
+                by Storyset
+              </span>
             </div>
           </div>
-        </GlowCapture>
+          <div className="Card_content__sobre">
+            <div className="flex-col">
+              <h2 className="Card_content__title">Variedade de línguas</h2>
+              <h3>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum,
+                porro ea. Facere cupiditate ut consequatur amet, vero odio neque
+                autem illo libero fuga magnam facilis voluptatibus accusamus
+                distinctio? Quas, nobis.
+              </h3>
+            </div>
+            <div className="Card_content__image">
+              <Image src={SVGInternet} alt="Online illustrations by Storyset" />
+              <span className="alt_card__image">
+                by Storyset
+              </span>
+            </div>
+          </div>
+          <div className="Card_content__sobre">
+            <div className="flex-col">
+              <h2 className="Card_content__title">Variedade de línguas</h2>
+              <h3>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum,
+                porro ea. Facere cupiditate ut consequatur amet, vero odio neque
+                autem illo libero fuga magnam facilis voluptatibus accusamus
+                distinctio? Quas, nobis.
+              </h3>
+            </div>
+            <div className="Card_content__image">
+              <Image src={SVGInternet} alt="Online illustrations by Storyset" />
+              <span className="alt_card__image">
+                by Storyset
+              </span>
+            </div>
+          </div>
+          <div className="Card_content__sobre">
+            <div className="flex-col">
+              <h2 className="Card_content__title">Variedade de línguas</h2>
+              <h3>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum,
+                porro ea. Facere cupiditate ut consequatur amet, vero odio neque
+                autem illo libero fuga magnam facilis voluptatibus accusamus
+                distinctio? Quas, nobis.
+              </h3>
+            </div>
+            <div className="Card_content__image">
+              <Image src={SVGInternet} alt="Online illustrations by Storyset" />
+              <span className="alt_card__image">
+                by Storyset
+              </span>
+            </div>
+          </div>
+        </div>
       </section>
       <section className="py-12 dark:bg-neutral-900">
         <div className="container mx-auto px-4">

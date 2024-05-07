@@ -1,15 +1,6 @@
 import Link from "next/link";
 import { ReactNode } from "react";
 import Marquee from "react-fast-marquee";
-import { Anton } from "next/font/google";
-import localFont from "next/font/local";
-
-const anton = Anton({
-  subsets: ["latin"],
-  weight: "400",
-});
-
-const tsBlock = localFont({ src: "./fonts/TS Block Bold.ttf" });
 
 function MarqueeText({ children }: { children: ReactNode }) {
   return <span className="mx-4">{children}</span>;
@@ -18,14 +9,9 @@ function MarqueeText({ children }: { children: ReactNode }) {
 export default function Home({}) {
   return (
     <>
-      <style>{`
-        .section {
-          background-color: rgb(191, 204, 242);
-        }
-      `}</style>
       <Marquee
         autoFill
-        className="pt-6 h-fit overflow-hidden text-2xl  2xl:text-3xl"
+        className="pt-6 h-fit overflow-hidden text-2xl 2xl:text-3xl"
       >
         <MarqueeText>Converse.</MarqueeText>
         <MarqueeText>Talk.</MarqueeText>

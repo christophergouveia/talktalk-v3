@@ -3,7 +3,7 @@ const app = express();
 const http = require("http").createServer(app);
 const { Server } = require("socket.io");
 const CryptoJS = require("crypto-js");
-
+const cookie = require("cookie");
 const origin = process.env.NEXT_PUBLIC_VERCEL_URL;
 const io = new Server(http, {
   cors: {
@@ -16,9 +16,10 @@ const users = {};
 
 io.on("connection", (socket) => {
   console.log("Usuário conectado! SocketID: " + socket.id);
-  socket.on("disconnect", () => {
-    io.in(room.toString()).emit("user-disconnected");
-  })
+  console.log(socket.handshake.headers)
+  // socket.on("disconnect", () => {
+  //   io.in(room.toString()).emit("user-disconnected");
+  // })
   socket.on("sendMessage", (message, socketId, room) => {
     console.log("Mensagem recebida: " + message);
     io.in(room.toString()).emit("message", { message: message, socketId: socketId });
