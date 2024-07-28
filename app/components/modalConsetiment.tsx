@@ -1,17 +1,9 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  useDisclosure,
-} from "@nextui-org/react";
-import { useCookies } from "react-cookie";
-import { Bounce } from "react-awesome-reveal";
+import React, { useEffect, useState } from 'react';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from '@nextui-org/react';
+import { useCookies } from 'react-cookie';
+import { Bounce } from 'react-awesome-reveal';
 
 interface CreateRoomModalProps {
   aberto: boolean;
@@ -19,9 +11,7 @@ interface CreateRoomModalProps {
 
 export default function CookieConsentModal() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [cookieConsetiment, setCookieConsetiment] = useCookies([
-    "cookieAceito",
-  ]);
+  const [cookieConsetiment, setCookieConsetiment] = useCookies(['cookieAceito']);
 
   useEffect(() => {
     if (!cookieConsetiment.cookieAceito) {
@@ -33,10 +23,10 @@ export default function CookieConsentModal() {
     <>
       <Modal
         isOpen={isOpen}
-        scrollBehavior={"inside"}
-        placement={"top"}
+        scrollBehavior={'inside'}
+        placement={'top'}
         isDismissable={false}
-        backdrop={"blur"}
+        backdrop={'blur'}
         hideCloseButton
         onOpenChange={onOpenChange}
       >
@@ -47,47 +37,33 @@ export default function CookieConsentModal() {
                 TalkTalk! - Consentimento de Cookies e Responsabilidade
               </ModalHeader>
               <ModalBody>
-                <p>
-                  Obrigado por usar o TalkTalk!, um website de chat de tradução
-                  em tempo real.
-                </p>
+                <p>Obrigado por usar o TalkTalk!, um website de chat de tradução em tempo real.</p>
                 <p>O TalkTalk! usa cookies para:</p>
                 <ul>
-                  <li>
-                    Lembrar suas preferências: idioma padrão, configurações de
-                    interface, etc.
-                  </li>
-                  <li>
-                    Melhorar o desempenho: analisar o uso do aplicativo e
-                    otimizar a experiência do usuário.
-                  </li>
-                  <li>
-                    Personalizar sua experiência: oferecer conteúdo e anúncios
-                    relevantes.
-                  </li>
+                  <li>Lembrar suas preferências: idioma padrão, configurações de interface, etc.</li>
+                  <li>Melhorar o desempenho: analisar o uso do aplicativo e otimizar a experiência do usuário.</li>
+                  <li>Personalizar sua experiência: oferecer conteúdo e anúncios relevantes.</li>
                 </ul>
                 <p>
-                  O TalkTalk! oferece um espaço para conversas em tempo real
-                  traduzidas automaticamente. Ao usar o aplicativo, você
-                  concorda em:
+                  O TalkTalk! oferece um espaço para conversas em tempo real traduzidas automaticamente. Ao usar o
+                  aplicativo, você concorda em:
                 </p>
                 <ul>
                   <li>
-                    Ser responsável por suas conversas: Use linguagem respeitosa
-                    e evite conteúdo ilegal ou ofensivo.
+                    Ser responsável por suas conversas: Use linguagem respeitosa e evite conteúdo ilegal ou ofensivo.
                   </li>
                   <li>
-                    Estar ciente das limitações da tradução automática: As
-                    traduções podem não ser perfeitas e podem conter erros.
+                    Estar ciente das limitações da tradução automática: As traduções podem não ser perfeitas e podem
+                    conter erros.
                   </li>
                   <li>
-                    Não compartilhar informações confidenciais ou sensíveis: O
-                    TalkTalk! não garante a segurança de suas conversas.
+                    Não compartilhar informações confidenciais ou sensíveis: O TalkTalk! não garante a segurança de suas
+                    conversas.
                   </li>
                 </ul>
                 <p>
-                  O TalkTalk! leva a sério a privacidade de seus usuários. Ao
-                  usar o TalkTalk!, você concorda com os termos acima.
+                  O TalkTalk! leva a sério a privacidade de seus usuários. Ao usar o TalkTalk!, você concorda com os
+                  termos acima.
                 </p>
                 <p>Obrigado por usar o TalkTalk!</p>
               </ModalBody>
@@ -98,7 +74,7 @@ export default function CookieConsentModal() {
                   variant="solid"
                   onPress={onClose}
                   onClick={() =>
-                    setCookieConsetiment("cookieAceito", true, {
+                    setCookieConsetiment('cookieAceito', true, {
                       expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
                       maxAge: 30 * 24 * 60 * 60,
                     })
@@ -120,7 +96,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ aberto }) => {
 
   useEffect(() => {
     setIsOpen(aberto);
-  }, [aberto])
+  }, [aberto]);
 
   return (
     <div>
@@ -136,5 +112,3 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({ aberto }) => {
     </div>
   );
 };
-
-

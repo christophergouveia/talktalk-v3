@@ -3,12 +3,16 @@
 @tailwind utilities;
 
 .dark,
-[data-theme="dark"] {
+[data-theme='dark'] {
   --nextui-background: 19.2% 21.2% 22%;
+  --chat-bg-geral: #2b2b2b;
+  --chat-bg-header: #1e1e1e;
+  --chat-bg-buttons: #1c1c1c;
+  --chat-bg-buttons-secondary: #282828;
 }
 
 .setinha::before {
-  content: "";
+  content: '';
   position: absolute;
   right: 2px;
   top: -3px;
@@ -18,7 +22,7 @@
 }
 
 .setinha-own::after {
-  content: "";
+  content: '';
   position: absolute;
   left: -2px;
   top: -5px;
@@ -66,25 +70,41 @@
   backdrop-filter: blur(5px);
 }
 
+.modal-content {
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.Card_content__sobre:first-child {
+  @apply !justify-normal;
+}
+
+.Card_content__sobre:not(:first-child) {
+  @apply items-center justify-center;
+}
+
 .Card_content__sobre {
-  @apply flex p-4 border rounded;
+  @apply flex gap-4 rounded-3xl border bg-neutral-50 p-4 dark:border-zinc-900 dark:bg-zinc-900 sm:flex-col sm:p-6 lg:flex-row;
+}
+
+.Card_content {
+  @apply flex flex-col gap-3 overflow-hidden sm:flex-wrap lg:flex-nowrap;
+}
+
+.Card h3 {
+  @apply text-lg font-normal text-gray-800 dark:text-gray-400 2xl:text-xl;
 }
 
 .Card_content__title {
-  @apply font-bold text-lg m-2;
+  @apply my-2 text-xl sm:font-semibold lg:font-bold 2xl:text-2xl;
 }
 
 .Card_content__image {
-  @apply flex flex-col gap-2 w-max justify-center;
+  @apply flex flex-col justify-center;
 }
 
 .alt_card__image {
   @apply self-end text-[12px] opacity-70;
-}
-
-.modal-content {
-  padding: 20px;
-  border-radius: 10px;
 }
 
 .imagem-animation {
@@ -100,5 +120,23 @@
   }
   100% {
     transform: translateY(0);
+  }
+}
+
+.text-animation {
+  animation: textFadeIn normal ease-in-out;
+}
+
+@keyframes textFadeIn {
+  0% {
+    transform: translateX(-4rem);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
   }
 }

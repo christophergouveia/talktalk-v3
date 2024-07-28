@@ -1,0 +1,5 @@
+[
+  { "label": "Português", "value": "pt_br", "description": "Português (Brasil)", "flag": "BR" },
+  { "label": "Inglês", "value": "en_us", "description": "Inglês (EUA)", "flag": "US" },
+  { "label": "Espanhol", "value": "es_es", "description": "Espanhol (Espanha)", "flag": "ES" }
+]

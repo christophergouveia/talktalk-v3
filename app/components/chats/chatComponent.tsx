@@ -1,12 +1,6 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
-export default function ChatComponent({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
+export default function ChatComponent({ children, className }: { children: ReactNode; className?: string }) {
   return <div className={className}>{children}</div>;
 }
 

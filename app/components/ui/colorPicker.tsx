@@ -1,7 +1,13 @@
-import {  Colorful } from '@uiw/react-color';
+import { Colorful } from '@uiw/react-color';
 import { useState, useEffect } from 'react';
 
-export default function ColorPicker({ onColorChange, initialHex = "#0dffff" } : { onColorChange: (hex: string) => void, initialHex?: string }) {
+export default function ColorPicker({
+  onColorChange,
+  initialHex = '#0dffff',
+}: {
+  onColorChange: (hex: string) => void;
+  initialHex?: string;
+}) {
   const [hex, setHex] = useState(initialHex);
   useEffect(() => {
     onColorChange(hex);
@@ -11,7 +17,7 @@ export default function ColorPicker({ onColorChange, initialHex = "#0dffff" } : 
     <Colorful
       color={hex}
       disableAlpha
-      className='lg:scale-100 scale-80'
+      className="scale-80 lg:scale-100"
       onChange={(color) => {
         setHex(color.hex);
       }}

@@ -1,146 +1,245 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useState } from "react";
-import NotFound from "@/app/not-found";
-import Avatar from "react-avatar";
-import { Button, ScrollShadow, Select, SelectItem } from "@nextui-org/react";
-import { Textarea } from "@nextui-org/react";
-import { IoSettingsSharp } from "react-icons/io5";
-import { FaArrowRightArrowLeft } from "react-icons/fa6";
-import { IoIosSend } from "react-icons/io";
-import MessageList from "@/app/components/chatComponent/messageListComponent";
-import Message from "@/app/components/chatComponent/messageComponent";
-import ChatComponent from "@/app/components/chatComponent/chatComponent";
-import CryptoJS from "crypto-js";
-import { Socket, io } from "socket.io-client";
-import fetchRoomData from "@/app/utils/room/fetchData";
-import { dadosAvatares, MessageType } from "@/app/models/chatScheme";
-
-const linguagens = [
-  { label: "Português", value: "pt_br", description: "Português Brasil" },
-  { label: "Inglês", value: "en_us", description: "English (USA)" },
-];
+import { ChangeEvent, KeyboardEvent, useEffect, useMemo, useRef, useState } from 'react';
+import Avatar from 'react-avatar';
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, Select, SelectItem, Switch } from '@nextui-org/react';
+import { Textarea } from '@nextui-org/react';
+import { IoSettingsSharp } from 'react-icons/io5';
+import { IoIosSend } from 'react-icons/io';
+import { MessageList } from '@/app/components/chats/messageListComponent';
+import Message from '@/app/components/chats/messageComponent';
+import ChatComponent from '@/app/components/chats/chatComponent';
+import { Socket, io } from 'socket.io-client';
+import { dadosAvatares, MessageType } from '@/app/interfaces/chat';
+import { CountryFlag } from '@/app/components/countryFlags';
+import { useCookies } from 'react-cookie';
+import linguagens from '@/app/locales/languages.json';
+import CopyButton from '@/app/components/functionals/copyButton';
+import { cleanMessage } from '../../utils/formatters/cleanMessage';
+import fetchRoom from '@/app/utils/roomManagement/fetchRoom';
+import updateRoom from '@/app/utils/roomManagement/updateRoom';
+import moment from "moment-timezone";
 
 export default function RoomPage({ params }: { params: { codigo: string } }) {
   const [linguaSelecionada, setLinguaSelecionada] = useState<{
     label: string;
     value: string;
-  } | null>({ label: "Português", value: "pt_br" });
+  } | null>({ label: 'Português', value: 'pt_br' });
   const [socketClient, setSocketClient] = useState<Socket | null>(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [dadosAvatares, setDadosAvatares] = useState<dadosAvatares[]>([
-    { apelido: "", cor: "" },
-    { apelido: "", cor: "" },
+    { apelido: '', cor: '' },
+    { apelido: '', cor: '' },
   ]);
-  const [mensagem, setMensagem] = useState<string>("");
+  const [mensagem, setMensagem] = useState<string>('');
   const [mensagens, setMensagens] = useState<MessageType[]>([]);
   const [pessoasConectadas, setPessoasConectadas] = useState(0);
+  const [hostModal, setHostModal] = useState<boolean>(true);
+  const [cookies, setCookie, removeCookie] = useCookies(['talktalk_roomid']);
+  const messageListRef = useRef<HTMLDivElement>(null);
+  const [shiftPressed, setShiftPressed] = useState<boolean>(false);
+  const [host, setHost] = useState<number | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  useEffect(() => console.log(pessoasConectadas), [pessoasConectadas]);
+
+  useEffect(() => {
+    if (!isUpdating) {
+      setIsUpdating(true);
+      updateRoom(params.codigo, { host: host?.toString() })
+        .then(() => {
+          setIsUpdating(false);
+        })
+        .catch((error) => {
+          console.error('Failed to update room:', error);
+          setIsUpdating(false);
+        });
+    }
+  }, [host]);
 
   useEffect(() => {
     async function fetchSala() {
-      const response = await fetch("/api/fetchRooms", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ codigo: params.codigo }),
-      });
-      const data = await response.json();
-      if (data.error) {
+      const sala = await fetchRoom(params.codigo);
+      if (sala == null) {
         return setShowErrorModal(true);
       } else {
-        setSocketClient(io("http://localhost:3001/"))
+        setSocketClient(io(process.env.NEXT_PUBLIC_SOCKET_URL + ':3001'));
+        console.log(sala.host);
+        if (!sala.host) {
+          const roomId = cookies['talktalk_roomid'];
+          if (roomId) {
+            setHost(parseInt(roomId.split('.')[0]));
+          }
+        } else {
+          setHost(parseInt(sala.host.split('.')[0]));
+        }
       }
     }
     fetchSala();
+    return () => {
+      socketClient?.off('user-connected');
+      socketClient?.off('user-disconnected');
+      socketClient?.off('message');
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.codigo]);
 
   useEffect(() => {
-    socketClient?.on("user-connected", () => {
+    socketClient?.on('user-connected', () => {
       setPessoasConectadas((prevCount) => prevCount + 1);
     });
-    socketClient?.on("user-disconnected", () => {
+    socketClient?.on('user-disconnected', () => {
       setPessoasConectadas((prevCount) => prevCount - 1);
     });
-    socketClient?.emit("join-room", params.codigo);
-    socketClient?.on("message", (message) => {
-      console.log(message);
+    socketClient?.emit('join-room', params.codigo);
+    socketClient?.on('message', async (message) => {
+      const clientTz = moment.tz.guess(true);
+      const data = moment(message.date);
+      data.tz(clientTz);
       setMensagens((mensagens) => [
         ...mensagens,
         {
           message: message.message,
           senderId: message.socketId,
+          date: data
         },
       ]);
     });
   }, [socketClient, params.codigo]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const dadosNovos = await fetchRoomData(params.codigo);
-      console.log(dadosNovos);
-    };
-    fetchData();
-  }, [pessoasConectadas, params.codigo, socketClient?.id, dadosAvatares]);
+    if (messageListRef.current) {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight + 200;
+    }
+  }, [mensagens, messageListRef]);
 
   const languageOptions = useMemo(function languageOptions() {
     return linguagens.map((idioma) => (
-      <SelectItem key={idioma.value} value={idioma.value}>
+      <SelectItem key={idioma.value} value={idioma.value} startContent={<CountryFlag flag={idioma.flag} />}>
         {idioma.label}
+        <p className="text-tiny text-default-600">{idioma.description}</p>
       </SelectItem>
     ));
   }, []);
 
   const sendMessage = () => {
-    socketClient?.emit(
-      "sendMessage",
-      mensagem,
-      socketClient?.id,
-      params.codigo
-    );
+    socketClient?.emit('sendMessage', cleanMessage(mensagem), socketClient?.id, params.codigo);
+    setMensagem('');
   };
 
-  if (params.codigo.length < 4) {
-    return <NotFound />;
-  }
+  const handleTextAreaChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setMensagem(e.target.value);
+  };
+
+  const handleTextAreaKeyUp = async (e: KeyboardEvent<HTMLInputElement> | KeyboardEvent) => {
+    if (e.key === 'Shift') {
+      setShiftPressed(false);
+      return;
+    }
+    if (e.key === 'Enter' && shiftPressed) {
+      e.preventDefault();
+      return;
+    } else if (e.key === 'Enter' && !shiftPressed) {
+      sendMessage();
+      return e.preventDefault();
+    }
+  };
+
+  const handleTextAreaKeyDown = (e: { key: string }) => {
+    if (e.key === 'Shift') {
+      setShiftPressed(true);
+    }
+  };
 
   if (showErrorModal) {
     return (
-      <div className="text-center">
-        <h2 className="text-2xl font-bold">Sala Cheia</h2>
-        <p className="text-gray-600 mt-2">
-          Desculpe, mas a sala já está cheia. Por favor, tente novamente mais
-          tarde.
+      <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
+        <h2 className="text-2xl font-bold">Sala Cheia ou indisponível</h2>
+        <p className="mt-2 text-gray-600">
+          Desculpe, mas ocorreu algum erro ao entrar na sala. Por favor, tente novamente mais tarde.
         </p>
       </div>
     );
-  }
-
-  if (typeof window == null) {
-    return <></>;
   }
 
   function updateLanguage(value: string) {
     const selectedLanguage = linguagens.find((item) => item.value === value);
     if (selectedLanguage) {
       setLinguaSelecionada({
-        label: selectedLanguage.label,
+        label: selectedLanguage.description,
         value: selectedLanguage.value,
       });
     }
   }
 
+  if (typeof window == null) {
+    return <></>;
+  }
+
+  if (socketClient == null) {
+    return <></>;
+  }
+
   return (
-    <div className="flex items-center justify-center mt-6 h-full">
-      <section className="shadow border-2 bg-slate-100 dark:shadow-slate-900 dark:border-slate-900 dark:bg-slate-800 rounded-md lg:w-[60%] w-[90%]">
-        <ChatComponent.Header className="bg-slate-300 dark:bg-slate-600 flex justify-between w-full">
-          <ChatComponent.Avatars className={"p-2"}>
+    <div className="mt-6 flex h-full items-center justify-center">
+      <Modal
+        isOpen={hostModal}
+        backdrop="opaque"
+        size="2xl"
+        hideCloseButton
+        classNames={{
+          footer: 'justify-center',
+          backdrop: 'bg-[#6F90F2]/30',
+        }}
+      >
+        <ModalContent>
+          <>
+            <ModalBody>
+              <h1 className="text-center text-3xl font-extrabold">VOCÊ É O ANFITRIÃO DA SALA!</h1>
+              <h2 className="text-center text-xl">
+                Copie o link a seguir ou compartilhe o código para a pessoa entrar em seu bate-papo.
+              </h2>
+              <div className="flex flex-col items-center justify-center gap-3 p-2">
+                <h3 className="flex items-center justify-center gap-2 rounded-md text-center text-3xl font-bold text-[#6F90F2]">
+                  {params?.codigo.split('').map((c, index) => {
+                    return (
+                      <span className="w-12 rounded-lg bg-slate-800 p-2 uppercase" key={index}>
+                        {c}
+                      </span>
+                    );
+                  })}
+                  <CopyButton copy={params?.codigo} text="Copiar" sucessText="Copiado!" />
+                </h3>
+                <span className="text-2xl font-semibold">OU</span>
+                <div className="flex gap-2">
+                  <span className="rounded-md bg-slate-800 p-2 font-semibold text-[#6F90F2]">
+                    {process.env.NEXT_PUBLIC_VERCEL_URL}/conversar/{params?.codigo}
+                  </span>
+                  <CopyButton
+                    copy={process.env.NEXT_PUBLIC_VERCEL_URL + '/conversar/' + params?.codigo}
+                    text="Copiar"
+                    sucessText="Copiado!"
+                  />
+                </div>
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <Button className="!w-[75%]" color="danger" onPress={() => setHostModal(false)}>
+                Fechar
+              </Button>
+            </ModalFooter>
+          </>
+        </ModalContent>
+      </Modal>
+      <section className="w-[90%] rounded-md bg-[--chat-bg-geral] shadow dark:shadow-slate-900 lg:w-[60%]">
+        <ChatComponent.Header className="flex w-full justify-between bg-[--chat-bg-header]">
+          <ChatComponent.Avatars className={'p-2'}>
             <div className="flex items-center gap-2">
               {dadosAvatares.map((avatar, index) => (
                 <Avatar
                   key={index}
                   name={avatar.apelido}
-                  color={avatar.cor.replace(";", "")}
+                  color={avatar.cor.replace(';', '')}
                   round
                   size="2.5rem"
                   className="[text-shadow:_0_1px_1px_rgb(0_0_0_/_100%)]"
@@ -148,86 +247,89 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
               ))}
             </div>
           </ChatComponent.Avatars>
-          <ChatComponent.LanguageOptions className="w-full items-center justify-center gap-2 lg:flex hidden">
-            <Select
-              onSelectionChange={(keys) => {
-                if ((keys as Set<string>).size === 1) {
-                  const value = Array.from(keys)[0];
-                  updateLanguage(value as any);
-                }
-              }}
-              label="Selecione seu idioma"
-              className="max-w-64"
-              size="sm"
-              multiple={false}
-            >
-              {languageOptions}
-            </Select>
-            <FaArrowRightArrowLeft
-              size={32}
-              className="text-slate-600 dark:text-slate-300"
-            />
-            <Select
-              onSelectionChange={(keys) => {
-                if ((keys as Set<string>).size === 1) {
-                  const value = Array.from(keys)[0];
-                  updateLanguage(value as any);
-                }
-              }}
-              label="Selecione seu idioma"
-              className="max-w-56"
-              size="sm"
-              multiple={false}
-            >
-              {linguagens.map((idioma) => (
-                <SelectItem key={idioma.value} value={idioma.value}>
-                  {idioma.label}
-                </SelectItem>
-              ))}
-            </Select>
-          </ChatComponent.LanguageOptions>
           <ChatComponent.Settings className="flex items-center">
-            <IoSettingsSharp
-              size={32}
-              style={{ marginRight: "1rem" }}
-              className="text-slate-600 dark:text-slate-300"
-            />
+            <IoSettingsSharp size={32} style={{ marginRight: '1rem' }} className="text-slate-600 dark:text-slate-300" />
           </ChatComponent.Settings>
         </ChatComponent.Header>
         <ChatComponent.Body>
-          <ScrollShadow size={100}>
-            <MessageList>
-              {mensagens.map((message, index) => (
+          <MessageList ref={messageListRef}>
+            {mensagens.map((message, index) => {
+              return (
                 <Message
                   key={index}
-                  date={Date.now()}
+                  date={message.date}
                   ownMessage={message.senderId == socketClient?.id}
                   sender={dadosAvatares[0].apelido}
                 >
-                  {message.message.toString()}
+                  {message.message}
                 </Message>
-              ))}
-            </MessageList>
-          </ScrollShadow>
+              );
+            })}
+          </MessageList>
         </ChatComponent.Body>
-        <ChatComponent.Footer className="border-t-2 border-t-slate-400 flex items-center p-3 gap-3">
+        <ChatComponent.Footer className="flex items-center gap-3 border-t-2 border-t-slate-400 p-3">
           <Textarea
             label=""
             placeholder="Digite uma mensagem..."
             minRows={1}
             maxRows={3}
             classNames={{
-              input: "textarea-message p-2",
+              input: 'textarea-message p-2',
             }}
-            onChange={(e) => setMensagem(e.target.value)}
+            onChange={(e) => handleTextAreaChange(e)}
+            onKeyUp={(e) => handleTextAreaKeyUp(e)}
+            onKeyDown={(e: any) => handleTextAreaKeyDown(e)}
+            value={mensagem}
             size="sm"
           />
-
           <Button isIconOnly onClick={() => sendMessage()}>
-            <IoIosSend className={"text-2xl"} />
+            <IoIosSend className={'text-2xl'} />
           </Button>
         </ChatComponent.Footer>
       </section>
+      <aside className="ml-2 h-full rounded-md bg-[--chat-bg-geral]">
+        <h1 className="rounded-md bg-[--chat-bg-header] p-2 text-center">CONFIGURAÇÕES DA SALA</h1>
+        <div className="m-2 flex flex-col gap-2">
+          <Switch
+            classNames={{
+              base: 'inline-flex flex-row-reverse gap-2 w-full max-w-md bg-[--chat-bg-buttons] mt-2 hover:bg-content2 items-center cursor-pointer p-4 border-2 border-transparent w-full rounded-md',
+              wrapper: '',
+            }}
+          >
+            <div className="flex flex-col gap-1">
+              <p className="text-medium">Chat compacto</p>
+              <p className="text-tiny text-default-400">Ative o modo compacto do chat. Os espaçamentos são menores.</p>
+            </div>
+          </Switch>
+          <div className="flex w-full flex-col gap-1 rounded-md bg-[--chat-bg-buttons] p-4">
+            <div className="flex flex-col gap-1">
+              <p className="text-medium">Idioma que a mensagem será traduzida</p>
+              <p className="text-tiny text-default-400">
+                Selecione para qual idioma deverá ser traduzido as mensagens.
+              </p>
+            </div>
+            <Select
+              onSelectionChange={(keys) => {
+                if ((keys as Set<string>).size === 1) {
+                  const value = Array.from(keys)[0];
+                  updateLanguage(value as any);
+                }
+              }}
+              label="Selecione seu idioma"
+              renderValue={(value) => {
+                return linguaSelecionada?.label;
+              }}
+              classNames={{
+                trigger: 'bg-[--chat-bg-buttons-secondary]',
+              }}
+              size="sm"
+              multiple={false}
+            >
+              {languageOptions}
+            </Select>
+          </div>
+        </div>
+      </aside>
     </div>
   );
 }

@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { ReactNode } from "react";
-import Marquee from "react-fast-marquee";
+import Link from 'next/link';
+import { ReactNode } from 'react';
+import Marquee from 'react-fast-marquee';
 
 function MarqueeText({ children }: { children: ReactNode }) {
   return <span className="mx-4">{children}</span>;
@@ -9,10 +9,7 @@ function MarqueeText({ children }: { children: ReactNode }) {
 export default function Home({}) {
   return (
     <>
-      <Marquee
-        autoFill
-        className="pt-6 h-fit overflow-hidden text-2xl 2xl:text-3xl"
-      >
+      <Marquee autoFill className="h-fit overflow-hidden pt-6 text-2xl 2xl:text-3xl">
         <MarqueeText>Converse.</MarqueeText>
         <MarqueeText>Talk.</MarqueeText>
         <MarqueeText>Hable.</MarqueeText>
@@ -30,21 +27,21 @@ export default function Home({}) {
         <MarqueeText>Chiacchierata.</MarqueeText>
         <MarqueeText>Ћаскање.</MarqueeText>
       </Marquee>
-      <section className="flex items-center justify-center text-center px-3 h-full">
+      <section className="flex h-full items-center justify-center px-3 text-center">
         <div>
           <h1
-            className={`sm:text-7xl 2xl:text-8xl text-5xl  font-extrabold mb-4 bg-gradient-to-r from-[#38A3F5] to-[#6Fe3F2] !leading-[1.2] text-transparent bg-clip-text`}
+            className={`mb-4 bg-gradient-to-r from-[#38A3F5] to-[#6Fe3F2] bg-clip-text text-5xl font-extrabold !leading-[1.2] text-transparent sm:text-7xl 2xl:text-8xl`}
           >
             TalkTalk !
           </h1>
-          <p className="text-xl 2xl:text-2xl  mb-8 text-gray-600 dark:text-gray-400 sm:text-xl">
-            Agora com essa ferramenta, converse com aquele seu amigo que não
-            fala o mesmo idioma que você, e tenha uma comunicação eficiente
+          <p className="mb-8 max-w-[750px] text-center text-xl text-gray-600 dark:text-gray-400 sm:text-xl 2xl:text-2xl">
+            Comunique-se de maneira eficiente com pessoas que não falam o mesmo idioma que você. Sem dificuldade. Com
+            praticidade.
           </p>
-          <div className="flex gap-4 justify-center mb-12">
+          <div className="mb-12 flex justify-center gap-4">
             <Link
               href="/conversar"
-              className="bg-gradient-to-r sm:text-lg 2xl:text-xl text- from-[#38A3F5] to-[#6F90F2] hover:bg-blue-700 transition-all shadow-2xl shadow-blue-600 text-white py-2 px-8 rounded hover:scale-105"
+              className="text- rounded bg-gradient-to-r from-[#38A3F5] to-[#6F90F2] px-8 py-2 text-white shadow-2xl shadow-blue-600 transition-all hover:scale-105 hover:bg-blue-700 sm:text-lg 2xl:text-xl"
             >
               Comece a conversar agora mesmo!
             </Link>

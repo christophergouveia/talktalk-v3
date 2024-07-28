@@ -1,171 +1,120 @@
-"use client";
+'use client';
 
-import { Button } from "@nextui-org/react";
-import Image from "next/image";
-import { ReactNode } from "react";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { Glow, GlowCapture } from "@codaworks/react-glow";
-import SVGInternet from "@/public/images/pictures/Home-bro.svg";
+import { Button } from '@nextui-org/react';
+import Image from 'next/image';
+import { ReactNode } from 'react';
+import { FaGithub, FaLinkedin } from 'react-icons/fa';
+import PNGCoins from '@/public/images/pictures/Coins-amico.png';
+import SVGInterface from '@/public/images/svg/Interface.svg';
+import SVGAccount from '@/public/images/svg/Account.svg';
+import { GridMain, SubGrid } from '../components/grids/grid';
+import PNGSecurity from '@/public/images/pictures/security.png';
 
 export default function SobrePage() {
   return (
     <div>
-      <section className="bg-blue-100 dark:bg-zinc-900">
-        <div className="flex max-w-screen-xl px-4 py-8 mx-auto xl:gap-8 gap-4 lg:py-16 items-center sm:items-normal">
-          <div className="mr-auto place-self-center lg:col-span-7">
-            <h1 className="max-w-3xl mb-4 sm:text-4xl text-[8vw] font-extrabold tracking-tight leading-none md:text-4xl xl:text-6xl text-center sm:text-start dark:text-white">
-              <span className={"whitespace-nowrap"}>
-                Sua{" "}
-                <span
-                  className={
-                    "bg-clip-text text-transparent bg-gradient-to-r from-[#786FF2] to-[#A46FF2]"
-                  }
-                >
+      <section className="bg-blue-50 dark:bg-zinc-900 lg:pb-6">
+        <div className="sm:items-normal mx-auto flex max-w-screen-xl items-center gap-4 px-4 py-12 lg:py-16 xl:gap-8">
+          <div className="mr-auto mt-0 place-self-center sm:mt-36 lg:col-span-7">
+            <h1 className="mb-4 max-w-3xl text-center text-[8vw] font-extrabold leading-none tracking-tight dark:text-white sm:text-start sm:text-4xl md:text-4xl xl:text-6xl">
+              <span className="sm:whitespace-nowrap">
+                Sua{' '}
+                <span className="bg-gradient-to-r from-[#786FF2] to-[#A46FF2] bg-clip-text text-transparent">
                   privacidade,
                 </span>
               </span>
               <br />
-              <span className={"whitespace-nowrap"}>
-                nossa{" "}
-                <span
-                  className={
-                    "bg-clip-text text-transparent bg-gradient-to-r from-[#6F90F2] to-[#38A3F5]"
-                  }
-                >
+              <span className="sm:whitespace-nowrap">
+                nossa{' '}
+                <span className="bg-gradient-to-r from-[#6F90F2] to-[#38A3F5] bg-clip-text text-transparent">
                   responsabilidade.
                 </span>
               </span>
             </h1>
-            <p className="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">
-              Esta ferramenta tem interação totalmente anônima com todas as
-              mensagens do usuário criptografadas e seguras.
+            <p className="mb-6 max-w-2xl font-normal text-gray-700 dark:text-gray-400 md:text-lg lg:mb-8 lg:text-2xl">
+              Esta ferramenta tem interação totalmente anônima com todas as mensagens do usuário criptografadas e
+              seguras.
             </p>
           </div>
-          <div className="hidden lg:mt-0 lg:col-span-8 lg:flex">
+          <div className="hidden lg:flex">
             <Image
               src="/images/pictures/Conversation-s.png"
-              alt={"Foto do Hero"}
+              alt={'Foto do Hero'}
               width={450}
               height={450}
-              className="w-[85%] h-full imagem-animation"
+              className="imagem-animation h-full w-[85%]"
             />
           </div>
         </div>
       </section>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full li -mt-2"
-        viewBox="0 0 1440 320"
-      >
+      <svg xmlns="http://www.w3.org/2000/svg" className="li -mt-2 h-full w-full" viewBox="0 0 1440 320">
         <path
-          className="fill-blue-100 dark:fill-zinc-900"
-          fill-opacity="1"
+          className="fill-blue-50 dark:fill-zinc-900"
+          fillOpacity="1"
           d="M0,192L80,176C160,160,320,128,480,128C640,128,800,160,960,165.3C1120,171,1280,149,1360,138.7L1440,128L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"
         ></path>
       </svg>
-      <section className="w-[80%] m-auto">
-        <h1 className="text-3xl mb-4 font-bold text-center">
+      <section className="m-auto w-[90%] sm:w-[80%]">
+        <h1 className="mb-8 text-center text-2xl font-semibold dark:text-gray-300 sm:mb-10 sm:text-4xl sm:font-bold">
           O que diferencia a nossa ferramenta para as outras ferramentas?
         </h1>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="Card_content__sobre">
-            <div className="flex-col">
-              <h2 className="Card_content__title">Variedade de línguas</h2>
-              <h3>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum,
-                porro ea. Facere cupiditate ut consequatur amet, vero odio neque
-                autem illo libero fuga magnam facilis voluptatibus accusamus
-                distinctio? Quas, nobis.
-              </h3>
-            </div>
-            <div className="Card_content__image">
-              <Image src={SVGInternet} alt="Online illustrations by Storyset" />
-              <span className="alt_card__image">
-                by Storyset
-              </span>
-            </div>
-          </div>
-          <div className="Card_content__sobre">
-            <div className="flex-col">
-              <h2 className="Card_content__title">Variedade de línguas</h2>
-              <h3>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum,
-                porro ea. Facere cupiditate ut consequatur amet, vero odio neque
-                autem illo libero fuga magnam facilis voluptatibus accusamus
-                distinctio? Quas, nobis.
-              </h3>
-            </div>
-            <div className="Card_content__image">
-              <Image src={SVGInternet} alt="Online illustrations by Storyset" />
-              <span className="alt_card__image">
-                by Storyset
-              </span>
-            </div>
-          </div>
-          <div className="Card_content__sobre">
-            <div className="flex-col">
-              <h2 className="Card_content__title">Variedade de línguas</h2>
-              <h3>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum,
-                porro ea. Facere cupiditate ut consequatur amet, vero odio neque
-                autem illo libero fuga magnam facilis voluptatibus accusamus
-                distinctio? Quas, nobis.
-              </h3>
-            </div>
-            <div className="Card_content__image">
-              <Image src={SVGInternet} alt="Online illustrations by Storyset" />
-              <span className="alt_card__image">
-                by Storyset
-              </span>
-            </div>
-          </div>
-          <div className="Card_content__sobre">
-            <div className="flex-col">
-              <h2 className="Card_content__title">Variedade de línguas</h2>
-              <h3>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum,
-                porro ea. Facere cupiditate ut consequatur amet, vero odio neque
-                autem illo libero fuga magnam facilis voluptatibus accusamus
-                distinctio? Quas, nobis.
-              </h3>
-            </div>
-            <div className="Card_content__image">
-              <Image src={SVGInternet} alt="Online illustrations by Storyset" />
-              <span className="alt_card__image">
-                by Storyset
-              </span>
-            </div>
-          </div>
+        <div className="Card mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <GridMain
+            title="Segurança"
+            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum, porro ea. Facere cupiditate ut consequatur amet, vero odio neque autem illo libero fuga magnam facilis voluptatibus accusamus distinctio? Quas, nobis."
+            image={PNGSecurity}
+          />
+          <SubGrid
+            className_Content="row-span-2 lg:row-span-1 sm:content-between"
+            className_Title="text-[#1F6DF4] sm:text-center !m-4 lg:!text-start 2xl:!text-2xl sm:!text-xl lg:!mx-0 lg:!my-2"
+            className_Text="sm:text-center lg:!text-start "
+            title="Gratuidade"
+            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum, porro ea. Facere cupiditate ut consequatur"
+            image={PNGCoins}
+            id={1}
+          />
+          <SubGrid
+            title="Interface intuitiva e fácil de usar"
+            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum, porro ea. Facere cupiditate ut consequatur"
+            className_Title="text-[#8359C2]"
+            image={SVGInterface}
+            id={1.3}
+          />
+          <SubGrid
+            title="Sem necessidade de criação de contas"
+            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum, porro ea. Facere cupiditate ut consequatur"
+            className_Title="text-[#38A3F5]"
+            image={SVGAccount}
+            id={1.6}
+          />
         </div>
       </section>
-      <section className="py-12 dark:bg-neutral-900">
+      <section className="py-12">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl sm:text-3xl text-center font-heading mb-12 font-bold text-s">
-            Desenvolvedores
-          </h2>
-          <div className="flex flex-wrap -mx-3 itens-center justify-center sm:">
+          <h2 className="font-heading text-s mb-12 text-center text-2xl font-bold sm:text-3xl">Desenvolvedores</h2>
+          <div className="itens-center sm: -mx-3 flex flex-wrap justify-center">
             <CardContent
               nome="Kaike"
               srcImagem="/images/pictures/imagem2.jpg"
               altImagem="Foto de perfil de Kaike"
               cargo="CTO"
-              tags={["React", "FrontEnd", "Dev amador"]}
+              tags={['React', 'FrontEnd']}
               icon={[<FaGithub key="github" />, <FaLinkedin key="linkedin" />]}
             />
             <CardContent
               nome="Christopher"
               srcImagem="/images/pictures/imagem1.jpg"
-              altImagem="Foto de perfil de Kaike"
+              altImagem="Foto de perfil de Christopher"
               cargo="CTO"
-              tags={["React", "BackEnd", "Dev avançado"]}
+              tags={['React', 'BackEnd']}
               icon={[<FaGithub key="github" />, <FaLinkedin key="linkedin" />]}
             />
             <CardContent
-              nome="Christopher"
-              srcImagem="/images/pictures/imagem1.jpg"
-              altImagem="Foto de perfil de Kaike"
+              nome="Gustavo"
+              srcImagem="/images/pictures/imagem3.png"
+              altImagem="Foto de perfil de Gustavo"
               cargo="CTO"
-              tags={["React", "BackEnd", "Dev avançado"]}
+              tags={['React', 'BackEnd']}
               icon={[<FaGithub key="github" />, <FaLinkedin key="linkedin" />]}
             />
           </div>
@@ -184,35 +133,26 @@ interface CardProps {
   icon?: ReactNode[];
 }
 
-function CardContent({
-  nome,
-  srcImagem,
-  altImagem,
-  cargo,
-  tags,
-  icon,
-}: CardProps) {
+function CardContent({ nome, srcImagem, altImagem, cargo, tags, icon }: CardProps) {
   return (
-    <div className="lg:w-1/3 md:w-1/2 px-3 mb-6 ">
-      <div className="bg-white dark:bg-transparent border-1 dark:border-neutral-800 border-sky-100 rounded-lg dark:shadow-none shadow-lg p-6">
-        <div className="flex relative w-full">
+    <div className="mb-6 px-3 md:w-1/2 lg:w-1/3">
+      <div className="rounded-lg border-1 border-sky-100 bg-white p-6 shadow-lg dark:border-neutral-800 dark:bg-transparent dark:shadow-none">
+        <div className="relative flex w-full">
           <Image
             src={srcImagem}
             width={100}
             height={100}
-            alt={altImagem ?? "Imagem"}
-            className="w-30 h-30 rounded-full mx-auto mb-6"
+            alt={altImagem ?? 'Imagem'}
+            className="mx-auto mb-6 h-24 w-24 rounded-full"
           />
-          <div className="absolute right-0 ">
+          <div className="absolute right-0">
             {icon?.map((value, index) => {
               return (
                 <Button
                   key={index}
                   isIconOnly
-                  radius={"full"}
-                  className={
-                    "bg-transparent data-[hover=true]:bg-gray-200 dark:data-[hover=true]:bg-gray-800 text-xl"
-                  }
+                  radius={'full'}
+                  className={'bg-transparent text-xl data-[hover=true]:bg-gray-200 dark:data-[hover=true]:bg-gray-800'}
                 >
                   {value}
                 </Button>
@@ -221,14 +161,14 @@ function CardContent({
           </div>
         </div>
 
-        <h3 className="text-xl text-center font-heading mb-3">{nome}</h3>
+        <h3 className="font-heading mb-3 text-center text-xl">{nome}</h3>
         <p className="text-center text-gray-600">{cargo}</p>
-        <p className="text-center mt-4">
+        <p className="mt-4 text-center">
           {tags.map((value, index) => {
             return (
               <span
                 key={index}
-                className="inline-block bg-gray-100 dark:bg-neutral-800 py-1 px-2 rounded-full mr-2 [&:not(:last-child)]:mr-2"
+                className="mr-2 inline-block rounded-full bg-gray-100 px-2 py-1 dark:bg-neutral-800 [&:not(:last-child)]:mr-2"
               >
                 {value}
               </span>
