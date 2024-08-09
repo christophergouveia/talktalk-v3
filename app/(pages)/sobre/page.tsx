@@ -7,7 +7,7 @@ import { FaGithub, FaLinkedin } from 'react-icons/fa';
 import PNGCoins from '@/public/images/pictures/Coins-amico.png';
 import SVGInterface from '@/public/images/svg/Interface.svg';
 import SVGAccount from '@/public/images/svg/Account.svg';
-import { GridMain, SubGrid } from '../components/grids/grid';
+import { GridMain, SubGrid } from '@/app/components/grids/grid';
 import PNGSecurity from '@/public/images/pictures/security.png';
 
 export default function SobrePage() {

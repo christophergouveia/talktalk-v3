@@ -34,18 +34,18 @@ export default function CookieConsentModal() {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                TalkTalk! - Consentimento de Cookies e Responsabilidade
+                Talk-Talk! - Consentimento de Cookies e Responsabilidade
               </ModalHeader>
               <ModalBody>
-                <p>Obrigado por usar o TalkTalk!, um website de chat de tradução em tempo real.</p>
-                <p>O TalkTalk! usa cookies para:</p>
+                <p>Obrigado por usar o Talk-Talk!, um website de chat de tradução em tempo real.</p>
+                <p>O Talk-Talk! usa cookies para:</p>
                 <ul>
                   <li>Lembrar suas preferências: idioma padrão, configurações de interface, etc.</li>
                   <li>Melhorar o desempenho: analisar o uso do aplicativo e otimizar a experiência do usuário.</li>
                   <li>Personalizar sua experiência: oferecer conteúdo e anúncios relevantes.</li>
                 </ul>
                 <p>
-                  O TalkTalk! oferece um espaço para conversas em tempo real traduzidas automaticamente. Ao usar o
+                  O Talk-Talk! oferece um espaço para conversas em tempo real traduzidas automaticamente. Ao usar o
                   aplicativo, você concorda em:
                 </p>
                 <ul>
@@ -57,15 +57,15 @@ export default function CookieConsentModal() {
                     conter erros.
                   </li>
                   <li>
-                    Não compartilhar informações confidenciais ou sensíveis: O TalkTalk! não garante a segurança de suas
+                    Não compartilhar informações confidenciais ou sensíveis: O Talk-Talk! não garante a segurança de suas
                     conversas.
                   </li>
                 </ul>
                 <p>
-                  O TalkTalk! leva a sério a privacidade de seus usuários. Ao usar o TalkTalk!, você concorda com os
+                  O Talk-Talk! leva a sério a privacidade de seus usuários. Ao usar o Talk-Talk!, você concorda com os
                   termos acima.
                 </p>
-                <p>Obrigado por usar o TalkTalk!</p>
+                <p>Obrigado por usar o Talk-Talk!</p>
               </ModalBody>
               <ModalFooter>
                 <Button

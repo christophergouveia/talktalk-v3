@@ -15,10 +15,12 @@ import { CountryFlag } from '@/app/components/countryFlags';
 import { useCookies } from 'react-cookie';
 import linguagens from '@/app/locales/languages.json';
 import CopyButton from '@/app/components/functionals/copyButton';
-import { cleanMessage } from '../../utils/formatters/cleanMessage';
+import { cleanMessage } from '@/app/utils/formatters/cleanMessage';
 import fetchRoom from '@/app/utils/roomManagement/fetchRoom';
 import updateRoom from '@/app/utils/roomManagement/updateRoom';
 import moment from "moment-timezone";
+import { insertUser } from '@/app/utils/roomManagement/user/insertUser';
+import { deleteUser } from '@/app/utils/roomManagement/user/deleteUser';
 
 export default function RoomPage({ params }: { params: { codigo: string } }) {
   const [linguaSelecionada, setLinguaSelecionada] = useState<{
@@ -85,11 +87,13 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
   }, [params.codigo]);
 
   useEffect(() => {
-    socketClient?.on('user-connected', () => {
+    socketClient?.on('user-connected', async() => {
       setPessoasConectadas((prevCount) => prevCount + 1);
+      insertUser(params.codigo, socketClient?.id || '');
     });
     socketClient?.on('user-disconnected', () => {
-      setPessoasConectadas((prevCount) => prevCount - 1);
+      setPessoasConectadas((prevCount) => prevCount - 1);;
+      deleteUser(params.codigo, socketClient?.id || '');
     });
     socketClient?.emit('join-room', params.codigo);
     socketClient?.on('message', async (message) => {

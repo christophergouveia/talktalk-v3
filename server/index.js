@@ -4,6 +4,9 @@ const http = require('http').createServer(app);
 const { Server } = require('socket.io');
 const origin = process.env.NEXT_PUBLIC_VERCEL_URL;
 const cookie = require("cookie");
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+const PORT = 3001;
 
 const io = new Server(http, {
   cookie: true,
@@ -31,7 +34,34 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = 3001;
+async function deleteInactiveRooms() {
+  try {
+    const inactivityThreshold = 1000 * 60 * 60 * 24 + (3 * 60 * 60 * 1000);
+
+    const inactiveRooms = await prisma.salas.findMany({
+      where: {
+        updateAt: {
+          lte: new Date(Date.now() - inactivityThreshold),
+        },
+      },
+    });
+
+    for (const room of inactiveRooms) {
+      await prisma.salas_Usuarios.deleteMany({
+        where: {
+          codigoSala: room.codigoSala,
+        },
+      });
+    }
+  } catch (error) {
+    console.error('Error deleting inactive rooms:', error);
+  } finally {
+    prisma.$disconnect();
+  }
+}
+
+setInterval(deleteInactiveRooms, 1000);
+
 http.listen(PORT, () => {
   console.log(`Server ligado na porta: ${PORT}`);
 });

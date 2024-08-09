@@ -24,9 +24,9 @@ export default function Message({
         <span>{sender}</span>
       </div>
       <div
-        className={`w-fit min-w-[80px] ${ownMessage ? 'self-end' : ''} m-2 rounded-lg p-4 pb-5 ${
+        className={`w-fit min-w-[80px] ${ownMessage ? 'self-end text-right' : 'text-left'} m-2 rounded-lg p-4 pb-5 ${
           ownMessage ? 'bg-gradient-to-r from-[#38A3F5] to-[#6F90F2]' : 'bg-slate-300 dark:bg-slate-600'
-        } relative w-[calc(100%-4rem)] break-all text-justify ${className}`}
+        } relative w-[calc(100%-4rem)] break-all ${className}`}
       >
         <span className="whitespace-pre-line">{children}</span>
         <span className="absolute bottom-0 right-2 w-full text-right text-sm text-slate-600 dark:text-slate-300">

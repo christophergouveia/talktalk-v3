@@ -9,7 +9,7 @@ import CookieConsetimentModal from './components/modalConsetiment';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'TalkTalk!: Projeto de tradução em tempo real',
+  title: 'Talk-Talk!: Projeto de tradução em tempo real',
   description: 'Ferramenta de tradução via bate-papo em tempo real',
   authors: [
     {

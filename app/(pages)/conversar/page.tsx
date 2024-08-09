@@ -4,17 +4,17 @@
 import { SetStateAction, useEffect, useState, useCallback } from 'react';
 import Avatar from 'react-avatar';
 import { Button, Input } from '@nextui-org/react';
-import ColorPicker from '../components/ui/colorPicker';
+import ColorPicker from '@/app/components/ui/colorPicker';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
-import { CreateRoomModal } from '../components/modalConsetiment';
+import { CreateRoomModal } from '@/app/components/modalConsetiment';
 import { FaUserCircle } from 'react-icons/fa';
-import { ErrorInputs } from '../interfaces/input';
+import { ErrorInputs } from '@/app/interfaces/input';
 import { SignJWT } from 'jose';
 import { useCookies } from 'react-cookie';
-import createRoom from '../utils/roomManagement/createRoom';
-import updateRoom from '../utils/roomManagement/updateRoom';
+import createRoom from '@/app/utils/roomManagement/createRoom';
+import updateRoom from '@/app/utils/roomManagement/updateRoom';
 
 const InputsSchema = yup.object().shape({
   apelido: yup

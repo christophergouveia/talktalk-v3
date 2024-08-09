@@ -32,8 +32,8 @@ export default function Footer({}) {
       />
       <div className="flex flex-col gap-2 sm:mr-[8rem]">
         <span className="text-sm">
-          Copyright&copy; 2024 Todos os direitos reservados. Desenvolvido por <strong>Christopher Gouveia</strong> e{' '}
-          <strong>Kaike Sathler</strong>.
+          Copyright&copy; 2024 Todos os direitos reservados. Desenvolvido por <strong>Christopher</strong> e{' '}
+          <strong>Kaike</strong>.
         </span>
         {/* <ButtonGroup>
           <Button isIconOnly radius="full" onClick={() => toggleTheme("dark")}>
@@ -44,7 +44,7 @@ export default function Footer({}) {
           </Button>
         </ButtonGroup> */}
         <span className="absolute bottom-2 right-2 -z-10 text-sm text-gray-600/20 dark:text-gray-300/10">
-          {commitSha}
+          {commitSha.slice(0, 20)}
         </span>
       </div>
     </footer>
