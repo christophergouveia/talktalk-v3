@@ -15,15 +15,15 @@ A nossa proposta é oferecer um ambiente confortável e seguro para duas pessoas
 
 Contribuições são sempre bem-vindas! Para contribuir, siga as seguintes etapas:
 
-1. Dê um fork no repositório [clicando aqui](https://github.com/christophergouveia/tcc-traducao/fork)
-2. Clone seu código fork `git clone https://github.com/seu_usuario/tcc_traducao`
+1. Dê um fork no repositório [clicando aqui](https://github.com/christophergouveia/talktalk/fork)
+2. Clone seu código fork `git clone https://github.com/seu_usuario/talktalk`
 3. Crie uma nova branch
 4. Dê um push nos seus commits
 5. Envie um pull request em novo repositório
 
 ## Build
 
-1. Clone o repositório: `git clone https://github.com/christophergouveia/tcc_traducao`
+1. Clone o repositório: `git clone https://github.com/christophergouveia/talktalk`
 2. Vá até a pasta onde o projeto foi clonado e execute:
 ```bash
 npm install
