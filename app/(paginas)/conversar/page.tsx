@@ -15,6 +15,7 @@ import { SignJWT } from 'jose';
 import { useCookies } from 'react-cookie';
 import createRoom from '@/app/utils/roomManagement/createRoom';
 import updateRoom from '@/app/utils/roomManagement/updateRoom';
+import { insertUser } from '@/app/utils/roomManagement/user/insertUser';
 
 const InputsSchema = yup.object().shape({
   apelido: yup
@@ -51,7 +52,7 @@ export default function ConversarHome() {
           sala: sala,
         };
         const secretBase64 = process.env.NEXT_PUBLIC_JWT_SECRET;
-        if (secretBase64 && !cookies.talktalk_roomid) {
+        if (secretBase64) {
           const decodedSecret = Buffer.from(secretBase64, 'base64');
           const secretUint8Array = new Uint8Array(decodedSecret);
           const token = await new SignJWT(payload)
@@ -63,9 +64,8 @@ export default function ConversarHome() {
             sameSite: 'strict',
             path: '/',
           });
+          insertUser(sala, token, true);
         }
-
-        await updateRoom(sala, { host: cookies.talktalk_roomid });
         router.push(`/conversar/${sala}`);
       } else {
         toast('Ocorreu um erro ao criar a sala.', {

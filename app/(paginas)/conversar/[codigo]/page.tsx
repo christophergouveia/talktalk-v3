@@ -17,10 +17,8 @@ import linguagens from '@/app/locales/languages.json';
 import CopyButton from '@/app/components/functionals/copyButton';
 import { cleanMessage } from '@/app/utils/formatters/cleanMessage';
 import fetchRoom from '@/app/utils/roomManagement/fetchRoom';
-import updateRoom from '@/app/utils/roomManagement/updateRoom';
 import moment from "moment-timezone";
-import { insertUser } from '@/app/utils/roomManagement/user/insertUser';
-import { deleteUser } from '@/app/utils/roomManagement/user/deleteUser';
+import fetchRoomUsers from "@/app/utils/roomManagement/fetchRoomUsers";
 
 export default function RoomPage({ params }: { params: { codigo: string } }) {
   const [linguaSelecionada, setLinguaSelecionada] = useState<{
@@ -29,10 +27,7 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
   } | null>({ label: 'Português', value: 'pt_br' });
   const [socketClient, setSocketClient] = useState<Socket | null>(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
-  const [dadosAvatares, setDadosAvatares] = useState<dadosAvatares[]>([
-    { apelido: '', cor: '' },
-    { apelido: '', cor: '' },
-  ]);
+  const [usuarios, setUsuarios] = useState<string[]>([]);
   const [mensagem, setMensagem] = useState<string>('');
   const [mensagens, setMensagens] = useState<MessageType[]>([]);
   const [pessoasConectadas, setPessoasConectadas] = useState(0);
@@ -40,40 +35,26 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
   const [cookies, setCookie, removeCookie] = useCookies(['talktalk_roomid']);
   const messageListRef = useRef<HTMLDivElement>(null);
   const [shiftPressed, setShiftPressed] = useState<boolean>(false);
-  const [host, setHost] = useState<number | null>(null);
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [host, setHost] = useState<boolean | null>(false);
+  const [showNameInput, setShowNameInput] = useState(false);
+  const [userName, setUserName] = useState('');
 
   useEffect(() => console.log(pessoasConectadas), [pessoasConectadas]);
 
   useEffect(() => {
-    if (!isUpdating) {
-      setIsUpdating(true);
-      updateRoom(params.codigo, { host: host?.toString() })
-        .then(() => {
-          setIsUpdating(false);
-        })
-        .catch((error) => {
-          console.error('Failed to update room:', error);
-          setIsUpdating(false);
-        });
-    }
-  }, [host]);
-
-  useEffect(() => {
     async function fetchSala() {
       const sala = await fetchRoom(params.codigo);
+      const salas_usuarios = await fetchRoomUsers(params.codigo);
+      if(!salas_usuarios) return null;
       if (sala == null) {
         return setShowErrorModal(true);
       } else {
-        setSocketClient(io(process.env.NEXT_PUBLIC_SOCKET_URL + ':3001'));
-        console.log(sala.host);
-        if (!sala.host) {
-          const roomId = cookies['talktalk_roomid'];
-          if (roomId) {
-            setHost(parseInt(roomId.split('.')[0]));
-          }
+        // Verifica se o cookie existe e se a sala é a mesma
+        const roomId = cookies['talktalk_roomid'];
+        if (!roomId || roomId.split('.')[0] !== params.codigo) {
+          setShowNameInput(true);
         } else {
-          setHost(parseInt(sala.host.split('.')[0]));
+          setSocketClient(io(process.env.NEXT_PUBLIC_SOCKET_URL + ':3001'));
         }
       }
     }
@@ -89,11 +70,9 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
   useEffect(() => {
     socketClient?.on('user-connected', async() => {
       setPessoasConectadas((prevCount) => prevCount + 1);
-      insertUser(params.codigo, socketClient?.id || '');
     });
     socketClient?.on('user-disconnected', () => {
-      setPessoasConectadas((prevCount) => prevCount - 1);;
-      deleteUser(params.codigo, socketClient?.id || '');
+      setPessoasConectadas((prevCount) => prevCount - 1);
     });
     socketClient?.emit('join-room', params.codigo);
     socketClient?.on('message', async (message) => {
@@ -142,17 +121,36 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
     }
     if (e.key === 'Enter' && shiftPressed) {
       e.preventDefault();
+      setMensagem(mensagem + "\n")
       return;
     } else if (e.key === 'Enter' && !shiftPressed) {
+      if(mensagem.trim().length == 0) return;
       sendMessage();
-      return e.preventDefault();
+      return;
     }
   };
 
-  const handleTextAreaKeyDown = (e: { key: string }) => {
+
+  const handleTextAreaKeyDown = (e: KeyboardEvent<HTMLInputElement> | KeyboardEvent) => {
+    if(e.keyCode == 13) {
+      e.preventDefault();
+    }
     if (e.key === 'Shift') {
+      e.preventDefault();
       setShiftPressed(true);
     }
+  };
+
+  const handleNameInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setUserName(e.target.value);
+  };
+
+  const connectToRoom = () => {
+    if (userName.trim() === '') {
+      return;
+    }
+    setSocketClient(io(process.env.NEXT_PUBLIC_SOCKET_URL + ':3001'));
+    setShowNameInput(false);
   };
 
   if (showErrorModal) {
@@ -178,6 +176,27 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
 
   if (typeof window == null) {
     return <></>;
+  }
+
+  if (showNameInput) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
+        <h2 className="text-2xl font-bold">Bem-vindo à sala!</h2>
+        <p className="mt-2 text-gray-600">
+          Para entrar na sala, digite seu nome:
+        </p>
+        <input
+          type="text"
+          className="mt-2 px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Seu nome"
+          value={userName}
+          onChange={handleNameInputChange}
+        />
+        <Button className="mt-4" onClick={connectToRoom}>
+          Entrar
+        </Button>
+      </div>
+    );
   }
 
   if (socketClient == null) {
@@ -239,7 +258,7 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
         <ChatComponent.Header className="flex w-full justify-between bg-[--chat-bg-header]">
           <ChatComponent.Avatars className={'p-2'}>
             <div className="flex items-center gap-2">
-              {dadosAvatares.map((avatar, index) => (
+              {/*dadosAvatares.map((avatar, index) => (
                 <Avatar
                   key={index}
                   name={avatar.apelido}
@@ -248,7 +267,7 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
                   size="2.5rem"
                   className="[text-shadow:_0_1px_1px_rgb(0_0_0_/_100%)]"
                 />
-              ))}
+              ))*/}
             </div>
           </ChatComponent.Avatars>
           <ChatComponent.Settings className="flex items-center">
@@ -263,7 +282,7 @@ export default function RoomPage({ params }: { params: { codigo: string } }) {
                   key={index}
                   date={message.date}
                   ownMessage={message.senderId == socketClient?.id}
-                  sender={dadosAvatares[0].apelido}
+                  sender={/*dadosAvatares[0].apelido*/ ""}
                 >
                   {message.message}
                 </Message>

@@ -9,6 +9,7 @@ import SVGInterface from '@/public/images/svg/Interface.svg';
 import SVGAccount from '@/public/images/svg/Account.svg';
 import { GridMain, SubGrid } from '@/app/components/grids/grid';
 import PNGSecurity from '@/public/images/pictures/security.png';
+import Avatar from 'react-avatar';
 
 export default function SobrePage() {
   return (
@@ -95,7 +96,6 @@ export default function SobrePage() {
           <div className="itens-center sm: -mx-3 flex flex-wrap justify-center">
             <CardContent
               nome="Kaike"
-              srcImagem="/images/pictures/imagem2.jpg"
               altImagem="Foto de perfil de Kaike"
               cargo="CTO"
               tags={['React', 'FrontEnd']}
@@ -103,7 +103,6 @@ export default function SobrePage() {
             />
             <CardContent
               nome="Christopher"
-              srcImagem="/images/pictures/imagem1.jpg"
               altImagem="Foto de perfil de Christopher"
               cargo="CTO"
               tags={['React', 'BackEnd']}
@@ -111,7 +110,6 @@ export default function SobrePage() {
             />
             <CardContent
               nome="Gustavo"
-              srcImagem="/images/pictures/imagem3.png"
               altImagem="Foto de perfil de Gustavo"
               cargo="CTO"
               tags={['React', 'BackEnd']}
@@ -126,7 +124,7 @@ export default function SobrePage() {
 
 interface CardProps {
   nome: string;
-  srcImagem: string;
+  srcImagem?: string;
   altImagem?: string;
   cargo: string;
   tags: string[];
@@ -138,13 +136,22 @@ function CardContent({ nome, srcImagem, altImagem, cargo, tags, icon }: CardProp
     <div className="mb-6 px-3 md:w-1/2 lg:w-1/3">
       <div className="rounded-lg border-1 border-sky-100 bg-white p-6 shadow-lg dark:border-neutral-800 dark:bg-transparent dark:shadow-none">
         <div className="relative flex w-full">
-          <Image
-            src={srcImagem}
-            width={100}
-            height={100}
-            alt={altImagem ?? 'Imagem'}
-            className="mx-auto mb-6 h-24 w-24 rounded-full"
-          />
+          {srcImagem ? (
+            <Image
+              src={srcImagem}
+              width={100}
+              height={100}
+              alt={altImagem ?? 'Imagem'}
+              className="mx-auto mb-6 h-24 w-24 rounded-full"
+            />
+          ) : (
+            <Avatar
+              className="[text-shadow:_0_1px_1px_rgb(0_0_0_/_100%)] mx-auto mb-6 h-24 w-24"
+              name={nome}
+              maxInitials={2}
+              round
+            />
+          )}
           <div className="absolute right-0">
             {icon?.map((value, index) => {
               return (

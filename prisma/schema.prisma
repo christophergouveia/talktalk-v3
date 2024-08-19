@@ -14,22 +14,23 @@ datasource db {
 model Salas {
   codigoSala        String           @id @unique
   pessoasConectadas Int              @default(0)
-  host         String?
-  updateAt DateTime @updatedAt
+  updateAt          DateTime         @updatedAt
   mensagens         Mensagens[]
   Salas_Usuarios    Salas_Usuarios[]
 }
 
 model Salas_Usuarios {
   codigoSala String
-  userData String
-  sala   Salas  @relation(fields: [codigoSala], references: [codigoSala])
+  userData   String
+  host       Boolean @default(false)
+  sala       Salas   @relation(fields: [codigoSala], references: [codigoSala])
+
   @@id([codigoSala, userData])
 }
 
 model Mensagens {
-  id                    Int    @id @default(autoincrement())
-  codigoSala            String
-  mensagem String
-  sala                  Salas  @relation(fields: [codigoSala], references: [codigoSala])
+  id         Int    @id @default(autoincrement())
+  codigoSala String
+  mensagem   String
+  sala       Salas  @relation(fields: [codigoSala], references: [codigoSala])
 }

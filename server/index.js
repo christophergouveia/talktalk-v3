@@ -17,8 +17,6 @@ const io = new Server(http, {
 });
 
 io.on('connection', (socket) => {
-  console.log('Usuário conectado! SocketID: ' + socket.id);
-  console.log('Cookies: ' + socket.handshake.headers.cookie);
   socket.on('disconnect', (room) => {
     console.log('Usuário saiu da sala!');
   });
@@ -34,9 +32,9 @@ io.on('connection', (socket) => {
   });
 });
 
-async function deleteInactiveRooms() {
+async function checkRooms() {
   try {
-    const inactivityThreshold = 1000 * 60 * 60 * 24 + (3 * 60 * 60 * 1000);
+    const inactivityThreshold = 1000 * 60 * 60 * 24;
 
     const inactiveRooms = await prisma.salas.findMany({
       where: {
@@ -45,6 +43,11 @@ async function deleteInactiveRooms() {
         },
       },
     });
+    
+
+    if (inactiveRooms.length === 0) {
+      return;
+    }
 
     for (const room of inactiveRooms) {
       await prisma.salas_Usuarios.deleteMany({
@@ -52,6 +55,11 @@ async function deleteInactiveRooms() {
           codigoSala: room.codigoSala,
         },
       });
+      await prisma.salas.delete({
+        where: {
+          codigoSala: room.codigoSala,
+        },
+      })
     }
   } catch (error) {
     console.error('Error deleting inactive rooms:', error);
@@ -60,7 +68,7 @@ async function deleteInactiveRooms() {
   }
 }
 
-setInterval(deleteInactiveRooms, 1000);
+setInterval(checkRooms, 1000 /* 1000 * 60 * 5*/); // 5 minutos
 
 http.listen(PORT, () => {
   console.log(`Server ligado na porta: ${PORT}`);
