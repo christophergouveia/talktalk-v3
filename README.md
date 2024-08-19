@@ -1,8 +1,40 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+<h1 align="center">Talk-Talk: Chat de tradução em tempo real</h1>
 
-First, run the development server:
+<img width="800" src="prototipo.png" style="display: table; margin: auto;" />
+
+## AVISO: ESTE PROJETO AINDA ESTÁ EM DESENVOLVIMENTO
+
+Este projeto está sendo desenvolvido e mantido pelos alunos Christopher e Kaike, veteranos do curso de Informática do IFPR - Câmpus Assis Chateaubriand.
+
+## Qual nossa proposta?
+
+A nossa proposta é oferecer um ambiente confortável e seguro para duas pessoas conversarem em suas respectivas línguas sem nenhuma dificuldade. Simples, rápido e acessível.
+
+## Como posso contribuir?
+
+Contribuições são sempre bem-vindas! Para contribuir, siga as seguintes etapas:
+
+1. Dê um fork no repositório [clicando aqui](https://github.com/christophergouveia/tcc-traducao/fork)
+2. Clone seu código fork `git clone https://github.com/seu_usuario/tcc_traducao`
+3. Crie uma nova branch
+4. Dê um push nos seus commits
+5. Envie um pull request em novo repositório
+
+## Build
+
+1. Clone o repositório: `git clone https://github.com/christophergouveia/tcc_traducao`
+2. Vá até a pasta onde o projeto foi clonado e execute:
+```bash
+npm install
+# ou
+yarn install
+# ou
+pnpm install
+# ou
+bun install
+```
+3. Execute:
 
 ```bash
 npm run dev
@@ -14,23 +46,4 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Abra a página [http://localhost:3000](http://localhost:3000) no seu navegador para acessar o projeto
