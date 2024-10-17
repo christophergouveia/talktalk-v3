@@ -2,8 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .animate-slideIn {
+    animation: slideIn 0.5s ease-out forwards;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .custom-scrollbars::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .custom-scrollbars::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbars::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 5px;
+  }
+
+  .custom-scrollbars::-webkit-scrollbar-thumb:hover {
+    background: #888;
+  }
+}
+
 .dark,
 [data-theme='dark'] {
+  --cor-azul: #38A3F5;
+  --cor-roxa: #786FF2;
+  --cor-azul2: #6F90F2;
   --nextui-background: 19.2% 21.2% 22%;
   --chat-bg-geral: #2b2b2b;
   --chat-bg-header: #1e1e1e;
@@ -73,6 +119,10 @@
 .modal-content {
   padding: 20px;
   border-radius: 10px;
+}
+
+section[role='dialog'] {
+  margin: 0;
 }
 
 .Card_content__sobre:first-child {

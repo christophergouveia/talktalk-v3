@@ -32,7 +32,7 @@ export default function Home({}) {
           <h1
             className={`mb-4 bg-gradient-to-r from-[#38A3F5] to-[#6Fe3F2] bg-clip-text text-5xl font-extrabold !leading-[1.2] text-transparent sm:text-7xl 2xl:text-8xl`}
           >
-            Talk-Talk !
+            Talk-Talk!
           </h1>
           <p className="mb-8 max-w-[750px] text-center text-xl text-gray-600 dark:text-gray-400 sm:text-xl 2xl:text-2xl">
             Comunique-se de maneira eficiente com pessoas que não falam o mesmo idioma que você. Sem dificuldade. Com

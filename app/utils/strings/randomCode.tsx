@@ -1,4 +1,4 @@
-export function gerarCodigoAleatorio(): string {
+function gerarCodigoAleatorio(): string {
   const caracteres = 'abcdefghijklmnopqrstuvwxyz0123456789';
   const tamanhos = [4, 5, 6];
   const tamanhoSelecionado = tamanhos[Math.floor(Math.random() * tamanhos.length)];
@@ -7,4 +7,10 @@ export function gerarCodigoAleatorio(): string {
     codigo += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
   }
   return codigo;
+}
+
+export default class RandomCode {
+  static get() { 
+    return gerarCodigoAleatorio();
+  }
 }

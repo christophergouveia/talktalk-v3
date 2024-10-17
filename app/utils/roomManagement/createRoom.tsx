@@ -1,6 +1,6 @@
 'use server';
 
-import { gerarCodigoAleatorio } from '../randomCode';
+import codigoAleatorio from '../strings/randomCode';
 import prisma from '@/prisma/prisma';
 
 /**
@@ -10,8 +10,8 @@ import prisma from '@/prisma/prisma';
  *
  * @return {string} The unique code of the newly created room.
  */
-export default async function createRoom() {
-  const codigo = gerarCodigoAleatorio();
+export default async function createRoom({ token } : { token: string }) {
+  const codigo = codigoAleatorio.get();
   const existingRoom = await prisma?.salas.findUnique({
     where: {
       codigoSala: codigo,
@@ -22,10 +22,11 @@ export default async function createRoom() {
     await prisma?.salas.create({
       data: {
         codigoSala: codigo,
+        token: token
       },
     });
   } else {
-    return createRoom();
+    return createRoom({ token: token });
   }
   prisma.$disconnect();
 

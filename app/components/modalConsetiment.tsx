@@ -3,90 +3,60 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from '@nextui-org/react';
 import { useCookies } from 'react-cookie';
-import { Bounce } from 'react-awesome-reveal';
+import { Bounce, Fade } from 'react-awesome-reveal';
+import { FaCookieBite } from 'react-icons/fa';
 
 interface CreateRoomModalProps {
   aberto: boolean;
 }
 
 export default function CookieConsentModal() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
   const [cookieConsetiment, setCookieConsetiment] = useCookies(['cookieAceito']);
 
   useEffect(() => {
     if (!cookieConsetiment.cookieAceito) {
-      onOpen();
+      setIsOpen(true);
     }
-  }, [onOpen, cookieConsetiment]);
+  }, [cookieConsetiment]);
 
   return (
     <>
-      <Modal
-        isOpen={isOpen}
-        scrollBehavior={'inside'}
-        placement={'top'}
-        isDismissable={false}
-        backdrop={'blur'}
-        hideCloseButton
-        onOpenChange={onOpenChange}
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Talk-Talk! - Consentimento de Cookies e Responsabilidade
-              </ModalHeader>
-              <ModalBody>
-                <p>Obrigado por usar o Talk-Talk!, um website de chat de tradução em tempo real.</p>
-                <p>O Talk-Talk! usa cookies para:</p>
-                <ul>
-                  <li>Lembrar suas preferências: idioma padrão, configurações de interface, etc.</li>
-                  <li>Melhorar o desempenho: analisar o uso do aplicativo e otimizar a experiência do usuário.</li>
-                  <li>Personalizar sua experiência: oferecer conteúdo e anúncios relevantes.</li>
-                </ul>
+      {isOpen && (
+        <div className="fixed bottom-0 left-0 right-0 p-4 !z-[999]">
+          <Fade triggerOnce={true} duration={200}>
+            <div className="flex justify-between gap-4 p-4 bg-slate-800 m-2 rounded">
+              <div className='flex items-center gap-4'>
+                <FaCookieBite className="text-2xl" />
                 <p>
-                  O Talk-Talk! oferece um espaço para conversas em tempo real traduzidas automaticamente. Ao usar o
-                  aplicativo, você concorda em:
+                  Este site utiliza cookies para melhorar sua experiência e para garantir que suas mensagens sejam
+                  seguras. Saiba mais acessando a{' '}
+                  <a className="text-blue-500 underline" href="#">
+                    Politica de cookies
+                  </a>{' '}
+                  e{' '}
+                  <a className="text-blue-500 underline" href="#">
+                    Política de Privacidade
+                  </a>
+                  .
                 </p>
-                <ul>
-                  <li>
-                    Ser responsável por suas conversas: Use linguagem respeitosa e evite conteúdo ilegal ou ofensivo.
-                  </li>
-                  <li>
-                    Estar ciente das limitações da tradução automática: As traduções podem não ser perfeitas e podem
-                    conter erros.
-                  </li>
-                  <li>
-                    Não compartilhar informações confidenciais ou sensíveis: O Talk-Talk! não garante a segurança de suas
-                    conversas.
-                  </li>
-                </ul>
-                <p>
-                  O Talk-Talk! leva a sério a privacidade de seus usuários. Ao usar o Talk-Talk!, você concorda com os
-                  termos acima.
-                </p>
-                <p>Obrigado por usar o Talk-Talk!</p>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  className="w-full"
-                  color="success"
-                  variant="solid"
-                  onPress={onClose}
-                  onClick={() =>
-                    setCookieConsetiment('cookieAceito', true, {
-                      expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-                      maxAge: 30 * 24 * 60 * 60,
-                    })
-                  }
-                >
-                  Aceitar
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+              </div>
+              <button
+                onClick={() => {
+                  setCookieConsetiment('cookieAceito', true, {
+                    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+                    maxAge: 30 * 24 * 60 * 60,
+                  });
+                  setIsOpen(false);
+                }}
+                className="hover:bg-blue-900/80 p-2 bg-blue-900 rounded"
+              >
+                Aceitar todos os cookies
+              </button>
+            </div>
+          </Fade>
+        </div>
+      )}
     </>
   );
 }

@@ -9,6 +9,5 @@
   "arrowParens": "always",
   "jsxSingleQuote": false,
   "bracketSameLine": false,
-  "endOfLine": "crlf",
-  "plugins": ["prettier-plugin-tailwindcss"]
+  "endOfLine": "crlf"
 }

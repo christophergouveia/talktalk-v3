@@ -44,6 +44,7 @@ export default function SobrePage() {
               width={450}
               height={450}
               className="imagem-animation h-full w-[85%]"
+              priority
             />
           </div>
         </div>
@@ -60,9 +61,9 @@ export default function SobrePage() {
           O que diferencia a nossa ferramenta para as outras ferramentas?
         </h1>
         <div className="Card mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <GridMain
+        <GridMain
             title="Segurança"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum, porro ea. Facere cupiditate ut consequatur amet, vero odio neque autem illo libero fuga magnam facilis voluptatibus accusamus distinctio? Quas, nobis."
+            description="A sua privacidade é prioridade para nós! Nossa plataforma utiliza criptografia avançada para garantir que suas conversas permaneçam confidenciais." 
             image={PNGSecurity}
           />
           <SubGrid
@@ -70,20 +71,20 @@ export default function SobrePage() {
             className_Title="text-[#1F6DF4] sm:text-center !m-4 lg:!text-start 2xl:!text-2xl sm:!text-xl lg:!mx-0 lg:!my-2"
             className_Text="sm:text-center lg:!text-start "
             title="Gratuidade"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum, porro ea. Facere cupiditate ut consequatur"
+            description="Diminua barreiras linguísticas sem gastar nada! Nossa ferramenta é totalmente gratuita, tornando a comunicação global acessível a todos."
             image={PNGCoins}
             id={1}
           />
           <SubGrid
             title="Interface intuitiva e fácil de usar"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum, porro ea. Facere cupiditate ut consequatur"
+            description="Conectar-se com pessoas de diferentes culturas nunca foi tão fácil! Nossa interface foi pensada para ser o mais simples e fácil de usar, inicie conversas com poucos clicks."
             className_Title="text-[#8359C2]"
             image={SVGInterface}
             id={1.3}
           />
           <SubGrid
             title="Sem necessidade de criação de contas"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum, porro ea. Facere cupiditate ut consequatur"
+            description="Contas? Registro? Esqueça cadastros complicados. Nossa ferramenta permite que você comece a conversar imediatamente, sem necessidade de criar uma conta."
             className_Title="text-[#38A3F5]"
             image={SVGAccount}
             id={1.6}
