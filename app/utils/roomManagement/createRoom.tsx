@@ -8,9 +8,10 @@ import prisma from '@/prisma/prisma';
  * If the code does not exist, a new room is created with the generated code.
  * If the code already exists, the function calls itself recursively to generate a new code.
  *
+ * @param {string} token - The token associated with the room.
  * @return {string} The unique code of the newly created room.
  */
-export default async function createRoom({ token } : { token: string }) {
+export default async function createRoom({ token, hostToken } : { token: string, hostToken: string }) {
   const codigo = codigoAleatorio.get();
   const existingRoom = await prisma?.salas.findUnique({
     where: {
@@ -22,11 +23,12 @@ export default async function createRoom({ token } : { token: string }) {
     await prisma?.salas.create({
       data: {
         codigoSala: codigo,
-        token: token
+        token: token,
+        hostToken: hostToken
       },
     });
   } else {
-    return createRoom({ token: token });
+    return createRoom({ token: token, hostToken: hostToken });
   }
   prisma.$disconnect();
 

@@ -1,0 +1,84 @@
+{
+    "navbar": {
+        "pagina_inicial": "Inicio",
+        "sobre_ferramenta": "Sobre la Herramienta",
+        "conversar": "Chatear"
+    },
+    "pagina_inicial": {
+        "descricao": "Comunique-se de manera eficiente con personas que no hablan el mismo idioma que tú. Sin dificultades. Con prácticidad.",
+        "comece_a_conversar": "¡Comienza a chatear ahora mismo!"
+    },
+    "footer": {
+        "copyright": "Copyright © 2024 - Todos los derechos reservados. ",
+        "desenvolvido_por": "Desarrollado por <strong>Christopher</strong>, <strong>Kaike</strong> y <strong>Gustavo</strong>.",
+        "campus": "Instituto Federal de Educación, Ciencia y Tecnología de Assis Chateaubriand"
+    },
+    "sobre": {
+        "hero": {
+            "privacidade": {
+                "sua": "Su",
+                "privacidade": "privacidad"
+            },
+            "responsabilidade": {
+                "nossa": "nuestra",
+                "responsabilidade": "responsabilidad"
+            },
+            "descricao": "Esta herramienta tiene una interacción completamente anónima con todos los mensajes de usuario encriptados y seguros."
+        },
+        "diferencial": {
+            "titulo": "Nuestro diferencial",
+            "seguranca": {
+                "titulo": "Seguridad",
+                "descricao": "¡Tu privacidad es nuestra prioridad! Nuestra plataforma utiliza encriptación avanzada para garantizar que tus conversaciones permanezcan confidenciales."
+            },
+            "gratuidade": {
+                "titulo": "Gratuito",
+                "descricao": "¡Rompe las barreras del idioma sin gastar nada! Nuestra herramienta es completamente gratuita, haciendo la comunicación global accesible para todos."
+            },
+            "interface": {
+                "titulo": "Interfaz intuitiva y fácil de usar",
+                "descricao": "¡Conectar con personas de diferentes culturas nunca fue tan fácil! Nuestra interfaz está diseñada para ser lo más simple y fácil de usar posible, inicia conversaciones con pocos clics."
+            },
+            "sem_conta": {
+                "titulo": "Sin necesidad de crear cuenta",
+                "descricao": "¿Cuentas? ¿Registro? Olvídate de registros complicados. Nuestra herramienta te permite comenzar a chatear inmediatamente, sin necesidad de crear una cuenta."
+            }
+        },
+        "desenvolvedores": {
+            "titulo": "Desarrolladores",
+            "cargos": {
+                "frontend": "Desarrollador Frontend",
+                "backend": "Desarrollador Backend"
+            }
+        }
+    },
+    "conversar": {
+        "hero": {
+            "titulo": {
+                "parte1": "Una",
+                "parte2": "poderosa",
+                "parte3": "herramienta de traducción en tiempo real. Sin necesidad de cambiar pestañas."
+            }
+        },
+        "criar_sala": {
+            "titulo": "Crea una sala",
+            "subtitulo": "¿Quieres unirte a una sala existente? Copia el enlace que te envió el anfitrión de la sala y accede.",
+            "apelido": {
+                "label": "Apodo (opcional)",
+                "erro_min": "El apodo debe contener al menos 4 caracteres.",
+                "erro_max": "El apodo debe contener como máximo 32 caracteres."
+            },
+            "botao_criar": "CREAR UNA SALA",
+            "dica": {
+                "parte1": "CONSEJO:",
+                "parte2": "¡Puedes cambiar el color usado en tus avatares! Prueba tocando/haciendo clic en tu icono 😉"
+            }
+        },
+        "botoes_avatar": {
+            "escolher_avatar": "Escoger avatar",
+            "escolher_avatar_aleatorio": "Escoger avatar aleatorio",
+            "escolha_seu_avatar": "Escoge tu avatar",
+            "selecionado": "SELECCIONADO"
+        }
+    }
+}

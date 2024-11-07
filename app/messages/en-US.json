@@ -1,0 +1,84 @@
+{
+    "navbar": {
+        "pagina_inicial": "Home",
+        "sobre_ferramenta": "About",
+        "conversar": "Chat"
+    },
+    "pagina_inicial": {
+        "descricao": "Communicate efficiently with people who don't speak the same language as you. Without difficulties. With practicality.",
+        "comece_a_conversar": "Start chatting now!"
+    },
+    "footer": {
+        "copyright": "Copyright © 2024 - All rights reserved. ",
+        "desenvolvido_por": "Developed by <strong>Christopher</strong>, <strong>Kaike</strong> and <strong>Gustavo</strong>.",
+        "campus": "Federal Institute of Education, Science and Technology of Assis Chateaubriand"
+    },
+    "sobre": {
+        "hero": {
+            "privacidade": {
+                "sua": "Your",
+                "privacidade": "privacy"
+            },
+            "responsabilidade": {
+                "nossa": "our",
+                "responsabilidade": "responsibility"
+            },
+            "descricao": "This tool has completely anonymous interaction with all user messages encrypted and secure."
+        },
+        "diferencial": {
+            "titulo": "Our differential",
+            "seguranca": {
+                "titulo": "Security",
+                "descricao": "Your privacy is our priority! Our platform uses advanced encryption to ensure your conversations remain confidential."
+            },
+            "gratuidade": {
+                "titulo": "Free",
+                "descricao": "Break down language barriers without spending anything! Our tool is completely free, making global communication accessible to everyone."
+            },
+            "interface": {
+                "titulo": "Intuitive and easy to use interface",
+                "descricao": "Connecting with people from different cultures has never been easier! Our interface is designed to be as simple and easy to use as possible, start conversations with just a few clicks."
+            },
+            "sem_conta": {
+                "titulo": "No account creation needed",
+                "descricao": "Accounts? Registration? Forget complicated sign-ups. Our tool allows you to start chatting immediately, without the need to create an account."
+            }
+        },
+        "desenvolvedores": {
+            "titulo": "Developers",
+            "cargos": {
+                "frontend": "Frontend Developer",
+                "backend": "Backend Developer"
+            }
+        }
+    },
+    "conversar": {
+        "hero": {
+            "titulo": {
+                "parte1": "A",
+                "parte2": "powerful",
+                "parte3": "real-time translation tool. No need to switch tabs."
+            }
+        },
+        "criar_sala": {
+            "titulo": "Create a room",
+            "subtitulo": "Want to join an existing room? Copy the link that the room host sent you and access it.",
+            "apelido": {
+                "label": "Nickname (optional)",
+                "erro_min": "The nickname must contain at least 4 characters.",
+                "erro_max": "The nickname must contain at most 32 characters."
+            },
+            "botao_criar": "CREATE A ROOM",
+            "dica": {
+                "parte1": "TIP:",
+                "parte2": "You can change the color used in your avatars! Try touching/clicking on your icon 😉"
+            }
+        },
+        "botoes_avatar": {
+            "escolher_avatar": "Choose avatar",
+            "escolher_avatar_aleatorio": "Choose random avatar",
+            "escolha_seu_avatar": "Choose your avatar",
+            "selecionado": "SELECTED"
+        }
+    }
+}

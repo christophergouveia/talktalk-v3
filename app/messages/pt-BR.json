@@ -1,0 +1,84 @@
+{
+    "navbar": {
+        "pagina_inicial": "Início",
+        "sobre_ferramenta": "Sobre a Ferramenta",
+        "conversar": "Conversar"
+    },
+    "pagina_inicial": {
+        "descricao": "Comunique-se de maneira eficiente com pessoas que não falam o mesmo idioma que você. Sem dificuldade. Com praticidade.",
+        "comece_a_conversar": "Comece a conversar agora mesmo!"
+    },
+    "footer": {
+        "copyright": "Copyright © 2024 - Todos os direitos reservados. ",
+        "desenvolvido_por": "Desenvolvido por <strong>Christopher</strong>, <strong>Kaike</strong> e <strong>Gustavo</strong>.",
+        "campus": "Instituto Federal de Educação, Ciência e Tecnologia de Assis Chateaubriand"
+    },
+    "sobre": {
+        "hero": {
+            "privacidade": {
+                "sua": "Sua",
+                "privacidade": "privacidade"
+            },
+            "responsabilidade": {
+                "nossa": "nossa",
+                "responsabilidade": "responsabilidade"
+            },
+            "descricao": "Esta ferramenta tem interação totalmente anônima com todas as mensagens do usuário criptografadas e seguras."
+        },
+        "diferencial": {
+            "titulo": "O nosso diferencial",
+            "seguranca": {
+                "titulo": "Segurança",
+                "descricao": "A sua privacidade é prioridade para nós! Nossa plataforma utiliza criptografia avançada para garantir que suas conversas permaneçam confidenciais."
+            },
+            "gratuidade": {
+                "titulo": "Gratuidade",
+                "descricao": "Diminua barreiras linguísticas sem gastar nada! Nossa ferramenta é totalmente gratuita, tornando a comunicação global acessível a todos."
+            },
+            "interface": {
+                "titulo": "Interface intuitiva e fácil de usar",
+                "descricao": "Conectar-se com pessoas de diferentes culturas nunca foi tão fácil! Nossa interface foi pensada para ser o mais simples e fácil de usar, inicie conversas com poucos clicks."
+            },
+            "sem_conta": {
+                "titulo": "Sem necessidade de criação de contas",
+                "descricao": "Contas? Registro? Esqueça cadastros complicados. Nossa ferramenta permite que você comece a conversar imediatamente, sem necessidade de criar uma conta."
+            }
+        },
+        "desenvolvedores": {
+            "titulo": "Desenvolvedores",
+            "cargos": {
+                "frontend": "Desenvolvedor FrontEnd",
+                "backend": "Desenvolvedor BackEnd"
+            }
+        }
+    },
+    "conversar": {
+        "hero": {
+            "titulo": {
+                "parte1": "Uma",
+                "parte2": "poderosa",
+                "parte3": "ferramenta de tradução em tempo real. Sem necessidade de trocar de abas."
+            }
+        },
+        "criar_sala": {
+            "titulo": "Crie uma sala",
+            "subtitulo": "Deseja entrar em uma sala já existente? Copie o link que o anfitrião da sala lhe enviou e acesse-o.",
+            "apelido": {
+                "label": "Apelido (opcional)",
+                "erro_min": "É necessário que o apelido contenha no mínimo 4 caracteres.",
+                "erro_max": "É necessário que o apelido contenha no máximo 32 caracteres."
+            },
+            "botao_criar": "CRIAR UMA SALA",
+            "dica": {
+                "parte1": "DICA:",
+                "parte2": "Você consegue alterar a cor utilizada nos seus avatares! Experimente tocando/clicando no seu ícone 😉"
+            }
+        },
+        "botoes_avatar": {
+            "escolher_avatar": "Escolher avatar",
+            "escolher_avatar_aleatorio": "Escolher avatar aleatório",
+            "escolha_seu_avatar": "Escolha seu avatar",
+            "selecionado": "SELECIONADO"
+        }
+    }
+}

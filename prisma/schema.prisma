@@ -16,22 +16,25 @@ model Salas {
   pessoasConectadas Int              @default(0)
   updateAt          DateTime         @updatedAt
   token             String
-  mensagens         Mensagens[]
+  hostToken         String
   Salas_Usuarios    Salas_Usuarios[]
+  Mensagens         Mensagens[]
 }
 
 model Salas_Usuarios {
   codigoSala String
-  userData   String
+  userData   String  @db.VarChar(255)
   host       Boolean @default(false)
   sala       Salas   @relation(fields: [codigoSala], references: [codigoSala])
-
   @@id([codigoSala, userData])
 }
 
 model Mensagens {
-  id         Int    @id @default(autoincrement())
-  codigoSala String
-  mensagem   String
-  sala       Salas  @relation(fields: [codigoSala], references: [codigoSala])
+  id                 Int      @id @default(autoincrement())
+  mensagem           String
+  mensagemTraduzida  String?
+  usuario            String
+  dataEnvio          DateTime
+  codigoSala         String
+  sala               Salas    @relation(fields: [codigoSala], references: [codigoSala])
 }

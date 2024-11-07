@@ -13,14 +13,14 @@ import prisma from "@/prisma/prisma";
 export const insertUser = async (
   codigoSala: string,
   userData: string,
-  host: boolean = false
+  host: boolean = false,
 ) => {
   try {
     await prisma.salas_Usuarios.create({
       data: {
         codigoSala,
         userData,
-        host
+        host,
       },
     });
     return true;

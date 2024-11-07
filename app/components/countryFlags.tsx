@@ -1,19 +1,20 @@
-import linguagens from '@/app/locales/languages.json';
-import { BR, US, ES } from 'country-flag-icons/react/1x1';
+import { countries } from "country-flag-icons";
 
 //Só para não dar problema :)
 type FlagComponent = {
   [key: string]: any;
 };
 
-const flagIcons: FlagComponent = {
-  BR,
-  US,
-  ES,
-};
+const flagIcons: FlagComponent = countries
 
-export function CountryFlag({ flag }: { flag: string }) {
-  const flagIcon = linguagens.find((lang) => lang.flag === flag);
-  const FlagIcon = flagIcons[flagIcon?.flag ?? 'BR'];
-  return <FlagIcon className="w-8 rounded-full" />;
+export function CountryFlag({ className, flag }: { className?: string, flag: string }) {
+  return (
+    <div className={`rounded-full overflow-hidden w-12 h-12 border-2 border-gray-200 dark:border-gray-700 ${className}`}>
+      <img
+        src={`https://flagcdn.com/w80/${flag.toLowerCase()}.png`}
+        alt={`Bandeira ${flag}`}
+        className="w-full h-full object-cover"
+      />
+    </div>
+  );
 }

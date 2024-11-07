@@ -1,39 +1,90 @@
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
-const { Server } = require('socket.io');
 const origin = process.env.NEXT_PUBLIC_VERCEL_URL;
-const cookie = require("cookie");
+const cookie = require('cookie');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const PORT = 3001;
 
-const io = new Server(http, {
-  cookie: true,
+const io = require('socket.io')(http, {
   cors: {
-    origin: origin ? origin : 'http://localhost:3000',
-    methods: ['GET', 'POST'],
-  },
+    origin: process.env.NEXT_PUBLIC_VERCEL_URL,
+    credentials: true,
+    methods: ["GET", "POST"]
+  }
 });
 
 io.on('connection', (socket) => {
-  socket.on('disconnect', (room) => {
+  socket.on('disconnect', () => {
+    const userToken = socket.userToken;
+    if (userToken) {
+      io.in(socket.room).emit('user-disconnected', userToken);
+    }
     console.log('Usuário saiu da sala!');
   });
-  socket.on('sendMessage', (message, socketId, room) => {
+  socket.on('sendMessage', async (message, userToken, room, lingua) => {
     const actualDate = new Date().toISOString();
     console.log('Mensagem recebida: ' + message);
-    io.in(room.toString()).emit('message', { message: message, socketId: socketId, date: actualDate });
+    try {
+      await prisma.mensagens.create({
+        data: {
+          codigoSala: room.toString(),
+          usuario: userToken,
+          mensagem: message,
+          dataEnvio: new Date(actualDate),
+        },
+      });
+
+      io.in(room.toString()).emit('message', {
+        message: message,
+        userToken,
+        date: actualDate,
+        from: lingua
+      });
+    } catch (error) {
+      console.error('Error saving message:', error);
+      io.to(socket.id).emit('error', 'Failed to save message.');
+    }
   });
-  socket.on('join-room', (room) => {
+  
+  socket.on('typing', (typing, userToken, room) => {
+    console.log('Usuário está digitando: ' + userToken);
+    io.in(room.toString()).emit('typing', typing, userToken);
+  });
+
+  socket.on('room-update', (room, users) => {
+    io.in(room.toString()).emit('room-update', users);
+  });
+
+  socket.on('join-room', async (room) => {
+    socket.room = room;
     console.log('Usuário entrou na sala: ' + room, socket.id);
+    const cookies = cookie.parse(socket.handshake.headers.cookie || '');
+    const userCookie = cookies['talktalk_userdata'];
+
+    console.log(userCookie);
+    
+    io.in(room.toString()).emit('user-connected', userCookie);
     socket.join(room.toString());
-    io.in(room.toString()).emit('user-connected');
+
+    try {
+      const roomMessages = await prisma.mensagens.findMany({
+        where: {
+          codigoSala: room.toString(),
+        },
+        orderBy: { dataEnvio: 'asc' },
+      });
+      socket.emit('previousMessages', roomMessages);
+    } catch (error) {
+      console.error('Error fetching previous messages:', error);
+    }
   });
 });
 
 async function checkRooms() {
   try {
+    
     const inactivityThreshold = 1000 * 60 * 60 * 24;
 
     const inactiveRooms = await prisma.salas.findMany({
@@ -43,28 +94,32 @@ async function checkRooms() {
         },
       },
     });
-    
 
     if (inactiveRooms.length === 0) {
       return;
     }
 
     for (const room of inactiveRooms) {
-      await prisma.salas_Usuarios.deleteMany({
-        where: {
-          codigoSala: room.codigoSala,
-        },
-      });
-      await prisma.salas.delete({
-        where: {
-          codigoSala: room.codigoSala,
-        },
-      })
+      try {
+        await prisma.$transaction([
+          prisma.mensagens.deleteMany({
+            where: { codigoSala: room.codigoSala }
+          }),
+          prisma.salas_Usuarios.deleteMany({
+            where: { codigoSala: room.codigoSala }
+          }),
+          prisma.salas.delete({
+            where: { codigoSala: room.codigoSala }
+          })
+        ]);
+      } catch (error) {
+        console.error(`Erro ao deletar sala ${room.codigoSala}:`, error);
+      }
     }
   } catch (error) {
     console.error('Error deleting inactive rooms:', error);
   } finally {
-    prisma.$disconnect();
+    await prisma.$disconnect();
   }
 }
 
@@ -73,7 +128,6 @@ setInterval(checkRooms, 1000 /* 1000 * 60 * 5*/); // 5 minutos
 http.listen(PORT, () => {
   console.log(`Server ligado na porta: ${PORT}`);
 });
-
 
 http.on('close', () => {
   io.sockets.clients().forEach((socket) => {
