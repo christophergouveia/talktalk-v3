@@ -144,7 +144,7 @@ section[role='dialog'] {
 }
 
 .Card_content__sobre {
-  @apply flex gap-4 rounded-3xl border bg-neutral-50 p-4 dark:border-zinc-900 dark:bg-zinc-900 sm:flex-col sm:p-6 lg:flex-row;
+  @apply flex gap-4 rounded-3xl border text-justify bg-neutral-50 p-4 dark:border-zinc-900 dark:bg-zinc-900 sm:flex-col sm:p-6 lg:flex-row;
 }
 
 .Card_content {
@@ -152,7 +152,7 @@ section[role='dialog'] {
 }
 
 .Card h3 {
-  @apply text-lg font-normal text-gray-800 dark:text-gray-400 2xl:text-xl;
+  @apply text-lg font-normal text-justify text-gray-800 dark:text-gray-400 2xl:text-xl;
 }
 
 .Card_content__title {

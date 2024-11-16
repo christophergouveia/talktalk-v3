@@ -17,5 +17,8 @@ export interface MessageType {
   message: string;
   messageTraduzido: string;
   senderId: string;
+  senderApelido: string;
+  senderAvatar: string;
+  senderColor: string;
   date: moment.Moment;
 } 

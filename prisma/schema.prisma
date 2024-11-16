@@ -36,5 +36,7 @@ model Mensagens {
   usuario            String
   dataEnvio          DateTime
   codigoSala         String
+  apelido            String?
+  avatar             String?
   sala               Salas    @relation(fields: [codigoSala], references: [codigoSala])
 }

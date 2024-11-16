@@ -71,7 +71,7 @@ export default function SobrePage() {
           <SubGrid
             className_Content="row-span-2 lg:row-span-1 sm:content-between"
             className_Title="text-[#1F6DF4] sm:text-center !m-4 lg:!text-start 2xl:!text-2xl sm:!text-xl lg:!mx-0 lg:!my-2"
-            className_Text="sm:text-center lg:!text-start"
+            className_Text=""
             title={t('diferencial.gratuidade.titulo')}
             description={t('diferencial.gratuidade.descricao')}
             image={PNGCoins}

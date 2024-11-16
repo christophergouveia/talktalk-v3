@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { avatar, Button, Input } from '@nextui-org/react';
+import { Button, Input } from '@nextui-org/react';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
@@ -11,9 +11,7 @@ import { ErrorInputs } from '@/app/utils/interfaces/input';
 import { useCookies } from 'react-cookie';
 import createRoom from '@/app/utils/roomManagement/createRoom';
 import { insertUser } from '@/app/utils/roomManagement/user/insertUser';
-// @ts-ignore
 import * as Criptografia from '@/app/utils/crypto/main';
-import React from 'react';
 import { RandomNicks } from '@/app/utils/strings/randomNicks';
 import RandomToken from '@/app/utils/strings/randomToken';
 import Image from 'next/image';
@@ -26,8 +24,10 @@ import { useTranslations } from 'next-intl';
 const InputsSchema = yup.object().shape({
   apelido: yup
     .string()
-    .min(4, 'conversar.criar_sala.apelido.erro_min')
-    .max(32, 'conversar.criar_sala.apelido.erro_max'),
+    .trim()
+    .min(4, 'criar_sala.apelido.erro_min')
+    .max(32, 'criar_sala.apelido.erro_max')
+    .matches(/^[a-zA-Z0-9\s_-]*$/, 'criar_sala.apelido.erro_caracteres'),
 });
 
 export default function ConversarHome() {
@@ -77,17 +77,17 @@ export default function ConversarHome() {
       // Depois acho uma maneira melhor de fazer isso...
       // TODO : Retirar o hostToken e utilizar o userToken como token do anfitrião
       var token = RandomToken.get();
-      var hostToken = RandomToken.get();
       var userToken = RandomToken.get();
-      const sala = await createRoom({ token: token, hostToken: hostToken });
+      const sala = await createRoom({ token: token, hostToken: userToken });
       if (sala != null) {
-        const payload = { token, hostToken };
+        const payload = { token, userToken };
         const secretBase64 = process.env.NEXT_PUBLIC_JWT_SECRET;
+        console.log(secretBase64)
         if (secretBase64) {
           const hashed = await Criptografia.criptografar(JSON.stringify(payload));
           // Aqui é somente os dados para a verificação se o usuário está permitido de entrar na sala ou nao
           setCookie('talktalk_roomid', hashed, {
-            expires: new Date(Date.now() + 86400000),
+            expires: undefined,
             sameSite: 'strict',
             path: '/',
           });
@@ -98,7 +98,6 @@ export default function ConversarHome() {
             color: avatarColor,
             token,
             userToken,
-            hostToken,
           };
           const userDataEncrypted = (await Criptografia.criptografarUserData(userData)).dadoCriptografado;
           setCookie('talktalk_userdata', userDataEncrypted, {
@@ -135,7 +134,7 @@ export default function ConversarHome() {
       return ''; // Retorna uma string vazia como valor padrão
     }
 
-    const imageUrl = `https://anonymous-animals.azurewebsites.net/animal/${englishName.toLowerCase()}`;
+    const imageUrl = `/images/avatars/${englishName.toLowerCase()}.png`;
     setAvatarDetails({ avatarURL: imageUrl, avatarName: randomAnimal });
     return randomAnimal;
   }, [setAvatarDetails]);
@@ -148,9 +147,10 @@ export default function ConversarHome() {
   const handleSelectColor = useCallback(
     (color: string) => {
       setAvatarColor(color);
+      console.log(color);
       setColorModalOpenned(false);
     },
-    [setAvatarColor]
+    [setAvatarColor, avatarColor]
   );
 
   const AvatarComponent = useMemo(() => {
@@ -207,7 +207,7 @@ export default function ConversarHome() {
                 e.preventDefault();
                 handleCriarSala();
               }}
-              className="flex items-center justify-center gap-2 w-fit"
+              className="flex flex-col items-center justify-center gap-2 w-fit"
             >
               <Input
                 type="name"

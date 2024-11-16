@@ -18,7 +18,7 @@ export const AvatarSelector: React.FC<AvatarSelectorProps> = ({ onAvatarSelect, 
   const handleAnimalSelect = (animal: string) => {
     setSelectedAnimal(animal);
     const animalNameEnglish = RandomNicks.getEnglish(animal);
-    const imageUrl = `https://anonymous-animals.azurewebsites.net/animal/${animalNameEnglish.toLowerCase()}`;
+    const imageUrl = `/images/avatars/${animalNameEnglish.toLowerCase()}.png`;
     onAvatarSelect(animal, imageUrl);
     setIsModalOpen(false);
   };
@@ -67,14 +67,14 @@ export const AvatarSelector: React.FC<AvatarSelectorProps> = ({ onAvatarSelect, 
                     </span>
                   )}
                   <Image
-                    src={`https://anonymous-animals.azurewebsites.net/animal/${RandomNicks.getEnglish(
+                    src={`/images/avatars/${RandomNicks.getEnglish(
                       animal
-                    ).toLowerCase()}`}
+                    ).toLowerCase()}.png`}
                     alt={animal}
                     width={80}
                     height={80}
-                    className="rounded-full mx-auto bg-[var(--cor-azul)] p-2 invert dark:invert-0"
-                    style={{ backgroundColor: avatarColor ? avatarColor : undefined}}
+                    className="rounded-full mx-auto p-2"
+                    style={{ backgroundColor: avatarColor ?? undefined}}
                   />
                   <p className="text-center mt-2">{animal}</p>
                 </button>

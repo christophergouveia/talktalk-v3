@@ -26,7 +26,7 @@
             "descricao": "Esta ferramenta tem interação totalmente anônima com todas as mensagens do usuário criptografadas e seguras."
         },
         "diferencial": {
-            "titulo": "O nosso diferencial",
+            "titulo": "nosso diferencial",
             "seguranca": {
                 "titulo": "Segurança",
                 "descricao": "A sua privacidade é prioridade para nós! Nossa plataforma utiliza criptografia avançada para garantir que suas conversas permaneçam confidenciais."
@@ -66,12 +66,16 @@
             "apelido": {
                 "label": "Apelido (opcional)",
                 "erro_min": "É necessário que o apelido contenha no mínimo 4 caracteres.",
-                "erro_max": "É necessário que o apelido contenha no máximo 32 caracteres."
+                "erro_max": "É necessário que o apelido contenha no máximo 32 caracteres.",
+                "erro_caracteres": "O apelido deve conter apenas letras, números, espaços, _ e -"
             },
+            "avatar_alt": "Seu avatar",
+            "carregando": "Criando sala...",
+            "criando_sala": "Criando sua sala...",
             "botao_criar": "CRIAR UMA SALA",
             "dica": {
                 "parte1": "DICA:",
-                "parte2": "Você consegue alterar a cor utilizada nos seus avatares! Experimente tocando/clicando no seu ícone 😉"
+                "parte2": "Você pode alterar a cor do seu avatar! Experimente clicando/tocando no ícone do seu animal. 😉"
             }
         },
         "botoes_avatar": {

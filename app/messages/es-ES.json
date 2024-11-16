@@ -66,8 +66,12 @@
             "apelido": {
                 "label": "Apodo (opcional)",
                 "erro_min": "El apodo debe contener al menos 4 caracteres.",
-                "erro_max": "El apodo debe contener como máximo 32 caracteres."
+                "erro_max": "El apodo debe contener como máximo 32 caracteres.",
+                "erro_caracteres": "El apodo debe contener solo letras, números, espacios, _ y -"
             },
+            "avatar_alt": "Tu avatar",
+            "carregando": "Creando sala...",
+            "criando_sala": "Creando tu sala...",
             "botao_criar": "CREAR UNA SALA",
             "dica": {
                 "parte1": "CONSEJO:",

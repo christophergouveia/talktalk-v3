@@ -2,12 +2,11 @@
 
 import ChatComponent from '@/app/components/chat/Chat';
 import Message from '@/app/components/chat/Message';
-import { MessageList } from '@/app/components/chat/MessageList';
+import MessageList from '@/app/components/chat/MessageList';
 import { CountryFlag } from '@/app/components/countryFlags';
 import CopyButton from '@/app/components/functionals/CopyButton';
 import linguagens from '@/app/locales/languages.json';
-// @ts-ignore
-import { descriptografarUserData, verificarHash, criptografarUserData, criptografar } from '@/app/utils/crypto/main.js';
+import { descriptografarUserData, verificarHash, criptografarUserData, criptografar } from '@/app/utils/crypto/main.ts';
 import fetchRoom from '@/app/utils/roomManagement/fetchRoom';
 import fetchRoomUsers from '@/app/utils/roomManagement/fetchRoomUsers';
 import { RandomAvatarColor } from '@/app/utils/strings/randomAvatarColor';
@@ -35,9 +34,15 @@ import { useChat } from '@/app/hooks/useChat';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
-type Params = Promise<{ codigo: string }>;
+interface RoomPageProps {
+  params: Promise<{
+    locale: string;
+    codigo: string;
+  }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
 
-export default function RoomPage(props: { children: React.ReactNode; params: Params }) {
+export default function RoomPage({ params, searchParams }: RoomPageProps) {
   const [linguaSelecionada, setLinguaSelecionada] = useState<{ label: string; value: string; flag: string }>({
     label: 'Português',
     value: 'pt',
@@ -79,7 +84,7 @@ export default function RoomPage(props: { children: React.ReactNode; params: Par
   const [selectedIndex, setSelectedIndex] = useState<number | undefined>(undefined);
   const [salaData, setSalaData] = useState<any>(null);
 
-  const params = React.use(props.params);
+  const codigo = React.use(params).codigo;
 
   const {
     mensagens,
@@ -96,7 +101,7 @@ export default function RoomPage(props: { children: React.ReactNode; params: Par
   } = useChat({
     socketClient,
     userData: userData || null,
-    codigo: params.codigo,
+    codigo: codigo,
     linguaSelecionada,
   });
 
@@ -107,15 +112,11 @@ export default function RoomPage(props: { children: React.ReactNode; params: Par
     setSelectedIndex(undefined);
   }, [isOpen]);
 
-  useEffect(() => {
-    console.log(userData);
-  }, [userData]);
-
   const fetchSala = useCallback(async () => {
     try {
-      const sala = await fetchRoom(params.codigo);
+      const sala = await fetchRoom(codigo);
       setSalaData(sala);
-      const salas_usuarios = await fetchRoomUsers(params.codigo);
+      const salas_usuarios = await fetchRoomUsers(codigo);
 
       if (!salas_usuarios || sala == null) {
         setShowErrorModal(true);
@@ -134,7 +135,8 @@ export default function RoomPage(props: { children: React.ReactNode; params: Par
       } else {
         setUserData(userDataDecrypt);
         console.log(userDataDecrypt, sala.hostToken);
-        if (userDataDecrypt.hostToken == sala.hostToken) {
+        console.log(userDataDecrypt.userToken, sala.hostToken);
+        if (userDataDecrypt.userToken == sala.hostToken) {
           setIsHost(true);
           setHostModal(true);
           setUsersRoomData({
@@ -160,24 +162,14 @@ export default function RoomPage(props: { children: React.ReactNode; params: Par
       setShowErrorModal(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.codigo]);
+  }, [codigo]);
 
   useEffect(() => {
     fetchSala();
 
-    if (Object.keys(usersRoomData).length == 0 && userData?.userToken) {
-      setUsersRoomData({
-        [userData.userToken]: {
-          ...userData,
-          host: true,
-          isTyping: false,
-        },
-      });
-    }
-
-    return () => {
-      if (socketClient) {
-        socketClient.disconnect();
+  return () => {
+    if (socketClient) {
+      socketClient.disconnect();
         socketClient.off('user-connected');
         socketClient.off('user-disconnected');
         socketClient.off('message');
@@ -197,15 +189,20 @@ export default function RoomPage(props: { children: React.ReactNode; params: Par
 
   const handleUserConnected = async (userCookie: any) => {
     try {
-      console.log('AAAAAAAAAAAAAA 2' + userCookie);
       const userDetails = await descriptografarUserData(userCookie as string);
-      setUsersRoomData((prev) => ({
-        ...prev,
-        [userDetails.userToken]: {
-          ...userDetails,
-          isTyping: false,
-        },
-      }));
+      setUsersRoomData((prev) => {
+        // Verifica se o usuário já existe no estado
+        if (prev[userDetails.userToken]) {
+          return prev;
+        }
+        return {
+          ...prev,
+          [userDetails.userToken]: {
+            ...userDetails,
+            isTyping: false,
+          },
+        };
+      });
       setPessoasConectadas((prev) => Number(prev) + 1);
     } catch (error) {
       console.error('Erro ao descriptografar dados do usuário:', error);
@@ -214,9 +211,9 @@ export default function RoomPage(props: { children: React.ReactNode; params: Par
 
   useEffect(() => {
     if (isHost) {
-      socketClient?.emit('room-update', params.codigo, usersRoomData);
+      socketClient?.emit('room-update', codigo, usersRoomData);
     }
-  }, [usersRoomData]);
+  }, [usersRoomData, isHost, socketClient, codigo]);
 
   useEffect(() => {
     if (!socketClient) return;
@@ -236,6 +233,9 @@ export default function RoomPage(props: { children: React.ReactNode; params: Par
             messageTraduzido: mensagens.mensagemTraduzida,
             senderId: mensagens.usuario,
             date: date,
+            senderApelido: mensagens.apelido,
+            senderAvatar: mensagens.avatar,
+            senderColor: mensagens.senderColor,
           },
         ]);
       });
@@ -250,13 +250,13 @@ export default function RoomPage(props: { children: React.ReactNode; params: Par
       socketClient.off('message', handleMessage);
       socketClient.off('typing', (typing, userToken) => handleTyping(typing, userToken));
     };
-  }, [socketClient, params.codigo, linguaSelecionada]);
+  }, [socketClient, codigo, linguaSelecionada]);
 
   useEffect(() => {
     if (socketClient) {
-      socketClient.emit('join-room', params.codigo);
+      socketClient.emit('join-room', codigo);
     }
-  }, [socketClient, params.codigo]);
+  }, [socketClient, codigo]);
 
   useEffect(() => {
     if (messageListRef.current) {
@@ -282,10 +282,10 @@ export default function RoomPage(props: { children: React.ReactNode; params: Par
       }
 
       if (userData?.userToken) {
-        socketClient?.emit('typing', true, userData.userToken, params.codigo);
+        socketClient?.emit('typing', true, userData.userToken, codigo);
       }
     },
-    [shiftPressed, mensagem, sendMessage, userData, socketClient, params.codigo]
+    [shiftPressed, mensagem, sendMessage, userData, socketClient, codigo]
   );
 
   const handleTextAreaKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement> | KeyboardEvent) => {
@@ -306,7 +306,7 @@ export default function RoomPage(props: { children: React.ReactNode; params: Par
       if (!nickname) {
         nickname = RandomNicks.get();
       }
-      const sala = await fetchRoom(params.codigo);
+      const sala = await fetchRoom(codigo);
       if (!sala) {
         setShowErrorModal(true);
         return;
@@ -435,20 +435,20 @@ export default function RoomPage(props: { children: React.ReactNode; params: Par
               </h2>
               <div className="flex flex-col items-center justify-center gap-3 p-2">
                 <h3 className="flex items-center justify-center gap-2 rounded-md text-center text-3xl font-bold text-[#6F90F2]">
-                  {params?.codigo.split('').map((c, index) => (
+                  {codigo.split('').map((c, index) => (
                     <span className="w-12 rounded-lg bg-slate-800 p-2 uppercase" key={index}>
                       {c}
                     </span>
                   ))}
-                  <CopyButton copy={params?.codigo} text="Copiar" sucessText="Copiado!" />
+                  <CopyButton copy={codigo} text="Copiar" sucessText="Copiado!" />
                 </h3>
                 <span className="text-2xl font-semibold">OU</span>
                 <div className="flex gap-2">
                   <span className="rounded-md bg-slate-800 p-2 font-semibold text-[#6F90F2]">
-                    {process.env.NEXT_PUBLIC_VERCEL_URL}/conversar/{params?.codigo}
+                    {process.env.NEXT_PUBLIC_VERCEL_URL}/conversar/{codigo}
                   </span>
                   <CopyButton
-                    copy={process.env.NEXT_PUBLIC_VERCEL_URL + '/conversar/' + params?.codigo}
+                    copy={process.env.NEXT_PUBLIC_VERCEL_URL + '/conversar/' + codigo}
                     text="Copiar"
                     sucessText="Copiado!"
                   />
@@ -468,8 +468,11 @@ export default function RoomPage(props: { children: React.ReactNode; params: Par
           <ChatComponent.Settings className="flex justify-between w-full items-center gap-2 p-4">
             <Button
               onClick={() => setHostModal(true)}
-              className="bg-gradient-to-r from-[var(--cor-azul)] to-[var(--cor-roxa)] hover:scale-110 transition-all"
+              className="bg-gradient-to-r from-[#38A3F5] to-[#6F90F2] dark:from-[#2563eb] dark:to-[#4f46e5] text-white dark:text-slate-100 font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out flex items-center gap-2"
             >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
+              </svg>
               COMPARTILHAR
             </Button>
             <IoSettingsSharp
@@ -488,6 +491,9 @@ export default function RoomPage(props: { children: React.ReactNode; params: Par
                 date={message.date}
                 ownMessage={message.senderId == userData?.userToken}
                 originalMessage={message.message}
+                senderApelido={message.senderApelido}
+                senderAvatar={message.senderAvatar}
+                senderColor={message.senderColor}
               >
                 {message.messageTraduzido}
               </Message>
@@ -638,33 +644,39 @@ export default function RoomPage(props: { children: React.ReactNode; params: Par
             </div>
           </div>
         </section>
-        <div className="bg-[--chat-bg-buttons] m-2 rounded-md">
-          <h2 className="text-medium bg-[var(--chat-bg-header)] rounded-t-md p-3 font-semibold flex items-center gap-2">
+        <div className="bg-white dark:bg-zinc-900 m-2 rounded-md shadow-sm border border-gray-200 dark:border-zinc-800">
+          <h2 className="text-medium bg-gray-50 dark:bg-zinc-800 rounded-t-md p-3 font-semibold flex items-center gap-2 border-b border-gray-200 dark:border-zinc-700">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
             Usuários Online
           </h2>
           <div className="flex flex-col gap-3 p-3">
-            {Object.values(usersRoomData).map((user) => (
-              <div
-                key={user.userToken}
-                className="flex items-center gap-3 p-2 rounded-md hover:bg-[var(--chat-bg-buttons-secondary)] transition-colors duration-200"
-              >
-                <Image
-                  src={user.avatar}
-                  alt={user.apelido}
-                  width={60}
-                  height={60}
-                  className={`rounded-full border-2 p-2`}
-                  style={{ borderColor: user.color }}
-                />
-                <div className="flex flex-col">
-                  <span className="text-medium font-medium flex items-center gap-1">
-                    {user.apelido} {user.host && <span>👑</span>}
-                  </span>
-                  <span className="text-tiny text-default-600">{user.host ? 'Anfitrião' : 'Convidado'}</span>
+            {Object.entries(usersRoomData).length > 0 ? (
+              Object.values(usersRoomData).map((user) => (
+                <div
+                  key={user.userToken}
+                  className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors duration-200"
+                >
+                  <Image
+                    src={user.avatar}
+                    alt={user.apelido}
+                    width={60}
+                    height={60}
+                    className={`rounded-full border-2 p-2 bg-white dark:bg-transparent`}
+                    style={{ borderColor: user.color, backgroundColor: user.color }}
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-medium font-medium flex items-center gap-1" style={{ color: user.color }}>
+                      {user.apelido} {user.host && <span>👑</span>}
+                    </span>
+                    <span className="text-tiny text-gray-600 dark:text-gray-400">{user.host ? 'Anfitrião' : 'Convidado'}</span>
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="text-center p-4 text-gray-500 dark:text-gray-400">
+                Nenhum usuário conectado
               </div>
-            ))}
+            )}
           </div>
         </div>
       </aside>

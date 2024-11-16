@@ -1,21 +1,27 @@
 'use server';
 
-const crypto = require('crypto');
-const dotenv = require('dotenv');
+import crypto from 'crypto';
+import dotenv from 'dotenv';
 dotenv.config({ path: '../../.env' });
 
-export const criptografar = async (string) => {
+interface CriptografiaResult {
+  chave: string;
+  iv: string;
+  dadoCriptografado: string;
+}
+
+export const criptografar = async (string: string): Promise<string> => {
   const hash = crypto.createHash('sha256');
   hash.update(string);
   return hash.digest('hex');
 }
 
-export const criptografarUserData = async (data) => {
-  const jwtSecret = process.env.JWT_SECRET;
+export const criptografarUserData = async (data: any): Promise<CriptografiaResult> => {
+  const jwtSecret = process.env.NEXT_PUBLIC_JWT_SECRET;
   if (!jwtSecret) {
     throw new Error('JWT_SECRET não está definido');
   }
-  const jwtSecretIv = process.env.JWT_SECRET_IV;
+  const jwtSecretIv = process.env.NEXT_PUBLIC_JWT_SECRET_IV;
   if (!jwtSecretIv) {
     throw new Error('JWT_SECRET_IV não está definido');
   }
@@ -35,12 +41,12 @@ export const criptografarUserData = async (data) => {
   };
 }
 
-export const descriptografarUserData = async (dadoCriptografado) => {
-  const jwtSecret = process.env.JWT_SECRET;
+export const descriptografarUserData = async (dadoCriptografado: string): Promise<any> => {
+  const jwtSecret = process.env.NEXT_PUBLIC_JWT_SECRET;
   if (!jwtSecret) {
     throw new Error('JWT_SECRET não está definido');
   }
-  const jwtSecretIv = process.env.JWT_SECRET_IV;
+  const jwtSecretIv = process.env.NEXT_PUBLIC_JWT_SECRET_IV;
   if (!jwtSecretIv) {
     throw new Error('JWT_SECRET_IV não está definido');
   }
@@ -61,12 +67,12 @@ export const descriptografarUserData = async (dadoCriptografado) => {
   return dadoDescriptografadoJson;
 }
 
-export const verificarDados = async (data, dataCriptografada) => {
+export const verificarDados = async (data: any, dataCriptografada: CriptografiaResult): Promise<boolean> => {
   const dadoDescriptografado = await descriptografarUserData(dataCriptografada.dadoCriptografado);
   return JSON.stringify(data) === JSON.stringify(dadoDescriptografado);
 }
 
-export const verificarHash = async (string, hash) => {
+export const verificarHash = async (string: string, hash: string): Promise<boolean> => {
   const stringHash = crypto.createHash('sha256').update(string).digest('hex');
   return stringHash === hash;
 } 

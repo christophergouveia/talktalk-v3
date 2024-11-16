@@ -66,12 +66,16 @@
             "apelido": {
                 "label": "Nickname (optional)",
                 "erro_min": "The nickname must contain at least 4 characters.",
-                "erro_max": "The nickname must contain at most 32 characters."
+                "erro_max": "The nickname must contain at most 32 characters.",
+                "erro_caracteres": "Nickname must contain only letters, numbers, spaces, _ and -"
             },
+            "avatar_alt": "Your avatar",
+            "carregando": "Creating room...",
+            "criando_sala": "Creating your room...",
             "botao_criar": "CREATE A ROOM",
             "dica": {
                 "parte1": "TIP:",
-                "parte2": "You can change the color used in your avatars! Try touching/clicking on your icon 😉"
+                "parte2": "You can change the color of your avatar! Try clicking/touching on your animal icon. 😉"
             }
         },
         "botoes_avatar": {

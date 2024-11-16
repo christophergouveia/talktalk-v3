@@ -1,4 +1,5 @@
 import { Moment } from 'moment-timezone';
+import Image from 'next/image';
 import { ReactNode } from 'react';
 import Avatar from 'react-avatar';
 
@@ -8,6 +9,9 @@ interface MessageType {
   children: ReactNode;
   className?: string;
   originalMessage: string;
+  senderApelido: string;
+  senderAvatar: string;
+  senderColor: string;
 }
 
 export default function Message({
@@ -16,13 +20,15 @@ export default function Message({
   children,
   className,
   originalMessage,
+  senderApelido,
+  senderAvatar,
+  senderColor,
 }: MessageType & { children: ReactNode }) {
-  let sender = 'teste';
   return (
     <div className="flex flex-col">
       <div className={`flex items-center gap-2 ${ownMessage ? 'justify-end' : ''}`}>
-        <Avatar name={sender} className={ownMessage ? 'order-2' : ''} round size="2.5rem" />
-        <span>{sender}</span>
+        <Image src={senderAvatar} alt={senderApelido} width={50} height={50} className={`${ownMessage ? 'order-2' : ''} dark:border-2 dark:border-solid rounded-full dark:!bg-transparent p-2`} style={{ borderColor: senderColor, backgroundColor: senderColor }} />
+        <span>{senderApelido}</span>
       </div>
       <div
         className={`w-fit min-w-[80px] ${ownMessage ? 'self-end text-left text-wrap' : 'text-left'} m-2 rounded-lg p-4 pb-5 ${

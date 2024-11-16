@@ -75,7 +75,10 @@ export function useChat({ socketClient, userData, codigo, linguaSelecionada }: U
             message: message.message,
             messageTraduzido: traduzido,
             senderId: message.userToken,
+            senderApelido: message.apelido,
+            senderAvatar: message.avatar,
             date: data,
+            senderColor: message.senderColor,
           },
         ]);
       } catch (error) {
@@ -113,7 +116,7 @@ export function useChat({ socketClient, userData, codigo, linguaSelecionada }: U
 
   const sendMessage = useCallback(() => {
     if (socketClient && mensagem.trim() && userData) {
-      socketClient.emit('sendMessage', cleanMessage(mensagem), userData.userToken, codigo, linguaSelecionada.value);
+      socketClient.emit('sendMessage', cleanMessage(mensagem), userData.userToken, userData.apelido, userData.avatar, codigo, linguaSelecionada.value, userData.color);
       setMensagem('');
     }
   }, [socketClient, mensagem, codigo, linguaSelecionada, userData]);

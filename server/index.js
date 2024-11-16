@@ -5,7 +5,7 @@ const origin = process.env.NEXT_PUBLIC_VERCEL_URL;
 const cookie = require('cookie');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 const io = require('socket.io')(http, {
   cors: {
@@ -23,7 +23,7 @@ io.on('connection', (socket) => {
     }
     console.log('Usuário saiu da sala!');
   });
-  socket.on('sendMessage', async (message, userToken, room, lingua) => {
+  socket.on('sendMessage', async (message, userToken, apelido, avatar, room, lingua, senderColor) => {
     const actualDate = new Date().toISOString();
     console.log('Mensagem recebida: ' + message);
     try {
@@ -33,6 +33,8 @@ io.on('connection', (socket) => {
           usuario: userToken,
           mensagem: message,
           dataEnvio: new Date(actualDate),
+          // apelido,
+          // avatar
         },
       });
 
@@ -40,7 +42,10 @@ io.on('connection', (socket) => {
         message: message,
         userToken,
         date: actualDate,
-        from: lingua
+        from: lingua,
+        apelido,
+        avatar,
+        senderColor
       });
     } catch (error) {
       console.error('Error saving message:', error);
@@ -125,7 +130,7 @@ async function checkRooms() {
 
 setInterval(checkRooms, 1000 /* 1000 * 60 * 5*/); // 5 minutos
 
-http.listen(PORT, () => {
+http.listen(PORT, '0.0.0.0', () => {
   console.log(`Server ligado na porta: ${PORT}`);
 });
 
