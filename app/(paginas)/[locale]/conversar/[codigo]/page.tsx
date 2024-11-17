@@ -316,7 +316,7 @@ export default function RoomPage({ params, searchParams }: RoomPageProps) {
           const englishName = RandomNicks.getEnglish(RandomNicks.get());
           const payload = {
             apelido: nickname,
-            avatar: `https://anonymous-animals.azurewebsites.net/animal/${englishName.toLowerCase()}`,
+            avatar: `/images/avatars/${englishName.toLowerCase()}.png`,
             color: RandomAvatarColor.get().hex,
             token: sala.token,
             userToken: RandomToken.get(),
