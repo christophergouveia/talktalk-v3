@@ -7,21 +7,29 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Copiar todos os arquivos do projeto
-COPY . .
-
-ENV DATABASE_URL=mysql://root:123123@204.216.166.160:3306/traducaodb
-
-RUN npx prisma generate
-RUN npx prisma migrate deploy
-
+# Primeiro copiar apenas os arquivos necessários para instalação
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+
+# Instalar dependências
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci --legacy-peer-deps; \
   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
   else echo "Lockfile not found." && exit 1; \
   fi
+
+# Copiar arquivos do prisma
+COPY prisma ./prisma
+
+# Gerar Prisma Client após instalação das dependências
+RUN npx prisma generate
+
+# Copiar todos os arquivos do projeto
+COPY . .
+
+ENV DATABASE_URL=mysql://root:123123@204.216.166.160:3306/traducaodb
+
+RUN npx prisma migrate deploy
 
 # Rebuild the source code only when needed
 FROM base AS builder

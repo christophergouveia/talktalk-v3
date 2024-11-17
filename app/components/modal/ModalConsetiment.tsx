@@ -37,7 +37,7 @@ export default function CookieConsentModal() {
                       Política de Cookies
                     </a>{' '}
                     e{' '}
-                    <a className="text-blue-400 hover:text-blue-300 underline transition-colors" href="/termos/privacidade">
+                    <a className="text-blue-400 hover:text-blue-300 underline transition-colors" href="/termos/politica">
                       Política de Privacidade
                     </a>
                     .

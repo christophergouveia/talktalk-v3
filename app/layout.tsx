@@ -1,13 +1,14 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import '../../globals.css';
-import Providers from '../../providers';
-import NavBar from '../../components/layout/Navbar';
-import Footer from '../../components/layout/Footer';
-import CookieConsetimentModal from '../../components/modal/ModalConsetiment';
+import './globals.css';
+import Providers from './providers';
+import NavBar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
+import CookieConsetimentModal from './components/modal/ModalConsetiment';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-import { routing } from '../../i18n/routing';
+import { routing } from './i18n/routing';
+import { cookies } from 'next/headers';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
       url: 'http://lattes.cnpq.br/2952383935652833',
     },
     {
-      name: 'Christopher Rodrigues Gouveia',
+      name: 'Christopher Rodrigues Gouveia', 
       url: 'http://lattes.cnpq.br/3214554816480546',
     },
   ],
@@ -33,7 +34,7 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  const locale = await (await params).locale || routing.defaultLocale;
+  const locale = await (await params).locale || (await cookies()).get('NEXT_LOCALE')?.value || 'pt-BR';
 
   if (!routing.locales.includes(locale as any)) {
     throw new Error(`Invalid locale: ${locale}`);

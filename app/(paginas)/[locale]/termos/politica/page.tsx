@@ -3,7 +3,7 @@ export default function Politica() {
   return (
     <>
       <section className="content-policy m-4">
-        <h1>Política Privacidade</h1>
+        <h1>Política de Privacidade</h1>
         <p>
           A sua privacidade é importante para nós. É política do <b>Talk-Talk!</b> respeitar a sua privacidade em
           relação a qualquer informação sua que possamos coletar no site <b>Talk-Talk!</b>, e outros sites que possuímos
@@ -37,35 +37,6 @@ export default function Politica() {
           informações pessoais. Se você tiver alguma dúvida sobre como lidamos com dados do usuário e informações
           pessoais, entre em contacto connosco.
         </p>
-        <ul>
-          <li>
-            O serviço Google Analytocs que usamos para veicular publicidade usa um cookie DoubleClick para veicular
-            anúncios mais relevantes em toda a Web e limitar o número de vezes que um determinado anúncio é exibido para
-            você.
-          </li>
-          <li>
-            Para mais informações sobre o Google Analytocs  consulte as FAQs oficiais sobre privacidade do{' '}
-            <a
-              href="https://support.google.com/adsense/?hl=pt-BR#topic=3373519"
-              target="_blank"
-              className="underline text-sky-500"
-            >
-              Google Analytocs 
-            </a>
-          </li>
-          <li>
-            Utilizamos anúncios para compensar os custos de funcionamento deste site e fornecer financiamento para
-            futuros desenvolvimentos. Os cookies de publicidade comportamental usados ​​por este site foram projetados
-            para garantir que você forneça os anúncios mais relevantes sempre que possível, rastreando anonimamente seus
-            interesses e apresentando coisas semelhantes que possam ser do seu interesse.
-          </li>
-          <li>
-            Vários parceiros anunciam em nosso nome e os cookies de rastreamento de afiliados simplesmente nos permitem
-            ver se nossos clientes acessaram o site através de um dos sites de nossos parceiros, para que possamos
-            creditá-los adequadamente e, quando aplicável, permitir que nossos parceiros afiliados ofereçam qualquer
-            promoção que pode fornecê-lo para fazer uma compra.
-          </li>
-        </ul>
         <h2>Compromisso do Usuário</h2>
         <p>
           O usuário se compromete a fazer uso adequado dos conteúdos e da informação que o Talk-Talk! oferece no site e

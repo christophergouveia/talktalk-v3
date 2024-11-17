@@ -40,6 +40,12 @@ function getLocale(request: NextRequest) {
 export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   
+  // Tratar página 404 especificamente
+  if (pathname === '/404') {
+    const locale = getLocale(request);
+    return NextResponse.redirect(new URL(`/${locale}/not-found`, request.url));
+  }
+
   // Ignorar arquivos estáticos e API routes
   if (
     pathname.startsWith('/_next') ||
@@ -55,7 +61,9 @@ export function middleware(request: NextRequest) {
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
 
-  if (pathnameHasLocale) return;
+  if (pathnameHasLocale) {
+    return NextResponse.next();
+  }
 
   // Redirecionar se não houver locale
   const locale = getLocale(request);
