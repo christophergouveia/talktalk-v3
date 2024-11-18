@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { Bounce, Fade } from 'react-awesome-reveal';
 import { FaCookieBite } from 'react-icons/fa';
-
+import Link from 'next/link';
 interface CreateRoomModalProps {
   aberto: boolean;
 }
@@ -33,13 +33,13 @@ export default function CookieConsentModal() {
                   <p className="text-center md:text-left text-sm md:text-base text-slate-200">
                     Este site utiliza cookies para melhorar sua experiência e para garantir que suas mensagens sejam
                     seguras. Saiba mais acessando a{' '}
-                    <a className="text-blue-400 hover:text-blue-300 underline transition-colors" href="/termos/cookies">
+                    <Link className="text-blue-400 hover:text-blue-300 underline transition-colors" href="/termos/cookies">
                       Política de Cookies
-                    </a>{' '}
+                    </Link>{' '}
                     e{' '}
-                    <a className="text-blue-400 hover:text-blue-300 underline transition-colors" href="/termos/politica">
+                    <Link className="text-blue-400 hover:text-blue-300 underline transition-colors" href="/termos/politica">
                       Política de Privacidade
-                    </a>
+                    </Link>
                     .
                   </p>
                 </div>
