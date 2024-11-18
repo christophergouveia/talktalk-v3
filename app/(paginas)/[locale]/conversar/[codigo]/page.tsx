@@ -336,7 +336,7 @@ export default function RoomPage({ params, searchParams }: RoomPageProps) {
           });
         }
         setSocketClient(
-          io(process.env.NEXT_PUBLIC_SOCKET_URL + ':3001', {
+          io("https://" + process.env.NEXT_PUBLIC_SOCKET_URL + ':3001', {
             withCredentials: true,
             transports: ['websocket', 'polling'],
           })

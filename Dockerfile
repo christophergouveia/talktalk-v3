@@ -27,9 +27,7 @@ RUN npx prisma generate
 # Copiar todos os arquivos do projeto
 COPY . .
 
-ENV DATABASE_URL=mysql://root:123123@204.216.166.160:3306/traducaodb
 
-RUN npx prisma migrate deploy
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -37,8 +35,14 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+ENV DATABASE_URL=mysql://root:123123@204.216.166.160:3306/traducaodb
+
 # Gerar o Prisma Client
 RUN npx prisma generate
+RUN npx prisma db push
+
+# Instalar sharp e core-js-pure (necessário para o Next.js)
+RUN npm i sharp core-js-pure --legacy-peer-deps
 
 # Construir o projeto
 RUN \
@@ -48,13 +52,6 @@ RUN \
   else echo "Lockfile not found." && exit 1; \
   fi
 
-# Executar as migrações do Prisma
-RUN \
-  if [ -f yarn.lock ]; then yarn prisma migrate deploy; \
-  elif [ -f package-lock.json ]; then npx prisma migrate deploy; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm prisma migrate deploy; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
 
 # Production image, copy all the files and run next
 FROM base AS runner
