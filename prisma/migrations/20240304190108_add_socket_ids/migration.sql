@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `salas` ADD COLUMN `socketIds` VARCHAR(191) NOT NULL DEFAULT '';
