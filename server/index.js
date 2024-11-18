@@ -1,18 +1,30 @@
 const express = require('express');
 const app = express();
-const http = require('http').createServer(app);
-const origin = process.env.NEXT_PUBLIC_VERCEL_URL;
+const fs = require('fs');
+const https = require('https');
 const cookie = require('cookie');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 
-const io = require('socket.io')(http, {
+// Configurações SSL
+const options = {
+  key: fs.readFileSync('/etc/nginx/ssl/private.key'),
+  cert: fs.readFileSync('/etc/nginx/ssl/certificate.crt'),
+};
+
+// Criar servidor HTTPS em vez de HTTP
+const server = https.createServer(options, app);
+
+const io = require('socket.io')(server, {
   cors: {
     origin: process.env.NEXT_PUBLIC_VERCEL_URL,
     credentials: true,
-    methods: ["GET", "POST"]
-  }
+    methods: ["GET", "POST"],
+    transports: ['websocket', 'polling']
+  },
+  allowEIO3: true,
+  path: '/socket.io/'
 });
 
 io.on('connection', (socket) => {
@@ -130,11 +142,11 @@ async function checkRooms() {
 
 setInterval(checkRooms, 1000 /* 1000 * 60 * 5*/); // 5 minutos
 
-http.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server ligado na porta: ${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor HTTPS ligado na porta: ${PORT}`);
 });
 
-http.on('close', () => {
+server.on('close', () => {
   io.sockets.clients().forEach((socket) => {
     socket.disconnect(true);
   });
