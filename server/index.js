@@ -3,41 +3,115 @@ const app = express();
 const fs = require('fs');
 const https = require('https');
 const cookie = require('cookie');
+const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
+const { descriptografarUserData } = require('../app/utils/crypto/main.js');
+const verifyUserInRoom = require('./utils/verifyUserInRoom');
+
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 
-// Configurações SSL
 const options = {
-  key: fs.readFileSync('/etc/nginx/ssl/private.key'),
-  cert: fs.readFileSync('/etc/nginx/ssl/certificate.crt'),
+  key: fs.readFileSync('./server/ssl/private.pem'),
+  cert: fs.readFileSync('./server/ssl/certificate.pem'),
+  requestCert: false,
+  rejectUnauthorized: false,
 };
 
-// Criar servidor HTTPS em vez de HTTP
 const server = https.createServer(options, app);
 
 const io = require('socket.io')(server, {
   cors: {
-    origin: process.env.NEXT_PUBLIC_VERCEL_URL,
+    origin: process.env.ORIGIN || process.env.NEXT_PUBLIC_VERCEL_URL,
     credentials: true,
-    methods: ["GET", "POST"],
-    transports: ['websocket', 'polling']
+    methods: ['GET', 'POST']
   },
-  allowEIO3: true,
-  path: '/socket.io/'
+  transports: ['websocket', 'polling'],
+  secure: true,
+  rejectUnauthorized: false
 });
 
+const activeUsers = new Map(); // Armazena usuários ativos e seus dados
+const roomUsers = new Map(); // Armazena usuários por sala
+
 io.on('connection', (socket) => {
-  socket.on('disconnect', () => {
-    const userToken = socket.userToken;
-    if (userToken) {
-      io.in(socket.room).emit('user-disconnected', userToken);
+  console.log('Novo cliente conectado:', socket.id);
+
+  let userRoom = null;
+  let userToken = null;
+
+  socket.on('join-room', async (room) => {
+    userRoom = room;
+    const cookies = cookie.parse(socket.handshake.headers.cookie || '');
+    const userCookie = cookies['talktalk_userdata'];
+
+    if (!userCookie) {
+      socket.disconnect();
+      return;
     }
-    console.log('Usuário saiu da sala!');
+
+    try {
+      const userData = await descriptografarUserData(userCookie);
+      userToken = userData.userToken;
+
+      if (!roomUsers.has(room)) {
+        roomUsers.set(room, new Map());
+      }
+      
+      roomUsers.get(room).set(userToken, {
+        ...userData,
+        socketId: socket.id,
+        lastActivity: new Date()
+      });
+
+      activeUsers.set(userToken, {
+        room,
+        socketId: socket.id,
+        lastActivity: new Date()
+      });
+
+      socket.join(room);
+
+      io.in(room).emit('user-connected', userCookie);
+      
+      const roomMessages = await prisma.mensagens.findMany({
+        where: { codigoSala: room },
+        orderBy: { dataEnvio: 'asc' },
+        take: 100
+      });
+
+      socket.emit('previousMessages', roomMessages);
+    } catch (error) {
+      console.error('Erro ao processar entrada do usuário:', error);
+      socket.emit('error', 'Erro ao entrar na sala');
+      socket.disconnect();
+    }
   });
-  socket.on('sendMessage', async (message, userToken, apelido, avatar, room, lingua, senderColor) => {
+
+  socket.on('disconnect', () => {
+    if (userToken && userRoom) {
+      if (roomUsers.has(userRoom)) {
+        roomUsers.get(userRoom).delete(userToken);
+        if (roomUsers.get(userRoom).size === 0) {
+          roomUsers.delete(userRoom);
+        } else {
+          const usersInRoom = Array.from(roomUsers.get(userRoom).values());
+          io.in(userRoom).emit('room-users-update', usersInRoom);
+        }
+      }
+      activeUsers.delete(userToken);
+    }
+  });
+
+  socket.on('user-activity', ({ userToken, room }) => {
+    if (activeUsers.has(userToken)) {
+      activeUsers.get(userToken).lastActivity = new Date();
+    }
+  });
+
+  socket.on('sendMessage', async (message, userToken, color, apelido, avatar, room, lingua) => {
     const actualDate = new Date().toISOString();
-    console.log('Mensagem recebida: ' + message);
+    console.log('[SERVER] Mensagem recebida: ' + message);
     try {
       await prisma.mensagens.create({
         data: {
@@ -45,8 +119,6 @@ io.on('connection', (socket) => {
           usuario: userToken,
           mensagem: message,
           dataEnvio: new Date(actualDate),
-          // apelido,
-          // avatar
         },
       });
 
@@ -54,19 +126,18 @@ io.on('connection', (socket) => {
         message: message,
         userToken,
         date: actualDate,
-        from: lingua,
         apelido,
         avatar,
-        senderColor
+        color,
+        lingua
       });
     } catch (error) {
-      console.error('Error saving message:', error);
-      io.to(socket.id).emit('error', 'Failed to save message.');
+      console.error('Erro ao salvar mensagem:', error);
+      io.to(socket.id).emit('error', 'Falha ao salvar mensagem.');
     }
   });
-  
+
   socket.on('typing', (typing, userToken, room) => {
-    console.log('Usuário está digitando: ' + userToken);
     io.in(room.toString()).emit('typing', typing, userToken);
   });
 
@@ -74,34 +145,21 @@ io.on('connection', (socket) => {
     io.in(room.toString()).emit('room-update', users);
   });
 
-  socket.on('join-room', async (room) => {
-    socket.room = room;
-    console.log('Usuário entrou na sala: ' + room, socket.id);
-    const cookies = cookie.parse(socket.handshake.headers.cookie || '');
-    const userCookie = cookies['talktalk_userdata'];
-
-    console.log(userCookie);
+  socket.on('message', (data) => {
+    console.log('Mensagem recebida:', {
+      room: data.room,
+      sender: data.sender.apelido,
+      message: data.message
+    });
     
-    io.in(room.toString()).emit('user-connected', userCookie);
-    socket.join(room.toString());
-
-    try {
-      const roomMessages = await prisma.mensagens.findMany({
-        where: {
-          codigoSala: room.toString(),
-        },
-        orderBy: { dataEnvio: 'asc' },
-      });
-      socket.emit('previousMessages', roomMessages);
-    } catch (error) {
-      console.error('Error fetching previous messages:', error);
-    }
+    socket.to(data.room).emit('message', data);
+    
+    console.log('Mensagem enviada para a sala:', data.room);
   });
 });
 
 async function checkRooms() {
   try {
-    
     const inactivityThreshold = 1000 * 60 * 60 * 24;
 
     const inactiveRooms = await prisma.salas.findMany({
@@ -120,30 +178,34 @@ async function checkRooms() {
       try {
         await prisma.$transaction([
           prisma.mensagens.deleteMany({
-            where: { codigoSala: room.codigoSala }
+            where: { codigoSala: room.codigoSala },
           }),
           prisma.salas_Usuarios.deleteMany({
-            where: { codigoSala: room.codigoSala }
+            where: { codigoSala: room.codigoSala },
           }),
           prisma.salas.delete({
-            where: { codigoSala: room.codigoSala }
-          })
+            where: { codigoSala: room.codigoSala },
+          }),
         ]);
       } catch (error) {
         console.error(`Erro ao deletar sala ${room.codigoSala}:`, error);
       }
     }
   } catch (error) {
-    console.error('Error deleting inactive rooms:', error);
+    console.error('Erro ao deletar salas inativas:', error);
   } finally {
     await prisma.$disconnect();
   }
 }
 
-setInterval(checkRooms, 1000 /* 1000 * 60 * 5*/); // 5 minutos
+setInterval(checkRooms, 1000 * 60 * 5); // 5 minutos
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Servidor HTTPS ligado na porta: ${PORT}`);
+app.get('/', (req, res) => {
+  res.send('Servidor HTTP funcionando corretamente');
+});
+
+server.listen(PORT, () => {
+  console.log(`Servidor Socket.IO rodando na porta ${PORT}`);
 });
 
 server.on('close', () => {

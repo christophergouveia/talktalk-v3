@@ -23,7 +23,7 @@ model Salas {
 
 model Salas_Usuarios {
   codigoSala String
-  userData   String  @db.VarChar(255)
+  userData   String  @db.VarChar(300)
   host       Boolean @default(false)
   sala       Salas   @relation(fields: [codigoSala], references: [codigoSala])
   @@id([codigoSala, userData])

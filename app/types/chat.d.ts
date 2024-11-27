@@ -1,9 +1,14 @@
+import { Moment } from 'moment-timezone';
+
 export interface UserData {
   apelido: string;
   avatar: string;
   color: string;
   token: string;
   userToken: string;
+  host?: boolean;
+  isTyping?: boolean;
+  lastActivity?: Date | string;
 }
 
 export interface Language {
@@ -20,5 +25,6 @@ export interface MessageType {
   senderApelido: string;
   senderAvatar: string;
   senderColor: string;
-  date: moment.Moment;
+  date: Moment | string | Date;
+  lingua: string;
 } 

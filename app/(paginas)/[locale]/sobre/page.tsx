@@ -135,11 +135,10 @@ interface CardProps {
   tags: string[];
   icon?: ReactNode[];
 }
-
 function CardContent({ nome, srcImagem, altImagem, cargo, tags, icon }: CardProps) {
   return (
-    <div className="mb-6 px-3 md:w-1/2 lg:w-1/3">
-      <div className="rounded-lg border-1 border-sky-100 bg-white p-6 shadow-lg dark:border-neutral-800 dark:bg-transparent dark:shadow-none">
+    <div className="mb-6 px-3 w-full md:w-1/2 lg:w-1/3">
+      <div className="rounded-lg border border-sky-100 bg-white p-6 shadow-lg dark:border-neutral-800 dark:bg-transparent dark:shadow-none">
         <div className="relative flex w-full">
           {srcImagem ? (
             <Image
@@ -157,35 +156,31 @@ function CardContent({ nome, srcImagem, altImagem, cargo, tags, icon }: CardProp
               round
             />
           )}
-          <div className="absolute right-0">
-            {icon?.map((value, index) => {
-              return (
-                <Button
-                  key={index}
-                  isIconOnly
-                  radius={'full'}
-                  className={'bg-transparent text-xl data-[hover=true]:bg-gray-200 dark:data-[hover=true]:bg-gray-800'}
-                >
-                  {value}
-                </Button>
-              );
-            })}
+          <div className="absolute right-0 flex space-x-2">
+            {icon?.map((value, index) => (
+              <Button
+                key={index}
+                isIconOnly
+                radius={'full'}
+                className={'bg-transparent text-xl hover:bg-gray-200 dark:hover:bg-gray-800'}
+              >
+                {value}
+              </Button>
+            ))}
           </div>
         </div>
 
         <h3 className="font-heading mb-3 text-center text-xl">{nome}</h3>
         <p className="text-center text-gray-600">{cargo}</p>
         <p className="mt-4 text-center">
-          {tags.map((value, index) => {
-            return (
-              <span
-                key={index}
-                className="mr-2 inline-block rounded-full bg-gray-100 px-2 py-1 dark:bg-neutral-800 [&:not(:last-child)]:mr-2"
-              >
-                {value}
-              </span>
-            );
-          })}
+          {tags.map((value, index) => (
+            <span
+              key={index}
+              className="mr-2 inline-block rounded-full bg-gray-100 px-2 py-1 dark:bg-neutral-800"
+            >
+              {value}
+            </span>
+          ))}
         </p>
       </div>
     </div>

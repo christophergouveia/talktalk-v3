@@ -73,12 +73,12 @@ exports.randomNicks = {
     'Python Anônimo': 'Python',
     'Wombat Anônimo': 'Wombat',
 };
-var RandomNicks = /** @class */ (function () {
+let RandomNicks = /** @class */ (function () {
     function RandomNicks() {
     }
     RandomNicks.get = function () {
-        var nicks = Object.keys(exports.randomNicks);
-        var randomIndex = Math.floor(Math.random() * nicks.length);
+        let nicks = Object.keys(exports.randomNicks);
+        let randomIndex = Math.floor(Math.random() * nicks.length);
         return nicks[randomIndex];
     };
     RandomNicks.getEnglish = function (nick) {

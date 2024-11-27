@@ -9,16 +9,16 @@ export function GridMain({ title, description, image }: { title: string; descrip
       className="Card_content__sobre row-span-1 !max-h-full !pb-0 !pt-6 sm:row-span-1 lg:row-span-3"
       animateOnce
     >
-      <div className="flex flex-col">
+      <div className="flex flex-col items-center lg:items-start">
         <div>
-          <h2 className="m-4 text-2xl font-semibold text-[#6E91F2] sm:text-center lg:text-start lg:text-3xl 2xl:text-4xl">
+          <h2 className="m-4 text-xl font-semibold text-[#6E91F2] text-center lg:text-start lg:text-3xl 2xl:text-4xl">
             {title}
           </h2>
-          <h3 className="m-4 text-base text-gray-800 dark:text-gray-400 sm:text-center lg:text-start lg:!text-lg 2xl:!text-2xl">
+          <h3 className="m-4 text-sm text-gray-800 dark:text-gray-400 text-center lg:text-start lg:!text-lg 2xl:!text-2xl">
             {description}
           </h3>
         </div>
-        <Image src={image} className="hidden w-[900px] sm:block" alt="Online illustrations by Storyset" />
+        <Image src={image} className="w-full sm:w-[900px]" alt="Online illustrations by Storyset" />
       </div>
     </ScrollAnimation>
   );
@@ -52,12 +52,12 @@ export function SubGrid({
         animationDuration: `${id}s`,
       }}
     >
-      <div className={`Card_content ${className_Content}`}>
-        <h2 className={`Card_content__title ${className_Title}`}>{title}</h2>
-        <h3 className={`${className_Text}`}>{description}</h3>
+      <div className={`Card_content ${className_Content} flex flex-col items-center lg:items-start`}>
+        <h2 className={`Card_content__title ${className_Title} text-center lg:text-start`}>{title}</h2>
+        <h3 className={`${className_Text} text-center lg:text-start`}>{description}</h3>
       </div>
-      <div className="Card_content__image">
-        <Image src={image} className="w-[250px]" alt="Online illustrations by Storyset" />
+      <div className="Card_content__image flex justify-center">
+        <Image src={image} className="w-full sm:w-[250px]" alt="Online illustrations by Storyset" />
       </div>
     </ScrollAnimation>
   );

@@ -154,7 +154,6 @@ export async function translateText(text: string, targetLanguage: SupportedLangu
         port: proxy.port,
       },
     };
-    console.log(text, targetLanguage);
     const translation = await translate(text, { to: targetLanguage, proxyOptions: options });
     return {
       result: translation.text,

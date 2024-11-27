@@ -6,7 +6,7 @@ import MessageList from '@/app/components/chat/MessageList';
 import { CountryFlag } from '@/app/components/countryFlags';
 import CopyButton from '@/app/components/functionals/CopyButton';
 import linguagens from '@/app/locales/languages.json';
-import { descriptografarUserData, verificarHash, criptografarUserData, criptografar } from '@/app/utils/crypto/main.ts';
+import { descriptografarUserData, criptografarUserData, criptografar } from '@/app/utils/crypto/main.ts';
 import fetchRoom from '@/app/utils/roomManagement/fetchRoom';
 import fetchRoomUsers from '@/app/utils/roomManagement/fetchRoomUsers';
 import { RandomAvatarColor } from '@/app/utils/strings/randomAvatarColor';
@@ -33,16 +33,17 @@ import { Socket, io } from 'socket.io-client';
 import { useChat } from '@/app/hooks/useChat';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { getUsersRoomData } from '@/app/utils/roomManagement/getUsersRoomData';
+import { gerarNomeAnimalAleatorio } from '@/app/utils/generators/randomAnimalName';
 
 interface RoomPageProps {
   params: Promise<{
     locale: string;
     codigo: string;
   }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default function RoomPage({ params, searchParams }: RoomPageProps) {
+export default function RoomPage({ params }: RoomPageProps) {
   const [linguaSelecionada, setLinguaSelecionada] = useState<{ label: string; value: string; flag: string }>({
     label: 'Português',
     value: 'pt',
@@ -82,27 +83,24 @@ export default function RoomPage({ params, searchParams }: RoomPageProps) {
   const [languagesFilter, setLanguagesFilter] = useState<string>('');
   const languagesFilterDebounced = useDebounce(languagesFilter, 500);
   const [selectedIndex, setSelectedIndex] = useState<number | undefined>(undefined);
-  const [salaData, setSalaData] = useState<any>(null);
+  const [showUserAlreadyInRoom, setShowUserAlreadyInRoom] = useState(false);
+  const [apelido, setApelido] = useState('');
 
   const codigo = React.use(params).codigo;
 
   const {
     mensagens,
-    setMensagens,
     mensagem,
     setMensagem,
     messageLoading,
-    pessoasConectadas,
     setPessoasConectadas,
     handleMessage,
     sendMessage,
-    isTyping,
-    handleTyping,
+    onLinguaChange,
   } = useChat({
     socketClient,
     userData: userData || null,
     codigo: codigo,
-    linguaSelecionada,
   });
 
   useEffect(() => {
@@ -112,10 +110,15 @@ export default function RoomPage({ params, searchParams }: RoomPageProps) {
     setSelectedIndex(undefined);
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!apelido) {
+      setApelido(gerarNomeAnimalAleatorio());
+    }
+  }, []);
+
   const fetchSala = useCallback(async () => {
     try {
       const sala = await fetchRoom(codigo);
-      setSalaData(sala);
       const salas_usuarios = await fetchRoomUsers(codigo);
 
       if (!salas_usuarios || sala == null) {
@@ -124,52 +127,58 @@ export default function RoomPage({ params, searchParams }: RoomPageProps) {
       }
 
       const userData = cookies.talktalk_userdata;
-      if (!userData) {
-        setShowNameInput(true);
-        return;
-      }
-      const userDataDecrypt = await descriptografarUserData(userData as string);
-      if (JSON.stringify(userDataDecrypt).length == 0 || userDataDecrypt.apelido.trim().length == 0) {
-        setShowNameInput(true);
-        return;
-      } else {
-        setUserData(userDataDecrypt);
-        console.log(userDataDecrypt, sala.hostToken);
-        console.log(userDataDecrypt.userToken, sala.hostToken);
-        if (userDataDecrypt.userToken == sala.hostToken) {
-          setIsHost(true);
-          setHostModal(true);
-          setUsersRoomData({
-            [userDataDecrypt.userToken]: {
-              ...userDataDecrypt,
-              host: true,
-              isTyping: false,
-            },
-          });
-        }
-      }
-
       const roomToken = cookies.talktalk_roomid;
 
-      if (await !verificarHash(JSON.stringify({ token: sala.token, hostToken: sala.hostToken }), roomToken)) {
-        setShowErrorModal(true);
-      } else {
+      if (!userData || !roomToken) {
+        setShowNameInput(true);
+        return;
+      }
+
+      try {
+        const userDataDecrypt = await descriptografarUserData(userData as string);
+
+        const isValidRoom = sala.token == userDataDecrypt.token;
+
+        if (!userDataDecrypt || !userDataDecrypt.apelido || !userDataDecrypt.userToken || !isValidRoom) {
+          setShowNameInput(true);
+          return;
+        }
+
+        setUserData(userDataDecrypt);
+
+        if (userDataDecrypt.userToken === sala.hostToken) {
+          setIsHost(true);
+          setHostModal(true);
+          setUsersRoomData((prev) => {
+            return {
+              [userDataDecrypt.userToken]: {
+                ...userDataDecrypt,
+                host: true,
+                isTyping: false,
+                lastActivity: new Date().toISOString(),
+              },
+            };
+          });
+        }
+
         setShowNameInput(false);
         connectToRoom(true);
+      } catch (error) {
+        console.error('Erro ao descriptografar dados do usuário:', error);
+        setShowNameInput(true);
       }
     } catch (error) {
       console.error('Erro ao buscar sala:', error);
       setShowErrorModal(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [codigo]);
 
   useEffect(() => {
     fetchSala();
 
-  return () => {
-    if (socketClient) {
-      socketClient.disconnect();
+    return () => {
+      if (socketClient) {
+        socketClient.disconnect();
         socketClient.off('user-connected');
         socketClient.off('user-disconnected');
         socketClient.off('message');
@@ -189,69 +198,91 @@ export default function RoomPage({ params, searchParams }: RoomPageProps) {
 
   const handleUserConnected = async (userCookie: any) => {
     try {
-      const userDetails = await descriptografarUserData(userCookie as string);
-      setUsersRoomData((prev) => {
-        // Verifica se o usuário já existe no estado
-        if (prev[userDetails.userToken]) {
-          return prev;
-        }
-        return {
+      // Verifica se o userCookie é um objeto ou string criptografada
+      if (!userCookie || typeof userCookie !== 'string') {
+        console.error('Dados do usuário inválidos');
+        return;
+      }
+
+      let userDetails;
+      try {
+        userDetails = await descriptografarUserData(userCookie);
+      } catch (error) {
+        console.error('Erro ao descriptografar dados do usuário:', error);
+        return;
+      }
+
+      if (!userDetails || !userDetails.userToken) {
+        console.error('Dados do usuário inválidos após descriptografia');
+        return;
+      }
+
+      // Verifica se o usuário já existe antes de atualizar o estado
+      const userExists = usersRoomData[userDetails.userToken];
+      if (userExists) {
+        console.log('Usuário já existe na sala:', userDetails.userToken);
+        return;
+      }
+
+      const newUserData = {
+        ...userDetails,
+        isTyping: false,
+        lastActivity: new Date().toISOString(),
+      };
+
+      const roomHost = (await getUsersRoomData(codigo)).find((user: any) => user.host);
+
+      const hostUserData = roomHost?.userData;
+      if (hostUserData) {
+        const roomHostUser = await descriptografarUserData(hostUserData);
+
+        setUsersRoomData((prev) => ({
           ...prev,
-          [userDetails.userToken]: {
-            ...userDetails,
+          [roomHostUser.userToken]: {
+            ...roomHostUser,
+            host: true,
             isTyping: false,
+            lastActivity: new Date().toISOString(),
           },
-        };
-      });
+          [userDetails.userToken]: {
+            ...newUserData,
+            isTyping: false,
+            lastActivity: new Date().toISOString(),
+          },
+        }));
+      }
+
       setPessoasConectadas((prev) => Number(prev) + 1);
     } catch (error) {
-      console.error('Erro ao descriptografar dados do usuário:', error);
+      console.error('Erro ao processar dados do usuário:', error);
     }
   };
 
-  useEffect(() => {
-    if (isHost) {
-      socketClient?.emit('room-update', codigo, usersRoomData);
-    }
-  }, [usersRoomData, isHost, socketClient, codigo]);
+  const handleUserAlreadyInRoom = () => {
+    setShowUserAlreadyInRoom(true);
+    setSocketClient(null);
+  };
 
   useEffect(() => {
     if (!socketClient) return;
 
+    const handleConnect = () => {
+      console.log('Conectado ao servidor');
+      if (userData) {
+        socketClient.emit('join-room', codigo);
+      }
+    };
+
+    socketClient.on('connect', handleConnect);
     socketClient.on('user-connected', handleUserConnected);
     socketClient.on('user-disconnected', handleUserDisconnected);
     socketClient.on('message', handleMessage);
-    socketClient.on('typing', (typing, userToken) => handleTyping(typing, userToken));
-    socketClient.on('previousMessages', (mensagens) => {
-      mensagens.forEach((mensagens: any) => {
-        const clientTz = moment.tz.guess(true);
-        const date = moment(mensagens.dataEnvio).tz(clientTz);
-        setMensagens((prev) => [
-          ...prev,
-          {
-            message: mensagens.mensagem,
-            messageTraduzido: mensagens.mensagemTraduzida,
-            senderId: mensagens.usuario,
-            date: date,
-            senderApelido: mensagens.apelido,
-            senderAvatar: mensagens.avatar,
-            senderColor: mensagens.senderColor,
-          },
-        ]);
+    socketClient.on('room-update', (users) => {
+      setUsersRoomData((prev) => {
+        return users;
       });
     });
-    socketClient.on('room-update', (users) => {
-      setUsersRoomData(users);
-    });
-
-    return () => {
-      socketClient.off('user-connected', handleUserConnected);
-      socketClient.off('user-disconnected', handleUserDisconnected);
-      socketClient.off('message', handleMessage);
-      socketClient.off('typing', (typing, userToken) => handleTyping(typing, userToken));
-    };
-  }, [socketClient, codigo, linguaSelecionada]);
-
+  }, [socketClient, codigo]);
   useEffect(() => {
     if (socketClient) {
       socketClient.emit('join-room', codigo);
@@ -285,7 +316,7 @@ export default function RoomPage({ params, searchParams }: RoomPageProps) {
         socketClient?.emit('typing', true, userData.userToken, codigo);
       }
     },
-    [shiftPressed, mensagem, sendMessage, userData, socketClient, codigo]
+    [shiftPressed, mensagem, sendMessage, userData, socketClient, codigo, linguaSelecionada.value]
   );
 
   const handleTextAreaKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement> | KeyboardEvent) => {
@@ -302,46 +333,89 @@ export default function RoomPage({ params, searchParams }: RoomPageProps) {
 
   const connectToRoom = useCallback(
     async (bypass: boolean) => {
-      let nickname = userName;
-      if (!nickname) {
-        nickname = RandomNicks.get();
-      }
-      const sala = await fetchRoom(codigo);
-      if (!sala) {
-        setShowErrorModal(true);
-        return;
-      }
-      if (userName.trim() || bypass) {
-        if (!bypass) {
-          const englishName = RandomNicks.getEnglish(RandomNicks.get());
-          const payload = {
-            apelido: nickname,
-            avatar: `/images/avatars/${englishName.toLowerCase()}.png`,
-            color: RandomAvatarColor.get().hex,
-            token: sala.token,
-            userToken: RandomToken.get(),
-          };
-          const payloadEncrypted = await criptografarUserData(payload);
-          const roomPayload = { token: sala.token, hostToken: sala.hostToken };
-          const roomPayloadEncrypted = await criptografar(JSON.stringify(roomPayload));
-          setCookies('talktalk_userdata', payloadEncrypted.dadoCriptografado, {
-            expires: undefined,
-            sameSite: 'strict',
-            path: '/',
-          });
-          setCookies('talktalk_roomid', roomPayloadEncrypted, {
-            expires: undefined,
-            sameSite: 'strict',
-            path: '/',
-          });
+      try {
+        console.log('[DEBUG] Iniciando connectToRoom com bypass:', bypass);
+
+        // Obtém o nickname
+        let nickname = userName;
+        if (!nickname) {
+          nickname = RandomNicks.get();
+          console.log('[DEBUG] Nickname gerado:', nickname);
         }
-        setSocketClient(
-          io("https://" + process.env.NEXT_PUBLIC_SOCKET_URL + ':3001', {
-            withCredentials: true,
+
+        // Busca dados da sala
+        const sala = await fetchRoom(codigo);
+        console.log('[DEBUG] Dados da sala:', sala);
+
+        if (!sala) {
+          console.log('[DEBUG] Sala não encontrada');
+          setShowErrorModal(true);
+          return;
+        }
+
+        // Verifica se pode prosseguir
+        if (userName.trim() || bypass) {
+          console.log('[DEBUG] Prosseguindo com a conexão');
+
+          if (!bypass) {
+            console.log('[DEBUG] Gerando novo usuário');
+            const englishName = RandomNicks.getEnglish(RandomNicks.get());
+            const payload = {
+              apelido: nickname,
+              avatar: `/images/avatars/${englishName.toLowerCase()}.png`,
+              color: RandomAvatarColor.get().hex,
+              token: sala.token,
+              userToken: RandomToken.get(),
+            };
+            console.log('[DEBUG] Payload gerado:', payload);
+
+            const payloadEncrypted = await criptografarUserData(payload);
+            console.log('[DEBUG] Payload criptografado:', payloadEncrypted);
+
+            const roomPayload = { token: sala.token, hostToken: sala.hostToken };
+            const roomPayloadEncrypted = await criptografar(JSON.stringify(roomPayload));
+            console.log('[DEBUG] Room payload criptografado:', roomPayloadEncrypted);
+
+            // Salva cookies
+            setCookies('talktalk_userdata', payloadEncrypted.dadoCriptografado, {
+              expires: undefined,
+              sameSite: 'strict',
+              path: '/',
+            });
+            setCookies('talktalk_roomid', roomPayloadEncrypted, {
+              expires: undefined,
+              sameSite: 'strict',
+              path: '/',
+            });
+
+            window.location.reload();
+          }
+
+          setShowNameInput(false);
+
+          const socket = io(`wss://${process.env.NEXT_PUBLIC_SOCKET_URL}:3001`, {
             transports: ['websocket', 'polling'],
-          })
-        );
-        setShowNameInput(false);
+            secure: true,
+            rejectUnauthorized: false,
+            withCredentials: true,
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
+          });
+
+          // Emite o evento join-room diretamente com o socket criado
+          socket.emit('join-room', codigo);
+
+          // Configura listeners do socket
+          socket.on('connect_error', (error) => {
+            console.error('[DEBUG] Erro na conexão do socket:', error);
+          });
+
+          // Só então atualiza o estado
+          setSocketClient(socket);
+        }
+      } catch (error) {
+        console.error('[DEBUG] Erro em connectToRoom:', error);
       }
     },
     [userName]
@@ -356,6 +430,11 @@ export default function RoomPage({ params, searchParams }: RoomPageProps) {
         value: selectedLanguage.value,
       });
     }
+    onLinguaChange(value);
+  }, []);
+
+  useEffect(() => {
+    onLinguaChange(linguaSelecionada.value);
   }, []);
 
   const filteredLanguages =
@@ -381,6 +460,15 @@ export default function RoomPage({ params, searchParams }: RoomPageProps) {
         <p className="mt-2 text-gray-600">
           Desculpe, mas ocorreu algum erro ao entrar na sala. Por favor, tente novamente mais tarde.
         </p>
+      </div>
+    );
+  }
+
+  if (showUserAlreadyInRoom) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
+        <h2 className="text-2xl font-bold">Você já está nesta sala em outro dispositivo!</h2>
+        <p className="mt-2 text-gray-600">Para entrar na sala, você deve sair de outros dispositivos.</p>
       </div>
     );
   }
@@ -489,13 +577,14 @@ export default function RoomPage({ params, searchParams }: RoomPageProps) {
               <Message
                 key={index}
                 date={message.date}
+                lingua={message.lingua}
                 ownMessage={message.senderId == userData?.userToken}
                 originalMessage={message.message}
                 senderApelido={message.senderApelido}
                 senderAvatar={message.senderAvatar}
                 senderColor={message.senderColor}
               >
-                {message.messageTraduzido}
+                {message.messageTraduzido || message.message}
               </Message>
             ))}
             {messageLoading && (
@@ -541,7 +630,9 @@ export default function RoomPage({ params, searchParams }: RoomPageProps) {
         </ChatComponent.Footer>
       </section>
       <aside
-        className={`ml-2 lg:h-full rounded-md bg-[var(--chat-bg-geral)] absolute lg:relative h-full flex flex-col lg:flex ${isSettingsOpen ? 'flex' : 'hidden'}`}
+        className={`ml-2 lg:h-full rounded-md bg-[var(--chat-bg-geral)] absolute lg:relative h-full flex flex-col lg:flex ${
+          isSettingsOpen ? 'flex' : 'hidden'
+        }`}
       >
         <h1 className="rounded-md bg-[var(--chat-bg-header)] p-2 text-center font-bold">CONFIGURAÇÕES DA SALA</h1>
         <section className="flex-1">
@@ -584,12 +675,7 @@ export default function RoomPage({ params, searchParams }: RoomPageProps) {
                         type="text"
                         className="p-4"
                         placeholder="Pesquise uma língua..."
-                        onChange={(e) => {
-                          setLanguagesFilter(e.target.value);
-                          if (linguagens.length > 0) {
-                            updateLanguage(linguagens[0].value);
-                          }
-                        }}
+                        onChange={(e) => setLanguagesFilter(e.target.value)}
                         ref={languagesFilterRef}
                         onKeyDown={(e) => {
                           if (e.key === 'ArrowDown') {
@@ -668,14 +754,14 @@ export default function RoomPage({ params, searchParams }: RoomPageProps) {
                     <span className="text-medium font-medium flex items-center gap-1" style={{ color: user.color }}>
                       {user.apelido} {user.host && <span>👑</span>}
                     </span>
-                    <span className="text-tiny text-gray-600 dark:text-gray-400">{user.host ? 'Anfitrião' : 'Convidado'}</span>
+                    <span className="text-tiny text-gray-600 dark:text-gray-400">
+                      {user.host ? 'Anfitrião' : 'Convidado'}
+                    </span>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-center p-4 text-gray-500 dark:text-gray-400">
-                Nenhum usuário conectado
-              </div>
+              <div className="text-center p-4 text-gray-500 dark:text-gray-400">Nenhum usuário conectado</div>
             )}
           </div>
         </div>
@@ -683,3 +769,4 @@ export default function RoomPage({ params, searchParams }: RoomPageProps) {
     </div>
   );
 }
+

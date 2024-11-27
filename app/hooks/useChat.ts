@@ -8,20 +8,24 @@ interface UseChatProps {
   socketClient: Socket | null;
   userData: UserData | null;
   codigo: string;
-  linguaSelecionada: {
-    value: string;
-  };
 }
 
-export function useChat({ socketClient, userData, codigo, linguaSelecionada }: UseChatProps) {
+export function useChat({ socketClient, userData, codigo }: UseChatProps) {
   const [mensagens, setMensagens] = useState<MessageType[]>([]);
   const [mensagem, setMensagem] = useState<string>('');
   const [messageLoading, setMessageLoading] = useState(false);
   const [pessoasConectadas, setPessoasConectadas] = useState<Number>(0);
   const [isTyping, setIsTyping] = useState<{ [key: string]: boolean }>({});
-
-  // Adiciona timeout para digitação
+  const [usersInRoom, setUsersInRoom] = useState<UserData[]>([]);
+  const linguaSelecionadaRef = useRef<string>('');
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const onLinguaChange = (lingua: string) => {
+    linguaSelecionadaRef.current = lingua;
+  };
+
+  useEffect(() => {
+  }, [linguaSelecionadaRef.current]);
 
   const handleTyping = (typing: boolean, userToken: string) => {
     if (typingTimeoutRef.current) {
@@ -49,24 +53,24 @@ export function useChat({ socketClient, userData, codigo, linguaSelecionada }: U
     }
   };
 
-  const handleMessage = useCallback(
-    async (message: any) => {
-      try {
+  const handleMessage = async (message: any) => {
+    const clientTz = moment.tz.guess(true);
+    const messageDate = moment(message.date).tz(clientTz);
+    try {
+      const isOwnMessage = message.userToken === userData?.userToken;
+      // Só traduz se não for mensagem própria e se o idioma for diferente
+      if (!isOwnMessage && message.lingua !== linguaSelecionadaRef.current) {
         setMessageLoading(true);
-        const clientTz = moment.tz.guess(true);
-        const data = moment(message.date).tz(clientTz);
-
         const response = await fetch('/api/translate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             text: message.message,
-            targetLanguage: linguaSelecionada.value,
+            targetLanguage: linguaSelecionadaRef.current,
           }),
         });
 
         if (!response.ok) throw new Error('Erro na tradução');
-
         const { result: traduzido } = await response.json();
 
         setMensagens((prev) => [
@@ -77,18 +81,47 @@ export function useChat({ socketClient, userData, codigo, linguaSelecionada }: U
             senderId: message.userToken,
             senderApelido: message.apelido,
             senderAvatar: message.avatar,
-            date: data,
             senderColor: message.senderColor,
+            date: messageDate,
+            lingua: message.lingua,
           },
         ]);
-      } catch (error) {
-        console.error('Erro:', error);
-      } finally {
-        setMessageLoading(false);
+      } else {
+        // Se for mensagem própria ou mesmo idioma, não traduz
+        setMensagens((prev) => [
+          ...prev,
+          {
+            message: message.message,
+            messageTraduzido: message.message, // Usa a mensagem original
+            senderId: message.userToken,
+            senderApelido: message.apelido,
+            senderAvatar: message.avatar,
+            senderColor: message.senderColor,
+            date: messageDate,
+            lingua: message.lingua,
+          },
+        ]);
       }
-    },
-    [linguaSelecionada]
-  );
+    } catch (error) {
+      console.error('Erro na tradução:', error);
+      // Em caso de erro, adiciona a mensagem sem tradução
+      setMensagens((prev) => [
+        ...prev,
+        {
+          message: message.message,
+          messageTraduzido: message.message,
+          senderId: message.userToken,
+          senderApelido: message.apelido,
+          senderAvatar: message.avatar,
+          senderColor: message.senderColor,
+          date: messageDate,
+          lingua: message.lingua,
+        },
+      ]);
+    } finally {
+      setMessageLoading(false);
+    }
+  };
 
   useEffect(() => {
     let reconnectAttempts = 0;
@@ -114,12 +147,39 @@ export function useChat({ socketClient, userData, codigo, linguaSelecionada }: U
     }
   }, [socketClient]);
 
+  useEffect(() => {
+    if (socketClient) {
+      socketClient.on('room-users-update', (users: UserData[]) => {
+        setUsersInRoom(users);
+        setPessoasConectadas(users.length);
+      });
+
+      socketClient.on('redirect-to-home', () => {
+        window.location.href = '/';
+      });
+
+      return () => {
+        socketClient.off('room-users-update');
+        socketClient.off('redirect-to-home');
+      };
+    }
+  }, [socketClient]);
+
   const sendMessage = useCallback(() => {
     if (socketClient && mensagem.trim() && userData) {
-      socketClient.emit('sendMessage', cleanMessage(mensagem), userData.userToken, userData.apelido, userData.avatar, codigo, linguaSelecionada.value, userData.color);
+      socketClient.emit(
+        'sendMessage',
+        cleanMessage(mensagem),
+        userData.userToken,
+        userData.color,
+        userData.apelido,
+        userData.avatar,
+        codigo,
+        linguaSelecionadaRef.current
+      );
       setMensagem('');
     }
-  }, [socketClient, mensagem, codigo, linguaSelecionada, userData]);
+  }, [socketClient, mensagem, codigo, userData]);
 
   return {
     mensagens,
@@ -133,5 +193,8 @@ export function useChat({ socketClient, userData, codigo, linguaSelecionada }: U
     sendMessage,
     isTyping,
     handleTyping,
+    usersInRoom,
+    onLinguaChange,
   };
 }
+

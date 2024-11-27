@@ -39,3 +39,4 @@ next-env.d.ts
 server/node_modules
 
 prisma/migrations
+certificates

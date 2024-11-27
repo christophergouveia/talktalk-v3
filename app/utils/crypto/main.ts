@@ -1,7 +1,7 @@
 'use server';
 
-import crypto from 'crypto';
-import dotenv from 'dotenv';
+import * as crypto from 'crypto';
+import * as dotenv from 'dotenv';
 dotenv.config({ path: '../../.env' });
 
 interface CriptografiaResult {
@@ -14,7 +14,7 @@ export const criptografar = async (string: string): Promise<string> => {
   const hash = crypto.createHash('sha256');
   hash.update(string);
   return hash.digest('hex');
-}
+};
 
 export const criptografarUserData = async (data: any): Promise<CriptografiaResult> => {
   const jwtSecret = process.env.NEXT_PUBLIC_JWT_SECRET;
@@ -39,9 +39,13 @@ export const criptografarUserData = async (data: any): Promise<CriptografiaResul
     iv: iv.toString('hex'),
     dadoCriptografado: dadoCriptografado.toString('hex'),
   };
-}
+};
 
 export const descriptografarUserData = async (dadoCriptografado: string): Promise<any> => {
+  if (dadoCriptografado.trim().length < 256) {
+    console.error("Dado criptografado inválido");
+    return '';
+  }
   const jwtSecret = process.env.NEXT_PUBLIC_JWT_SECRET;
   if (!jwtSecret) {
     throw new Error('JWT_SECRET não está definido');
@@ -65,14 +69,14 @@ export const descriptografarUserData = async (dadoCriptografado: string): Promis
   const dadoDescriptografadoJson = JSON.parse(dadoDescriptografado.toString('utf8'));
 
   return dadoDescriptografadoJson;
-}
+};
 
 export const verificarDados = async (data: any, dataCriptografada: CriptografiaResult): Promise<boolean> => {
   const dadoDescriptografado = await descriptografarUserData(dataCriptografada.dadoCriptografado);
   return JSON.stringify(data) === JSON.stringify(dadoDescriptografado);
-}
+};
 
 export const verificarHash = async (string: string, hash: string): Promise<boolean> => {
   const stringHash = crypto.createHash('sha256').update(string).digest('hex');
   return stringHash === hash;
-} 
+};

@@ -11,7 +11,7 @@ import { ErrorInputs } from '@/app/utils/interfaces/input';
 import { useCookies } from 'react-cookie';
 import createRoom from '@/app/utils/roomManagement/createRoom';
 import { insertUser } from '@/app/utils/roomManagement/user/insertUser';
-import * as Criptografia from '@/app/utils/crypto/main';
+import { criptografar, criptografarUserData } from '@/app/utils/crypto/main.ts';
 import { RandomNicks } from '@/app/utils/strings/randomNicks';
 import RandomToken from '@/app/utils/strings/randomToken';
 import Image from 'next/image';
@@ -76,20 +76,20 @@ export default function ConversarHome() {
       // São dois tokens, um para os usuários que não são anfitrião, e um para identificar o anfitrião da sala
       // Depois acho uma maneira melhor de fazer isso...
       // TODO : Retirar o hostToken e utilizar o userToken como token do anfitrião
-      var token = RandomToken.get();
-      var userToken = RandomToken.get();
+      let token = RandomToken.get();
+      let userToken = RandomToken.get();
       const sala = await createRoom({ token: token, hostToken: userToken });
       if (sala != null) {
         const payload = { token, userToken };
         const secretBase64 = process.env.NEXT_PUBLIC_JWT_SECRET;
-        console.log(secretBase64)
         if (secretBase64) {
-          const hashed = await Criptografia.criptografar(JSON.stringify(payload));
+          const hashed = await criptografar(JSON.stringify(payload));
           // Aqui é somente os dados para a verificação se o usuário está permitido de entrar na sala ou nao
           setCookie('talktalk_roomid', hashed, {
             expires: undefined,
             sameSite: 'strict',
             path: '/',
+            secure: true,
           });
           // Aqui agora, irá ser criptografado os dados do usuário e o token, para saber que ele é o dono da, como apelido e avatar :D
           const userData = {
@@ -99,13 +99,14 @@ export default function ConversarHome() {
             token,
             userToken,
           };
-          const userDataEncrypted = (await Criptografia.criptografarUserData(userData)).dadoCriptografado;
+          const userDataEncrypted = (await criptografarUserData(userData)).dadoCriptografado;
           setCookie('talktalk_userdata', userDataEncrypted, {
             expires: undefined,
             sameSite: 'strict',
             path: '/',
+            secure: true,
           });
-          await insertUser(sala, hashed, true);
+          await insertUser(sala, userDataEncrypted, true);
         }
         router.push(`/conversar/${sala}`);
       } else {
@@ -147,7 +148,6 @@ export default function ConversarHome() {
   const handleSelectColor = useCallback(
     (color: string) => {
       setAvatarColor(color);
-      console.log(color);
       setColorModalOpenned(false);
     },
     [setAvatarColor, avatarColor]
