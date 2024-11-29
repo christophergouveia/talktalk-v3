@@ -43,7 +43,7 @@ export function middleware(request: NextRequest) {
   // Tratar página 404 especificamente
   if (pathname === '/404') {
     const locale = getLocale(request);
-    return NextResponse.redirect(new URL(`/${locale}/not-found`, request.url));
+    return NextResponse.rewrite(new URL(`/${locale}/not-found`, request.url));
   }
 
   // Ignorar arquivos estáticos e API routes

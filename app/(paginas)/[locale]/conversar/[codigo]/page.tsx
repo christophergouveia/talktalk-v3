@@ -7,11 +7,11 @@ import { CountryFlag } from '@/app/components/countryFlags.tsx';
 import CopyButton from '@/app/components/functionals/CopyButton.tsx';
 import linguagens from '@/app/locales/languages.json';
 import { descriptografarUserData, criptografarUserData, criptografar } from '@/app/utils/crypto/main.ts';
-import fetchRoom from '@/app/utils/roomManagement/fetchRoom.ts';
-import fetchRoomUsers from '@/app/utils/roomManagement/fetchRoomUsers.ts';
-import { RandomAvatarColor } from '@/app/utils/strings/randomAvatarColor.ts';
-import { RandomNicks } from '@/app/utils/strings/randomNicks.ts';
-import RandomToken from '@/app/utils/strings/randomToken.ts';
+import fetchRoom from '@/app/utils/roomManagement/fetchRoom.tsx';
+import fetchRoomUsers from '@/app/utils/roomManagement/fetchRoomUsers.tsx';
+import { RandomAvatarColor } from '@/app/utils/strings/randomAvatarColor.tsx';
+import { RandomNicks } from '@/app/utils/strings/randomNicks.tsx';
+import RandomToken from '@/app/utils/strings/randomToken.tsx';
 import {
   Button,
   Input,
