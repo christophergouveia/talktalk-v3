@@ -24,14 +24,12 @@ import {
   Textarea,
 } from '@nextui-org/react';
 import { useDebounce } from '@uidotdev/usehooks';
-import moment from 'moment-timezone';
 import React, { ChangeEvent, KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { IoIosSend } from 'react-icons/io';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { Socket, io } from 'socket.io-client';
 import { useChat } from '@/app/hooks/useChat';
-import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { getUsersRoomData } from '@/app/utils/roomManagement/getUsersRoomData';
 import { gerarNomeAnimalAleatorio } from '@/app/utils/generators/randomAnimalName';
@@ -258,11 +256,6 @@ export default function RoomPage({ params }: RoomPageProps) {
     }
   };
 
-  const handleUserAlreadyInRoom = () => {
-    setShowUserAlreadyInRoom(true);
-    setSocketClient(null);
-  };
-
   useEffect(() => {
     if (!socketClient) return;
 
@@ -393,10 +386,8 @@ export default function RoomPage({ params }: RoomPageProps) {
 
           setShowNameInput(false);
 
-          const socket = io(`wss://${process.env.NEXT_PUBLIC_SOCKET_URL}:3001`, {
+          const socket = io(`http://${process.env.NEXT_PUBLIC_SOCKET_URL}:3001`, {
             transports: ['websocket', 'polling'],
-            secure: true,
-            rejectUnauthorized: false,
             withCredentials: true,
             reconnection: true,
             reconnectionAttempts: 5,

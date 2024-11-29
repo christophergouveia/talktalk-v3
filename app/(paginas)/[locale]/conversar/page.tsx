@@ -89,7 +89,6 @@ export default function ConversarHome() {
             expires: undefined,
             sameSite: 'strict',
             path: '/',
-            secure: true,
           });
           // Aqui agora, irá ser criptografado os dados do usuário e o token, para saber que ele é o dono da, como apelido e avatar :D
           const userData = {
@@ -104,7 +103,6 @@ export default function ConversarHome() {
             expires: undefined,
             sameSite: 'strict',
             path: '/',
-            secure: true,
           });
           await insertUser(sala, userDataEncrypted, true);
         }

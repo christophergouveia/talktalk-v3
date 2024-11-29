@@ -1,24 +1,17 @@
 const express = require('express');
 const app = express();
-const fs = require('fs');
-const https = require('https');
-const cookie = require('cookie');
+const http = require('http');
 const cors = require('cors');
+const cookie = require('cookie');
 const { PrismaClient } = require('@prisma/client');
 const { descriptografarUserData } = require('../app/utils/crypto/main.js');
-const verifyUserInRoom = require('./utils/verifyUserInRoom');
 
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 
-const options = {
-  key: fs.readFileSync('./server/ssl/private.pem'),
-  cert: fs.readFileSync('./server/ssl/certificate.pem'),
-  requestCert: false,
-  rejectUnauthorized: false,
-};
+app.use(cors());
 
-const server = https.createServer(options, app);
+const server = http.createServer(app);
 
 const io = require('socket.io')(server, {
   cors: {
@@ -26,9 +19,7 @@ const io = require('socket.io')(server, {
     credentials: true,
     methods: ['GET', 'POST']
   },
-  transports: ['websocket', 'polling'],
-  secure: true,
-  rejectUnauthorized: false
+  transports: ['websocket', 'polling']
 });
 
 const activeUsers = new Map(); // Armazena usuários ativos e seus dados
@@ -204,8 +195,8 @@ app.get('/', (req, res) => {
   res.send('Servidor HTTP funcionando corretamente');
 });
 
-server.listen(PORT, () => {
-  console.log(`Servidor Socket.IO rodando na porta ${PORT}`);
+server.listen(PORT, process.env.NEXT_PUBLIC_SOCKET_URL, () => {
+  console.log(`Servidor Socket.IO rodando na porta ${PORT} e URL ${process.env.NEXT_PUBLIC_SOCKET_URL}`);
 });
 
 server.on('close', () => {
