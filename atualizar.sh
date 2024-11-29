@@ -17,3 +17,6 @@ git reset --hard origin/main
 
 # Move os arquivos do server para a pasta server na raiz
 cp -rf server/* ../nodejs-talktalk/
+sudo chown -R ubuntu:ubuntu .
+
+printf "Atualização concluída com sucesso! \n"

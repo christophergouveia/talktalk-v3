@@ -1,17 +1,17 @@
 'use client';
 
-import ChatComponent from '@/app/components/chat/Chat';
-import Message from '@/app/components/chat/Message';
-import MessageList from '@/app/components/chat/MessageList';
-import { CountryFlag } from '@/app/components/countryFlags';
-import CopyButton from '@/app/components/functionals/CopyButton';
+import ChatComponent from '@/app/components/chat/Chat.tsx';
+import Message from '@/app/components/chat/Message.tsx';
+import MessageList from '@/app/components/chat/MessageList.tsx';
+import { CountryFlag } from '@/app/components/countryFlags.tsx';
+import CopyButton from '@/app/components/functionals/CopyButton.tsx';
 import linguagens from '@/app/locales/languages.json';
 import { descriptografarUserData, criptografarUserData, criptografar } from '@/app/utils/crypto/main.ts';
-import fetchRoom from '@/app/utils/roomManagement/fetchRoom';
-import fetchRoomUsers from '@/app/utils/roomManagement/fetchRoomUsers';
-import { RandomAvatarColor } from '@/app/utils/strings/randomAvatarColor';
-import { RandomNicks } from '@/app/utils/strings/randomNicks';
-import RandomToken from '@/app/utils/strings/randomToken';
+import fetchRoom from '@/app/utils/roomManagement/fetchRoom.ts';
+import fetchRoomUsers from '@/app/utils/roomManagement/fetchRoomUsers.ts';
+import { RandomAvatarColor } from '@/app/utils/strings/randomAvatarColor.ts';
+import { RandomNicks } from '@/app/utils/strings/randomNicks.ts';
+import RandomToken from '@/app/utils/strings/randomToken.ts';
 import {
   Button,
   Input,
