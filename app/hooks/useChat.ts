@@ -1,8 +1,8 @@
 import { Socket } from 'socket.io-client';
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { MessageType, UserData } from '@/app/types/chat';
+import { MessageType, UserData } from '/app/types/chat';
 import moment from 'moment-timezone';
-import { cleanMessage } from '@/app/utils/formatters/cleanMessage';
+import { cleanMessage } from '/app/utils/formatters/cleanMessage';
 
 interface UseChatProps {
   socketClient: Socket | null;

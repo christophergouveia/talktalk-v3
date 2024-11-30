@@ -1,6 +1,6 @@
 'use server';
 
-import prisma from "@/prisma/prisma";
+import prisma from "/prisma/prisma";
 
 /**
  * Fetches a user from the database based on the provided room code and user data.

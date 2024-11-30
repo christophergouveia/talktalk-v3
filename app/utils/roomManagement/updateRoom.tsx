@@ -1,7 +1,7 @@
 'use server';
 
 import type { Salas as SalasType } from '@prisma/client';
-import prisma from '@/prisma/prisma';
+import prisma from '/prisma/prisma';
 
 /**
  * Updates a room in the database with the provided data.

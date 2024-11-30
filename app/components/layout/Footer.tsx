@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import imagemLogo from '@/public/images/icon/logo-ifpr.png';
+import imagemLogo from '/public/images/icon/logo-ifpr.png';
 import { useTranslations } from 'next-intl';
 
 export default function Footer({}) {

@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { UserData } from '@/app/types/chat';
+import { UserData } from '/app/types/chat';
 
 interface UsersOnlineProps {
   users: UserData[];

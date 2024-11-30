@@ -1,6 +1,6 @@
 'use server';   
 
-import prisma from '@/prisma/prisma';
+import prisma from '/prisma/prisma';
 
 export const getUsersRoomData = async (roomCode: string) => {
   const users = await prisma.salas_Usuarios.findMany({

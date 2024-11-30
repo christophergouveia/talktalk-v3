@@ -1,4 +1,4 @@
-import { RandomNicks, randomNicks } from '@/app/utils/strings/randomNicks';
+import { RandomNicks, randomNicks } from '/app/utils/strings/randomNicks';
 import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Tooltip } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';

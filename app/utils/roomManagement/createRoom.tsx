@@ -1,7 +1,7 @@
 'use server';
 
 import codigoAleatorio from '../strings/randomCode';
-import prisma from '@/prisma/prisma';
+import prisma from '/prisma/prisma';
 
 /**
  * Creates a new room by generating a unique code and checking if it already exists in the database.

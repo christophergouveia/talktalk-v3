@@ -1,6 +1,6 @@
 'use server';
 
-import prisma from "@/prisma/prisma";
+import prisma from "/prisma/prisma";
 
 /**
  * Inserts a new user into the salas_Usuarios table.
