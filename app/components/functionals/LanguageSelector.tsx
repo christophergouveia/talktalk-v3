@@ -1,7 +1,7 @@
-import { CountryFlag } from '/app/components/countryFlags';
+import { CountryFlag } from '@/app/components/countryFlags';
 import { Input } from '@nextui-org/react';
 import { useEffect, useRef, useState } from 'react';
-import linguagens from '/app/locales/languages.json';
+import linguagens from '@/app/locales/languages.json';
 import { ChevronDown } from 'lucide-react';
 
 interface LanguageSelectorProps {

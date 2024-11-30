@@ -2,7 +2,7 @@ import moment from 'moment-timezone';
 import Image from 'next/image';
 import { ReactNode } from 'react';
 import { Moment } from 'moment-timezone';
-import { supportedLanguages } from '/app/api/translate/languages';
+import { supportedLanguages } from '@/app/api/translate/languages';
 
 interface MessageType {
   ownMessage: boolean;

@@ -1,4 +1,4 @@
-import { colors } from '/app/components/functionals/ColorsSelector';
+import { colors } from '@/app/components/functionals/ColorsSelector';
 
 export class RandomAvatarColor {
   static get() {

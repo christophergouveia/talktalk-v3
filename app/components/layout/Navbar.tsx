@@ -10,7 +10,7 @@ import LogoSite from '/public/images/icon/logo.png';
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react';
 import { CountryFlag } from '../countryFlags';
 import { useLocale, useTranslations } from 'next-intl';
-import { Link, usePathname, useRouter } from '/app/i18n/routing';
+import { Link, usePathname, useRouter } from '@/app/i18n/routing';
 import { usePathname as usePathnameNext } from 'next/navigation';
 import { useCookies } from 'react-cookie';
 import { motion } from 'framer-motion';
