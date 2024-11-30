@@ -1,17 +1,17 @@
 'use client';
 
-import ChatComponent from '@/app/components/chat/Chat.tsx';
-import Message from '@/app/components/chat/Message.tsx';
-import MessageList from '@/app/components/chat/MessageList.tsx';
-import { CountryFlag } from '@/app/components/countryFlags.tsx';
-import CopyButton from '@/app/components/functionals/CopyButton.tsx';
-import linguagens from '@/app/locales/languages.json';
-import { descriptografarUserData, criptografarUserData, criptografar } from '@/app/utils/crypto/main.ts';
-import fetchRoom from '@/app/utils/roomManagement/fetchRoom.tsx';
-import fetchRoomUsers from '@/app/utils/roomManagement/fetchRoomUsers.tsx';
-import { RandomAvatarColor } from '@/app/utils/strings/randomAvatarColor.tsx';
-import { RandomNicks } from '@/app/utils/strings/randomNicks.tsx';
-import RandomToken from '@/app/utils/strings/randomToken.tsx';
+import ChatComponent from '/app/components/chat/Chat.tsx';
+import Message from '/app/components/chat/Message.tsx';
+import MessageList from '/app/components/chat/MessageList.tsx';
+import { CountryFlag } from '/app/components/countryFlags.tsx';
+import CopyButton from '/app/components/functionals/CopyButton.tsx';
+import linguagens from '/app/locales/languages.json';
+import { descriptografarUserData, criptografarUserData, criptografar } from '/app/utils/crypto/main.ts';
+import fetchRoom from '/app/utils/roomManagement/fetchRoom.tsx';
+import fetchRoomUsers from '/app/utils/roomManagement/fetchRoomUsers.tsx';
+import { RandomAvatarColor } from '/app/utils/strings/randomAvatarColor.tsx';
+import { RandomNicks } from '/app/utils/strings/randomNicks.tsx';
+import RandomToken from '/app/utils/strings/randomToken.tsx';
 import {
   Button,
   Input,
@@ -29,10 +29,10 @@ import { useCookies } from 'react-cookie';
 import { IoIosSend } from 'react-icons/io';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { Socket, io } from 'socket.io-client';
-import { useChat } from '@/app/hooks/useChat';
+import { useChat } from '/app/hooks/useChat';
 import Image from 'next/image';
-import { getUsersRoomData } from '@/app/utils/roomManagement/getUsersRoomData';
-import { gerarNomeAnimalAleatorio } from '@/app/utils/generators/randomAnimalName';
+import { getUsersRoomData } from '/app/utils/roomManagement/getUsersRoomData';
+import { gerarNomeAnimalAleatorio } from '/app/utils/generators/randomAnimalName';
 
 interface RoomPageProps {
   params: Promise<{
