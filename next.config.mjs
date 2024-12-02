@@ -1,4 +1,5 @@
-import createNextIntlPlugin from 'next-intl/plugin';
+import MillionLint from "@million/lint";
+import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin("./app/i18n/request.ts");
 
@@ -9,10 +10,13 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        hostname: '*',
+        hostname: "*",
       },
     ],
   },
 };
 
-export default withNextIntl(nextConfig);
+export default MillionLint.next({
+  enabled: true,
+  rsc: true
+})(withNextIntl(nextConfig));
