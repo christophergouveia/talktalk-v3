@@ -40,7 +40,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.verificarHash = exports.verificarDados = exports.descriptografarUserData = exports.criptografarUserData = exports.criptografar = void 0;
 var crypto = require("crypto");
 var dotenv = require("dotenv");
-dotenv.config({ path: '../../.env' });
+dotenv.config({ path: '../../../.env' });
 var criptografar = function (string) { return __awaiter(void 0, void 0, void 0, function () {
     var hash;
     return __generator(this, function (_a) {
@@ -53,11 +53,11 @@ exports.criptografar = criptografar;
 var criptografarUserData = function (data) { return __awaiter(void 0, void 0, void 0, function () {
     var jwtSecret, jwtSecretIv, chave, iv, aes, dadoCriptografado;
     return __generator(this, function (_a) {
-        jwtSecret = process.env.NEXT_PUBLIC_JWT_SECRET;
+        jwtSecret = process.env.JWT_SECRET;
         if (!jwtSecret) {
             throw new Error('JWT_SECRET não está definido');
         }
-        jwtSecretIv = process.env.NEXT_PUBLIC_JWT_SECRET_IV;
+        jwtSecretIv = process.env.JWT_SECRET_IV;
         if (!jwtSecretIv) {
             throw new Error('JWT_SECRET_IV não está definido');
         }
@@ -83,11 +83,11 @@ var descriptografarUserData = function (dadoCriptografado) { return __awaiter(vo
             console.error("Dado criptografado inválido");
             return [2 /*return*/, ''];
         }
-        jwtSecret = process.env.NEXT_PUBLIC_JWT_SECRET;
+        jwtSecret = process.env.JWT_SECRET;
         if (!jwtSecret) {
             throw new Error('JWT_SECRET não está definido');
         }
-        jwtSecretIv = process.env.NEXT_PUBLIC_JWT_SECRET_IV;
+        jwtSecretIv = process.env.JWT_SECRET_IV;
         if (!jwtSecretIv) {
             throw new Error('JWT_SECRET_IV não está definido');
         }

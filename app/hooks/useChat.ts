@@ -10,48 +10,54 @@ interface UseChatProps {
   codigo: string;
 }
 
+
 export function useChat({ socketClient, userData, codigo }: UseChatProps) {
   const [mensagens, setMensagens] = useState<MessageType[]>([]);
   const [mensagem, setMensagem] = useState<string>('');
   const [messageLoading, setMessageLoading] = useState(false);
-  const [pessoasConectadas, setPessoasConectadas] = useState<Number>(0);
-  const [isTyping, setIsTyping] = useState<{ [key: string]: boolean }>({});
+  const [pessoasConectadas, setPessoasConectadas] = useState<number>(0);
   const [usersInRoom, setUsersInRoom] = useState<UserData[]>([]);
   const linguaSelecionadaRef = useRef<string>('');
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
+  const [isTyping, setIsTyping] = useState<{[key: string]: boolean}>({});
+  const typingTimeoutRef = useRef<NodeJS.Timeout>();
+  
   const onLinguaChange = (lingua: string) => {
     linguaSelecionadaRef.current = lingua;
   };
 
-  useEffect(() => {
-  }, [linguaSelecionadaRef.current]);
+  const handleTyping = useCallback((userToken: string, typing: boolean) => {
+    setIsTyping(prev => ({
+      ...prev,
+      [userToken]: typing
+    }));
+  }, []);
 
-  const handleTyping = (typing: boolean, userToken: string) => {
+  const emitTypingStatus = useCallback((typing: boolean) => {
+    if (!socketClient || !userData?.userToken) return;
+
+    // Limpa o timeout anterior se existir
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
-      typingTimeoutRef.current = null;
     }
 
-    setIsTyping((prev) => ({
-      ...prev,
-      [userToken]: typing,
-    }));
+    // Emite o status atual
+    socketClient.emit('typing', {
+      typing,
+      userToken: userData.userToken,
+      room: codigo
+    });
 
+    // Se estiver digitando, configura timeout para parar após 5 segundos
     if (typing) {
       typingTimeoutRef.current = setTimeout(() => {
-        setIsTyping((prev) => {
-          if (prev[userToken]) {
-            return {
-              ...prev,
-              [userToken]: false,
-            };
-          }
-          return prev;
+        socketClient.emit('typing', {
+          typing: false,
+          userToken: userData.userToken,
+          room: codigo
         });
-      }, 4000);
+      }, 5000);
     }
-  };
+  }, [socketClient, userData, codigo]);
 
   const handleMessage = async (message: any) => {
     const clientTz = moment.tz.guess(true);
@@ -178,8 +184,65 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
         linguaSelecionadaRef.current
       );
       setMensagem('');
+      emitTypingStatus(false);
     }
-  }, [socketClient, mensagem, codigo, userData]);
+  }, [socketClient, mensagem, codigo, userData, emitTypingStatus]);
+
+  // Função para carregar histórico de mensagens
+  const loadMessageHistory = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/messages/${codigo}`);
+      if (!response.ok) throw new Error('Falha ao carregar mensagens');
+      
+      const messages = await response.json();
+      
+      // Processa e traduz as mensagens se necessário
+      const processedMessages = await Promise.all(messages.map(async (msg: any) => {
+        if (msg.linguaOriginal !== linguaSelecionadaRef.current) {
+          try {
+            const response = await fetch('/api/translate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                text: msg.message,
+                targetLanguage: linguaSelecionadaRef.current,
+              }),
+            });
+
+            if (!response.ok) throw new Error('Erro na tradução');
+            const { result: traduzido } = await response.json();
+
+            return {
+              ...msg,
+              messageTraduzido: traduzido
+            };
+          } catch (error) {
+            console.error('Erro ao traduzir mensagem do histórico:', error);
+            return msg;
+          }
+        }
+        return msg;
+      }));
+
+      setMensagens(processedMessages);
+    } catch (error) {
+      console.error('Erro ao carregar histórico de mensagens:', error);
+    }
+  }, [codigo, linguaSelecionadaRef.current]);
+
+  // Carrega mensagens quando o componente monta
+  useEffect(() => {
+    if (socketClient && userData) {
+      loadMessageHistory();
+    }
+  }, [socketClient, userData, loadMessageHistory]);
+
+  // Atualiza traduções quando o idioma muda
+  useEffect(() => {
+    if (mensagens.length > 0) {
+      loadMessageHistory();
+    }
+  }, [linguaSelecionadaRef.current]);
 
   return {
     mensagens,
@@ -191,10 +254,10 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
     setPessoasConectadas,
     handleMessage,
     sendMessage,
-    isTyping,
     handleTyping,
     usersInRoom,
     onLinguaChange,
+    isTyping,
+    emitTypingStatus,
   };
 }
-

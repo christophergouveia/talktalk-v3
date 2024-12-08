@@ -17,15 +17,15 @@ model Salas {
   updateAt          DateTime         @updatedAt
   token             String
   hostToken         String
-  Salas_Usuarios    Salas_Usuarios[]
   Mensagens         Mensagens[]
+  Salas_Usuarios    Salas_Usuarios[]
 }
 
 model Salas_Usuarios {
-  codigoSala String
-  userData   String  @db.VarChar(300)
-  host       Boolean @default(false)
-  sala       Salas   @relation(fields: [codigoSala], references: [codigoSala])
+  codigoSala  String
+  userData    String   @db.VarChar(400)
+  host        Boolean  @default(false)
+  sala        Salas    @relation(fields: [codigoSala], references: [codigoSala])
   @@id([codigoSala, userData])
 }
 
@@ -38,5 +38,6 @@ model Mensagens {
   codigoSala         String
   apelido            String?
   avatar             String?
+  linguaOriginal     String?  @default("pt")
   sala               Salas    @relation(fields: [codigoSala], references: [codigoSala])
 }

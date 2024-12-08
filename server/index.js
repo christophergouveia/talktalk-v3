@@ -2,10 +2,8 @@ const express = require('express');
 const app = express();
 const http = require('http');
 const cors = require('cors');
-const cookie = require('cookie');
 const { PrismaClient } = require('@prisma/client');
-const { descriptografarUserData } = require('../app/utils/crypto/main.js');
-
+const fetch = require('node-fetch');
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 
@@ -15,101 +13,178 @@ const server = http.createServer(app);
 
 const io = require('socket.io')(server, {
   cors: {
-    origin: process.env.ORIGIN || process.env.NEXT_PUBLIC_VERCEL_URL,
+    origin: [process.env.ORIGIN, process.env.NEXT_PUBLIC_VERCEL_URL].filter(Boolean),
     credentials: true,
-    methods: ['GET', 'POST']
+    methods: ['GET', 'POST'],
   },
-  transports: ['websocket', 'polling']
+  pingTimeout: 120000,
+  pingInterval: 45000,
+  transports: ['websocket', 'polling'],
+  allowEIO3: true,
+  connectTimeout: 45000
 });
-
-const activeUsers = new Map(); // Armazena usuários ativos e seus dados
-const roomUsers = new Map(); // Armazena usuários por sala
 
 io.on('connection', (socket) => {
   console.log('Novo cliente conectado:', socket.id);
-
+  
   let userRoom = null;
-  let userToken = null;
+  let userData = null;
 
-  socket.on('join-room', async (room) => {
-    userRoom = room;
-    const cookies = cookie.parse(socket.handshake.headers.cookie || '');
-    const userCookie = cookies['talktalk_userdata'];
-
-    if (!userCookie) {
-      socket.disconnect();
-      return;
-    }
-
+  socket.on('join-room', async (room, userDataParam) => {
     try {
-      const userData = await descriptografarUserData(userCookie);
-      userToken = userData.userToken;
-
-      if (!roomUsers.has(room)) {
-        roomUsers.set(room, new Map());
+      if (!room || !userDataParam) {
+        console.error('[DEBUG] Dados inválidos:', { room, userDataParam });
+        socket.emit('error', 'Dados inválidos para entrar na sala');
+        return;
       }
-      
-      roomUsers.get(room).set(userToken, {
-        ...userData,
-        socketId: socket.id,
-        lastActivity: new Date()
+
+      let parsedUserData;
+      try {
+        parsedUserData = typeof userDataParam === 'string' ? JSON.parse(userDataParam) : userDataParam;
+      } catch (e) {
+        console.error('[DEBUG] Erro ao fazer parse dos dados do usuário:', e);
+        socket.emit('error', 'Dados do usuário inválidos');
+        return;
+      }
+
+      if (!parsedUserData.userToken || !parsedUserData.apelido) {
+        console.error('[DEBUG] Dados do usuário incompletos:', parsedUserData);
+        socket.emit('error', 'Dados do usuário incompletos');
+        return;
+      }
+
+      const encryptResponse = await fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.CRYPTO_API_KEY}`,
+        },
+        body: JSON.stringify({
+          data: parsedUserData,
+          action: 'encryptUserData',
+        }),
       });
 
-      activeUsers.set(userToken, {
-        room,
-        socketId: socket.id,
-        lastActivity: new Date()
+      const encryptResult = await encryptResponse.json();
+      if (encryptResult.error) {
+        throw new Error(encryptResult.error);
+      }
+
+      const sala = await prisma.salas.findUnique({
+        where: { codigoSala: room }
       });
+
+      if (!sala) {
+        socket.emit('error', 'Sala não encontrada');
+        return;
+      }
+
+      const isHost = parsedUserData.userToken === sala.hostToken;
+      const isUserInRoom = await prisma.salas_Usuarios.findUnique({
+        where: { codigoSala_userData: { codigoSala: room, userData: encryptResult.data } }
+      });
+
+      if (!isUserInRoom) {
+        await prisma.salas_Usuarios.create({
+          data: {
+          codigoSala: room,
+          userData: encryptResult.data,
+          host: isHost
+          }
+        });
+      }
+
+      const roomUsers = await prisma.salas_Usuarios.findMany({
+        where: { codigoSala: room }
+      });
+
+      const decryptedUsers = await Promise.all(
+        roomUsers.map(async (user) => {
+          const decryptResponse = await fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${process.env.CRYPTO_API_KEY}`,
+            },
+            body: JSON.stringify({
+              data: user.userData,
+              action: 'decryptUserData',
+            }),
+          });
+          
+          const decryptResult = await decryptResponse.json();
+          return {
+            userData: decryptResult.data,
+            host: user.host
+          };
+        })
+      );
 
       socket.join(room);
+      userRoom = room;
+      userData = encryptResult.data;
 
-      io.in(room).emit('user-connected', userCookie);
-      
-      const roomMessages = await prisma.mensagens.findMany({
-        where: { codigoSala: room },
-        orderBy: { dataEnvio: 'asc' },
-        take: 100
-      });
-
-      socket.emit('previousMessages', roomMessages);
+      io.to(room).emit('users-update', decryptedUsers);
     } catch (error) {
-      console.error('Erro ao processar entrada do usuário:', error);
+      console.error('[DEBUG] Erro ao processar entrada do usuário:', error);
       socket.emit('error', 'Erro ao entrar na sala');
-      socket.disconnect();
     }
   });
 
-  socket.on('disconnect', () => {
-    if (userToken && userRoom) {
-      if (roomUsers.has(userRoom)) {
-        roomUsers.get(userRoom).delete(userToken);
-        if (roomUsers.get(userRoom).size === 0) {
-          roomUsers.delete(userRoom);
-        } else {
-          const usersInRoom = Array.from(roomUsers.get(userRoom).values());
-          io.in(userRoom).emit('room-users-update', usersInRoom);
-        }
+  socket.on('disconnect', async () => {
+    if (userRoom && userData) {
+      try {
+        await prisma.salas_Usuarios.deleteMany({
+          where: {
+            codigoSala: userRoom,
+            userData: userData
+          }
+        });
+
+        socket.to(userRoom).emit('user-disconnected', userData);
+        
+        const roomUsers = await prisma.salas_Usuarios.findMany({
+          where: { codigoSala: userRoom }
+        });
+        
+        io.to(userRoom).emit('users-update', roomUsers);
+      } catch (error) {
+        console.error('Erro ao processar desconexão:', error);
       }
-      activeUsers.delete(userToken);
     }
+    
+    socket.leave(userRoom);
+    userRoom = null;
+    userData = null;
   });
 
   socket.on('user-activity', ({ userToken, room }) => {
-    if (activeUsers.has(userToken)) {
-      activeUsers.get(userToken).lastActivity = new Date();
-    }
   });
 
   socket.on('sendMessage', async (message, userToken, color, apelido, avatar, room, lingua) => {
     const actualDate = new Date().toISOString();
     console.log('[SERVER] Mensagem recebida: ' + message);
     try {
+      const encryptedMessage = await fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.CRYPTO_API_KEY}`,
+        },
+        body: JSON.stringify({
+          data: message,
+          action: 'encrypt',
+        }),
+      }).then(res => res.json());
+
       await prisma.mensagens.create({
         data: {
           codigoSala: room.toString(),
           usuario: userToken,
-          mensagem: message,
+          mensagem: encryptedMessage.data,
           dataEnvio: new Date(actualDate),
+          apelido: apelido,
+          avatar: avatar
         },
       });
 
@@ -128,8 +203,8 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('typing', (typing, userToken, room) => {
-    io.in(room.toString()).emit('typing', typing, userToken);
+  socket.on('typing', ({ typing, userToken, room }) => {
+    socket.to(room).emit('users-typing', { userToken, typing });
   });
 
   socket.on('room-update', (room, users) => {
@@ -146,6 +221,15 @@ io.on('connection', (socket) => {
     socket.to(data.room).emit('message', data);
     
     console.log('Mensagem enviada para a sala:', data.room);
+  });
+});
+
+io.engine.on("connection_error", (err) => {
+  console.log('Erro de conexão:', {
+    req: err.req,
+    code: err.code,
+    message: err.message,
+    context: err.context
   });
 });
 
@@ -197,10 +281,4 @@ app.get('/', (req, res) => {
 
 server.listen(PORT, process.env.NEXT_PUBLIC_SOCKET_URL, () => {
   console.log(`Servidor Socket.IO rodando na porta ${PORT} e URL ${process.env.NEXT_PUBLIC_SOCKET_URL}`);
-});
-
-server.on('close', () => {
-  io.sockets.clients().forEach((socket) => {
-    socket.disconnect(true);
-  });
 });

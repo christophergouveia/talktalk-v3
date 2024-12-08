@@ -6,7 +6,7 @@ import MessageList from '@/app/components/chat/MessageList.tsx';
 import { CountryFlag } from '@/app/components/countryFlags.tsx';
 import CopyButton from '@/app/components/functionals/CopyButton.tsx';
 import linguagens from '@/app/locales/languages.json';
-import { descriptografarUserData, criptografarUserData, criptografar } from '@/app/utils/crypto/main.ts';
+import { descriptografarUserData, criptografarUserData, criptografar } from '@/app/services/cryptoService';
 import fetchRoom from '@/app/utils/roomManagement/fetchRoom.tsx';
 import fetchRoomUsers from '@/app/utils/roomManagement/fetchRoomUsers.tsx';
 import { RandomAvatarColor } from '@/app/utils/strings/randomAvatarColor.tsx';
@@ -31,8 +31,12 @@ import { IoSettingsSharp } from 'react-icons/io5';
 import { Socket, io } from 'socket.io-client';
 import { useChat } from '@/app/hooks/useChat';
 import Image from 'next/image';
-import { getUsersRoomData } from '@/app/utils/roomManagement/getUsersRoomData';
 import { gerarNomeAnimalAleatorio } from '@/app/utils/generators/randomAnimalName';
+import { AvatarSelector } from '@/app/components/functionals/AvatarSelector';
+import ColorSelector from '@/app/components/functionals/ColorsSelector';
+import { UserData } from '@/app/types/chat';
+import { useRouter } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface RoomPageProps {
   params: Promise<{
@@ -65,17 +69,7 @@ export default function RoomPage({ params }: RoomPageProps) {
     userToken: string;
   }>();
   const [isHost, setIsHost] = useState<boolean>(false);
-  const [usersRoomData, setUsersRoomData] = useState<{
-    [key: string]: {
-      apelido: string;
-      avatar: string;
-      color: string;
-      token: string;
-      userToken: string;
-      host: boolean;
-      isTyping?: boolean;
-    };
-  }>({});
+  const [usersRoomData, setUsersRoomData] = useState<{ [key: string]: UserData }>({});
   const [isOpen, setIsOpen] = useState(false);
   const languagesFilterRef = useRef<HTMLInputElement>(null);
   const [languagesFilter, setLanguagesFilter] = useState<string>('');
@@ -83,6 +77,17 @@ export default function RoomPage({ params }: RoomPageProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | undefined>(undefined);
   const [showUserAlreadyInRoom, setShowUserAlreadyInRoom] = useState(false);
   const [apelido, setApelido] = useState('');
+  const [avatarDetails, setAvatarDetails] = useState<{ avatarURL: string; avatarName: string }>({
+    avatarURL: '',
+    avatarName: '',
+  });
+  const [avatarColor, setAvatarColor] = useState('');
+  const [isColorModalOpenned, setColorModalOpenned] = useState(false);
+  const [chatCompacto, setChatCompacto] = useState(false);
+  const [salaData, setSalaData] = useState<any>(null);
+  const [usersTyping, setUsersTyping] = useState<{ userToken: string; typing: boolean }[]>([]);
+
+  const router = useRouter();
 
   const codigo = React.use(params).codigo;
 
@@ -95,6 +100,9 @@ export default function RoomPage({ params }: RoomPageProps) {
     handleMessage,
     sendMessage,
     onLinguaChange,
+    handleTyping,
+    isTyping,
+    emitTypingStatus
   } = useChat({
     socketClient,
     userData: userData || null,
@@ -124,10 +132,12 @@ export default function RoomPage({ params }: RoomPageProps) {
         return;
       }
 
+      setSalaData(sala);
+
       const userData = cookies.talktalk_userdata;
       const roomToken = cookies.talktalk_roomid;
 
-      if (!userData || !roomToken) {
+      if (userData == undefined || roomToken == undefined) {
         setShowNameInput(true);
         return;
       }
@@ -135,22 +145,22 @@ export default function RoomPage({ params }: RoomPageProps) {
       try {
         const userDataDecrypt = await descriptografarUserData(userData as string);
 
-        const isValidRoom = sala.token == userDataDecrypt.token;
+        const isValidRoom = sala.token == userDataDecrypt.data.token;
 
-        if (!userDataDecrypt || !userDataDecrypt.apelido || !userDataDecrypt.userToken || !isValidRoom) {
+        if (!userDataDecrypt || !userDataDecrypt.data.apelido || !userDataDecrypt.data.userToken || !isValidRoom) {
           setShowNameInput(true);
           return;
         }
 
-        setUserData(userDataDecrypt);
+        setUserData(userDataDecrypt.data);
 
-        if (userDataDecrypt.userToken === sala.hostToken) {
+        if (userDataDecrypt.data.userToken === sala.hostToken) {
           setIsHost(true);
           setHostModal(true);
           setUsersRoomData((prev) => {
             return {
-              [userDataDecrypt.userToken]: {
-                ...userDataDecrypt,
+              [userDataDecrypt.data.userToken]: {
+                ...userDataDecrypt.data,
                 host: true,
                 isTyping: false,
                 lastActivity: new Date().toISOString(),
@@ -185,102 +195,98 @@ export default function RoomPage({ params }: RoomPageProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleUserDisconnected = (userToken: string) => {
-    setUsersRoomData((prev) => {
-      const newData = { ...prev };
-      delete newData[userToken];
-      return newData;
-    });
-    setPessoasConectadas((prev) => Number(prev) - 1);
-  };
-
-  const handleUserConnected = async (userCookie: any) => {
-    try {
-      // Verifica se o userCookie é um objeto ou string criptografada
-      if (!userCookie || typeof userCookie !== 'string') {
-        console.error('Dados do usuário inválidos');
-        return;
-      }
-
-      let userDetails;
-      try {
-        userDetails = await descriptografarUserData(userCookie);
-      } catch (error) {
-        console.error('Erro ao descriptografar dados do usuário:', error);
-        return;
-      }
-
-      if (!userDetails || !userDetails.userToken) {
-        console.error('Dados do usuário inválidos após descriptografia');
-        return;
-      }
-
-      // Verifica se o usuário já existe antes de atualizar o estado
-      const userExists = usersRoomData[userDetails.userToken];
-      if (userExists) {
-        console.log('Usuário já existe na sala:', userDetails.userToken);
-        return;
-      }
-
-      const newUserData = {
-        ...userDetails,
-        isTyping: false,
-        lastActivity: new Date().toISOString(),
-      };
-
-      const roomHost = (await getUsersRoomData(codigo)).find((user: any) => user.host);
-
-      const hostUserData = roomHost?.userData;
-      if (hostUserData) {
-        const roomHostUser = await descriptografarUserData(hostUserData);
-
-        setUsersRoomData((prev) => ({
-          ...prev,
-          [roomHostUser.userToken]: {
-            ...roomHostUser,
-            host: true,
-            isTyping: false,
-            lastActivity: new Date().toISOString(),
-          },
-          [userDetails.userToken]: {
-            ...newUserData,
-            isTyping: false,
-            lastActivity: new Date().toISOString(),
-          },
-        }));
-      }
-
-      setPessoasConectadas((prev) => Number(prev) + 1);
-    } catch (error) {
-      console.error('Erro ao processar dados do usuário:', error);
-    }
-  };
-
   useEffect(() => {
     if (!socketClient) return;
 
     const handleConnect = () => {
       console.log('Conectado ao servidor');
       if (userData) {
-        socketClient.emit('join-room', codigo);
+        const userDataString = JSON.stringify(userData);
+        socketClient.emit('join-room', codigo, userDataString);
+      }
+    };
+
+    const handleUsersUpdate = async (users: any[]) => {
+      console.log('[DEBUG] Users Update Received: ', users);
+      const usersMap: { [key: string]: UserData } = {};
+
+      for (const user of users) {
+        try {
+          if (user.userData) {
+            if (typeof user.userData == 'string') {
+              const userDataDecrypted = await descriptografarUserData(user.userData);
+              const isUserHost = userDataDecrypted.data.userToken === salaData?.hostToken;
+              usersMap[userDataDecrypted.data.userToken] = {
+                ...userDataDecrypted.data,
+                host: isUserHost,
+                isTyping: false,
+                lastActivity: new Date().toISOString(),
+              };
+            } else {
+              const isUserHost = user.userData.userToken === salaData?.hostToken;
+              usersMap[user.userData.userToken] = {
+                ...user.userData,
+                host: isUserHost,
+                isTyping: false,
+                lastActivity: new Date().toISOString(),
+              };
+            }
+          }
+        } catch (error) {
+          console.error('Erro ao processar dados do usuário:', error);
+        }
+      }
+
+      setUsersRoomData(usersMap);
+      setPessoasConectadas(users.length);
+    };
+
+
+    const handleUsersTyping = async (data: { userToken: string; typing: boolean }) => {
+      if (userData?.userToken === data.userToken) return;
+      console.log('[DEBUG] Users Typing Received: ', data);
+      setUsersTyping((prev) => {
+        const existingIndex = prev.findIndex(user => user.userToken === data.userToken);
+        if (existingIndex >= 0) {
+          const newArray = [...prev];
+          newArray[existingIndex] = data;
+          return newArray;
+        }
+        return [...prev, data];
+      });
+      handleTyping(data.userToken, data.typing);
+    };
+
+    const handleUserDisconnected = async (disconnectedUserData: string) => {
+      try {
+        const decryptedUser = await descriptografarUserData(disconnectedUserData);
+        if (decryptedUser?.data.userToken) {
+          setUsersRoomData((prev) => {
+            const newData = { ...prev };
+            delete newData[decryptedUser.data.userToken];
+            return newData;
+          });
+          setPessoasConectadas((prev) => prev - 1);
+        }
+      } catch (error) {
+        console.error('Erro ao processar desconexão do usuário:', error);
       }
     };
 
     socketClient.on('connect', handleConnect);
-    socketClient.on('user-connected', handleUserConnected);
+    socketClient.on('users-update', handleUsersUpdate);
     socketClient.on('user-disconnected', handleUserDisconnected);
     socketClient.on('message', handleMessage);
-    socketClient.on('room-update', (users) => {
-      setUsersRoomData((prev) => {
-        return users;
-      });
-    });
-  }, [socketClient, codigo]);
-  useEffect(() => {
-    if (socketClient) {
-      socketClient.emit('join-room', codigo);
-    }
-  }, [socketClient, codigo]);
+    socketClient.on('users-typing', handleUsersTyping);
+
+    return () => {
+      socketClient.off('connect', handleConnect);
+      socketClient.off('users-update', handleUsersUpdate);
+      socketClient.off('user-disconnected', handleUserDisconnected);
+      socketClient.off('message', handleMessage);
+      socketClient.off('users-typing', handleUsersTyping);
+    };
+  }, [socketClient, codigo, userData, salaData]);
 
   useEffect(() => {
     if (messageListRef.current) {
@@ -290,7 +296,8 @@ export default function RoomPage({ params }: RoomPageProps) {
 
   const handleTextAreaChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setMensagem(e.target.value);
-  }, []);
+    emitTypingStatus(true);
+  }, [emitTypingStatus]);
 
   const handleTextAreaKeyUp = useCallback(
     (e: KeyboardEvent<HTMLInputElement> | KeyboardEvent) => {
@@ -306,7 +313,7 @@ export default function RoomPage({ params }: RoomPageProps) {
       }
 
       if (userData?.userToken) {
-        socketClient?.emit('typing', true, userData.userToken, codigo);
+        socketClient?.emit('typing', true, codigo);
       }
     },
     [shiftPressed, mensagem, sendMessage, userData, socketClient, codigo, linguaSelecionada.value]
@@ -327,89 +334,98 @@ export default function RoomPage({ params }: RoomPageProps) {
   const connectToRoom = useCallback(
     async (bypass: boolean) => {
       try {
-        console.log('[DEBUG] Iniciando connectToRoom com bypass:', bypass);
+        if (bypass) {
+          console.log('[DEBUG] Bypass ativado, conectando diretamente ao socket');
+          const socket = io(`http://${process.env.NEXT_PUBLIC_SOCKET_URL}:3001`, {
+            withCredentials: true,
+            transports: ['websocket'],
+            reconnection: false,
+            forceNew: true,
+            autoConnect: false,
+          });
 
-        // Obtém o nickname
-        let nickname = userName;
-        if (!nickname) {
-          nickname = RandomNicks.get();
-          console.log('[DEBUG] Nickname gerado:', nickname);
+          socket.once('connect', () => {
+            console.log('[DEBUG] Socket conectado:', socket.id);
+            setShowNameInput(false);
+          });
+
+          socket.on('error', (error) => {
+            console.error('[DEBUG] Erro do socket:', error);
+          });
+
+          socket.connect();
+          setSocketClient(socket);
+          return;
         }
 
-        // Busca dados da sala
+        console.log('[DEBUG] Gerando novo usuário');
         const sala = await fetchRoom(codigo);
-        console.log('[DEBUG] Dados da sala:', sala);
 
         if (!sala) {
-          console.log('[DEBUG] Sala não encontrada');
           setShowErrorModal(true);
           return;
         }
 
-        // Verifica se pode prosseguir
-        if (userName.trim() || bypass) {
-          console.log('[DEBUG] Prosseguindo com a conexão');
+        const nickname = userName.trim() || avatarDetails.avatarName;
+        const payload = {
+          apelido: nickname,
+          avatar: avatarDetails.avatarURL,
+          color: avatarColor,
+          token: sala.token,
+          userToken: RandomToken.get(),
+        };
 
-          if (!bypass) {
-            console.log('[DEBUG] Gerando novo usuário');
-            const englishName = RandomNicks.getEnglish(RandomNicks.get());
-            const payload = {
-              apelido: nickname,
-              avatar: `/images/avatars/${englishName.toLowerCase()}.png`,
-              color: RandomAvatarColor.get().hex,
-              token: sala.token,
-              userToken: RandomToken.get(),
-            };
-            console.log('[DEBUG] Payload gerado:', payload);
+        const payloadEncrypted = await criptografarUserData(payload);
 
-            const payloadEncrypted = await criptografarUserData(payload);
-            console.log('[DEBUG] Payload criptografado:', payloadEncrypted);
+        // Salva cookies e dados do usuário
+        setCookies('talktalk_userdata', payloadEncrypted.data, {
+          expires: undefined,
+          sameSite: 'strict',
+          path: '/',
+        });
 
-            const roomPayload = { token: sala.token, hostToken: sala.hostToken };
-            const roomPayloadEncrypted = await criptografar(JSON.stringify(roomPayload));
-            console.log('[DEBUG] Room payload criptografado:', roomPayloadEncrypted);
+        const roomPayload = { token: sala.token, hostToken: sala.hostToken };
+        const roomPayloadEncrypted = await criptografar(JSON.stringify(roomPayload));
 
-            // Salva cookies
-            setCookies('talktalk_userdata', payloadEncrypted.dadoCriptografado, {
-              expires: undefined,
-              sameSite: 'strict',
-              path: '/',
-            });
-            setCookies('talktalk_roomid', roomPayloadEncrypted, {
-              expires: undefined,
-              sameSite: 'strict',
-              path: '/',
-            });
+        // Salva cookies e dados do usuário
+        setCookies('talktalk_roomid', roomPayloadEncrypted.data, {
+          expires: undefined,
+          sameSite: 'strict',
+          path: '/',
+        });
 
-            window.location.reload();
-          }
+        // Define os dados do usuário antes de criar o socket
+        setUserData(payload);
 
+        // Cria e configura o socket apenas uma vez
+        const socket = io(`http://${process.env.NEXT_PUBLIC_SOCKET_URL}:3001`, {
+          withCredentials: true,
+          transports: ['websocket'],
+          reconnection: false,
+          forceNew: true,
+          autoConnect: false,
+        });
+
+        // Configura os eventos antes de conectar
+        socket.once('connect', () => {
+          console.log('[DEBUG] Socket conectado:', socket.id);
+          const userDataString = JSON.stringify(payload);
+          socket.emit('join-room', codigo, userDataString);
           setShowNameInput(false);
+        });
 
-          const socket = io(`http://${process.env.NEXT_PUBLIC_SOCKET_URL}:3001`, {
-            transports: ['websocket', 'polling'],
-            withCredentials: true,
-            reconnection: true,
-            reconnectionAttempts: 5,
-            reconnectionDelay: 1000,
-          });
+        socket.on('error', (error) => {
+          console.error('[DEBUG] Erro do socket:', error);
+        });
 
-          // Emite o evento join-room diretamente com o socket criado
-          socket.emit('join-room', codigo);
-
-          // Configura listeners do socket
-          socket.on('connect_error', (error) => {
-            console.error('[DEBUG] Erro na conexão do socket:', error);
-          });
-
-          // Só então atualiza o estado
-          setSocketClient(socket);
-        }
+        // Conecta o socket
+        socket.connect();
+        setSocketClient(socket);
       } catch (error) {
         console.error('[DEBUG] Erro em connectToRoom:', error);
       }
     },
-    [userName]
+    [userName, avatarDetails, avatarColor, codigo, userData]
   );
 
   const updateLanguage = useCallback((value: string) => {
@@ -444,6 +460,93 @@ export default function RoomPage({ params }: RoomPageProps) {
         )
       : linguagens;
 
+  const getRandomAvatar = useCallback(() => {
+    const randomAnimal = RandomNicks.get();
+    const englishName = RandomNicks.getEnglish(randomAnimal);
+
+    if (!englishName) {
+      console.error(`Apelido "${randomAnimal}" não encontrado.`);
+      return ''; // Retorna uma string vazia como valor padrão
+    }
+
+    const imageUrl = `/images/avatars/${englishName.toLowerCase()}.png`;
+    setAvatarDetails({ avatarURL: imageUrl, avatarName: randomAnimal });
+    return randomAnimal;
+  }, [setAvatarDetails]);
+
+  useEffect(() => {
+    getRandomAvatar();
+    setAvatarColor(RandomAvatarColor.get().hex);
+  }, []);
+
+  const handleSelectColor = useCallback(
+    (color: string) => {
+      setAvatarColor(color);
+      setColorModalOpenned(false);
+    },
+    [setAvatarColor]
+  );
+
+  useEffect(() => {
+    if (!socketClient) return;
+
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 5;
+
+    const handleDisconnect = (reason: string) => {
+      console.log('Desconectado:', reason);
+
+      // Se for desconexão por timeout, tenta reconectar
+      if (reason === 'io server disconnect' || reason === 'transport close' || reason === 'ping timeout') {
+        if (reconnectAttempts < maxReconnectAttempts) {
+          console.log(`Tentativa de reconexão ${reconnectAttempts + 1} de ${maxReconnectAttempts}`);
+          setTimeout(
+            () => {
+              socketClient.connect();
+              reconnectAttempts++;
+            },
+            1000 * Math.min(reconnectAttempts + 1, 5)
+          ); // Backoff exponencial
+        } else {
+          console.log('Número máximo de tentativas de reconexão atingido');
+        }
+      }
+    };
+
+    const handleReconnect = (attempt: number) => {
+      console.log('Reconectado após tentativa:', attempt);
+      reconnectAttempts = 0; // Reseta contador após reconexão bem sucedida
+      socketClient.emit('join-room', codigo);
+    };
+
+    const handleConnect = () => {
+      console.log('Conectado ao servidor');
+      reconnectAttempts = 0;
+    };
+
+    socketClient.on('connect', handleConnect);
+    socketClient.on('disconnect', handleDisconnect);
+    socketClient.on('reconnect', handleReconnect);
+    socketClient.on('reconnect_error', (error: Error) => {
+      console.error('Erro na reconexão:', error);
+    });
+
+    return () => {
+      socketClient.off('connect', handleConnect);
+      socketClient.off('disconnect', handleDisconnect);
+      socketClient.off('reconnect', handleReconnect);
+      socketClient.off('reconnect_error');
+    };
+  }, [socketClient, codigo]);
+
+  useEffect(() => {
+    return () => {
+      if (socketClient) {
+        socketClient.disconnect();
+      }
+    };
+  }, [socketClient]);
+
   if (showErrorModal) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
@@ -451,6 +554,9 @@ export default function RoomPage({ params }: RoomPageProps) {
         <p className="mt-2 text-gray-600">
           Desculpe, mas ocorreu algum erro ao entrar na sala. Por favor, tente novamente mais tarde.
         </p>
+        <Button className="mt-4" onClick={() => router.push('/conversar')}>
+          Voltar para a página de sala
+        </Button>
       </div>
     );
   }
@@ -472,6 +578,46 @@ export default function RoomPage({ params }: RoomPageProps) {
     return (
       <div className="flex w-fit mx-auto p-6 rounded-md flex-col items-center justify-center gap-4 text-center bg-[#232124]">
         <h2 className="text-2xl font-bold">Bem-vindo à sala!</h2>
+
+        <div className="relative group">
+          <Image
+            src={avatarDetails.avatarURL || '/images/avatars/default.png'}
+            alt="Avatar Preview"
+            width={100}
+            height={100}
+            className="rounded-full border-4 p-2"
+            style={{ borderColor: avatarColor, backgroundColor: avatarColor }}
+          />
+
+          <button
+            onClick={() => setColorModalOpenned(true)}
+            className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+          >
+            <div className="flex flex-col items-center text-white">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                />
+              </svg>
+              <span className="text-xs mt-1">Mudar cor</span>
+            </div>
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: avatarColor }} />
+          <span className="text-sm text-gray-400">Cor selecionada</span>
+        </div>
+
         <p className="mt-2 text-gray-400">Para entrar na sala, digite um apelido (opcional):</p>
         <input
           type="text"
@@ -480,11 +626,28 @@ export default function RoomPage({ params }: RoomPageProps) {
           value={userName}
           onChange={handleNameInputChange}
         />
-        <div className="*:block">
-          <span>Não se preocupe caso não insira um apelido. Será gerado um apelido aleatório para você!</span>
-          <span>Além disto, será também gerado um avatar aleatório independentemente do apelido que inserir.</span>
+        <AvatarSelector
+          onAvatarSelect={(avatar, url) => setAvatarDetails({ avatarURL: url, avatarName: avatar })}
+          color={avatarColor}
+          getRandomAvatar={getRandomAvatar}
+        />
+        <ColorSelector
+          onSelectColor={handleSelectColor}
+          isOpen={isColorModalOpenned}
+          onModalClose={() => setColorModalOpenned(false)}
+        />
+        <div className="*:block text-sm text-gray-400">
+          <span>Não se preocupe caso não insira um apelido.</span>
+          <span>Será utilizado o nome do avatar selecionado!</span>
         </div>
-        <Button onClick={() => connectToRoom(false)}>Entrar</Button>
+
+        <Button
+          onClick={() => connectToRoom(false)}
+          className="w-full bg-gradient-to-r from-[#38A3F5] to-[#6F90F2] hover:opacity-90 transition-opacity text-white font-semibold"
+          size="lg"
+        >
+          Entrar na Sala
+        </Button>
       </div>
     );
   }
@@ -542,7 +705,7 @@ export default function RoomPage({ params }: RoomPageProps) {
           </>
         </ModalContent>
       </Modal>
-      <section className="w-[90%] rounded-md bg-[var(--chat-bg-geral)] shadow dark:shadow-slate-900 lg:w-[60%]">
+      <section className="w-[90%] lg:w-[55%] rounded-md bg-[var(--chat-bg-geral)] shadow dark:shadow-slate-900">
         <ChatComponent.Header className="flex w-full bg-[var(--chat-bg-header)]">
           <ChatComponent.Settings className="flex justify-between w-full items-center gap-2 p-4">
             <Button
@@ -557,13 +720,16 @@ export default function RoomPage({ params }: RoomPageProps) {
             <IoSettingsSharp
               size={32}
               style={{ marginRight: '1rem' }}
-              className="text-slate-600 dark:text-slate-300 cursor-pointer"
+              className="text-slate-600 dark:text-slate-300 cursor-pointer lg:hidden"
               onClick={() => setIsSettingsOpen(!isSettingsOpen)}
             />
           </ChatComponent.Settings>
         </ChatComponent.Header>
-        <ChatComponent.Body>
-          <MessageList ref={messageListRef}>
+        <ChatComponent.Body className="h-[calc(100vh-20rem)] select-none overflow-hidden bg-[var(--chat-bg-geral)]">
+          <MessageList
+            ref={messageListRef}
+            className={`messageList h-full overflow-y-auto p-4 ${chatCompacto ? 'chat-compact' : ''}`}
+          >
             {mensagens.map((message, index) => (
               <Message
                 key={index}
@@ -574,6 +740,7 @@ export default function RoomPage({ params }: RoomPageProps) {
                 senderApelido={message.senderApelido}
                 senderAvatar={message.senderAvatar}
                 senderColor={message.senderColor}
+                compact={chatCompacto}
               >
                 {message.messageTraduzido || message.message}
               </Message>
@@ -583,21 +750,36 @@ export default function RoomPage({ params }: RoomPageProps) {
                 <Spinner />
               </div>
             )}
-            {/* {Object.entries(isTyping).map(
-              ([user, typing]) =>
-                typing &&
-                user !== userData?.userToken && (
-                  <div key={user} className="flex items-center justify-center">
+            <AnimatePresence>
+              {usersTyping.map(({ userToken, typing }) => 
+                typing && userToken !== userData?.userToken && usersRoomData[userToken] && (
+                  <motion.div
+                    key={userToken}
+                    className="flex items-center justify-center gap-2 text-gray-500"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Image
+                      src={usersRoomData[userToken].avatar}
+                      alt={usersRoomData[userToken].apelido}
+                      width={30}
+                      height={30}
+                      className="rounded-full"
+                    />
                     <motion.span
                       animate={{ opacity: [0.5, 1, 0.5] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
-                      className="text-xl font-semibold"
+                      className="text-sm"
+                      style={{ color: usersRoomData[userToken].color }}
                     >
-                      {usersRoomData[user].apelido} está digitando...
+                      {usersRoomData[userToken].apelido} está digitando...
                     </motion.span>
-                  </div>
+                  </motion.div>
                 )
-            )} */}
+              )}
+            </AnimatePresence>
           </MessageList>
         </ChatComponent.Body>
         <ChatComponent.Footer className="flex items-center gap-3 border-t-2 border-t-slate-400 p-3">
@@ -620,45 +802,95 @@ export default function RoomPage({ params }: RoomPageProps) {
           </Button>
         </ChatComponent.Footer>
       </section>
+
+      {isSettingsOpen && (
+        <motion.div
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        />
+      )}
+
       <aside
-        className={`ml-2 lg:h-full rounded-md bg-[var(--chat-bg-geral)] absolute lg:relative h-full flex flex-col lg:flex ${
-          isSettingsOpen ? 'flex' : 'hidden'
-        }`}
+        className={`
+          lg:relative lg:w-[400px] lg:ml-4 lg:flex lg:flex-col lg:h-full lg:shadow-none
+          fixed w-[calc(100%-2rem)] h-[calc(95%-2rem)] top-8 bg-[var(--chat-bg-geral)] overflow-y-auto shadow-xl p-4
+          ${
+            isSettingsOpen
+              ? 'left-[50%] translate-x-[-50%] z-50 rounded-md lg:left-0 lg:translate-x-0 lg:z-0'
+              : 'left-[150%] lg:left-0'
+          }
+          transition-[left] duration-300 ease-in-out lg:transition-none
+        `}
       >
-        <h1 className="rounded-md bg-[var(--chat-bg-header)] p-2 text-center font-bold">CONFIGURAÇÕES DA SALA</h1>
-        <section className="flex-1">
-          <div className="m-2 flex flex-col gap-4">
-            <Switch
-              classNames={{
-                base: 'inline-flex flex-row-reverse gap-2 w-full max-w-md bg-[--chat-bg-buttons] hover:bg-content2 items-center cursor-pointer p-4 border-2 border-transparent rounded-md transition-all duration-200',
-                wrapper: '',
-              }}
+        <div className="sticky top-0 z-10">
+          <h1 className="rounded-md bg-[var(--chat-bg-header)] p-4 text-center font-bold flex items-center justify-between">
+            <span>CONFIGURAÇÕES DA SALA</span>
+            <motion.button
+              className="lg:hidden p-2 hover:bg-[var(--chat-bg-buttons)] rounded-full"
+              onClick={() => setIsSettingsOpen(false)}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
             >
-              <div className="flex flex-col gap-1">
-                <p className="text-medium font-semibold">Chat compacto</p>
-                <p className="text-tiny text-default-600">
-                  Ative o modo compacto do chat. Os espaçamentos são menores.
-                </p>
-              </div>
-            </Switch>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </motion.button>
+          </h1>
+        </div>
+
+        <section className="flex-1 p-4">
+          <div className="flex flex-col gap-4">
+            <div className="w-full">
+              <Switch
+                isSelected={chatCompacto}
+                onValueChange={setChatCompacto}
+                classNames={{
+                  base: 'inline-flex flex-row-reverse gap-2 !w-full bg-[--chat-bg-buttons] hover:bg-content2 items-center cursor-pointer p-4 border-2 border-transparent rounded-md transition-all duration-200',
+                  wrapper: '',
+                  endContent: 'w-full',
+                  label: 'w-full',
+                }}
+              >
+                <div className="flex flex-col gap-1">
+                  <p className="text-medium font-semibold">Chat compacto</p>
+                  <p className="text-tiny text-default-600">
+                    Ative o modo compacto do chat. Os espaçamentos são menores.
+                  </p>
+                </div>
+              </Switch>
+            </div>
             <div className="flex w-full flex-col gap-2 rounded-md bg-[--chat-bg-buttons] p-4">
               <div className="flex flex-col gap-1">
                 <p className="text-medium font-semibold">Idioma de tradução</p>
                 <p className="text-tiny text-default-600">Selecione para qual idioma as mensagens serão traduzidas</p>
               </div>
               <div className="relative">
-                <button
+                <motion.button
                   onClick={() => setIsOpen(!isOpen)}
                   className="relative z-10 w-full rounded-md bg-[--chat-bg-buttons-secondary] px-4 py-3 pr-8 text-left hover:opacity-90 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm flex gap-2 items-center"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   <CountryFlag flag={linguaSelecionada?.flag} />
                   {linguaSelecionada?.label}
-                </button>
-                <div
+                </motion.button>
+                <motion.div
                   className={`absolute z-20 w-full rounded-md bg-white dark:bg-[var(--chat-bg-buttons)] shadow-lg ${
                     isOpen ? 'block' : 'hidden'
                   }`}
                   style={{ zIndex: 100 }}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : -10 }}
+                  transition={{ duration: 0.2 }}
                 >
                   {isOpen && (
                     <div onClick={(e) => e.stopPropagation()}>
@@ -694,7 +926,12 @@ export default function RoomPage({ params }: RoomPageProps) {
                       />
                       <ul className="py-1 h-[17rem] overflow-y-scroll custom-scrollbars text-small text-gray-700">
                         {filteredLanguages.map((idioma, index) => (
-                          <li key={idioma.value}>
+                          <motion.li
+                            key={idioma.value}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                          >
                             <button
                               onClick={() => {
                                 updateLanguage(idioma.value);
@@ -710,12 +947,12 @@ export default function RoomPage({ params }: RoomPageProps) {
                                 <p className="ml-2 text-tiny text-default-600">{idioma.description}</p>
                               </div>
                             </button>
-                          </li>
+                          </motion.li>
                         ))}
                       </ul>
                     </div>
                   )}
-                </div>
+                </motion.div>
                 {isOpen && <div className="fixed inset-0" onClick={() => setIsOpen(false)} style={{ zIndex: 99 }} />}
               </div>
             </div>
@@ -728,10 +965,13 @@ export default function RoomPage({ params }: RoomPageProps) {
           </h2>
           <div className="flex flex-col gap-3 p-3">
             {Object.entries(usersRoomData).length > 0 ? (
-              Object.values(usersRoomData).map((user) => (
-                <div
+              Object.values(usersRoomData).map((user, index) => (
+                <motion.div
                   key={user.userToken}
                   className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors duration-200"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
                 >
                   <Image
                     src={user.avatar}
@@ -749,10 +989,17 @@ export default function RoomPage({ params }: RoomPageProps) {
                       {user.host ? 'Anfitrião' : 'Convidado'}
                     </span>
                   </div>
-                </div>
+                </motion.div>
               ))
             ) : (
-              <div className="text-center p-4 text-gray-500 dark:text-gray-400">Nenhum usuário conectado</div>
+              <motion.div
+                className="text-center p-4 text-gray-500 dark:text-gray-400"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                Nenhum usuário conectado
+              </motion.div>
             )}
           </div>
         </div>

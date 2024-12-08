@@ -8,7 +8,7 @@ export interface UserData {
   userToken: string;
   host?: boolean;
   isTyping?: boolean;
-  lastActivity?: Date | string;
+  lastActivity?: string;
 }
 
 export interface Language {

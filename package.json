@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev\" \"dotenv -e .\\.env.development -- nodemon server/index.js\"",
+    "dev": "concurrently \"next dev\" \"dotenv -e .\\.env -- nodemon server/index.js\"",
+    "dev:nonodemon": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -56,6 +57,7 @@
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.1.0",
+    "@types/css-font-loading-module": "^0.0.14",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^22.10.1",
     "@types/react": "^18",

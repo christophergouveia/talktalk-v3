@@ -78,6 +78,15 @@
                 "parte2": "Você pode alterar a cor do seu avatar! Experimente clicando/tocando no ícone do seu animal. 😉"
             }
         },
+        "entrar_sala": {
+            "titulo": "Entrar em uma Sala",
+            "subtitulo": "Digite o código da sala para participar de uma conversa existente",
+            "codigo": {
+                "label": "Código da Sala",
+                "placeholder": "Digite o código da sala"
+            },
+            "botao_entrar": "Entrar na Sala"
+        },
         "botoes_avatar": {
             "escolher_avatar": "Escolher avatar",
             "escolher_avatar_aleatorio": "Escolher avatar aleatório",

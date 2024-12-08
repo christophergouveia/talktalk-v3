@@ -1,60 +1,97 @@
 import moment from 'moment-timezone';
 import Image from 'next/image';
-import { ReactNode } from 'react';
 import { Moment } from 'moment-timezone';
 import { supportedLanguages } from '@/app/api/translate/languages';
-
-interface MessageType {
+import { useState } from 'react';
+interface MessageProps {
+  children: React.ReactNode;
+  date: string | Moment | Date;
+  lingua: string;
   ownMessage: boolean;
-  date: string | Date | Moment;
-  children: ReactNode;
-  className?: string;
   originalMessage: string;
   senderApelido: string;
   senderAvatar: string;
   senderColor: string;
-  lingua: string;
+  compact?: boolean;
 }
 
 export default function Message({
-  ownMessage,
-  date,
   children,
-  className,
+  date,
+  lingua,
+  ownMessage,
   originalMessage,
   senderApelido,
   senderAvatar,
   senderColor,
-  lingua,
-}: MessageType) {
-  const formattedDate = moment(date).format('HH:mm');
+  compact = false,
+}: MessageProps) {
+  const [showOriginal, setShowOriginal] = useState(false);
+  const formattedDate = moment(date).toDate().toLocaleTimeString('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
   return (
-    <div className={`flex flex-col ${ownMessage ? 'items-end' : 'items-start'}`}>
-      <div className={`flex items-center gap-2 ${ownMessage ? 'flex-row-reverse' : 'flex-row'}`}>
-        <Image src={senderAvatar} alt={senderApelido} width={50} height={50} className="dark:border-2 dark:border-solid rounded-full dark:!bg-transparent p-2" style={{ borderColor: senderColor, backgroundColor: senderColor }} />
-        <span className="text-sm">{senderApelido}</span>
-      </div>
-      <div
-        className={`w-fit min-w-[80px] m-2 rounded-lg p-4 pb-5 ${
-          ownMessage ? 'bg-gradient-to-r from-[#38A3F5] to-[#6F90F2] text-white' : 'bg-slate-300 dark:bg-slate-600'
-        } relative max-w-[80%] ${className}`}
-      >
-        <span className="absolute bottom-0 right-2 w-full text-right text-sm text-slate-600 dark:text-slate-300">
-          {formattedDate || 'N/A'}
-        </span>
-        <div className={`absolute h-0 w-0 ${ownMessage ? 'right-0' : 'left-0'} top-0 -mb-1 ml-2 mr-1.5 mt-2`}>
-          <div
-            className={`h-3 w-3 ${
-              ownMessage ? 'bg-[#6F90F2]' : 'bg-slate-300 dark:bg-slate-600'
-            } [clip-path:_polygon(100%_60%,_35%_3%,_8%_63%)]`}
-          ></div>
-        </div>
-        <div className="flex flex-col">
-          <span className="whitespace-pre-line">{children}</span>
-          {!ownMessage && (
-            <span className="text-sm text-slate-600 dark:text-slate-300">{originalMessage} ({supportedLanguages[lingua as keyof typeof supportedLanguages]})</span>
-          )}
-        </div>
+    <div
+      className={`relative mb-2 flex items-start gap-2 ${
+        compact ? 'py-0.5' : 'py-2'
+      } ${ownMessage ? 'flex-row-reverse' : 'flex-row'}`}
+    >
+      {!compact && (
+        <Image
+          src={senderAvatar}
+          alt={senderApelido}
+          width={40}
+          height={40}
+          className="rounded-full border-2 p-1"
+          style={{ borderColor: senderColor }}
+        />
+      )}
+      <div className={`select-text flex max-w-[80%] flex-col ${ownMessage ? 'items-end' : 'items-start'}`}>
+        {compact ? (
+          <div className="flex items-center gap-1">
+            <span className="text-xs text-gray-500">{formattedDate}</span>
+            <span className="font-medium" style={{ color: senderColor }}>
+              {senderApelido}:
+            </span>
+            <span className="text-sm">{showOriginal ? originalMessage : children}</span>
+            {!ownMessage && (
+              <>
+                <span className="text-xs text-gray-500">
+                  Traduzido do {supportedLanguages[lingua]} ({lingua})
+                </span>
+                <button onClick={() => setShowOriginal(!showOriginal)} className="text-xs text-blue-400">
+                  {showOriginal ? 'Exibir traduzido' : 'Exibir original'}
+                </button>
+              </>
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="font-medium" style={{ color: senderColor }}>
+                {senderApelido}
+              </span>
+              <span className="text-xs text-gray-500">{formattedDate}</span>
+            </div>
+            <div
+              className={`relative mt-1 max-w-full rounded-lg p-2 ${ownMessage ? 'setinha-own bg-blue-500 text-white' : 'setinha bg-gray-200 dark:bg-zinc-800'}`}
+            >
+              <p className="text-sm">{showOriginal ? originalMessage : children}</p>
+              {!ownMessage && (
+                <>
+                  <span className="text-xs text-gray-500">
+                    Traduzido do {supportedLanguages[lingua]} ({lingua})
+                  </span>{' '}
+                  <button onClick={() => setShowOriginal(!showOriginal)} className="text-xs text-blue-400">
+                    {showOriginal ? 'Exibir traduzido' : 'Exibir original'}
+                  </button>
+                </>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

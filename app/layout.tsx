@@ -13,18 +13,28 @@ import { cookies } from 'next/headers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Talk-Talk!: Projeto de tradução em tempo real',
-  description: 'Ferramenta de tradução via bate-papo em tempo real',
+  title: 'Talk-Talk! - Tradução em Tempo Real | Converse em Qualquer Idioma',
+  description: 'Talk-Talk! é uma ferramenta de tradução via bate-papo em tempo real. Quebre barreiras linguísticas e comunique-se facilmente com pessoas de todo o mundo.',
+  keywords: 'tradução em tempo real, chat multilíngue, comunicação global, quebra de barreiras linguísticas',
   authors: [
-    {
-      name: 'Kaike da Silva Sathler',
-      url: 'http://lattes.cnpq.br/2952383935652833',
-    },
-    {
-      name: 'Christopher Rodrigues Gouveia', 
-      url: 'http://lattes.cnpq.br/3214554816480546',
-    },
+    { name: 'Kaike da Silva Sathler', url: 'http://lattes.cnpq.br/2952383935652833' },
+    { name: 'Christopher Rodrigues Gouveia', url: 'http://lattes.cnpq.br/3214554816480546' },
+    { name: "Gustavo Gomes Preti" }
   ],
+  openGraph: {
+    type: 'website',
+    locale: 'pt_BR',
+    url: 'https://talktalk.com',
+    title: 'Talk-Talk! - Tradução em Tempo Real',
+    description: 'Ferramenta de tradução via bate-papo em tempo real para comunicação global',
+    images: [{ url: '/images/talktalk-og-image.jpg', width: 1200, height: 630, alt: 'Talk-Talk! Preview' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Talk-Talk! - Tradução em Tempo Real',
+    description: 'Ferramenta de tradução via bate-papo em tempo real para comunicação global',
+    images: ['/images/talktalk-twitter-image.jpg'],
+  },
 };
 
 export default async function RootLayout({
@@ -34,7 +44,7 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  const locale = await (await params).locale || (await cookies()).get('NEXT_LOCALE')?.value || 'pt-BR';
+  const locale = (await params).locale || (await cookies()).get('NEXT_LOCALE')?.value || 'pt-BR';
 
   if (!routing.locales.includes(locale as any)) {
     throw new Error(`Invalid locale: ${locale}`);
@@ -50,15 +60,19 @@ export default async function RootLayout({
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="canonical" href={`https://talktalk.com/${locale}`} />
       </head>
-      <body className={inter.className} style={{ marginBottom: '0.2rem' }}>
+      <body className={`${inter.className} min-h-screen flex flex-col`}>
         <NextIntlClientProvider messages={messages} locale={locale}>
           <Providers>
             <CookieConsetimentModal />
-            <div className="flex h-[99dvh] flex-col justify-between">
-              <NavBar />
-              {children}
-              <Footer />
+            <div className="flex flex-col min-h-screen">
+              <header>
+                <NavBar />
+              </header>
+              <main className="flex-1">{children}</main>
+              <Footer className="mt-auto" />
             </div>
           </Providers>
         </NextIntlClientProvider>

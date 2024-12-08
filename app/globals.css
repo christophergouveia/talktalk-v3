@@ -67,24 +67,40 @@
   --chat-header-text: #333;
 }
 
+.setinha {
+  position: relative;
+}
+
 .setinha::before {
   content: '';
   position: absolute;
-  right: 2px;
-  top: -3px;
+  left: -8px;
+  top: 8px;
   width: 0;
   height: 0;
-  border: 7px solid;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid #e5e7eb; /* cor do bg-gray-200 */
+}
+
+.dark .setinha::before {
+  border-right-color: #27272a; /* cor do dark:bg-zinc-800 */
+}
+
+.setinha-own {
+  position: relative;
 }
 
 .setinha-own::after {
   content: '';
   position: absolute;
-  left: -2px;
-  top: -5px;
+  right: -8px;
+  top: 8px;
   width: 0;
   height: 0;
-  border: 10px solid;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 8px solid #3b82f6; /* cor do bg-blue-500 */
 }
 
 .messageList::-webkit-scrollbar {
@@ -209,4 +225,14 @@ section[role='dialog'] {
 .navbar-blur {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+}
+
+.chat-compact {
+  font-family: 'Consolas', 'Monaco', monospace;
+  line-height: 1.2;
+}
+
+.chat-compact .message {
+  margin: 0;
+  padding: 2px 0;
 }

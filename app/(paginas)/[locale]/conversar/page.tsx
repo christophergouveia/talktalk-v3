@@ -11,7 +11,7 @@ import { ErrorInputs } from '@/app/utils/interfaces/input';
 import { useCookies } from 'react-cookie';
 import createRoom from '@/app/utils/roomManagement/createRoom';
 import { insertUser } from '@/app/utils/roomManagement/user/insertUser';
-import { criptografar, criptografarUserData } from '@/app/utils/crypto/main.ts';
+import { criptografar, criptografarUserData } from '@/app/services/cryptoService';
 import { RandomNicks } from '@/app/utils/strings/randomNicks';
 import RandomToken from '@/app/utils/strings/randomToken';
 import Image from 'next/image';
@@ -43,6 +43,7 @@ export default function ConversarHome() {
   const [isColorModalOpenned, setColorModalOpenned] = useState(false);
   const [cookies, setCookie] = useCookies(['talktalk_roomid', 'talktalk_userdata']);
   const router = useRouter();
+  const [codigoSala, setCodigoSala] = useState('');
 
   const validarApelido = useCallback(async () => {
     try {
@@ -81,31 +82,37 @@ export default function ConversarHome() {
       const sala = await createRoom({ token: token, hostToken: userToken });
       if (sala != null) {
         const payload = { token, userToken };
-        const secretBase64 = process.env.NEXT_PUBLIC_JWT_SECRET;
-        if (secretBase64) {
-          const hashed = await criptografar(JSON.stringify(payload));
-          // Aqui é somente os dados para a verificação se o usuário está permitido de entrar na sala ou nao
-          setCookie('talktalk_roomid', hashed, {
-            expires: undefined,
-            sameSite: 'strict',
-            path: '/',
-          });
-          // Aqui agora, irá ser criptografado os dados do usuário e o token, para saber que ele é o dono da, como apelido e avatar :D
-          const userData = {
-            apelido: nickname,
-            avatar: avatarDetails.avatarURL,
-            color: avatarColor,
-            token,
-            userToken,
-          };
-          const userDataEncrypted = (await criptografarUserData(userData)).dadoCriptografado;
-          setCookie('talktalk_userdata', userDataEncrypted, {
-            expires: undefined,
-            sameSite: 'strict',
-            path: '/',
-          });
-          await insertUser(sala, userDataEncrypted, true);
+        const hashed = await criptografar(JSON.stringify(JSON.stringify(payload)));
+        // Aqui é somente os dados para a verificação se o usuário está permitido de entrar na sala ou nao
+        setCookie('talktalk_roomid', hashed.data, {
+          expires: undefined,
+          sameSite: 'strict',
+          path: '/',
+        });
+
+        // Aqui agora, irá ser criptografado os dados do usuário e o token, para saber que ele é o dono da, como apelido e avatar :D
+        const userData = {
+          apelido: nickname,
+          avatar: avatarDetails.avatarURL,
+          color: avatarColor,
+          token,
+          userToken,
+        };
+        const userDataEncrypted = await criptografarUserData(userData);
+        console.log('userDataEncrypted:', userDataEncrypted); // Debug log
+
+        if (!userDataEncrypted?.data) {
+          console.error('Falha ao criptografar dados do usuário');
+          toast('Ocorreu um erro ao criar a sala.', { type: 'error' });
+          return;
         }
+
+        setCookie('talktalk_userdata', userDataEncrypted.data, {
+          expires: undefined,
+          sameSite: 'strict',
+          path: '/',
+        });
+        await insertUser(sala, userDataEncrypted.data, true);
         router.push(`/conversar/${sala}`);
       } else {
         toast('Ocorreu um erro ao criar a sala.', { type: 'error' });
@@ -174,71 +181,107 @@ export default function ConversarHome() {
         />
       </div>
     );
-  }, [apelido, avatarDetails.avatarURL, avatarColor]);
+  }, [avatarDetails.avatarURL, avatarColor]);
+
+  const handleEntrarSala = useCallback(() => {
+    if (codigoSala.trim()) {
+      router.push(`/conversar/${codigoSala.trim()}`);
+    }
+  }, [codigoSala, router]);
 
   return (
-    <>
-      <div className="mt-12">
-        <div className="mx-auto w-full text-center text-xl font-bold lg:w-[60%] lg:text-3xl">
-          <h1 className="!mb-4">
+    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-white to-blue-50 dark:from-[#121212] dark:to-[#1a1a1a]">
+      <div className="container mx-auto px-4 pt-16">
+        {/* Hero Section Atualizada */}
+        <div className="text-center mb-16">
+          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">
             {t('hero.titulo.parte1')}{' '}
-            <span className="bg-gradient-to-r from-[#38A3F5] to-[#786FF2] bg-clip-text font-extrabold text-transparent">
+            <span className="bg-gradient-to-r from-[#38A3F5] to-[#786FF2] bg-clip-text text-transparent">
               {t('hero.titulo.parte2')}
             </span>{' '}
+            <br className="hidden md:block" />
             {t('hero.titulo.parte3')}
           </h1>
         </div>
-        <section className="m-auto w-[calc(100%-2rem)] rounded-lg p-4 py-12 shadow-lg dark:bg-[#212121] dark:shadow-none lg:w-[60%]">
-          <h1 className="m-2 text-center text-4xl font-bold">{t('criar_sala.titulo')}</h1>
-          <p className="m-2 text-xl text-center text-gray-600 dark:text-white">
-            {t('criar_sala.subtitulo')}
-          </p>
-          <div className="flex flex-col items-center justify-center gap-4 p-4">
-            {AvatarComponent}
-            <ColorSelector
-              onSelectColor={handleSelectColor}
-              isOpen={isColorModalOpenned}
-              onModalClose={() => setColorModalOpenned(false)}
-            />
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleCriarSala();
-              }}
-              className="flex flex-col items-center justify-center gap-2 w-fit"
-            >
-              <Input
-                type="name"
-                label={t('criar_sala.apelido.label')}
-                size="lg"
-                maxLength={32}
-                value={apelido}
-                onValueChange={setApelido}
-                isInvalid={errorInputs.errorApelido}
-                classNames={{
-                  input: 'text-[1.2rem]',
-                }}
+
+        {/* Cards Container */}
+        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+          {/* Card Criar Sala */}
+          <section className="bg-white dark:bg-[#212121] rounded-2xl shadow-xl p-8">
+            <h2 className="text-3xl font-bold mb-6 text-center">{t('criar_sala.titulo')}</h2>
+            <div className="flex flex-col items-center gap-6">
+              {AvatarComponent}
+              <ColorSelector
+                onSelectColor={handleSelectColor}
+                isOpen={isColorModalOpenned}
+                onModalClose={() => setColorModalOpenned(false)}
               />
-              {errorInputs.errorApelido && (
-                <span className="text-danger">* {t(errorInputs.errorApelidoMessage)}</span>
-              )}
-            </form>
-            <Button
-              color="primary"
-              className="bg-[#38A3F5] font-semibold"
-              onClick={handleCriarSala}
-              isLoading={isLoading}
-            >
-              {t('criar_sala.botao_criar')}
-            </Button>
-            <span className="font-bold text-center">
-              <span className="text-orange-400">{t('criar_sala.dica.parte1')}</span>{' '}
-              {t('criar_sala.dica.parte2')}
-            </span>
-          </div>
-        </section>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleCriarSala();
+                }}
+                className="w-full max-w-md"
+              >
+                <Input
+                  type="name"
+                  label={t('criar_sala.apelido.label')}
+                  size="lg"
+                  maxLength={32}
+                  value={apelido}
+                  onValueChange={setApelido}
+                  isInvalid={errorInputs.errorApelido}
+                  classNames={{
+                    input: 'text-[1.2rem]',
+                  }}
+                />
+                {errorInputs.errorApelido && (
+                  <span className="text-danger text-sm">* {t(errorInputs.errorApelidoMessage)}</span>
+                )}
+              </form>
+              <Button
+                color="primary"
+                size="lg"
+                className="w-full max-w-md bg-[#38A3F5] font-semibold"
+                onClick={handleCriarSala}
+                isLoading={isLoading}
+              >
+                {t('criar_sala.botao_criar')}
+              </Button>
+            </div>
+          </section>
+
+          {/* Card Entrar em Sala */}
+          <section className="bg-white dark:bg-[#212121] rounded-2xl shadow-xl p-8">
+            <h2 className="text-3xl font-bold mb-6 text-center">{t('entrar_sala.titulo')}</h2>
+            <div className="flex flex-col items-center gap-6">
+              <p className="text-center text-gray-600 dark:text-gray-300">{t('entrar_sala.subtitulo')}</p>
+              <div className="w-full max-w-md">
+                <Input
+                  type="text"
+                  label={t('entrar_sala.codigo.label')}
+                  size="lg"
+                  value={codigoSala}
+                  onValueChange={setCodigoSala}
+                  placeholder={t('entrar_sala.codigo.placeholder')}
+                  classNames={{
+                    input: 'text-[1.2rem]',
+                  }}
+                />
+              </div>
+              <Button color="secondary" size="lg" className="w-full max-w-md font-semibold" onClick={handleEntrarSala}>
+                {t('entrar_sala.botao_entrar')}
+              </Button>
+            </div>
+          </section>
+        </div>
+
+        <p className="text-center mt-8 font-bold">
+          <span className="text-orange-400">{t('criar_sala.dica.parte1')}</span> {t('criar_sala.dica.parte2')}
+        </p>
       </div>
       <CreateRoomModal aberto={isLoading} />
-    </>
+    </div>
   );
 }
+

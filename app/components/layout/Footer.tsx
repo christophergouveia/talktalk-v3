@@ -5,7 +5,7 @@ import Image from 'next/image';
 import imagemLogo from '/public/images/icon/logo-ifpr.png';
 import { useTranslations } from 'next-intl';
 
-export default function Footer({}) {
+export default function Footer({ className }: { className?: string }) {
 
   const [commitSha, setCommitSha] = useState('');
 
