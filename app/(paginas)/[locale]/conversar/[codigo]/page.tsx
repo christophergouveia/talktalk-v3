@@ -870,8 +870,8 @@ export default function RoomPage({ params }: RoomPageProps) {
             </div>
             <div className="flex w-full flex-col gap-2 rounded-md bg-[--chat-bg-buttons] p-4">
               <div className="flex flex-col gap-1">
-                <p className="text-medium font-semibold">Idioma de tradução</p>
-                <p className="text-tiny text-default-600">Selecione para qual idioma as mensagens serão traduzidas</p>
+                <p className="text-medium font-semibold">Língua de tradução</p>
+                <p className="text-tiny text-default-600">Selecione para qual língua as mensagens serão traduzidas</p>
               </div>
               <div className="relative">
                 <motion.button

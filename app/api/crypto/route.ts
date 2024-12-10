@@ -78,11 +78,32 @@ export async function POST(req: NextRequest) {
       }
 
       case 'encrypt': {
-        const hash = crypto.createHash('sha256');
-        hash.update(body.data);
+        const chave = crypto.createHash('sha256').update(String(jwtSecret)).digest();
+        const iv = Buffer.from(jwtSecretIv, 'hex');
+        const cipher = crypto.createCipheriv('aes-256-cbc', chave, iv);
+        const encrypted = Buffer.concat([
+          cipher.update(body.data, 'utf8'),
+          cipher.final()
+        ]);
         return new NextResponse(
           JSON.stringify({
-            data: hash.digest('hex'),
+            data: encrypted.toString('hex'),
+          }),
+          { status: 200 }
+        );
+      }
+
+      case 'decrypt': {
+        const chave = crypto.createHash('sha256').update(String(jwtSecret)).digest();
+        const iv = Buffer.from(jwtSecretIv, 'hex');
+        const decipher = crypto.createDecipheriv('aes-256-cbc', chave, iv);
+        const decrypted = Buffer.concat([
+          decipher.update(Buffer.from(body.data, 'hex')),
+          decipher.final()
+        ]);
+        return new NextResponse(
+          JSON.stringify({
+            data: decrypted.toString('utf8'),
           }),
           { status: 200 }
         );

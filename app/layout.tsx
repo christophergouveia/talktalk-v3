@@ -24,7 +24,6 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    url: 'https://talktalk.com',
     title: 'Talk-Talk! - Tradução em Tempo Real',
     description: 'Ferramenta de tradução via bate-papo em tempo real para comunicação global',
     images: [{ url: '/images/talktalk-og-image.jpg', width: 1200, height: 630, alt: 'Talk-Talk! Preview' }],

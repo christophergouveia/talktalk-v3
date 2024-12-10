@@ -165,7 +165,11 @@ io.on('connection', (socket) => {
     const actualDate = new Date().toISOString();
     console.log('[SERVER] Mensagem recebida: ' + message);
     try {
-      const encryptedMessage = await fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
+      const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL 
+        ? `http://${process.env.NEXT_PUBLIC_VERCEL_URL}` 
+        : 'http://localhost:3000';
+
+      const encryptedMessage = await fetch(`${baseUrl}/api/crypto`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -32,7 +32,14 @@ async function processCryptoRequest(body: any): Promise<any> {
 export async function criptografar(string: string): Promise<CryptoResponse> {
   return await processCryptoRequest({
     data: string,
-    action: 'hash',
+    action: 'encrypt',
+  });
+}
+
+export async function descriptografar(string: string): Promise<CryptoResponse> {
+  return await processCryptoRequest({
+    data: string,
+    action: 'decrypt',
   });
 }
 

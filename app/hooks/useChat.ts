@@ -234,6 +234,7 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
   useEffect(() => {
     if (socketClient && userData) {
       loadMessageHistory();
+      console.log('loadMessageHistory | userData', userData);
     }
   }, [socketClient, userData, loadMessageHistory]);
 
