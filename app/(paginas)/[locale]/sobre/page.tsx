@@ -10,10 +10,13 @@ import SVGAccount from '/public/images/svg/Account.svg';
 import { GridMain, SubGrid } from '@/app/components/grids/grid';
 import PNGSecurity from '/public/images/pictures/security.png';
 import Avatar from 'react-avatar';
-import { useTranslations } from 'next-intl';
+import { useTranslation} from 'react-i18next';
+import ImagemGustavo from '/public/images/pictures/foto-gustavo.jpg';
+import ImagemChristopher from '/public/images/pictures/foto-christopher.jpg';
+import Link from 'next/link';
 
 export default function SobrePage() {
-  const t = useTranslations('sobre');
+  const t = useTranslation('', { keyPrefix: 'sobre' }).t;
 
   return (
     <div>
@@ -105,20 +108,25 @@ export default function SobrePage() {
               cargo={t('desenvolvedores.cargos.frontend')}
               tags={['FrontEnd']}
               icon={[<FaGithub key="github" />, <FaLinkedin key="linkedin" />]}
+              linkGithub='https://github.com/KaikeSathler'
             />
             <CardContent
               nome="Christopher"
               altImagem="Foto de perfil de Christopher"
+              srcImagem={ImagemChristopher.src}
               cargo={t('desenvolvedores.cargos.backend')}
               tags={['BackEnd']}
               icon={[<FaGithub key="github" />, <FaLinkedin key="linkedin" />]}
+              linkGithub='https://github.com/christophergouveia'
             />
             <CardContent
               nome="Gustavo"
               altImagem="Foto de perfil de Gustavo"
+              srcImagem={ImagemGustavo.src}
               cargo={t('desenvolvedores.cargos.backend')}
               tags={['BackEnd']}
               icon={[<FaGithub key="github" />, <FaLinkedin key="linkedin" />]}
+              linkGithub='https://github.com/GustavoGPreti'
             />
           </div>
         </div>
@@ -134,8 +142,10 @@ interface CardProps {
   cargo: string;
   tags: string[];
   icon?: ReactNode[];
+  linkGithub?: string;
+  linkLinkedin?: string;
 }
-function CardContent({ nome, srcImagem, altImagem, cargo, tags, icon }: CardProps) {
+function CardContent({ nome, srcImagem, altImagem, cargo, tags, icon, linkGithub, linkLinkedin = "#"}: CardProps) {
   return (
     <div className="mb-6 px-3 w-full md:w-1/2 lg:w-1/3">
       <div className="rounded-lg border border-sky-100 bg-white p-6 shadow-lg dark:border-neutral-800 dark:bg-transparent dark:shadow-none">
@@ -164,7 +174,7 @@ function CardContent({ nome, srcImagem, altImagem, cargo, tags, icon }: CardProp
                 radius={'full'}
                 className={'bg-transparent text-xl hover:bg-gray-200 dark:hover:bg-gray-800'}
               >
-                {value}
+                <Link href={index === 0 ? linkGithub ?? '#' : linkLinkedin} target="_blank" rel="noreferrer" className="hover:text-gray-900 dark:hover:text-white">{value}</Link>
               </Button>
             ))}
           </div>

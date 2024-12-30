@@ -43,16 +43,8 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  const locale = (await params).locale || (await cookies()).get('NEXT_LOCALE')?.value || 'pt-BR';
-
-  if (!routing.locales.includes(locale as any)) {
-    throw new Error(`Invalid locale: ${locale}`);
-  }
-
-  const messages = await getMessages({ locale });
-
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
@@ -60,10 +52,8 @@ export default async function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="canonical" href={`https://talktalk.com/${locale}`} />
       </head>
       <body className={`${inter.className} min-h-screen flex flex-col`}>
-        <NextIntlClientProvider messages={messages} locale={locale}>
           <Providers>
             <CookieConsetimentModal />
             <div className="flex flex-col min-h-screen">
@@ -74,7 +64,6 @@ export default async function RootLayout({
               <Footer className="mt-auto" />
             </div>
           </Providers>
-        </NextIntlClientProvider>
       </body>
     </html>
   );

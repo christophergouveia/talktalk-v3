@@ -7,13 +7,14 @@ import { useTheme } from 'next-themes';
 import { FaGithub } from 'react-icons/fa';
 import Image from 'next/image';
 import LogoSite from '/public/images/icon/logo.png';
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react';
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Spinner } from '@nextui-org/react';
 import { CountryFlag } from '../countryFlags';
-import { useLocale, useTranslations } from 'next-intl';
-import { Link, usePathname, useRouter } from '@/app/i18n/routing';
-import { usePathname as usePathnameNext } from 'next/navigation';
-import { useCookies } from 'react-cookie';
+
 import { motion } from 'framer-motion';
+import i18n from '@/i18n';
+import { usePathname, useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'next-view-transitions';
 
 interface NavbarItem {
   name: string;
@@ -23,49 +24,54 @@ interface NavbarItem {
 export default function NavBar() {
   const pathname = usePathname();
   const theme = useTheme();
-  const locale = useLocale();
-  
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasMounted, setHasMounted] = useState<boolean>(false);
   const [activeItem, setActiveItem] = useState<NavbarItem | null>(null);
-  
-  useEffect(() => setHasMounted(true), []);
-  
-  const t = useTranslations('navbar');
 
-  const listaItems = useMemo<NavbarItem[]>(() => [
-    {
-      name: t('pagina_inicial'),
-      href: '/',
-    },
-    {
-      name: t('sobre_ferramenta'), 
-      href: '/sobre',
-    },
-    {
-      name: t('conversar'),
-      href: '/conversar',
-    },
-  ], [t]);
+  useEffect(() => setHasMounted(true), []);
+
+  const { t } = useTranslation('', { keyPrefix: 'navbar' });
+
+  const listaItems = useMemo<NavbarItem[]>(
+    () => [
+      {
+        name: t('pagina_inicial'),
+        href: '/locale',
+      },
+      {
+        name: t('sobre_ferramenta'),
+        href: '/locale/sobre',
+      },
+      {
+        name: t('conversar'),
+        href: '/locale/conversar',
+      },
+    ],
+    [t]
+  );
 
   useEffect(() => {
-    const currentItem = listaItems.find(item => isActiveLink(item.href));
+    const currentItem = listaItems.find((item) => isActiveLink(item.href));
     setActiveItem(currentItem || null);
+    if(pathname?.split('/').filter(Boolean)[0] !== i18n.language) {
+      i18n.changeLanguage(pathname?.split('/').filter(Boolean)[0]);
+    }
   }, [pathname]);
 
   const toggleTheme = useCallback(() => {
     theme.setTheme(theme.resolvedTheme === 'dark' ? 'light' : 'dark');
   }, [theme]);
 
-  const isActiveLink = useCallback((href: string) => {
-    if (href === '/') {
-      return pathname === '/' || pathname === `/${locale}` || pathname === `/${locale}/`;
-    }
-    return pathname.startsWith(href) || pathname.startsWith(`/${locale}${href}`);
-  }, [pathname, locale]);
+  const isActiveLink = useCallback(
+    (href: string) => {
+      return pathname === href;
+    },
+    [pathname]
+  );
 
   const toggleMenu = useCallback(() => {
-    setIsMenuOpen(prev => !prev);
+    setIsMenuOpen((prev) => !prev);
   }, []);
 
   return (
@@ -73,15 +79,8 @@ export default function NavBar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0">
-            <Link href="/" locale={locale as "pt-BR" | "es-ES" | 'en-US'}>
-              <Image 
-                src={LogoSite.src} 
-                width={48} 
-                height={48} 
-                alt="Logo"
-                priority
-                className="w-12 h-12"
-              />
+            <Link href="/">
+              <Image src={LogoSite.src} width={48} height={48} alt="Logo" priority className="w-12 h-12" />
             </Link>
           </div>
 
@@ -89,8 +88,7 @@ export default function NavBar() {
             {listaItems.map((item) => (
               <Link
                 key={item.href}
-                href={item.href}
-                locale={locale as "pt-BR" | "es-ES" | 'en-US'}
+                href={`${item.href}`.replace('locale', i18n.language)}
                 className={`relative text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors
                   ${isActiveLink(item.href) ? '!text-sky-600' : ''}`}
               >
@@ -101,9 +99,9 @@ export default function NavBar() {
                     className="absolute bottom-[-20px] left-0 right-0 h-0.5 bg-sky-600"
                     initial={false}
                     transition={{
-                      type: "spring",
+                      type: 'spring',
                       stiffness: 500,
-                      damping: 30
+                      damping: 30,
                     }}
                   />
                 )}
@@ -175,36 +173,49 @@ export default function NavBar() {
 function LanguageSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
-  const locale = useLocale();
-  const [, setCookie] = useCookies(['NEXT_LOCALE']);
 
-  const handleLanguageChange = useCallback(async (newLocale: string) => {
-    try {
-      const pathParts = pathname.split('/').filter(Boolean);
-      const currentLocale = pathParts[0];
-      
-      let newPathname = '';
-      if (currentLocale && ['pt-BR', 'es-ES', 'en-US'].includes(currentLocale)) {
-        newPathname = '/' + pathParts.slice(1).join('/');
-      } else {
-        newPathname = pathname;
+  const [isChangingLocale, setIsChangingLocale] = useState(false);
+  const locale = i18n.language;
+
+  const handleLanguageChange = useCallback(
+    async (newLocale: string) => {
+      try {
+        setIsChangingLocale(true);
+        const pathParts = pathname?.split('/').filter(Boolean) || [];
+        const currentLocale = pathParts[0];
+
+        let newPathname = '';
+        if (currentLocale && ['pt-BR', 'es-ES', 'en-US'].includes(currentLocale)) {
+          newPathname = '/' + pathParts.slice(1).join('/');
+        } else {
+          newPathname = pathname ?? '/';
+        }
+
+        newPathname = newPathname || '/';
+        console.log(newPathname);
+        // await router.push(newPathname);
+        // router.refresh();
+        // console.log(newLocale);
+        i18n.changeLanguage(newLocale);
+
+        const newUrl = `/${newLocale}${newPathname}`;
+        window.history.pushState({}, '', newUrl);
+
+        router.refresh();
+      } catch (error) {
+        console.error('Erro ao mudar idioma:', error);
+      } finally {
+        setIsChangingLocale(false);
       }
-
-      newPathname = newPathname || '/';
-
-      await router.push(newPathname, { locale: newLocale as "pt-BR" | "es-ES" | "en-US" });
-      router.refresh();
-
-    } catch (error) {
-      console.error('Erro ao mudar idioma:', error);
-    }
-  }, [pathname, router]);
+    },
+    [pathname, router]
+  );
 
   const getLanguageName = useCallback((localeCode: string) => {
     const languages = {
       'pt-BR': 'Português (BR)',
       'en-US': 'English (US)',
-      'es-ES': 'Español (ES)'
+      'es-ES': 'Español (ES)',
     };
     return languages[localeCode as keyof typeof languages] || localeCode;
   }, []);
@@ -212,42 +223,44 @@ function LanguageSwitcher() {
   return (
     <Dropdown>
       <DropdownTrigger>
-        <Button 
-          variant="light" 
+        <Button
+          variant="light"
           startContent={<IoLanguage size={18} />}
           className="min-w-0 sm:min-w-[140px] justify-start p-1.5 sm:p-2"
           aria-label="Selecionar idioma"
         >
           <div className="flex items-center gap-2">
-            <CountryFlag 
-              className="w-6 h-6 sm:w-8 sm:h-8"
-              flag={locale.split('-')[1]} 
-            />
+            <CountryFlag className="w-6 h-6 sm:w-8 sm:h-8" flag={locale.split('-')[1]} />
             <span className="hidden md:block">{getLanguageName(locale)}</span>
           </div>
         </Button>
       </DropdownTrigger>
-      <DropdownMenu 
-        aria-label="Seleção de Idiomas" 
-        className="min-w-[200px]" 
+      <DropdownMenu
+        aria-label="Seleção de Idiomas"
+        className="min-w-[200px]"
         onAction={(key) => handleLanguageChange(key as string)}
         selectedKeys={new Set([locale])}
+        disabledKeys={isChangingLocale ? new Set(['pt-BR', 'es-ES', 'en-US']) : new Set()}
       >
-        <DropdownItem key="pt-BR" className="flex items-center gap-2">
+        <DropdownItem textValue="pt-BR" key="pt-BR" className="flex items-center gap-2">
+          {isChangingLocale ? (
+            <Spinner size="sm" />
+          ) : (
+            <span className="text-sm flex items-center gap-2">
+              <CountryFlag className="w-8 h-8" flag="BR" />
+              {getLanguageName('pt-BR')}
+            </span>
+          )}
+        </DropdownItem>
+        <DropdownItem textValue="es-ES" key="es-ES" className="flex items-center gap-2">
           <span className="text-sm flex items-center gap-2">
-            <CountryFlag className="w-8 h-8" flag="BR" /> 
-            {getLanguageName('pt-BR')}
+            {' '}
+            <CountryFlag className="w-8 h-8" flag="ES" /> {getLanguageName('es-ES')}{' '}
           </span>
         </DropdownItem>
-        <DropdownItem key="es-ES" className="flex items-center gap-2">
+        <DropdownItem textValue="en-US" key="en-US" className="flex items-center gap-2">
           <span className="text-sm flex items-center gap-2">
-            <CountryFlag className="w-8 h-8" flag="ES" /> 
-            {getLanguageName('es-ES')}
-          </span>
-        </DropdownItem>
-        <DropdownItem key="en-US" className="flex items-center gap-2">
-          <span className="text-sm flex items-center gap-2">
-            <CountryFlag className="w-8 h-8" flag="US" /> 
+            <CountryFlag className="w-8 h-8" flag="US" />
             {getLanguageName('en-US')}
           </span>
         </DropdownItem>

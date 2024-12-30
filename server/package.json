@@ -20,7 +20,8 @@
     "selfsigned": "^2.4.1",
     "server": "file:",
     "socket.io": "^4.8.1",
-    "uuid": "^11.0.3"
+    "uuid": "^11.0.3",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "@types/express": "^5.0.0"

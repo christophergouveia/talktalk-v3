@@ -1,16 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { routing } from "./app/i18n/routing";
-
-const locales = routing.locales;
+import { i18n } from './next-i18next.config'
+const locales = i18n.locales;
 
 function getLocale(request: NextRequest) {
-  // Primeiro tenta obter do cookie
   const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
   if (cookieLocale && locales.includes(cookieLocale as any)) {
     return cookieLocale;
   }
 
-  // Se não houver cookie, tenta obter do Accept-Language
   const acceptLanguage = request.headers.get('accept-language');
   if (acceptLanguage) {
     const preferredLocale = acceptLanguage
@@ -19,14 +16,12 @@ function getLocale(request: NextRequest) {
       .join('-')
       .toLowerCase();
 
-    // Tenta encontrar uma correspondência exata
     for (const locale of locales) {
       if (locale.toLowerCase() === preferredLocale) {
         return locale;
       }
     }
 
-    // Tenta encontrar uma correspondência parcial
     for (const locale of locales) {
       if (preferredLocale.startsWith(locale.split('-')[0].toLowerCase())) {
         return locale;
@@ -34,29 +29,21 @@ function getLocale(request: NextRequest) {
     }
   }
 
-  return routing.defaultLocale;
+  return i18n.defaultLocale;
 }
 
 export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   
-  // Tratar página 404 especificamente
-  if (pathname === '/404') {
-    const locale = getLocale(request);
-    return NextResponse.rewrite(new URL(`/${locale}/not-found`, request.url));
-  }
-
-  // Ignorar arquivos estáticos e API routes
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
     pathname.startsWith('/static') ||
     pathname.includes('.')
   ) {
-    return;
+    return NextResponse.next();
   }
 
-  // Verificar se o pathname já tem um locale válido
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
@@ -65,16 +52,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Redirecionar se não houver locale
   const locale = getLocale(request);
   const newUrl = new URL(`/${locale}${pathname}${search}`, request.url);
-  
+
   return NextResponse.redirect(newUrl);
 }
 
 export const config = {
   matcher: [
-    // Ignorar arquivos estáticos e API routes
-    '/((?!api|_next|_vercel|.*\\..*).*)',
+    '/((?!api|_next|_vercel|static|.*\\..*).*)',
   ],
-};
+}; 

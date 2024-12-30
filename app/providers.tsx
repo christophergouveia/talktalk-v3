@@ -8,6 +8,8 @@ import { ToastContainer } from 'react-toastify';
 import { ViewTransitions } from 'next-view-transitions';
 import 'react-toastify/dist/ReactToastify.css';
 
+import "../i18n"
+
 export default function Providers({ children }: { children: ReactNode }) {
   return (
     <ViewTransitions>

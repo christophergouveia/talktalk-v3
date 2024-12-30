@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import imagemLogo from '/public/images/icon/logo-ifpr.png';
-import { useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 
 export default function Footer({ className }: { className?: string }) {
 
@@ -15,7 +15,7 @@ export default function Footer({ className }: { className?: string }) {
       .then((data) => (data.error ? setCommitSha("Erro ao obter o SHA") : setCommitSha(data.commitSha)));
   }, []);
 
-  const t = useTranslations('footer');
+  const { t } = useTranslation('', { keyPrefix: 'footer' });
 
   return (
     <footer className="relative mt-6 flex flex-col items-center justify-center gap-2 px-2 py-4 text-center text-gray-500 sm:flex-row sm:px-0">
@@ -28,9 +28,7 @@ export default function Footer({ className }: { className?: string }) {
       <div className="flex flex-col items-center gap-2">
         <span className="text-sm text-center">
           {t('copyright')}
-          {t.rich('desenvolvido_por', {
-            strong: (chunks) => <strong>{chunks}</strong>
-          })}
+          <span dangerouslySetInnerHTML={{ __html: t("desenvolvido_por") }} />
         </span>
         <span className="text-sm text-center">
           {t('campus')}

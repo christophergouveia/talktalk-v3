@@ -6,7 +6,7 @@ import Marquee from 'react-fast-marquee';
 import { motion } from 'framer-motion';
 import { CountryFlag } from '../../components/countryFlags';
 import linguagens from '../../locales/languages.json';
-import { useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 
 function MarqueeText({ children }: { children: ReactNode }) {
   return <span className="mx-4">{children}</span>;
@@ -66,7 +66,7 @@ AnimatedFlag.displayName = 'AnimatedFlag';
 
 export default function Home({}) {
   const [flags, setFlags] = useState<FlagData[]>([]);
-  const t = useTranslations('pagina_inicial');
+  const t = useTranslation('', { keyPrefix: 'pagina_inicial' }).t;
 
   useEffect(() => {
     const novasBandeiras = Array.from({ length: 20 }).map(() => ({

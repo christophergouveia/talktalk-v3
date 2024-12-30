@@ -78,6 +78,15 @@
                 "parte2": "You can change the color of your avatar! Try clicking/touching on your animal icon. 😉"
             }
         },
+        "entrar_sala": {
+            "titulo": "Join a room",
+            "subtitulo": "Do you already have a room code? Enter it below and start chatting.",
+            "codigo": {
+                "label": "Room code",
+                "placeholder": "Enter the room code"
+            },
+            "botao_entrar": "Join the room"
+        },
         "botoes_avatar": {
             "escolher_avatar": "Choose avatar",
             "escolher_avatar_aleatorio": "Choose random avatar",

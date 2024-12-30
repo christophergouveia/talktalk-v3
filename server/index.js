@@ -3,7 +3,6 @@ const app = express();
 const http = require('http');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
-const fetch = require('node-fetch');
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 
@@ -53,7 +52,7 @@ io.on('connection', (socket) => {
         return;
       }
 
-      const encryptResponse = await fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
+      const encryptResponse = await import('node-fetch').then(({default: fetch}) => fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,7 +62,7 @@ io.on('connection', (socket) => {
           data: parsedUserData,
           action: 'encryptUserData',
         }),
-      });
+      }));
 
       const encryptResult = await encryptResponse.json();
       if (encryptResult.error) {
@@ -100,7 +99,7 @@ io.on('connection', (socket) => {
 
       const decryptedUsers = await Promise.all(
         roomUsers.map(async (user) => {
-          const decryptResponse = await fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
+          const decryptResponse = await import('node-fetch').then(({default: fetch}) => fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -110,7 +109,7 @@ io.on('connection', (socket) => {
               data: user.userData,
               action: 'decryptUserData',
             }),
-          });
+          }));
           
           const decryptResult = await decryptResponse.json();
           return {
@@ -169,7 +168,7 @@ io.on('connection', (socket) => {
         ? `http://${process.env.NEXT_PUBLIC_VERCEL_URL}` 
         : 'http://localhost:3000';
 
-      const encryptedMessage = await fetch(`${baseUrl}/api/crypto`, {
+      const encryptedMessage = await import('node-fetch').then(({default: fetch}) => fetch(`${baseUrl}/api/crypto`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -179,7 +178,7 @@ io.on('connection', (socket) => {
           data: message,
           action: 'encrypt',
         }),
-      }).then(res => res.json());
+      })).then(res => res.json());
 
       await prisma.mensagens.create({
         data: {
@@ -286,3 +285,4 @@ app.get('/', (req, res) => {
 server.listen(PORT, process.env.NEXT_PUBLIC_SOCKET_URL, () => {
   console.log(`Servidor Socket.IO rodando na porta ${PORT} e URL ${process.env.NEXT_PUBLIC_SOCKET_URL}`);
 });
+

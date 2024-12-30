@@ -78,6 +78,15 @@
                 "parte2": "¡Puedes cambiar el color usado en tus avatares! Prueba tocando/haciendo clic en tu icono 😉"
             }
         },
+        "entrar_sala": {
+            "titulo": "Unirse a una sala",
+            "subtitulo": "¿Ya tienes un código de sala? ¡Únete a una sala existente!",
+            "codigo": {
+                "label": "Código de sala",
+                "placeholder": "Ingresa el código de la sala"
+            },
+            "botao_entrar": "Unirse a la sala"
+        },
         "botoes_avatar": {
             "escolher_avatar": "Escoger avatar",
             "escolher_avatar_aleatorio": "Escoger avatar aleatorio",

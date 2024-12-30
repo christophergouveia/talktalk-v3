@@ -2,7 +2,7 @@ import { RandomNicks, randomNicks } from '@/app/utils/strings/randomNicks';
 import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Tooltip } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 
 interface AvatarSelectorProps {
   onAvatarSelect: (name: string, imageUrl: string) => void;
@@ -32,7 +32,7 @@ export const AvatarSelector: React.FC<AvatarSelectorProps> = ({ onAvatarSelect, 
     setAvatarColor(color);
   }, [color])
 
-  const t = useTranslations('conversar.botoes_avatar');
+  const t = useTranslation('', { keyPrefix: 'conversar.botoes_avatar' }).t;
 
   return (
     <>

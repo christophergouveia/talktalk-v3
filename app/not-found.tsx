@@ -1,9 +1,9 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslation } from 'react-i18next';
 
 export default function NotFoundPage() {
-  const t = useTranslations('errors');
+  const t = useTranslation('', { keyPrefix: 'errors' }).t;
   
   return (
     <div className="flex min-h-[calc(100vh-200px)] flex-col items-center justify-center gap-4">

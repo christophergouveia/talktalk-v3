@@ -37,6 +37,7 @@ import ColorSelector from '@/app/components/functionals/ColorsSelector';
 import { UserData } from '@/app/types/chat';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
+import { cleanMessage } from '../../../../utils/formatters/cleanMessage';
 
 interface RoomPageProps {
   params: Promise<{
@@ -89,7 +90,7 @@ export default function RoomPage({ params }: RoomPageProps) {
 
   const router = useRouter();
 
-  const codigo = React.use(params).codigo;
+  const codigo = React.use(params).codigo.toLowerCase();
 
   const {
     mensagens,
@@ -506,7 +507,7 @@ export default function RoomPage({ params }: RoomPageProps) {
               reconnectAttempts++;
             },
             1000 * Math.min(reconnectAttempts + 1, 5)
-          ); // Backoff exponencial
+          ); // Backoff exponencial (backoff é pra dar delay entre as tentativas gustavin)
         } else {
           console.log('Número máximo de tentativas de reconexão atingido');
         }
@@ -662,7 +663,9 @@ export default function RoomPage({ params }: RoomPageProps) {
         isOpen={hostModal}
         backdrop="opaque"
         size="2xl"
-        hideCloseButton
+        isDismissable
+        onKeyUp={(e) => e.key === 'Escape' && setHostModal(false)}
+        onClose={() => setHostModal(false)}
         classNames={{
           footer: 'justify-center',
           backdrop: 'bg-[#6F90F2]/30',
