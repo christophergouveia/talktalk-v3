@@ -7,7 +7,7 @@ import { useTheme } from 'next-themes';
 import { FaGithub } from 'react-icons/fa';
 import Image from 'next/image';
 import LogoSite from '/public/images/icon/logo.png';
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Spinner } from '@nextui-org/react';
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Spinner } from "@heroui/react";
 import { CountryFlag } from '../countryFlags';
 
 import { motion } from 'framer-motion';

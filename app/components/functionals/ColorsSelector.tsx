@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, ModalContent, ModalHeader, ModalBody, Button, Tooltip } from '@nextui-org/react';
+import { Modal, ModalContent, ModalHeader, ModalBody, Button, Tooltip } from "@heroui/react";
 
 export const colors = [
   { name: 'Tangerina', hex: '#FFDDC1' },

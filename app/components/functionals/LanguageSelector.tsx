@@ -1,5 +1,5 @@
 import { CountryFlag } from '@/app/components/countryFlags';
-import { Input } from '@nextui-org/react';
+import { Input } from "@heroui/react";
 import { useEffect, useRef, useState } from 'react';
 import linguagens from '@/app/locales/languages.json';
 import { ChevronDown } from 'lucide-react';

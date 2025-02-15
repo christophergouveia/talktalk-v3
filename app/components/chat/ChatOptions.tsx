@@ -1,4 +1,4 @@
-import { Button, Input, Switch } from '@nextui-org/react';
+import { Button, Input, Switch } from "@heroui/react";
 import { CountryFlag } from '@/app/components/countryFlags';
 import Image from 'next/image';
 import { useRef } from 'react';

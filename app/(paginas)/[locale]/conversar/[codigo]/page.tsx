@@ -22,7 +22,7 @@ import {
   Spinner,
   Switch,
   Textarea,
-} from '@nextui-org/react';
+} from "@heroui/react";
 import { useDebounce } from '@uidotdev/usehooks';
 import React, { ChangeEvent, KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useCookies } from 'react-cookie';

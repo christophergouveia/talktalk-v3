@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input } from "@heroui/react";
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';

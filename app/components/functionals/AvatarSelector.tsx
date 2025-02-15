@@ -1,5 +1,5 @@
 import { RandomNicks, randomNicks } from '@/app/utils/strings/randomNicks';
-import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Tooltip } from '@nextui-org/react';
+import { Button, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Tooltip } from "@heroui/react";
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
