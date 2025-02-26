@@ -12,9 +12,10 @@ const server = http.createServer(app);
 
 const io = require('socket.io')(server, {
   cors: {
-    origin: [process.env.ORIGIN, process.env.NEXT_PUBLIC_VERCEL_URL].filter(Boolean),
+    origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+    methods: ["GET", "POST"],
     credentials: true,
-    methods: ['GET', 'POST'],
+    allowedHeaders: ["my-custom-header"],
   },
   pingTimeout: 120000,
   pingInterval: 45000,
@@ -285,4 +286,3 @@ app.get('/', (req, res) => {
 server.listen(PORT, process.env.NEXT_PUBLIC_SOCKET_URL, () => {
   console.log(`Servidor Socket.IO rodando na porta ${PORT} e URL ${process.env.NEXT_PUBLIC_SOCKET_URL}`);
 });
-
