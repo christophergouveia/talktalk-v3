@@ -182,6 +182,8 @@ export default function RoomPage({ params }: RoomPageProps) {
     }
   }, [codigo]);
 
+  
+
   useEffect(() => {
     fetchSala();
 
@@ -924,6 +926,7 @@ export default function RoomPage({ params }: RoomPageProps) {
                           } else if (e.key === 'Enter' && selectedIndex !== undefined) {
                             updateLanguage(filteredLanguages[selectedIndex].value);
                             setIsOpen(false);
+                            setLanguagesFilter("");
                           }
                         }}
                       />
@@ -939,6 +942,7 @@ export default function RoomPage({ params }: RoomPageProps) {
                               onClick={() => {
                                 updateLanguage(idioma.value);
                                 setIsOpen(false);
+                                setLanguagesFilter("");
                               }}
                               className={`block w-full px-4 py-2 hover:bg-gray-600 ${
                                 index === selectedIndex ? 'bg-zinc-600 text-white' : ''

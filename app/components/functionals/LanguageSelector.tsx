@@ -31,6 +31,10 @@ export function LanguageSelector({ selectedLanguage, onLanguageChange }: Languag
     setSelectedIndex(undefined);
   }, [isOpen]);
 
+  useEffect(() => {
+    console.log(filter)
+  }, [filter])
+
   return (
     <div className="relative">
       <button
@@ -82,6 +86,7 @@ export function LanguageSelector({ selectedLanguage, onLanguageChange }: Languag
                 } else if (e.key === 'Enter' && selectedIndex !== undefined) {
                   onLanguageChange(filteredLanguages[selectedIndex].value);
                   setIsOpen(false);
+                  setFilter("");
                 }
               }}
             />
@@ -92,6 +97,7 @@ export function LanguageSelector({ selectedLanguage, onLanguageChange }: Languag
                     onClick={() => {
                       onLanguageChange(idioma.value);
                       setIsOpen(false);
+                      setFilter("");
                     }}
                     className={`block w-full px-4 py-2 hover:bg-gray-600 ${
                       index === selectedIndex ? 'bg-zinc-600 text-white' : ''
