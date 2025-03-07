@@ -3,11 +3,12 @@ import Image from 'next/image';
 import { Moment } from 'moment-timezone';
 import { supportedLanguages } from '@/app/api/translate/languages';
 import { useState } from 'react';
-import { Ellipsis, Play, Pause, Volume2, Video } from 'lucide-react';
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
+import { Play, Pause, Volume2 } from 'lucide-react';
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+
 interface MessageProps {
+  isAudio: boolean;
   children: React.ReactNode;
   date: string | Moment | Date;
   lingua: string;
@@ -76,6 +77,8 @@ function MicComponent({ text }: { text: string }) {
     }
   };
 
+  
+
   return (
     <div className="flex items-center gap-1.5 rounded-full bg-gray-100/50 dark:bg-gray-800/50 px-1.5 py-0.5">
       <button
@@ -138,6 +141,7 @@ function MicComponent({ text }: { text: string }) {
 }
 
 export default function Message({
+  isAudio,
   children,
   date,
   lingua,
@@ -153,6 +157,20 @@ export default function Message({
     hour: '2-digit',
     minute: '2-digit',
   });
+  
+  const renderContent = () => {
+    if (isAudio) {
+      return (
+        <audio 
+          controls 
+          src={originalMessage}
+          className="max-w-[300px] rounded-lg"
+        />
+      );
+    }
+    return showOriginal ? originalMessage : children;
+  };
+
   return (
     <>
       <div
@@ -207,7 +225,7 @@ export default function Message({
               <div
                 className={`relative mt-1 max-w-full rounded-lg p-2 ${ownMessage ? 'setinha-own bg-blue-500 text-white' : 'setinha bg-gray-200 dark:bg-zinc-800'}`}
               >
-                <p className="text-sm">{showOriginal ? originalMessage : children}</p>
+                {renderContent()}
                 {!ownMessage && (
                   <>
                     <span className="text-xs text-gray-500">

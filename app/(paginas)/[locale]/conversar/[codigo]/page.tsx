@@ -27,6 +27,7 @@ import { useDebounce } from '@uidotdev/usehooks';
 import React, { ChangeEvent, KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { IoIosSend } from 'react-icons/io';
+import { IoMicOutline } from "react-icons/io5";
 import { IoSettingsSharp } from 'react-icons/io5';
 import { Socket, io } from 'socket.io-client';
 import { useChat } from '@/app/hooks/useChat';
@@ -38,6 +39,7 @@ import { UserData } from '@/app/types/chat';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cleanMessage } from '../../../../utils/formatters/cleanMessage';
+import { toast } from 'react-toastify';
 
 interface RoomPageProps {
   params: Promise<{
@@ -87,6 +89,9 @@ export default function RoomPage({ params }: RoomPageProps) {
   const [chatCompacto, setChatCompacto] = useState(false);
   const [salaData, setSalaData] = useState<any>(null);
   const [usersTyping, setUsersTyping] = useState<{ userToken: string; typing: boolean }[]>([]);
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
   const router = useRouter();
 
@@ -182,7 +187,7 @@ export default function RoomPage({ params }: RoomPageProps) {
     }
   }, [codigo]);
 
-  
+
 
   useEffect(() => {
     fetchSala();
@@ -298,8 +303,11 @@ export default function RoomPage({ params }: RoomPageProps) {
   }, [mensagens]);
 
   const handleTextAreaChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setMensagem(e.target.value);
-    emitTypingStatus(true);
+    const cleanedMessage = cleanMessage(e.target.value);
+    if (cleanedMessage !== undefined) {
+      setMensagem(cleanedMessage);
+      emitTypingStatus(true);
+    }
   }, [emitTypingStatus]);
 
   const handleTextAreaKeyUp = useCallback(
@@ -310,7 +318,7 @@ export default function RoomPage({ params }: RoomPageProps) {
         e.preventDefault();
         if (shiftPressed) {
           setMensagem((prev) => prev + '\n');
-        } else if (mensagem.trim()) {
+        } else if (mensagem && mensagem.trim()) {
           sendMessage();
         }
       }
@@ -333,6 +341,71 @@ export default function RoomPage({ params }: RoomPageProps) {
   const handleNameInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setUserName(e.target.value);
   }, []);
+
+  const recAudio = async () => {
+    try {
+      if (isRecording) {
+        mediaRecorderRef.current?.stop();
+        setIsRecording(false);
+        return;
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunksRef.current.push(event.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = () => {
+          const base64Audio = reader.result as string;
+          
+          if (socketClient && userData) {
+            const audioMessage = {
+              type: 'audio',
+              message: base64Audio,
+              userToken: userData.userToken,
+              senderColor: userData.color,
+              apelido: userData.apelido,
+              avatar: userData.avatar,
+              room: codigo,
+              lingua: linguaSelecionada.value,
+              date: new Date().toISOString()
+            };
+            
+            socketClient.emit('sendMessage', audioMessage.message, audioMessage.userToken, audioMessage.senderColor, audioMessage.apelido, audioMessage.avatar, audioMessage.room, audioMessage.lingua, audioMessage.type);
+            toast.success('Áudio enviado com sucesso!');
+          }
+        };
+
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      toast.info('Gravando áudio... Clique novamente para parar.');
+
+      setTimeout(() => {
+        if (mediaRecorderRef.current?.state === 'recording') {
+          mediaRecorderRef.current.stop();
+          setIsRecording(false);
+          toast.info('Gravação finalizada automaticamente (limite de 1 minuto).');
+        }
+      }, 60000);
+
+    } catch (error) {
+      console.error('Error recording audio:', error);
+      toast.error('Erro ao gravar áudio. Verifique as permissões do microfone.');
+      setIsRecording(false);
+    }
+  };
 
   const connectToRoom = useCallback(
     async (bypass: boolean) => {
@@ -450,17 +523,17 @@ export default function RoomPage({ params }: RoomPageProps) {
   const filteredLanguages =
     languagesFilterDebounced.length > 0
       ? linguagens.filter((idioma) =>
-          idioma.label
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .toLowerCase()
-            .includes(
-              languagesFilterDebounced
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .toLowerCase()
-            )
-        )
+        idioma.label
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .includes(
+            languagesFilterDebounced
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+              .toLowerCase()
+          )
+      )
       : linguagens;
 
   const getRandomAvatar = useCallback(() => {
@@ -530,7 +603,7 @@ export default function RoomPage({ params }: RoomPageProps) {
     socketClient.on('connect', handleConnect);
     socketClient.on('disconnect', handleDisconnect);
     socketClient.on('reconnect', handleReconnect);
-    socketClient.on('reconnect_error', (error: Error) => {
+    socketClient.on('reconnect_error', (error) => {
       console.error('Erro na reconexão:', error);
     });
 
@@ -549,6 +622,19 @@ export default function RoomPage({ params }: RoomPageProps) {
       }
     };
   }, [socketClient]);
+
+  const renderMessage = (message: any) => {
+    if (message.type === 'audio') {
+      return (
+        <audio 
+          controls 
+          src={message.message}
+          className="max-w-[300px] rounded-lg"
+        />
+      );
+    }
+    return message.messageTraduzido || message.message;
+  };
 
   if (showErrorModal) {
     return (
@@ -746,8 +832,9 @@ export default function RoomPage({ params }: RoomPageProps) {
                 senderAvatar={message.senderAvatar}
                 senderColor={message.senderColor}
                 compact={chatCompacto}
+                isAudio={message.isAudio}
               >
-                {message.messageTraduzido || message.message}
+                {renderMessage(message)}
               </Message>
             ))}
             {messageLoading && (
@@ -756,7 +843,7 @@ export default function RoomPage({ params }: RoomPageProps) {
               </div>
             )}
             <AnimatePresence>
-              {usersTyping.map(({ userToken, typing }) => 
+              {usersTyping.map(({ userToken, typing }) =>
                 typing && userToken !== userData?.userToken && usersRoomData[userToken] && (
                   <motion.div
                     key={userToken}
@@ -805,6 +892,13 @@ export default function RoomPage({ params }: RoomPageProps) {
           <Button isIconOnly onClick={sendMessage}>
             <IoIosSend className={'text-2xl'} />
           </Button>
+          <Button 
+            isIconOnly 
+            onClick={recAudio}
+            color={isRecording ? "danger" : "primary"}
+          >
+            <IoMicOutline className={`text-2xl ${isRecording ? 'animate-pulse' : ''}`} />
+          </Button>
         </ChatComponent.Footer>
       </section>
 
@@ -822,10 +916,9 @@ export default function RoomPage({ params }: RoomPageProps) {
         className={`
           lg:relative lg:w-[400px] lg:ml-4 lg:flex lg:flex-col lg:h-full lg:shadow-none
           fixed w-[calc(100%-2rem)] h-[calc(95%-2rem)] top-8 bg-[var(--chat-bg-geral)] overflow-y-auto shadow-xl p-4
-          ${
-            isSettingsOpen
-              ? 'left-[50%] translate-x-[-50%] z-50 rounded-md lg:left-0 lg:translate-x-0 lg:z-0'
-              : 'left-[150%] lg:left-0'
+          ${isSettingsOpen
+            ? 'left-[50%] translate-x-[-50%] z-50 rounded-md lg:left-0 lg:translate-x-0 lg:z-0'
+            : 'left-[150%] lg:left-0'
           }
           transition-[left] duration-300 ease-in-out lg:transition-none
         `}
@@ -889,9 +982,8 @@ export default function RoomPage({ params }: RoomPageProps) {
                   {linguaSelecionada?.label}
                 </motion.button>
                 <motion.div
-                  className={`absolute z-20 w-full rounded-md bg-white dark:bg-[var(--chat-bg-buttons)] shadow-lg ${
-                    isOpen ? 'block' : 'hidden'
-                  }`}
+                  className={`absolute z-20 w-full rounded-md bg-white dark:bg-[var(--chat-bg-buttons)] shadow-lg ${isOpen ? 'block' : 'hidden'
+                    }`}
                   style={{ zIndex: 100 }}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : -10 }}
@@ -944,9 +1036,8 @@ export default function RoomPage({ params }: RoomPageProps) {
                                 setIsOpen(false);
                                 setLanguagesFilter("");
                               }}
-                              className={`block w-full px-4 py-2 hover:bg-gray-600 ${
-                                index === selectedIndex ? 'bg-zinc-600 text-white' : ''
-                              }`}
+                              className={`block w-full px-4 py-2 hover:bg-gray-600 ${index === selectedIndex ? 'bg-zinc-600 text-white' : ''
+                                }`}
                             >
                               <div className="flex items-center">
                                 <CountryFlag flag={idioma.flag} />
@@ -1008,6 +1099,7 @@ export default function RoomPage({ params }: RoomPageProps) {
                 Nenhum usuário conectado
               </motion.div>
             )}
+            
           </div>
         </div>
       </aside>

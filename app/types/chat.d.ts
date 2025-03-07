@@ -27,4 +27,6 @@ export interface MessageType {
   senderColor: string;
   date: Moment | string | Date;
   lingua: string;
-} 
+  isAudio: boolean;
+  type: 'text' | 'audio';
+}

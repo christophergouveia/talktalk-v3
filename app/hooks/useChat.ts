@@ -60,10 +60,37 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
   }, [socketClient, userData, codigo]);
 
   const handleMessage = async (message: any) => {
+    if (!message || !message.message) {
+      console.error('Invalid message received:', message);
+      return;
+    }
+    console.log('handleMessage | message', message);
     const clientTz = moment.tz.guess(true);
     const messageDate = moment(message.date).tz(clientTz);
+
+    // Adiciona a mensagem diretamente se for áudio
+    if (message.type === 'audio') {
+      setMensagens((prev) => [
+        ...prev,
+        {
+          isAudio: true,
+          message: message.message,
+          messageTraduzido: message.message,
+          senderId: message.userToken,
+          senderApelido: message.apelido,
+          senderAvatar: message.avatar,
+          senderColor: message.senderColor,
+          date: messageDate,
+          lingua: message.lingua,
+          type: 'audio'
+        },
+      ]);
+      return;
+    }
+
     try {
       const isOwnMessage = message.userToken === userData?.userToken;
+      
       // Só traduz se não for mensagem própria e se o idioma for diferente
       if (!isOwnMessage && message.lingua !== linguaSelecionadaRef.current) {
         setMessageLoading(true);
@@ -82,6 +109,7 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
         setMensagens((prev) => [
           ...prev,
           {
+            isAudio: message.isAudio,
             message: message.message,
             messageTraduzido: traduzido,
             senderId: message.userToken,
@@ -90,6 +118,7 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
             senderColor: message.senderColor,
             date: messageDate,
             lingua: message.lingua,
+            type: 'text'
           },
         ]);
       } else {
@@ -97,6 +126,7 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
         setMensagens((prev) => [
           ...prev,
           {
+            isAudio: message.isAudio,
             message: message.message,
             messageTraduzido: message.message, // Usa a mensagem original
             senderId: message.userToken,
@@ -105,6 +135,7 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
             senderColor: message.senderColor,
             date: messageDate,
             lingua: message.lingua,
+            type: 'text'
           },
         ]);
       }
@@ -114,6 +145,7 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
       setMensagens((prev) => [
         ...prev,
         {
+          isAudio: message.isAudio,
           message: message.message,
           messageTraduzido: message.message,
           senderId: message.userToken,
@@ -122,6 +154,7 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
           senderColor: message.senderColor,
           date: messageDate,
           lingua: message.lingua,
+          type: 'text'
         },
       ]);
     } finally {
@@ -172,16 +205,22 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
   }, [socketClient]);
 
   const sendMessage = useCallback(() => {
-    if (socketClient && mensagem.trim() && userData) {
+    if (socketClient && mensagem && mensagem.trim() && userData) {
+      const messageContent = cleanMessage(mensagem);
+      if (!messageContent) return; // Don't send if message is empty after cleaning
+      
+      const messageType = messageContent.startsWith('data:audio') ? 'audio' : 'text';
+      
       socketClient.emit(
         'sendMessage',
-        cleanMessage(mensagem),
+        messageContent,
         userData.userToken,
         userData.color,
         userData.apelido,
         userData.avatar,
         codigo,
-        linguaSelecionadaRef.current
+        linguaSelecionadaRef.current,
+        messageType
       );
       setMensagem('');
       emitTypingStatus(false);

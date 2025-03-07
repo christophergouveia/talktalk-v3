@@ -26,7 +26,7 @@ const io = require('socket.io')(server, {
 
 io.on('connection', (socket) => {
   console.log('Novo cliente conectado:', socket.id);
-  
+
   let userRoom = null;
   let userData = null;
 
@@ -53,7 +53,7 @@ io.on('connection', (socket) => {
         return;
       }
 
-      const encryptResponse = await import('node-fetch').then(({default: fetch}) => fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
+      const encryptResponse = await import('node-fetch').then(({ default: fetch }) => fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -87,9 +87,9 @@ io.on('connection', (socket) => {
       if (!isUserInRoom) {
         await prisma.salas_Usuarios.create({
           data: {
-          codigoSala: room,
-          userData: encryptResult.data,
-          host: isHost
+            codigoSala: room,
+            userData: encryptResult.data,
+            host: isHost
           }
         });
       }
@@ -100,7 +100,7 @@ io.on('connection', (socket) => {
 
       const decryptedUsers = await Promise.all(
         roomUsers.map(async (user) => {
-          const decryptResponse = await import('node-fetch').then(({default: fetch}) => fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
+          const decryptResponse = await import('node-fetch').then(({ default: fetch }) => fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ io.on('connection', (socket) => {
               action: 'decryptUserData',
             }),
           }));
-          
+
           const decryptResult = await decryptResponse.json();
           return {
             userData: decryptResult.data,
@@ -142,17 +142,17 @@ io.on('connection', (socket) => {
         });
 
         socket.to(userRoom).emit('user-disconnected', userData);
-        
+
         const roomUsers = await prisma.salas_Usuarios.findMany({
           where: { codigoSala: userRoom }
         });
-        
+
         io.to(userRoom).emit('users-update', roomUsers);
       } catch (error) {
         console.error('Erro ao processar desconexão:', error);
       }
     }
-    
+
     socket.leave(userRoom);
     userRoom = null;
     userData = null;
@@ -161,15 +161,15 @@ io.on('connection', (socket) => {
   socket.on('user-activity', ({ userToken, room }) => {
   });
 
-  socket.on('sendMessage', async (message, userToken, color, apelido, avatar, room, lingua) => {
+  socket.on('sendMessage', async (message, userToken, color, apelido, avatar, room, lingua, type) => {
     const actualDate = new Date().toISOString();
     console.log('[SERVER] Mensagem recebida: ' + message);
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL 
-        ? `http://${process.env.NEXT_PUBLIC_VERCEL_URL}` 
+      const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
+        ? `http://${process.env.NEXT_PUBLIC_VERCEL_URL}`
         : 'http://localhost:3000';
 
-      const encryptedMessage = await import('node-fetch').then(({default: fetch}) => fetch(`${baseUrl}/api/crypto`, {
+      const encryptedMessage = await import('node-fetch').then(({ default: fetch }) => fetch(`${baseUrl}/api/crypto`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -181,16 +181,19 @@ io.on('connection', (socket) => {
         }),
       })).then(res => res.json());
 
-      await prisma.mensagens.create({
-        data: {
-          codigoSala: room.toString(),
-          usuario: userToken,
-          mensagem: encryptedMessage.data,
-          dataEnvio: new Date(actualDate),
-          apelido: apelido,
-          avatar: avatar
-        },
-      });
+      if (type !== "audio") {
+
+        await prisma.mensagens.create({
+          data: {
+            codigoSala: room.toString(),
+            usuario: userToken,
+            mensagem: encryptedMessage.data,
+            dataEnvio: new Date(actualDate),
+            apelido: apelido,
+            avatar: avatar
+          },
+        });
+      }
 
       io.in(room.toString()).emit('message', {
         message: message,
@@ -199,7 +202,8 @@ io.on('connection', (socket) => {
         apelido,
         avatar,
         color,
-        lingua
+        lingua,
+        type // Add this line
       });
     } catch (error) {
       console.error('Erro ao salvar mensagem:', error);
@@ -218,12 +222,12 @@ io.on('connection', (socket) => {
   socket.on('message', (data) => {
     console.log('Mensagem recebida:', {
       room: data.room,
-      sender: data.sender.apelido,
+      sender: data.senderApelido,
       message: data.message
     });
-    
+
     socket.to(data.room).emit('message', data);
-    
+
     console.log('Mensagem enviada para a sala:', data.room);
   });
 });
