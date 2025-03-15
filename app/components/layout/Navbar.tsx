@@ -11,6 +11,7 @@ import { Button, Spinner } from "@heroui/react";
 import { CountryFlag } from '../countryFlags';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { Phone } from 'lucide-react';
+import { IoSettingsSharp } from "react-icons/io5";
 
 import { motion } from 'framer-motion';
 import i18n from '@/i18n';
@@ -50,6 +51,7 @@ export default function NavBar() {
         name: t('conversar'),
         href: '/locale/conversar',
       },
+      
     ],
     [t]
   );
@@ -57,7 +59,7 @@ export default function NavBar() {
   useEffect(() => {
     const currentItem = listaItems.find((item) => isActiveLink(item.href));
     setActiveItem(currentItem || null);
-    if(pathname?.split('/').filter(Boolean)[0] !== i18n.language) {
+    if (pathname?.split('/').filter(Boolean)[0] !== i18n.language) {
       i18n.changeLanguage(pathname?.split('/').filter(Boolean)[0]);
     }
   }, [pathname]);
@@ -134,6 +136,15 @@ export default function NavBar() {
                     <FaGithub size={18} />
                   </a>
                   <div className="hidden sm:block w-px h-6 bg-gray-300 dark:bg-gray-700" />
+                  <Link
+                  href={`/locale/configuracoes`.replace('locale', i18n.language)}
+                    rel="noopener noreferrer"
+                    aria-label="Visitar GitHub"
+                    className="hidden sm:block p-1.5 rounded-full text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                    >
+                    <IoSettingsSharp size={18} />
+                  </Link>
+                  <div className="hidden sm:block w-px h-6 bg-gray-300 dark:bg-gray-700" />
                   <LanguageSwitcher />
                   <button
                     onClick={toggleMenu}
@@ -157,10 +168,9 @@ export default function NavBar() {
                   key={item.href}
                   href={item.href}
                   className={`block px-3 py-2 rounded-md text-base font-medium
-                    ${
-                      isActiveLink(item.href)
-                        ? 'bg-sky-100 text-sky-600 dark:bg-sky-900'
-                        : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
+                    ${isActiveLink(item.href)
+                      ? 'bg-sky-100 text-sky-600 dark:bg-sky-900'
+                      : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
                     }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -227,7 +237,7 @@ function LanguageSwitcher() {
 
   return (
     <Menu as="div" className="relative">
-      <MenuButton 
+      <MenuButton
         className="inline-flex items-center gap-2 rounded-lg p-1.5 sm:p-2 text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
       >
         <div className="flex items-center gap-2">
