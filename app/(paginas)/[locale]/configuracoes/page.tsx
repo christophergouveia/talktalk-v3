@@ -1,19 +1,11 @@
-"use client"
+'use client';
 import React, { useState, useEffect } from 'react';
-import {
-  Save,
-  Volume2,
-  Moon,
-  Sun,
-  Globe,
-  User,
-  Bell,
-  MessageSquare,
-  Mic,
-  Sliders,
-  ChevronRight
-} from 'lucide-react';
+import { Save, Volume2, Moon, Sun, Globe, User, Bell, MessageSquare, Mic, Sliders, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { LanguageSelector } from '@/app/components/functionals/LanguageSelector';
+
+import languagesData from "@/app/locales/languages.json"
+import { Label } from '@headlessui/react';
 
 const UserSettingsPage = () => {
   // Suporte a idiomas simulado (em vez de importar de @/app/api/translate/languages)
@@ -27,7 +19,7 @@ const UserSettingsPage = () => {
     'ja-JP': 'Japonês (Japão)',
     'zh-CN': 'Chinês (China)',
     'ru-RU': 'Russo (Rússia)',
-    'ar-SA': 'Árabe (Arábia Saudita)'
+    'ar-SA': 'Árabe (Arábia Saudita)',
   };
 
   // Estados para as configurações do usuário
@@ -62,7 +54,7 @@ const UserSettingsPage = () => {
         // setAvailableVoices(voices);
 
         // Escolher voz padrão baseada no idioma preferido
-        const defaultVoice = voices.find(voice => voice.lang && voice.lang.includes(preferredLanguage));
+        const defaultVoice = voices.find((voice) => voice.lang && voice.lang.includes(preferredLanguage));
         if (defaultVoice) {
           setPreviewVoice(defaultVoice.name);
         } else if (voices.length) {
@@ -82,7 +74,7 @@ const UserSettingsPage = () => {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
       window.speechSynthesis.cancel();
 
-      const utterance = new SpeechSynthesisUtterance("Olá! Esta é uma mensagem de teste para as configurações de voz.");
+      const utterance = new SpeechSynthesisUtterance('Olá! Esta é uma mensagem de teste para as configurações de voz.');
 
       // Aplicar configurações de voz
       utterance.volume = volume / 100;
@@ -125,13 +117,33 @@ const UserSettingsPage = () => {
     { id: 'chime', name: 'Campainha' },
     { id: 'bell', name: 'Sino' },
     { id: 'alert', name: 'Alerta' },
-    { id: 'gentle', name: 'Suave' }
+    { id: 'gentle', name: 'Suave' },
   ];
+
+  const [linguaSelecionada, setLinguaSelecionada] = useState<{ label: string; value: string; flag: string }>({
+    label: 'Português',
+    value: 'pt',
+    flag: 'PT',
+  });
+
+  const handleLanguageChange = (language) => {
+    const index = languagesData.findIndex(lang => lang.value === language);
+    console.log(languagesData[index])
+    setLinguaSelecionada({
+      label: languagesData[index].label,
+      value: languagesData[index].value,
+      flag: languagesData[index].flag
+    })
+  };
+
+  const handleColorChange = () => {
+    
+  }
+
 
   return (
     <div className={`flex flex-col p-4  text-gray-900 dark:text-gray-100 transition-colors duration-200 h-max`}>
       <header className="flex items-center justify-between mb-6">
-        
         <button
           className="flex items-center gap-2 px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
           onClick={saveSettings}
@@ -246,7 +258,7 @@ const UserSettingsPage = () => {
                   <div className="w-full">
                     <label className="block text-sm font-medium mb-1">Cor do perfil</label>
                     <div className="flex flex-wrap gap-2 justify-center">
-                      {colorOptions.map(color => (
+                      {colorOptions.map((color) => (
                         <button
                           key={color}
                           onClick={() => setUserColor(color)}
@@ -261,7 +273,9 @@ const UserSettingsPage = () => {
 
                 <div className="flex-1 space-y-4">
                   <div>
-                    <label htmlFor="userName" className="block text-sm font-medium mb-1">Nome completo</label>
+                    <label htmlFor="userName" className="block text-sm font-medium mb-1">
+                      Nome completo
+                    </label>
                     <input
                       id="userName"
                       type="text"
@@ -273,7 +287,9 @@ const UserSettingsPage = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="userApelido" className="block text-sm font-medium mb-1">Apelido (exibido nos chats)</label>
+                    <label htmlFor="userApelido" className="block text-sm font-medium mb-1">
+                      Apelido (exibido nos chats)
+                    </label>
                     <input
                       id="userApelido"
                       type="text"
@@ -285,7 +301,9 @@ const UserSettingsPage = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
+                    <label htmlFor="email" className="block text-sm font-medium mb-1">
+                      Email
+                    </label>
                     <input
                       id="email"
                       type="email"
@@ -310,17 +328,17 @@ const UserSettingsPage = () => {
 
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="preferredLanguage" className="block text-sm font-medium mb-1">Idioma principal</label>
-                  <select
-                    id="preferredLanguage"
-                    value={preferredLanguage}
-                    onChange={(e) => setPreferredLanguage(e.target.value)}
-                    className="w-full p-2 border dark:border-gray-700 bg-white dark:bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent"
-                  >
-                    {Object.entries(supportedLanguages).map(([code, name]) => (
-                      <option key={code} value={code}>{name}</option>
-                    ))}
-                  </select>
+                  <label htmlFor="preferredLanguage" className="block text-sm font-medium mb-1">
+                    Idioma principal
+                  </label>
+                  <LanguageSelector
+                    selectedLanguage={{
+                      label: linguaSelecionada.label,
+                      value: linguaSelecionada.value,
+                      flag: linguaSelecionada.flag
+                    }}
+                    onLanguageChange={handleLanguageChange}
+                  />
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                     Este é o idioma em que você deseja receber as traduções
                   </p>
@@ -349,18 +367,20 @@ const UserSettingsPage = () => {
                 <div>
                   <label className="block text-sm font-medium mb-2">Idiomas que você fala</label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                    {Object.entries(supportedLanguages).slice(0, 9).map(([code, name]) => (
-                      <div key={code} className="flex items-center">
-                        <input
-                          id={`lang-${code}`}
-                          type="checkbox"
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
-                        />
-                        <label htmlFor={`lang-${code}`} className="ms-2 text-sm font-medium">
-                          {name}
-                        </label>
-                      </div>
-                    ))}
+                    {Object.entries(supportedLanguages)
+                      .slice(0, 9)
+                      .map(([code, name]) => (
+                        <div key={code} className="flex items-center">
+                          <input
+                            id={`lang-${code}`}
+                            type="checkbox"
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
+                          />
+                          <label htmlFor={`lang-${code}`} className="ms-2 text-sm font-medium">
+                            {name}
+                          </label>
+                        </div>
+                      ))}
                   </div>
                 </div>
               </div>
@@ -379,7 +399,9 @@ const UserSettingsPage = () => {
 
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="voice" className="block text-sm font-medium mb-1">Voz para leitura</label>
+                  <label htmlFor="voice" className="block text-sm font-medium mb-1">
+                    Voz para leitura
+                  </label>
                   <select
                     id="voice"
                     value={previewVoice}
@@ -396,7 +418,9 @@ const UserSettingsPage = () => {
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label htmlFor="volume" className="text-sm font-medium">Volume</label>
+                    <label htmlFor="volume" className="text-sm font-medium">
+                      Volume
+                    </label>
                     <span className="text-sm">{volume}%</span>
                   </div>
                   <input
@@ -412,7 +436,9 @@ const UserSettingsPage = () => {
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label htmlFor="rate" className="text-sm font-medium">Velocidade</label>
+                    <label htmlFor="rate" className="text-sm font-medium">
+                      Velocidade
+                    </label>
                     <span className="text-sm">{rate}x</span>
                   </div>
                   <input
@@ -429,7 +455,9 @@ const UserSettingsPage = () => {
 
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label htmlFor="pitch" className="text-sm font-medium">Tom</label>
+                    <label htmlFor="pitch" className="text-sm font-medium">
+                      Tom
+                    </label>
                     <span className="text-sm">{pitch}</span>
                   </div>
                   <input
@@ -458,7 +486,9 @@ const UserSettingsPage = () => {
                       <Mic size={18} />
                       <div>
                         <p className="font-medium">Leitura automática</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Ler mensagens automaticamente ao recebê-las</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Ler mensagens automaticamente ao recebê-las
+                        </p>
                       </div>
                     </div>
 
@@ -527,15 +557,28 @@ const UserSettingsPage = () => {
                   <label className="block text-sm font-medium mb-2">Tamanho da fonte</label>
                   <div className="flex gap-4">
                     <label className="flex items-center">
-                      <input type="radio" name="fontSize" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300" />
+                      <input
+                        type="radio"
+                        name="fontSize"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                      />
                       <span className="ms-2 text-sm">Pequeno</span>
                     </label>
                     <label className="flex items-center">
-                      <input type="radio" name="fontSize" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300" defaultChecked />
+                      <input
+                        type="radio"
+                        name="fontSize"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                        defaultChecked
+                      />
                       <span className="ms-2 text-sm">Médio</span>
                     </label>
                     <label className="flex items-center">
-                      <input type="radio" name="fontSize" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300" />
+                      <input
+                        type="radio"
+                        name="fontSize"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                      />
                       <span className="ms-2 text-sm">Grande</span>
                     </label>
                   </div>
@@ -581,7 +624,11 @@ const UserSettingsPage = () => {
                       <p className="font-medium mb-2">Tipo de notificação</p>
                       <div className="space-y-2">
                         <label className="flex items-center">
-                          <input type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300" defaultChecked />
+                          <input
+                            type="checkbox"
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
+                            defaultChecked
+                          />
                           <span className="ms-2 text-sm">Notificações no navegador</span>
                         </label>
                         <label className="flex items-center">
@@ -598,7 +645,9 @@ const UserSettingsPage = () => {
 
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <label htmlFor="notificationVolume" className="text-sm font-medium">Volume da notificação</label>
+                        <label htmlFor="notificationVolume" className="text-sm font-medium">
+                          Volume da notificação
+                        </label>
                         <span className="text-sm">{notificationVolume}%</span>
                       </div>
                       <input
@@ -613,26 +662,30 @@ const UserSettingsPage = () => {
                     </div>
 
                     <div>
-                      <label htmlFor="notificationTone" className="block text-sm font-medium mb-1">Tom de notificação</label>
+                      <label htmlFor="notificationTone" className="block text-sm font-medium mb-1">
+                        Tom de notificação
+                      </label>
                       <select
                         id="notificationTone"
                         value={notificationTone}
                         onChange={(e) => setNotificationTone(e.target.value)}
                         className="w-full p-2 border dark:border-gray-700 bg-white dark:bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent"
                       >
-                        {notificationTones.map(tone => (
-                          <option key={tone.id} value={tone.id}>{tone.name}</option>
+                        {notificationTones.map((tone) => (
+                          <option key={tone.id} value={tone.id}>
+                            {tone.name}
+                          </option>
                         ))}
                       </select>
-                      <button className="mt-2 text-sm text-blue-500 hover:text-blue-600">
-                        Testar som
-                      </button>
+                      <button className="mt-2 text-sm text-blue-500 hover:text-blue-600">Testar som</button>
                     </div>
 
                     <div className="p-4 bg-gray-100 dark:bg-gray-700/50 rounded-lg flex items-center justify-between">
                       <div>
                         <p className="font-medium">Modo silencioso</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Desativar notificações durante certos horários</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          Desativar notificações durante certos horários
+                        </p>
                       </div>
 
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -649,7 +702,9 @@ const UserSettingsPage = () => {
                     {quietHours && (
                       <div className="flex gap-4">
                         <div className="flex-1">
-                          <label htmlFor="quietHoursStart" className="block text-sm font-medium mb-1">Início</label>
+                          <label htmlFor="quietHoursStart" className="block text-sm font-medium mb-1">
+                            Início
+                          </label>
                           <input
                             id="quietHoursStart"
                             type="time"
@@ -659,7 +714,9 @@ const UserSettingsPage = () => {
                           />
                         </div>
                         <div className="flex-1">
-                          <label htmlFor="quietHoursEnd" className="block text-sm font-medium mb-1">Fim</label>
+                          <label htmlFor="quietHoursEnd" className="block text-sm font-medium mb-1">
+                            Fim
+                          </label>
                           <input
                             id="quietHoursEnd"
                             type="time"
@@ -677,7 +734,6 @@ const UserSettingsPage = () => {
           )}
         </div>
       </div>
-
     </div>
   );
 };

@@ -13,6 +13,7 @@ import { RandomAvatarColor } from '@/app/utils/strings/randomAvatarColor.tsx';
 import { RandomNicks } from '@/app/utils/strings/randomNicks.tsx';
 import RandomToken from '@/app/utils/strings/randomToken.tsx';
 import {
+  button,
   Button,
   Input,
   Modal,
@@ -114,6 +115,7 @@ export default function RoomPage({ params }: RoomPageProps) {
     userData: userData || null,
     codigo: codigo,
   });
+ 
 
   useEffect(() => {
     if (isOpen && languagesFilterRef.current) {
@@ -327,7 +329,7 @@ export default function RoomPage({ params }: RoomPageProps) {
         socketClient?.emit('typing', true, codigo);
       }
     },
-    [shiftPressed, mensagem, sendMessage, userData, socketClient, codigo, linguaSelecionada.value]
+    [shiftPressed, mensagem, sendMessage, userData, socketClient, codigo]
   );
 
   const handleTextAreaKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement> | KeyboardEvent) => {
@@ -376,7 +378,7 @@ export default function RoomPage({ params }: RoomPageProps) {
               apelido: userData.apelido,
               avatar: userData.avatar,
               room: codigo,
-              lingua: linguaSelecionada.value,
+              lingua: linguaSelecionada,
               date: new Date().toISOString()
             };
             
@@ -504,21 +506,9 @@ export default function RoomPage({ params }: RoomPageProps) {
     [userName, avatarDetails, avatarColor, codigo, userData]
   );
 
-  const updateLanguage = useCallback((value: string) => {
-    const selectedLanguage = linguagens.find((item) => item.value === value);
-    if (selectedLanguage) {
-      setLinguaSelecionada({
-        flag: selectedLanguage.flag,
-        label: selectedLanguage.description,
-        value: selectedLanguage.value,
-      });
-    }
-    onLinguaChange(value);
-  }, []);
+  
 
-  useEffect(() => {
-    onLinguaChange(linguaSelecionada.value);
-  }, []);
+  
 
   const filteredLanguages =
     languagesFilterDebounced.length > 0
@@ -743,6 +733,10 @@ export default function RoomPage({ params }: RoomPageProps) {
 
   if (socketClient == null) {
     return null;
+  }
+
+  function updateLanguage(value: string) {
+    throw new Error('Function not implemented.');
   }
 
   return (
