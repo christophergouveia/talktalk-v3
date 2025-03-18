@@ -15,7 +15,7 @@ A nossa proposta é oferecer um ambiente confortável e seguro para duas pessoas
 
 Contribuições são sempre bem-vindas! Para contribuir, siga as seguintes etapas:
 
-1. Dê um fork no repositório [clicando aqui](https://github.com/christophergouveia/talktalk/fork)
+1. Dê um fork no repositório [clicando aqui](https://github.com/gustavogpreti/talktalk/fork)
 2. Clone seu código fork `git clone https://github.com/seu_usuario/talktalk`
 3. Crie uma nova branch
 4. Dê um push nos seus commits
