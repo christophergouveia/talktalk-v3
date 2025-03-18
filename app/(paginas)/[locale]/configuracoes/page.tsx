@@ -1,12 +1,21 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useCallback, ChangeEvent, useMemo } from 'react';
+
+import { Image } from '@heroui/react';
+
 import { Save, Volume2, Moon, Sun, Globe, User, Bell, MessageSquare, Mic, Sliders, ChevronRight } from 'lucide-react';
+
 import { motion } from 'framer-motion';
+
+import languagesData from '@/app/locales/languages.json';
+
 import { LanguageSelector } from '@/app/components/functionals/LanguageSelector';
-
-import languagesData from "@/app/locales/languages.json"
-import { Label } from '@headlessui/react';
-
+import { colors as colorsData } from '@/app/components/functionals/ColorsSelector';
+import ColorSelector from '@/app/components/functionals/ColorsSelector';
+import { AvatarSelector } from '@/app/components/functionals/AvatarSelector';
+import { RandomNicks } from '@/app/utils/strings/randomNicks';
+import AvatarDropdown from '@/app/components/functionals/AvatarDropdown';
 const UserSettingsPage = () => {
   // Suporte a idiomas simulado (em vez de importar de @/app/api/translate/languages)
   const supportedLanguages = {
@@ -45,6 +54,12 @@ const UserSettingsPage = () => {
   const [quietHours, setQuietHours] = useState(false);
   const [quietHoursStart, setQuietHoursStart] = useState('22:00');
   const [quietHoursEnd, setQuietHoursEnd] = useState('07:00');
+  const [isColorModalOpenned, setColorModalOpenned] = useState(false);
+  const [avatarColor, setAvatarColor] = useState('');
+  const [avatarDetails, setAvatarDetails] = useState<{ avatarURL: string; avatarName: string }>({
+    avatarURL: '',
+    avatarName: '',
+  });
 
   // Obter vozes disponíveis no navegador
   useEffect(() => {
@@ -99,18 +114,6 @@ const UserSettingsPage = () => {
     }, 1000);
   };
 
-  // Cores disponíveis para seleção
-  const colorOptions = [
-    '#3b82f6', // blue
-    '#ef4444', // red
-    '#10b981', // green
-    '#f59e0b', // amber
-    '#8b5cf6', // purple
-    '#ec4899', // pink
-    '#6366f1', // indigo
-    '#14b8a6', // teal
-  ];
-
   // Tons de notificação disponíveis
   const notificationTones = [
     { id: 'default', name: 'Padrão' },
@@ -127,19 +130,65 @@ const UserSettingsPage = () => {
   });
 
   const handleLanguageChange = (language) => {
-    const index = languagesData.findIndex(lang => lang.value === language);
-    console.log(languagesData[index])
+    const index = languagesData.findIndex((lang) => lang.value === language);
+    console.log(languagesData[index]);
     setLinguaSelecionada({
       label: languagesData[index].label,
       value: languagesData[index].value,
-      flag: languagesData[index].flag
-    })
+      flag: languagesData[index].flag,
+    });
   };
 
-  const handleColorChange = () => {
-    
-  }
+  const getRandomAvatar = useCallback(() => {
+    const randomAnimal = RandomNicks.get();
+    const englishName = RandomNicks.getEnglish(randomAnimal);
 
+    if (!englishName) {
+      console.error(`Apelido "${randomAnimal}" não encontrado.`);
+      return ''; // Retorna uma string vazia como valor padrão
+    }
+
+    const imageUrl = `/images/avatars/${englishName.toLowerCase()}.png`;
+    setAvatarDetails({ avatarURL: imageUrl, avatarName: randomAnimal });
+    return randomAnimal;
+  }, [setAvatarDetails]);
+
+  const handleSelectColor = useCallback(
+    (color: string) => {
+      setAvatarColor(color);
+      setColorModalOpenned(false);
+    },
+    [setAvatarColor]
+  );
+
+  const handleNameInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setUserName(e.target.value);
+  }, []);
+
+  const AvatarComponent = useMemo(() => {
+    console.log("filho da puta")
+    // if (avatarDetails.avatarURL.trim() == '') return <span>Carregando...</span>;
+    return (
+      <div className="flex flex-col items-center gap-3">
+        <AvatarDropdown openModal={() => setColorModalOpenned((prev) => !prev)}>
+          <Image
+            src={avatarDetails.avatarURL}
+            width={120}
+            height={120}
+            className={`rounded-full ${avatarColor} p-2 bg-blue-500 !opacity-100`}
+            style={{
+              backgroundColor: avatarColor,
+            }}
+          />
+        </AvatarDropdown>
+        <AvatarSelector
+          onAvatarSelect={(avatar, url) => setAvatarDetails({ avatarURL: url, avatarName: avatar })}
+          color={avatarColor}
+          getRandomAvatar={getRandomAvatar}
+        />
+      </div>
+    );
+  }, [avatarDetails.avatarURL, avatarColor]);
 
   return (
     <div className={`flex flex-col p-4  text-gray-900 dark:text-gray-100 transition-colors duration-200 h-max`}>
@@ -237,38 +286,13 @@ const UserSettingsPage = () => {
               <h2 className="text-xl font-semibold mb-4">Informações do Perfil</h2>
 
               <div className="flex flex-col md:flex-row gap-6">
-                <div className="flex-shrink-0 flex flex-col items-center gap-4">
-                  <div className="relative">
-                    {/* Usando imagem de placeholder em vez do componente Next/Image */}
-                    <div
-                      className="w-24 h-24 rounded-full border-4 p-1 bg-gray-200 flex items-center justify-center overflow-hidden"
-                      style={{ borderColor: userColor }}
-                    >
-                      <img
-                        src="/api/placeholder/100/100"
-                        alt="Avatar do usuário"
-                        className="w-full h-full object-cover rounded-full"
-                      />
-                    </div>
-                    <button className="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors">
-                      <User size={14} />
-                    </button>
-                  </div>
-
-                  <div className="w-full">
-                    <label className="block text-sm font-medium mb-1">Cor do perfil</label>
-                    <div className="flex flex-wrap gap-2 justify-center">
-                      {colorOptions.map((color) => (
-                        <button
-                          key={color}
-                          onClick={() => setUserColor(color)}
-                          className={`w-8 h-8 rounded-full transition-transform ${userColor === color ? 'ring-2 ring-offset-2 ring-blue-500 scale-110' : 'hover:scale-105'}`}
-                          style={{ backgroundColor: color }}
-                          aria-label={`Cor ${color}`}
-                        />
-                      ))}
-                    </div>
-                  </div>
+                <div className="relative flex-shrink-0">
+                  {AvatarComponent}
+                  <ColorSelector
+                    onSelectColor={handleSelectColor}
+                    isOpen={isColorModalOpenned}
+                    onModalClose={() => setColorModalOpenned(false)}
+                  />
                 </div>
 
                 <div className="flex-1 space-y-4">
@@ -335,7 +359,7 @@ const UserSettingsPage = () => {
                     selectedLanguage={{
                       label: linguaSelecionada.label,
                       value: linguaSelecionada.value,
-                      flag: linguaSelecionada.flag
+                      flag: linguaSelecionada.flag,
                     }}
                     onLanguageChange={handleLanguageChange}
                   />
@@ -739,3 +763,6 @@ const UserSettingsPage = () => {
 };
 
 export default UserSettingsPage;
+function setAvatarColor(color: string) {
+  throw new Error('Function not implemented.');
+}

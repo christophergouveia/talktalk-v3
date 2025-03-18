@@ -29,8 +29,10 @@ export const AvatarSelector: React.FC<AvatarSelectorProps> = ({ onAvatarSelect, 
   };
 
   useEffect(() => {
-    setAvatarColor(color);
-  }, [color])
+    if (color) {
+      setAvatarColor(color);
+    }
+  }, [color]);
 
   const t = useTranslation('', { keyPrefix: 'conversar.botoes_avatar' }).t;
 
@@ -49,32 +51,30 @@ export const AvatarSelector: React.FC<AvatarSelectorProps> = ({ onAvatarSelect, 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {Object.keys(randomNicks).map((animal) => (
                 <button
-                key={animal}
-                onClick={() => handleAnimalSelect(animal)}
-                style={{ borderColor: selectedAnimal === animal ? avatarColor : undefined }}
-                className={`border rounded-lg p-2 relative ${
-                  selectedAnimal === animal
-                    ? 'border-2 hover:bg-slate-200 transition-background dark:hover:bg-slate-600 border-b-8'
-                    : 'border-slate-600 dark:hover:bg-slate-600 dark:hover:border-slate-600 hover:bg-slate-200 transition-background'
-                }`}
-              >
+                  key={animal}
+                  onClick={() => handleAnimalSelect(animal)}
+                  style={{ borderColor: selectedAnimal === animal ? color : undefined }}
+                  className={`border rounded-lg p-2 relative ${
+                    selectedAnimal === animal
+                      ? 'border-2 hover:bg-slate-200 transition-background dark:hover:bg-slate-600 border-b-8'
+                      : 'border-slate-600 dark:hover:bg-slate-600 dark:hover:border-slate-600 hover:bg-slate-200 transition-background'
+                  }`}
+                >
                   {selectedAnimal === animal && (
                     <span
-                    style={{ backgroundColor: selectedAnimal === animal ? avatarColor : undefined }}
-                      className={`absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-4 bg-blue-500 text-white px-2 py-1 rounded-md text-xs font-bold`}
+                      style={{ backgroundColor: selectedAnimal === animal ? color : undefined }}
+                      className={`absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-4 text-white px-2 py-1 rounded-md text-xs font-bold`}
                     >
                       {t('selecionado')}
                     </span>
                   )}
                   <Image
-                    src={`/images/avatars/${RandomNicks.getEnglish(
-                      animal
-                    ).toLowerCase()}.png`}
+                    src={`/images/avatars/${RandomNicks.getEnglish(animal).toLowerCase()}.png`}
                     alt={animal}
                     width={80}
                     height={80}
                     className="rounded-full mx-auto p-2"
-                    style={{ backgroundColor: avatarColor ?? undefined}}
+                    style={{ backgroundColor: color }}
                   />
                   <p className="text-center mt-2">{animal}</p>
                 </button>
