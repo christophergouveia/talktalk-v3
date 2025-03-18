@@ -5,7 +5,7 @@
 
 ## AVISO: ESTE PROJETO AINDA ESTÁ EM DESENVOLVIMENTO
 
-Este projeto está sendo desenvolvido e mantido pelos alunos Christopher e Kaike, veteranos do curso de Informática do IFPR - Câmpus Assis Chateaubriand.
+Este projeto está sendo desenvolvido e mantido pelos alunos Christopher, Gustavo e Kaike, veteranos do curso de Informática do IFPR - Câmpus Assis Chateaubriand.
 
 ## Qual nossa proposta?
 
