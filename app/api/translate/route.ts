@@ -7,6 +7,8 @@ type SupportedLanguage = keyof typeof supportedLanguages;
 export async function POST(request: Request) {
   const { text, targetLanguage } = await request.json();
 
+  console.log('[DEBUG] Requisição de tradução recebida:', { text, targetLanguage });
+
   if (!text || !targetLanguage) {
     return NextResponse.json({ error: 'Missing text or targetLanguage' }, { status: 400 });
   }

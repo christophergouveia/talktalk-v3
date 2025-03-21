@@ -106,6 +106,8 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
         if (!response.ok) throw new Error('Erro na tradução');
         const { result: traduzido } = await response.json();
 
+        console.log("VEIO TRADUZIDO UHUUUU: ", traduzido);
+
         setMensagens((prev) => [
           ...prev,
           {

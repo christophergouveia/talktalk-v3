@@ -115,6 +115,10 @@ export default function RoomPage({ params }: RoomPageProps) {
     userData: userData || null,
     codigo: codigo,
   });
+
+  useEffect(() => {
+    console.log(mensagens)
+  }, [mensagens])
  
 
   useEffect(() => {
@@ -127,6 +131,22 @@ export default function RoomPage({ params }: RoomPageProps) {
   useEffect(() => {
     if (!apelido) {
       setApelido(gerarNomeAnimalAleatorio());
+    }
+  }, []);
+
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('talktalk_user_settings');
+    if (savedSettings) {
+      const settings = JSON.parse(savedSettings);
+      if (settings.linguaSelecionada) {
+        setLinguaSelecionada(settings.linguaSelecionada);
+      }
+      if (settings.avatarDetails) {
+        setAvatarDetails(settings.avatarDetails);
+      }
+      if (settings.avatarColor) {
+        setAvatarColor(settings.avatarColor);
+      }
     }
   }, []);
 
@@ -444,11 +464,12 @@ export default function RoomPage({ params }: RoomPageProps) {
           return;
         }
 
+        // Use saved settings or fallback to default values
         const nickname = userName.trim() || avatarDetails.avatarName;
         const payload = {
           apelido: nickname,
-          avatar: avatarDetails.avatarURL,
-          color: avatarColor,
+          avatar: avatarDetails.avatarURL || '/images/avatars/default.png',
+          color: avatarColor || '#3b82f6',
           token: sala.token,
           userToken: RandomToken.get(),
         };
@@ -613,17 +634,19 @@ export default function RoomPage({ params }: RoomPageProps) {
     };
   }, [socketClient]);
 
-  const renderMessage = (message: any) => {
-    if (message.type === 'audio') {
-      return (
-        <audio 
-          controls 
-          src={message.message}
-          className="max-w-[300px] rounded-lg"
-        />
-      );
+  const handleLanguageChange = (language: string) => {
+    const index = linguagens.findIndex((lang) => lang.value === language);
+    if (index !== -1) {
+      setLinguaSelecionada(linguagens[index]);
+      onLinguaChange(language);
+      // Save settings while keeping other settings intact
+      const settings = {
+        linguaSelecionada: linguagens[index],
+        avatarDetails,
+        avatarColor,
+      };
+      localStorage.setItem('talktalk_user_settings', JSON.stringify(settings));
     }
-    return message.messageTraduzido || message.message;
   };
 
   if (showErrorModal) {
@@ -735,10 +758,6 @@ export default function RoomPage({ params }: RoomPageProps) {
     return null;
   }
 
-  function updateLanguage(value: string) {
-    throw new Error('Function not implemented.');
-  }
-
   return (
     <div className="mt-6 flex h-full items-center justify-center">
       <Modal
@@ -828,7 +847,14 @@ export default function RoomPage({ params }: RoomPageProps) {
                 compact={chatCompacto}
                 isAudio={message.isAudio}
               >
-                {renderMessage(message)}
+                {message.isAudio ? (
+                  <audio controls>
+                    <source src={message.message} type="audio/webm" />
+                    Your browser does not support the audio element.
+                  </audio>
+                ) : (
+                  message.message
+                )}
               </Message>
             ))}
             {messageLoading && (
@@ -1010,7 +1036,7 @@ export default function RoomPage({ params }: RoomPageProps) {
                               item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                             }
                           } else if (e.key === 'Enter' && selectedIndex !== undefined) {
-                            updateLanguage(filteredLanguages[selectedIndex].value);
+                            handleLanguageChange(filteredLanguages[selectedIndex].value);
                             setIsOpen(false);
                             setLanguagesFilter("");
                           }
@@ -1026,7 +1052,7 @@ export default function RoomPage({ params }: RoomPageProps) {
                           >
                             <button
                               onClick={() => {
-                                updateLanguage(idioma.value);
+                                handleLanguageChange(idioma.value);
                                 setIsOpen(false);
                                 setLanguagesFilter("");
                               }}

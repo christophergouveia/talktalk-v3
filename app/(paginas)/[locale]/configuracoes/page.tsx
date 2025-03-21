@@ -17,7 +17,6 @@ import { AvatarSelector } from '@/app/components/functionals/AvatarSelector';
 import { RandomNicks } from '@/app/utils/strings/randomNicks';
 import AvatarDropdown from '@/app/components/functionals/AvatarDropdown';
 const UserSettingsPage = () => {
-  // Suporte a idiomas simulado (em vez de importar de @/app/api/translate/languages)
   const supportedLanguages = {
     'pt-BR': 'Português (Brasil)',
     'en-US': 'Inglês (Estados Unidos)',
@@ -43,15 +42,10 @@ const UserSettingsPage = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [compactMode, setCompactMode] = useState(false);
   const [autoTranslate, setAutoTranslate] = useState(true);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [activeTab, setActiveTab] = useState('profile');
   const [previewVoice, setPreviewVoice] = useState('');
   const [availableVoices, setAvailableVoices] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
-  const [notificationVolume, setNotificationVolume] = useState(70);
-  const [notificationTone, setNotificationTone] = useState('default');
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [quietHours, setQuietHours] = useState(false);
   const [quietHoursStart, setQuietHoursStart] = useState('22:00');
   const [quietHoursEnd, setQuietHoursEnd] = useState('07:00');
   const [isColorModalOpenned, setColorModalOpenned] = useState(false);
@@ -60,6 +54,28 @@ const UserSettingsPage = () => {
     avatarURL: '',
     avatarName: '',
   });
+
+  // Add new function to save settings
+  const saveUserSettings = useCallback((settings: any) => {
+    localStorage.setItem('talktalk_user_settings', JSON.stringify(settings));
+  }, []);
+
+  // Add useEffect to load saved settings on component mount
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('talktalk_user_settings');
+    if (savedSettings) {
+      const settings = JSON.parse(savedSettings);
+      if (settings.linguaSelecionada) {
+        setLinguaSelecionada(settings.linguaSelecionada);
+      }
+      if (settings.avatarDetails) {
+        setAvatarDetails(settings.avatarDetails);
+      }
+      if (settings.avatarColor) {
+        setAvatarColor(settings.avatarColor);
+      }
+    }
+  }, []);
 
   // Obter vozes disponíveis no navegador
   useEffect(() => {
@@ -114,14 +130,6 @@ const UserSettingsPage = () => {
     }, 1000);
   };
 
-  // Tons de notificação disponíveis
-  const notificationTones = [
-    { id: 'default', name: 'Padrão' },
-    { id: 'chime', name: 'Campainha' },
-    { id: 'bell', name: 'Sino' },
-    { id: 'alert', name: 'Alerta' },
-    { id: 'gentle', name: 'Suave' },
-  ];
 
   const [linguaSelecionada, setLinguaSelecionada] = useState<{ label: string; value: string; flag: string }>({
     label: 'Português',
@@ -136,6 +144,15 @@ const UserSettingsPage = () => {
       label: languagesData[index].label,
       value: languagesData[index].value,
       flag: languagesData[index].flag,
+    });
+    saveUserSettings({
+      linguaSelecionada: {
+        label: languagesData[index].label,
+        value: languagesData[index].value,
+        flag: languagesData[index].flag,
+      },
+      avatarDetails,
+      avatarColor,
     });
   };
 
@@ -157,13 +174,28 @@ const UserSettingsPage = () => {
     (color: string) => {
       setAvatarColor(color);
       setColorModalOpenned(false);
+      saveUserSettings({
+        linguaSelecionada,
+        avatarDetails,
+        avatarColor: color,
+      });
     },
-    [setAvatarColor]
+    [saveUserSettings, linguaSelecionada, avatarDetails]
   );
 
   const handleNameInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setUserName(e.target.value);
   }, []);
+
+  const handleAvatarSelect = (avatar: string, url: string) => {
+    const newAvatarDetails = { avatarURL: url, avatarName: avatar };
+    setAvatarDetails(newAvatarDetails);
+    saveUserSettings({
+      linguaSelecionada,
+      avatarDetails: newAvatarDetails,
+      avatarColor,
+    });
+  };
 
   const AvatarComponent = useMemo(() => {
     console.log("filho da puta")
@@ -182,13 +214,13 @@ const UserSettingsPage = () => {
           />
         </AvatarDropdown>
         <AvatarSelector
-          onAvatarSelect={(avatar, url) => setAvatarDetails({ avatarURL: url, avatarName: avatar })}
+          onAvatarSelect={handleAvatarSelect}
           color={avatarColor}
           getRandomAvatar={getRandomAvatar}
         />
       </div>
     );
-  }, [avatarDetails.avatarURL, avatarColor]);
+  }, [avatarDetails.avatarURL, avatarColor, handleAvatarSelect, getRandomAvatar]);
 
   return (
     <div className={`flex flex-col p-4  text-gray-900 dark:text-gray-100 transition-colors duration-200 h-max`}>
@@ -256,18 +288,6 @@ const UserSettingsPage = () => {
                   <span>Aparência</span>
                 </div>
                 <ChevronRight size={16} className={activeTab === 'appearance' ? 'opacity-100' : 'opacity-0'} />
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => setActiveTab('notifications')}
-                className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors ${activeTab === 'notifications' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
-              >
-                <div className="flex items-center gap-3">
-                  <Bell size={18} />
-                  <span>Notificações</span>
-                </div>
-                <ChevronRight size={16} className={activeTab === 'notifications' ? 'opacity-100' : 'opacity-0'} />
               </button>
             </li>
           </ul>
@@ -611,151 +631,6 @@ const UserSettingsPage = () => {
             </motion.div>
           )}
 
-          {/* Notificações */}
-          {activeTab === 'notifications' && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-6"
-            >
-              <h2 className="text-xl font-semibold mb-4">Notificações</h2>
-
-              <div className="space-y-4">
-                <div className="p-4 bg-gray-100 dark:bg-gray-700/50 rounded-lg flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Bell size={20} />
-                    <div>
-                      <p className="font-medium">Notificações</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Receber alertas de novas mensagens</p>
-                    </div>
-                  </div>
-
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={notificationsEnabled}
-                      onChange={() => setNotificationsEnabled(!notificationsEnabled)}
-                      className="sr-only peer"
-                    />
-                    <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-500 peer-checked:bg-blue-500"></div>
-                  </label>
-                </div>
-
-                {notificationsEnabled && (
-                  <>
-                    <div>
-                      <p className="font-medium mb-2">Tipo de notificação</p>
-                      <div className="space-y-2">
-                        <label className="flex items-center">
-                          <input
-                            type="checkbox"
-                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
-                            defaultChecked
-                          />
-                          <span className="ms-2 text-sm">Notificações no navegador</span>
-                        </label>
-                        <label className="flex items-center">
-                          <input
-                            type="checkbox"
-                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
-                            checked={emailNotifications}
-                            onChange={() => setEmailNotifications(!emailNotifications)}
-                          />
-                          <span className="ms-2 text-sm">Notificações por email</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <label htmlFor="notificationVolume" className="text-sm font-medium">
-                          Volume da notificação
-                        </label>
-                        <span className="text-sm">{notificationVolume}%</span>
-                      </div>
-                      <input
-                        id="notificationVolume"
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={notificationVolume}
-                        onChange={(e) => setNotificationVolume(Number(e.target.value))}
-                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-500"
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="notificationTone" className="block text-sm font-medium mb-1">
-                        Tom de notificação
-                      </label>
-                      <select
-                        id="notificationTone"
-                        value={notificationTone}
-                        onChange={(e) => setNotificationTone(e.target.value)}
-                        className="w-full p-2 border dark:border-gray-700 bg-white dark:bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent"
-                      >
-                        {notificationTones.map((tone) => (
-                          <option key={tone.id} value={tone.id}>
-                            {tone.name}
-                          </option>
-                        ))}
-                      </select>
-                      <button className="mt-2 text-sm text-blue-500 hover:text-blue-600">Testar som</button>
-                    </div>
-
-                    <div className="p-4 bg-gray-100 dark:bg-gray-700/50 rounded-lg flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">Modo silencioso</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Desativar notificações durante certos horários
-                        </p>
-                      </div>
-
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={quietHours}
-                          onChange={() => setQuietHours(!quietHours)}
-                          className="sr-only peer"
-                        />
-                        <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-500 peer-checked:bg-blue-500"></div>
-                      </label>
-                    </div>
-
-                    {quietHours && (
-                      <div className="flex gap-4">
-                        <div className="flex-1">
-                          <label htmlFor="quietHoursStart" className="block text-sm font-medium mb-1">
-                            Início
-                          </label>
-                          <input
-                            id="quietHoursStart"
-                            type="time"
-                            value={quietHoursStart}
-                            onChange={(e) => setQuietHoursStart(e.target.value)}
-                            className="w-full p-2 border dark:border-gray-700 bg-white dark:bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent"
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <label htmlFor="quietHoursEnd" className="block text-sm font-medium mb-1">
-                            Fim
-                          </label>
-                          <input
-                            id="quietHoursEnd"
-                            type="time"
-                            value={quietHoursEnd}
-                            onChange={(e) => setQuietHoursEnd(e.target.value)}
-                            className="w-full p-2 border dark:border-gray-700 bg-white dark:bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </motion.div>
-          )}
         </div>
       </div>
     </div>
