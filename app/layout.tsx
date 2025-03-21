@@ -5,6 +5,7 @@ import Providers from './providers';
 import NavBar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import CookieConsetimentModal from './components/modal/ModalConsetiment';
+import { FontSizeProvider } from './contexts/FontSizeContext';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -50,16 +51,18 @@ export default async function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body className={`${inter.className} min-h-screen flex flex-col`}>
-        <Providers>
-          <CookieConsetimentModal />
-          <div className="flex flex-col min-h-screen">
-            <header>
-              <NavBar />
-            </header>
-            <main className="flex-1">{children}</main>
-            <Footer className="mt-auto" />
-          </div>
-        </Providers>
+        <FontSizeProvider>
+          <Providers>
+            <CookieConsetimentModal />
+            <div className="flex flex-col min-h-screen">
+              <header>
+                <NavBar />
+              </header>
+              <main className="flex-1">{children}</main>
+              <Footer className="mt-auto" />
+            </div>
+          </Providers>
+        </FontSizeProvider>
       </body>
     </html>
   );

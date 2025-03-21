@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Play, Pause, Volume2 } from 'lucide-react';
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useFontSize } from '@/app/contexts/FontSizeContext';
 
 interface MessageProps {
   isAudio: boolean;
@@ -152,6 +153,7 @@ export default function Message({
   senderColor,
   compact = false,
 }: MessageProps) {
+  const { fontSize } = useFontSize();
   const [showOriginal, setShowOriginal] = useState(false);
   const formattedDate = moment(date).toDate().toLocaleTimeString('pt-BR', {
     hour: '2-digit',
@@ -174,8 +176,12 @@ export default function Message({
   return (
     <>
       <div
-        className={`relative mb-2 flex items-start gap-2 ${compact ? 'py-0.5' : 'py-2'
-          } ${ownMessage ? 'flex-row-reverse' : 'flex-row'}`}
+        className={`
+          relative mb-2 flex items-start gap-2 
+          ${compact ? 'py-0.5' : 'py-2'} 
+          ${ownMessage ? 'flex-row-reverse' : 'flex-row'}
+          font-size-${fontSize}
+        `}
       >
         {!compact && (
           <Image

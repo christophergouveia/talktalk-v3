@@ -237,7 +237,59 @@ section[role='dialog'] {
   padding: 2px 0;
 }
 
+/* Font size classes */
+.font-size-small {
+  font-size: 0.875rem !important; /* 14px */
+  line-height: 1.25rem !important;
+}
 
+.font-size-medium {
+  font-size: 1rem !important; /* 16px */
+  line-height: 1.5rem !important;
+}
+
+.font-size-large {
+  font-size: 1.125rem !important; /* 18px */
+  line-height: 1.75rem !important;
+}
+
+/* Message specific font size adjustments */
+.font-size-small .message-content {
+  font-size: 0.875rem !important;
+}
+
+.font-size-medium .message-content {
+  font-size: 1rem !important;
+}
+
+.font-size-large .message-content {
+  font-size: 1.125rem !important;
+}
+
+/* Adjust other elements accordingly */
+.font-size-small .sender-name {
+  font-size: 0.75rem !important;
+}
+
+.font-size-medium .sender-name {
+  font-size: 0.875rem !important;
+}
+
+.font-size-large .sender-name {
+  font-size: 1rem !important;
+}
+
+.font-size-small .message-text {
+  font-size: 0.875rem;
+}
+
+.font-size-medium .message-text {
+  font-size: 1rem;
+}
+
+.font-size-large .message-text {
+  font-size: 1.125rem;
+}
 
 #wheel {
   height: 300px;

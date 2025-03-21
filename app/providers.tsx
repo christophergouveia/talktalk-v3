@@ -22,6 +22,7 @@ export default function Providers({ children }: { children: ReactNode }) {
 		{process.env.NODE_ENV === "development" && <VLibras forceOnload />}
     </div>
       <HeroUIProvider>
+      
         <CookiesProvider>
           <ThemeProvider attribute="class" enableSystem themes={['light', 'dark']}>
             {children}

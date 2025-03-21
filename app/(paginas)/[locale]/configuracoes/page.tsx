@@ -16,6 +16,8 @@ import ColorSelector from '@/app/components/functionals/ColorsSelector';
 import { AvatarSelector } from '@/app/components/functionals/AvatarSelector';
 import { RandomNicks } from '@/app/utils/strings/randomNicks';
 import AvatarDropdown from '@/app/components/functionals/AvatarDropdown';
+import { useFontSize } from '@/app/contexts/FontSizeContext';
+
 const UserSettingsPage = () => {
   const supportedLanguages = {
     'pt-BR': 'Português (Brasil)',
@@ -54,6 +56,8 @@ const UserSettingsPage = () => {
     avatarURL: '',
     avatarName: '',
   });
+
+  const { fontSize, setFontSize } = useFontSize();
 
   // Add new function to save settings
   const saveUserSettings = useCallback((settings: any) => {
@@ -195,6 +199,10 @@ const UserSettingsPage = () => {
       avatarDetails: newAvatarDetails,
       avatarColor,
     });
+  };
+
+  const handleFontSizeChange = (size: 'small' | 'medium' | 'large') => {
+    setFontSize(size);
   };
 
   const AvatarComponent = useMemo(() => {
@@ -604,6 +612,9 @@ const UserSettingsPage = () => {
                       <input
                         type="radio"
                         name="fontSize"
+                        value="small"
+                        checked={fontSize === 'small'}
+                        onChange={(e) => handleFontSizeChange('small')}
                         className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                       />
                       <span className="ms-2 text-sm">Pequeno</span>
@@ -612,8 +623,10 @@ const UserSettingsPage = () => {
                       <input
                         type="radio"
                         name="fontSize"
+                        value="medium"
+                        checked={fontSize === 'medium'}
+                        onChange={(e) => handleFontSizeChange('medium')}
                         className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
-                        defaultChecked
                       />
                       <span className="ms-2 text-sm">Médio</span>
                     </label>
@@ -621,6 +634,9 @@ const UserSettingsPage = () => {
                       <input
                         type="radio"
                         name="fontSize"
+                        value="large"
+                        checked={fontSize === 'large'}
+                        onChange={(e) => handleFontSizeChange('large')}
                         className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
                       />
                       <span className="ms-2 text-sm">Grande</span>
