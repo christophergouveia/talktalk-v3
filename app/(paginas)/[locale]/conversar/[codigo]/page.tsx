@@ -13,7 +13,6 @@ import { RandomAvatarColor } from '@/app/utils/strings/randomAvatarColor.tsx';
 import { RandomNicks } from '@/app/utils/strings/randomNicks.tsx';
 import RandomToken from '@/app/utils/strings/randomToken.tsx';
 import {
-  button,
   Button,
   Input,
   Modal,
@@ -140,6 +139,7 @@ export default function RoomPage({ params }: RoomPageProps) {
       const settings = JSON.parse(savedSettings);
       if (settings.linguaSelecionada) {
         setLinguaSelecionada(settings.linguaSelecionada);
+        onLinguaChange(settings.linguaSelecionada.value);
       }
       if (settings.avatarDetails) {
         setAvatarDetails(settings.avatarDetails);
@@ -848,12 +848,14 @@ export default function RoomPage({ params }: RoomPageProps) {
                 isAudio={message.isAudio}
               >
                 {message.isAudio ? (
-                  <audio controls>
+                  <audio controls
+                  controlsList="nodownload"
+                  >
                     <source src={message.message} type="audio/webm" />
                     Your browser does not support the audio element.
                   </audio>
                 ) : (
-                  message.message
+                  message.messageTraduzido
                 )}
               </Message>
             ))}

@@ -205,7 +205,9 @@ export default function Message({
                 <>
                   <span className="text-xs text-gray-500">
                     Traduzido do {supportedLanguages[lingua]} ({lingua})
+                    
                   </span>
+              
                   <button onClick={() => setShowOriginal(!showOriginal)} className="text-xs text-blue-400">
                     {showOriginal ? 'Exibir traduzido' : 'Exibir original'}
                   </button>
@@ -235,6 +237,7 @@ export default function Message({
                 {!ownMessage && (
                   <>
                     <span className="text-xs text-gray-500">
+                      {console.log("lingua" + lingua)}
                       Traduzido do {supportedLanguages[lingua]} ({lingua})''
                     </span>{' '}
                     <button onClick={() => setShowOriginal(!showOriginal)} className="text-xs text-blue-400">

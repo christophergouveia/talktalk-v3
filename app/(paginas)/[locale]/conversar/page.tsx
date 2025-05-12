@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { Button, Input } from "@heroui/react";
+import { avatar, Button, Input } from '@heroui/react';
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
@@ -25,9 +25,9 @@ const InputsSchema = yup.object().shape({
   apelido: yup
     .string()
     .trim()
-    .min(4, 'criar_sala.apelido.erro_min')
-    .max(32, 'criar_sala.apelido.erro_max')
-    .matches(/^[a-zA-Z0-9\s_-]*$/, 'criar_sala.apelido.erro_caracteres'),
+    .min(4, 'conversar.criar_sala.apelido.erro_min')
+    .max(32, 'conversar.criar_sala.apelido.erro_max')
+    .matches(/^[a-zA-Z0-9\s_-]*$/, 'conversar.criar_sala.apelido.erro_caracteres'),
 });
 
 export default function ConversarHome() {
@@ -147,8 +147,16 @@ export default function ConversarHome() {
   }, [setAvatarDetails]);
 
   useEffect(() => {
-    getRandomAvatar();
-    setAvatarColor(RandomAvatarColor.get().hex);
+    if (localStorage.getItem('talktalk_user_settings')) {
+      const userData = JSON.parse(localStorage.getItem('talktalk_user_settings') || '{}');
+      const { avatarDetails, avatarColor, userApelido } = userData;
+      setAvatarDetails(avatarDetails);
+      setAvatarColor(avatarColor);
+      setApelido(userApelido);
+    } else {
+      getRandomAvatar();
+      setAvatarColor(RandomAvatarColor.get().hex);
+    }
   }, []);
 
   const handleSelectColor = useCallback(
@@ -278,11 +286,11 @@ export default function ConversarHome() {
         </div>
 
         <p className="text-center mt-8 font-bold">
-          <span className="text-orange-400">{t('conversar.criar_sala.dica.parte1')}</span> {t('conversar.criar_sala.dica.parte2')}
+          <span className="text-orange-400">{t('conversar.criar_sala.dica.parte1')}</span>{' '}
+          {t('conversar.criar_sala.dica.parte2')}
         </p>
       </div>
       <CreateRoomModal aberto={isLoading} />
     </div>
   );
 }
-
