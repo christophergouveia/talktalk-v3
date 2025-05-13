@@ -53,7 +53,7 @@ io.on('connection', (socket) => {
         return;
       }
 
-      const encryptResponse = await import('node-fetch').then(({ default: fetch }) => fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
+      const encryptResponse = await import('node-fetch').then(({ default: fetch }) => fetch(`https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ io.on('connection', (socket) => {
 
       const decryptedUsers = await Promise.all(
         roomUsers.map(async (user) => {
-          const decryptResponse = await import('node-fetch').then(({ default: fetch }) => fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
+          const decryptResponse = await import('node-fetch').then(({ default: fetch }) => fetch(`https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -166,7 +166,7 @@ io.on('connection', (socket) => {
     console.log('[SERVER] Mensagem recebida: ' + message);
     try {
       const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
-        ? `http://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+        ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
         : 'http://localhost:3000';
 
       const encryptedMessage = await import('node-fetch').then(({ default: fetch }) => fetch(`${baseUrl}/api/crypto`, {

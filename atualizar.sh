@@ -12,7 +12,7 @@ git init
 git remote add origin https://github.com/christophergouveia/talktalk.git
 
 # Força o pull do repositório GitHub
-git fetch origin
+git fetch origin master
 git reset --hard origin/master
 
 # Move os arquivos do server para a pasta server na raiz
