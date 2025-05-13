@@ -126,7 +126,6 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
           },
         ]);
       } else {
-        // Se for mensagem própria OU mesmo idioma, usa mensagem original
         setMensagens((prev) => [
           ...prev,
           {
