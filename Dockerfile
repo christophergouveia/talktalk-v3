@@ -5,6 +5,7 @@ FROM node:18-alpine AS base
 # Install dependencies only when needed
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
+
 WORKDIR /app
 
 # Primeiro copiar apenas os arquivos necessários para instalação
@@ -21,13 +22,16 @@ RUN \
 # Copiar arquivos do prisma
 COPY prisma ./prisma
 
+RUN apk update && apk upgrade
+RUN apk add --no-cache openssl
+
+RUN ln -s /usr/lib/libssl.so.3 /lib/libssl.so.3
+
 # Gerar Prisma Client após instalação das dependências
 RUN npx prisma generate
 
 # Copiar todos os arquivos do projeto
 COPY . .
-
-
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -35,7 +39,12 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-ENV DATABASE_URL=mysql://root:123123@204.216.166.160:3306/traducaodb
+ENV DATABASE_URL=mysql://root:Chris123!@204.216.166.160:3306/traducaodb
+
+RUN apk update && apk upgrade
+RUN apk add --no-cache openssl
+
+RUN ln -s /usr/lib/libssl.so.3 /lib/libssl.so.3
 
 # Gerar o Prisma Client
 RUN npx prisma generate
@@ -61,6 +70,11 @@ ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
+
+RUN apk update && apk upgrade
+RUN apk add --no-cache openssl
+
+RUN ln -s /usr/lib/libssl.so.3 /lib/libssl.so.3
 
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
