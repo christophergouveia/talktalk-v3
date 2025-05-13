@@ -23,6 +23,11 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
   
   const onLinguaChange = (lingua: string) => {
     linguaSelecionadaRef.current = lingua;
+    console.log('Lingua selecionada:', lingua);
+    // Força recarregamento das mensagens quando o idioma muda
+    if (mensagens.length > 0) {
+      loadMessageHistory();
+    }
   };
 
   const handleTyping = useCallback((userToken: string, typing: boolean) => {
@@ -64,11 +69,12 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
       console.error('Invalid message received:', message);
       return;
     }
-    console.log('handleMessage | message', message);
+    
     const clientTz = moment.tz.guess(true);
     const messageDate = moment(message.date).tz(clientTz);
+    const isOwnMessage = message.userToken === userData?.userToken;
 
-    // Adiciona a mensagem diretamente se for áudio
+    // Se for mensagem de áudio, adiciona sem tradução
     if (message.type === 'audio') {
       setMensagens((prev) => [
         ...prev,
@@ -89,9 +95,7 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
     }
 
     try {
-      const isOwnMessage = message.userToken === userData?.userToken;
-      
-      // Só traduz se não for mensagem própria e se o idioma for diferente
+      // Só tenta traduzir se não for mensagem própria E idioma for diferente
       if (!isOwnMessage && message.lingua !== linguaSelecionadaRef.current) {
         setMessageLoading(true);
         const response = await fetch('/api/translate', {
@@ -105,8 +109,6 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
 
         if (!response.ok) throw new Error('Erro na tradução');
         const { result: traduzido } = await response.json();
-
-        console.log("VEIO TRADUZIDO UHUUUU: ", traduzido);
 
         setMensagens((prev) => [
           ...prev,
@@ -124,13 +126,13 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
           },
         ]);
       } else {
-        // Se for mensagem própria ou mesmo idioma, não traduz
+        // Se for mensagem própria OU mesmo idioma, usa mensagem original
         setMensagens((prev) => [
           ...prev,
           {
             isAudio: message.isAudio,
             message: message.message,
-            messageTraduzido: message.message, // Usa a mensagem original
+            messageTraduzido: message.message,
             senderId: message.userToken,
             senderApelido: message.apelido,
             senderAvatar: message.avatar,
@@ -143,7 +145,7 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
       }
     } catch (error) {
       console.error('Erro na tradução:', error);
-      // Em caso de erro, adiciona a mensagem sem tradução
+      // Em caso de erro, adiciona sem tradução
       setMensagens((prev) => [
         ...prev,
         {
@@ -239,7 +241,10 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
       
       // Processa e traduz as mensagens se necessário
       const processedMessages = await Promise.all(messages.map(async (msg: any) => {
-        if (msg.linguaOriginal !== linguaSelecionadaRef.current) {
+        const isOwnMessage = msg.senderId === userData?.userToken;
+
+        // Só traduz se NÃO for mensagem própria E o idioma for diferente
+        if (!isOwnMessage && msg.linguaOriginal !== linguaSelecionadaRef.current) {
           try {
             const response = await fetch('/api/translate', {
               method: 'POST',
@@ -247,7 +252,7 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
               body: JSON.stringify({
                 text: msg.message,
                 targetLanguage: linguaSelecionadaRef.current,
-              }),
+              }), 
             });
 
             if (!response.ok) throw new Error('Erro na tradução');
@@ -262,14 +267,18 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
             return msg;
           }
         }
-        return msg;
+        // Se for mensagem própria OU mesmo idioma, retorna sem traduzir
+        return {
+          ...msg,
+          messageTraduzido: msg.message
+        };
       }));
 
       setMensagens(processedMessages);
     } catch (error) {
       console.error('Erro ao carregar histórico de mensagens:', error);
     }
-  }, [codigo, linguaSelecionadaRef.current]);
+  }, [codigo, linguaSelecionadaRef.current, userData?.userToken]); // Adicionei userData?.userToken nas dependências
 
   // Carrega mensagens quando o componente monta
   useEffect(() => {
@@ -279,12 +288,12 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
     }
   }, [socketClient, userData, loadMessageHistory]);
 
-  // Atualiza traduções quando o idioma muda
-  useEffect(() => {
-    if (mensagens.length > 0) {
-      loadMessageHistory();
-    }
-  }, [linguaSelecionadaRef.current]);
+  // Remova este useEffect que estava duplicando a chamada
+  // useEffect(() => {
+  //   if (mensagens.length > 0) {
+  //     loadMessageHistory();
+  //   }
+  // }, [linguaSelecionadaRef.current]);
 
   return {
     mensagens,

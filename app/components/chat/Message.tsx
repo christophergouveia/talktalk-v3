@@ -78,8 +78,6 @@ function MicComponent({ text }: { text: string }) {
     }
   };
 
-  
-
   return (
     <div className="flex items-center gap-1.5 rounded-full bg-gray-100/50 dark:bg-gray-800/50 px-1.5 py-0.5">
       <button
@@ -97,13 +95,13 @@ function MicComponent({ text }: { text: string }) {
         {isPlaying && (
           <motion.div
             initial={{ width: 0, opacity: 0 }}
-            animate={{ width: "4rem", opacity: 1 }}
+            animate={{ width: '4rem', opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
             className="relative overflow-hidden"
           >
             <div className="w-16 h-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
-              <div 
+              <div
                 className="h-full bg-gray-400 dark:bg-gray-500 transition-all duration-100"
                 style={{ width: `${progress}%` }}
               />
@@ -120,7 +118,7 @@ function MicComponent({ text }: { text: string }) {
           >
             <Volume2 size={14} className="text-gray-600 dark:text-gray-300" />
           </button>
-          
+
           {showVolumeControl && (
             <div className="absolute bottom-full right-0 mb-2 p-1.5 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-lg z-10 border border-gray-200 dark:border-gray-700 animate-scaleIn">
               <div className="w-24 flex items-center gap-2">
@@ -159,16 +157,10 @@ export default function Message({
     hour: '2-digit',
     minute: '2-digit',
   });
-  
+
   const renderContent = () => {
     if (isAudio) {
-      return (
-        <audio 
-          controls 
-          src={originalMessage}
-          className="max-w-[300px] rounded-lg"
-        />
-      );
+      return <audio controls src={originalMessage} className="max-w-[300px] rounded-lg" />;
     }
     return showOriginal ? originalMessage : children;
   };
@@ -203,21 +195,21 @@ export default function Message({
               <span className="text-sm">{showOriginal ? originalMessage : children}</span>
               {!ownMessage && (
                 <>
-                  <span className="text-xs text-gray-500">
-                    Traduzido do {supportedLanguages[lingua]} ({lingua})
-                    
-                  </span>
-              
-                  <button onClick={() => setShowOriginal(!showOriginal)} className="text-xs text-blue-400">
-                    {showOriginal ? 'Exibir traduzido' : 'Exibir original'}
-                  </button>
+                    <span className="text-xs flex flex-col text-gray-500 mt-1">
+                    <div className="mt-1 flex">
+                      <p>Traduzido do {supportedLanguages[lingua]} ({lingua})</p>
+                      <button onClick={() => setShowOriginal(!showOriginal)} className="ml-1 text-xs text-blue-400">
+                      {showOriginal ? 'Exibir traduzido' : 'Exibir original'}
+                      </button>
+                    </div>
+                    </span>
                 </>
               )}
             </div>
           ) : (
             <>
               <div className="flex items-center gap-2">
-                {ownMessage && (
+                {ownMessage && !isAudio && (
                   <>
                     <MicComponent text={originalMessage} />
                   </>
@@ -226,9 +218,7 @@ export default function Message({
                   {senderApelido}
                 </span>
                 <span className="text-xs text-gray-500">{formattedDate}</span>
-                {!ownMessage && (
-                  <MicComponent text={children as string} />
-                )}
+                {!ownMessage && <MicComponent text={children as string} />}
               </div>
               <div
                 className={`relative mt-1 max-w-full rounded-lg p-2 ${ownMessage ? 'setinha-own bg-blue-500 text-white' : 'setinha bg-gray-200 dark:bg-zinc-800'}`}
@@ -236,13 +226,14 @@ export default function Message({
                 {renderContent()}
                 {!ownMessage && (
                   <>
-                    <span className="text-xs text-gray-500">
-                      {console.log("lingua" + lingua)}
-                      Traduzido do {supportedLanguages[lingua]} ({lingua})''
+                    <span className="text-xs text-gray-500 ">
+                      <div className="mt-1">
+                        Traduzido do {supportedLanguages[lingua]} ({lingua})''
+                        <button onClick={() => setShowOriginal(!showOriginal)} className="ml-2 text-xs text-blue-400">
+                          {showOriginal ? 'Exibir traduzido' : 'Exibir original'}
+                        </button>
+                      </div>
                     </span>{' '}
-                    <button onClick={() => setShowOriginal(!showOriginal)} className="text-xs text-blue-400">
-                      {showOriginal ? 'Exibir traduzido' : 'Exibir original'}
-                    </button>
                   </>
                 )}
               </div>
@@ -253,7 +244,3 @@ export default function Message({
     </>
   );
 }
-
-
-
-

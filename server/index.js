@@ -190,7 +190,8 @@ io.on('connection', (socket) => {
             mensagem: encryptedMessage.data,
             dataEnvio: new Date(actualDate),
             apelido: apelido,
-            avatar: avatar
+            avatar: avatar,
+            linguaOriginal: lingua
           },
         });
       }
@@ -203,7 +204,7 @@ io.on('connection', (socket) => {
         avatar,
         color,
         lingua,
-        type // Add this line
+        type 
       });
     } catch (error) {
       console.error('Erro ao salvar mensagem:', error);

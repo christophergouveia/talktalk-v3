@@ -13,9 +13,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Missing text or targetLanguage' }, { status: 400 });
   }
 
-  if (!(targetLanguage in supportedLanguages)) {
-    return NextResponse.json({ error: 'Unsupported language' }, { status: 400 });
-  }
+  //if (!(targetLanguage in supportedLanguages)) {
+    //return NextResponse.json({ error: 'Unsupported language' }, { status: 400 });
+  //}
 
   try {
 
