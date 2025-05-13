@@ -131,303 +131,7 @@ export default function RoomPage({ params }: RoomPageProps) {
     if (!apelido) {
       setApelido(gerarNomeAnimalAleatorio());
     }
-  }, []);
-
-  useEffect(() => {
-    const savedSettings = localStorage.getItem('talktalk_user_settings');
-    if (savedSettings) {
-      const settings = JSON.parse(savedSettings);
-      if (settings.linguaSelecionada) {
-        setLinguaSelecionada(settings.linguaSelecionada);
-        onLinguaChange(settings.linguaSelecionada.value);
-      }
-      if (settings.avatarDetails) {
-        setAvatarDetails(settings.avatarDetails);
-      }
-      if (settings.avatarColor) {
-        setAvatarColor(settings.avatarColor);
-      }
-    }
-  }, []);
-
-  const fetchSala = useCallback(async () => {
-    try {
-      const sala = await fetchRoom(codigo);
-      const salas_usuarios = await fetchRoomUsers(codigo);
-
-      if (!salas_usuarios || sala == null) {
-        setShowErrorModal(true);
-        return;
-      }
-
-      setSalaData(sala);
-
-      const userData = cookies.talktalk_userdata;
-      const roomToken = cookies.talktalk_roomid;
-
-      if (userData == undefined || roomToken == undefined) {
-        setShowNameInput(true);
-        return;
-      }
-
-      try {
-        const userDataDecrypt = await descriptografarUserData(userData as string);
-
-        const isValidRoom = sala.token == userDataDecrypt.data.token;
-
-        if (!userDataDecrypt || !userDataDecrypt.data.apelido || !userDataDecrypt.data.userToken || !isValidRoom) {
-          setShowNameInput(true);
-          return;
-        }
-
-        setUserData(userDataDecrypt.data);
-
-        if (userDataDecrypt.data.userToken === sala.hostToken) {
-          setIsHost(true);
-          setHostModal(true);
-          setUsersRoomData((prev) => {
-            return {
-              [userDataDecrypt.data.userToken]: {
-                ...userDataDecrypt.data,
-                host: true,
-                isTyping: false,
-                lastActivity: new Date().toISOString(),
-              },
-            };
-          });
-        }
-
-        setShowNameInput(false);
-        connectToRoom(true);
-      } catch (error) {
-        console.error('Erro ao descriptografar dados do usuário:', error);
-        setShowNameInput(true);
-      }
-    } catch (error) {
-      console.error('Erro ao buscar sala:', error);
-      setShowErrorModal(true);
-    }
-  }, [codigo]);
-
-
-
-  useEffect(() => {
-    fetchSala();
-
-    return () => {
-      if (socketClient) {
-        socketClient.disconnect();
-        socketClient.off('user-connected');
-        socketClient.off('user-disconnected');
-        socketClient.off('message');
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (!socketClient) return;
-
-    const handleConnect = () => {
-      console.log('Conectado ao servidor');
-      if (userData) {
-        const userDataString = JSON.stringify(userData);
-        socketClient.emit('join-room', codigo, userDataString);
-      }
-    };
-
-    const handleUsersUpdate = async (users: any[]) => {
-      console.log('[DEBUG] Users Update Received: ', users);
-      const usersMap: { [key: string]: UserData } = {};
-
-      for (const user of users) {
-        try {
-          if (user.userData) {
-            if (typeof user.userData == 'string') {
-              const userDataDecrypted = await descriptografarUserData(user.userData);
-              const isUserHost = userDataDecrypted.data.userToken === salaData?.hostToken;
-              usersMap[userDataDecrypted.data.userToken] = {
-                ...userDataDecrypted.data,
-                host: isUserHost,
-                isTyping: false,
-                lastActivity: new Date().toISOString(),
-              };
-            } else {
-              const isUserHost = user.userData.userToken === salaData?.hostToken;
-              usersMap[user.userData.userToken] = {
-                ...user.userData,
-                host: isUserHost,
-                isTyping: false,
-                lastActivity: new Date().toISOString(),
-              };
-            }
-          }
-        } catch (error) {
-          console.error('Erro ao processar dados do usuário:', error);
-        }
-      }
-
-      setUsersRoomData(usersMap);
-      setPessoasConectadas(users.length);
-    };
-
-
-    const handleUsersTyping = async (data: { userToken: string; typing: boolean }) => {
-      if (userData?.userToken === data.userToken) return;
-      console.log('[DEBUG] Users Typing Received: ', data);
-      setUsersTyping((prev) => {
-        const existingIndex = prev.findIndex(user => user.userToken === data.userToken);
-        if (existingIndex >= 0) {
-          const newArray = [...prev];
-          newArray[existingIndex] = data;
-          return newArray;
-        }
-        return [...prev, data];
-      });
-      handleTyping(data.userToken, data.typing);
-    };
-
-    const handleUserDisconnected = async (disconnectedUserData: string) => {
-      try {
-        const decryptedUser = await descriptografarUserData(disconnectedUserData);
-        if (decryptedUser?.data.userToken) {
-          setUsersRoomData((prev) => {
-            const newData = { ...prev };
-            delete newData[decryptedUser.data.userToken];
-            return newData;
-          });
-          setPessoasConectadas((prev) => prev - 1);
-        }
-      } catch (error) {
-        console.error('Erro ao processar desconexão do usuário:', error);
-      }
-    };
-
-    socketClient.on('connect', handleConnect);
-    socketClient.on('users-update', handleUsersUpdate);
-    socketClient.on('user-disconnected', handleUserDisconnected);
-    socketClient.on('message', handleMessage);
-    socketClient.on('users-typing', handleUsersTyping);
-
-    return () => {
-      socketClient.off('connect', handleConnect);
-      socketClient.off('users-update', handleUsersUpdate);
-      socketClient.off('user-disconnected', handleUserDisconnected);
-      socketClient.off('message', handleMessage);
-      socketClient.off('users-typing', handleUsersTyping);
-    };
-  }, [socketClient, codigo, userData, salaData]);
-
-  useEffect(() => {
-    if (messageListRef.current) {
-      messageListRef.current.scrollTop = messageListRef.current.scrollHeight + 200;
-    }
-  }, [mensagens]);
-
-  const handleTextAreaChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const cleanedMessage = cleanMessage(e.target.value);
-    if (cleanedMessage !== undefined) {
-      setMensagem(cleanedMessage);
-      emitTypingStatus(true);
-    }
-  }, [emitTypingStatus]);
-
-  const handleTextAreaKeyUp = useCallback(
-    (e: KeyboardEvent<HTMLInputElement> | KeyboardEvent) => {
-      if (e.key === 'Shift') {
-        setShiftPressed(false);
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        if (shiftPressed) {
-          setMensagem((prev) => prev + '\n');
-        } else if (mensagem && mensagem.trim()) {
-          sendMessage();
-        }
-      }
-
-      if (userData?.userToken) {
-        socketClient?.emit('typing', true, codigo);
-      }
-    },
-    [shiftPressed, mensagem, sendMessage, userData, socketClient, codigo]
-  );
-
-  const handleTextAreaKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement> | KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-    } else if (e.key === 'Shift') {
-      setShiftPressed(true);
-    }
-  }, []);
-
-  const handleNameInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setUserName(e.target.value);
-  }, []);
-
-  const recAudio = async () => {
-    try {
-      if (isRecording) {
-        mediaRecorderRef.current?.stop();
-        setIsRecording(false);
-        return;
-      }
-
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      audioChunksRef.current = [];
-
-      mediaRecorder.ondataavailable = (event) => {
-        audioChunksRef.current.push(event.data);
-      };
-
-      mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        
-        const reader = new FileReader();
-        reader.readAsDataURL(audioBlob);
-        reader.onloadend = () => {
-          const base64Audio = reader.result as string;
-          
-          if (socketClient && userData) {
-            const audioMessage = {
-              type: 'audio',
-              message: base64Audio,
-              userToken: userData.userToken,
-              senderColor: userData.color,
-              apelido: userData.apelido,
-              avatar: userData.avatar,
-              room: codigo,
-              lingua: linguaSelecionada,
-              date: new Date().toISOString()
-            };
-            
-            socketClient.emit('sendMessage', audioMessage.message, audioMessage.userToken, audioMessage.senderColor, audioMessage.apelido, audioMessage.avatar, audioMessage.room, audioMessage.lingua, audioMessage.type);
-            toast.success('Áudio enviado com sucesso!');
-          }
-        };
-
-        stream.getTracks().forEach(track => track.stop());
-      };
-
-      mediaRecorder.start();
-      setIsRecording(true);
-      toast.info('Gravando áudio... Clique novamente para parar.');
-
-      setTimeout(() => {
-        if (mediaRecorderRef.current?.state === 'recording') {
-          mediaRecorderRef.current.stop();
-          setIsRecording(false);
-          toast.info('Gravação finalizada automaticamente (limite de 1 minuto).');
-        }
-      }, 60000);
-
-    } catch (error) {
-      console.error('Error recording audio:', error);
-      toast.error('Erro ao gravar áudio. Verifique as permissões do microfone.');
-      setIsRecording(false);
-    }
-  };
+  }, [apelido]);
 
   const connectToRoom = useCallback(
     async (bypass: boolean) => {
@@ -524,8 +228,306 @@ export default function RoomPage({ params }: RoomPageProps) {
         console.error('[DEBUG] Erro em connectToRoom:', error);
       }
     },
-    [userName, avatarDetails, avatarColor, codigo, userData]
+    [userName, avatarDetails, avatarColor, codigo, setCookies]
   );
+
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('talktalk_user_settings');
+    if (savedSettings) {
+      const settings = JSON.parse(savedSettings);
+      if (settings.linguaSelecionada) {
+        setLinguaSelecionada(settings.linguaSelecionada);
+        onLinguaChange(settings.linguaSelecionada.value);
+      }
+      if (settings.avatarDetails) {
+        setAvatarDetails(settings.avatarDetails);
+      }
+      if (settings.avatarColor) {
+        setAvatarColor(settings.avatarColor);
+      }
+    }
+  }, [ onLinguaChange]);
+
+  const fetchSala = useCallback(async () => {
+    try {
+      const sala = await fetchRoom(codigo);
+      const salas_usuarios = await fetchRoomUsers(codigo);
+
+      if (!salas_usuarios || sala == null) {
+        setShowErrorModal(true);
+        return;
+      }
+
+      setSalaData(sala);
+
+      const userData = cookies.talktalk_userdata;
+      const roomToken = cookies.talktalk_roomid;
+
+      if (userData == undefined || roomToken == undefined) {
+        setShowNameInput(true);
+        return;
+      }
+
+      try {
+        const userDataDecrypt = await descriptografarUserData(userData as string);
+
+        const isValidRoom = sala.token == userDataDecrypt.data.token;
+
+        if (!userDataDecrypt || !userDataDecrypt.data.apelido || !userDataDecrypt.data.userToken || !isValidRoom) {
+          setShowNameInput(true);
+          return;
+        }
+
+        setUserData(userDataDecrypt.data);
+
+        if (userDataDecrypt.data.userToken === sala.hostToken) {
+          setIsHost(true);
+          setHostModal(true);
+          setUsersRoomData((prev) => {
+            return {
+              [userDataDecrypt.data.userToken]: {
+                ...userDataDecrypt.data,
+                host: true,
+                isTyping: false,
+                lastActivity: new Date().toISOString(),
+              },
+            };
+          });
+        }
+
+        setShowNameInput(false);
+        connectToRoom(true);
+      } catch (error) {
+        console.error('Erro ao descriptografar dados do usuário:', error);
+        setShowNameInput(true);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar sala:', error);
+      setShowErrorModal(true);
+    }
+  }, [codigo, connectToRoom, cookies.talktalk_userdata, cookies.talktalk_roomid]);
+
+
+
+  useEffect(() => {
+    fetchSala();
+
+    return () => {
+      if (socketClient) {
+        socketClient.disconnect();
+        socketClient.off('user-connected');
+        socketClient.off('user-disconnected');
+        socketClient.off('message');
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleMessage, handleTyping, setPessoasConectadas]);
+
+  useEffect(() => {
+    if (!socketClient) return;
+
+    const handleConnect = () => {
+      console.log('Conectado ao servidor');
+      if (userData) {
+        const userDataString = JSON.stringify(userData);
+        socketClient.emit('join-room', codigo, userDataString);
+      }
+    };
+
+    const handleUsersUpdate = async (users: any[]) => {
+      console.log('[DEBUG] Users Update Received: ', users);
+      const usersMap: { [key: string]: UserData } = {};
+
+      for (const user of users) {
+        try {
+          if (user.userData) {
+            if (typeof user.userData == 'string') {
+              const userDataDecrypted = await descriptografarUserData(user.userData);
+              const isUserHost = userDataDecrypted.data.userToken === salaData?.hostToken;
+              usersMap[userDataDecrypted.data.userToken] = {
+                ...userDataDecrypted.data,
+                host: isUserHost,
+                isTyping: false,
+                lastActivity: new Date().toISOString(),
+              };
+            } else {
+              const isUserHost = user.userData.userToken === salaData?.hostToken;
+              usersMap[user.userData.userToken] = {
+                ...user.userData,
+                host: isUserHost,
+                isTyping: false,
+                lastActivity: new Date().toISOString(),
+              };
+            }
+          }
+        } catch (error) {
+          console.error('Erro ao processar dados do usuário:', error);
+        }
+      }
+
+      setUsersRoomData(usersMap);
+      setPessoasConectadas(users.length);
+    };
+
+
+    const handleUsersTyping = async (data: { userToken: string; typing: boolean }) => {
+      if (userData?.userToken === data.userToken) return;
+      console.log('[DEBUG] Users Typing Received: ', data);
+      setUsersTyping((prev) => {
+        const existingIndex = prev.findIndex(user => user.userToken === data.userToken);
+        if (existingIndex >= 0) {
+          const newArray = [...prev];
+          newArray[existingIndex] = data;
+          return newArray;
+        }
+        return [...prev, data];
+      });
+      handleTyping(data.userToken, data.typing);
+    };
+
+    const handleUserDisconnected = async (disconnectedUserData: string) => {
+      try {
+        const decryptedUser = await descriptografarUserData(disconnectedUserData);
+        if (decryptedUser?.data.userToken) {
+          setUsersRoomData((prev) => {
+            const newData = { ...prev };
+            delete newData[decryptedUser.data.userToken];
+            return newData;
+          });
+          setPessoasConectadas((prev) => prev - 1);
+        }
+      } catch (error) {
+        console.error('Erro ao processar desconexão do usuário:', error);
+      }
+    };
+
+    socketClient.on('connect', handleConnect);
+    socketClient.on('users-update', handleUsersUpdate);
+    socketClient.on('user-disconnected', handleUserDisconnected);
+    socketClient.on('message', handleMessage);
+    socketClient.on('users-typing', handleUsersTyping);
+
+    return () => {
+      socketClient.off('connect', handleConnect);
+      socketClient.off('users-update', handleUsersUpdate);
+      socketClient.off('user-disconnected', handleUserDisconnected);
+      socketClient.off('message', handleMessage);
+      socketClient.off('users-typing', handleUsersTyping);
+    };
+  }, [socketClient, codigo, userData, salaData, setMensagem, handleMessage, handleTyping, setPessoasConectadas]);
+
+  useEffect(() => {
+    if (messageListRef.current) {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight + 200;
+    }
+  }, [mensagens]);
+
+  const handleTextAreaChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const cleanedMessage = cleanMessage(e.target.value);
+    if (cleanedMessage !== undefined) {
+      setMensagem(cleanedMessage);
+      emitTypingStatus(true);
+    }
+  }, [emitTypingStatus, setMensagem]);
+
+  const handleTextAreaKeyUp = useCallback(
+    (e: KeyboardEvent<HTMLInputElement> | KeyboardEvent) => {
+      if (e.key === 'Shift') {
+        setShiftPressed(false);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (shiftPressed) {
+          setMensagem((prev) => prev + '\n');
+        } else if (mensagem && mensagem.trim()) {
+          sendMessage();
+        }
+      }
+
+      if (userData?.userToken) {
+        socketClient?.emit('typing', true, codigo);
+      }
+    },
+    [shiftPressed, mensagem, sendMessage, userData, socketClient, codigo, setMensagem]
+  );
+
+  const handleTextAreaKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement> | KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+    } else if (e.key === 'Shift') {
+      setShiftPressed(true);
+    }
+  }, []);
+
+  const handleNameInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setUserName(e.target.value);
+  }, []);
+
+  const recAudio = async () => {
+    try {
+      if (isRecording) {
+        mediaRecorderRef.current?.stop();
+        setIsRecording(false);
+        return;
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunksRef.current.push(event.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = () => {
+          const base64Audio = reader.result as string;
+          
+          if (socketClient && userData) {
+            const audioMessage = {
+              type: 'audio',
+              message: base64Audio,
+              userToken: userData.userToken,
+              senderColor: userData.color,
+              apelido: userData.apelido,
+              avatar: userData.avatar,
+              room: codigo,
+              lingua: linguaSelecionada,
+              date: new Date().toISOString()
+            };
+            
+            socketClient.emit('sendMessage', audioMessage.message, audioMessage.userToken, audioMessage.senderColor, audioMessage.apelido, audioMessage.avatar, audioMessage.room, audioMessage.lingua, audioMessage.type);
+            toast.success('Áudio enviado com sucesso!');
+          }
+        };
+
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      toast.info('Gravando áudio... Clique novamente para parar.');
+
+      setTimeout(() => {
+        if (mediaRecorderRef.current?.state === 'recording') {
+          mediaRecorderRef.current.stop();
+          setIsRecording(false);
+          toast.info('Gravação finalizada automaticamente (limite de 1 minuto).');
+        }
+      }, 60000);
+
+    } catch (error) {
+      console.error('Error recording audio:', error);
+      toast.error('Erro ao gravar áudio. Verifique as permissões do microfone.');
+      setIsRecording(false);
+    }
+  };
+
+  
 
   
 
@@ -564,7 +566,7 @@ export default function RoomPage({ params }: RoomPageProps) {
   useEffect(() => {
     getRandomAvatar();
     setAvatarColor(RandomAvatarColor.get().hex);
-  }, []);
+  }, [getRandomAvatar]);
 
   const handleSelectColor = useCallback(
     (color: string) => {

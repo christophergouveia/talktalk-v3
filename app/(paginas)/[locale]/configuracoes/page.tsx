@@ -62,31 +62,27 @@ const UserSettingsPage = () => {
 
   const { fontSize, setFontSize } = useFontSize();
 
-  // Única função para salvar todas as configurações
+  // Add new function to save settings
+  const saveUserSettings = useCallback((settings: any) => {
+    localStorage.setItem('talktalk_user_settings', JSON.stringify(settings));
+  }, []);
 
-
-  // Update useEffect to load all saved settings
+  // Add useEffect to load saved settings on component mount
   useEffect(() => {
     const savedSettings = localStorage.getItem('talktalk_user_settings');
     if (savedSettings) {
       const settings = JSON.parse(savedSettings);
-      if (settings.linguaSelecionada) setLinguaSelecionada(settings.linguaSelecionada);
-      if (settings.avatarDetails) setAvatarDetails(settings.avatarDetails);
-      if (settings.avatarColor) setAvatarColor(settings.avatarColor);
-      if (settings.userApelido) setUserApelido(settings.userApelido);
-      if (settings.userName) setUserName(settings.userName);
-      if (settings.volume) setVolume(settings.volume);
-      if (settings.pitch) setPitch(settings.pitch);
-      if (settings.rate) setRate(settings.rate);
-      if (settings.darkMode) setDarkMode(settings.darkMode);
-      if (settings.compactMode) setCompactMode(settings.compactMode);
-      if (settings.autoTranslate) setAutoTranslate(settings.autoTranslate);
-      if (settings.previewVoice) setPreviewVoice(settings.previewVoice);
-      if (settings.quietHoursStart) setQuietHoursStart(settings.quietHoursStart);
-      if (settings.quietHoursEnd) setQuietHoursEnd(settings.quietHoursEnd);
-      if (settings.fontSize) setFontSize(settings.fontSize);
+      if (settings.linguaSelecionada) {
+        setLinguaSelecionada(settings.linguaSelecionada);
+      }
+      if (settings.avatarDetails) {
+        setAvatarDetails(settings.avatarDetails);
+      }
+      if (settings.avatarColor) {
+        setAvatarColor(settings.avatarColor);
+      }
     }
-  }, [setFontSize]);
+  }, []);
 
   // Obter vozes disponíveis no navegador
   useEffect(() => {
@@ -136,7 +132,6 @@ const UserSettingsPage = () => {
   // Função para simular salvamento
   const saveSettings = () => {
     setIsSaving(true);
-    saveUserSettings();
     setTimeout(() => {
       setIsSaving(false);
     }, 1000);
@@ -148,42 +143,24 @@ const UserSettingsPage = () => {
     flag: 'PT',
   });
 
-  const saveUserSettings = useCallback(() => {
-    const settings = {
-      linguaSelecionada: {
-        label: linguaSelecionada.label,
-        value: linguaSelecionada.value,
-        flag: linguaSelecionada.flag,
-      },
-      avatarDetails,
-      avatarColor,
-      userApelido,
-      userName,
-      volume,
-      pitch,
-      rate,
-      darkMode,
-      compactMode,
-      autoTranslate,
-      previewVoice,
-      quietHoursStart,
-      quietHoursEnd,
-      fontSize
-    };
-    localStorage.setItem('talktalk_user_settings', JSON.stringify(settings));
-  }, [avatarDetails, linguaSelecionada, avatarColor, userApelido, userName, volume, 
-      pitch, rate, darkMode, compactMode, autoTranslate, previewVoice, 
-      quietHoursStart, quietHoursEnd, fontSize]);
-
-  // Update handleLanguageChange to include all settings
   const handleLanguageChange = (language) => {
     const index = languagesData.findIndex((lang) => lang.value === language);
+    console.log(languagesData[index]);
     setLinguaSelecionada({
       label: languagesData[index].label,
       value: languagesData[index].value,
       flag: languagesData[index].flag,
     });
-    saveUserSettings();
+    saveUserSettings({
+      linguaSelecionada: {
+        label: languagesData[index].label,
+        value: languagesData[index].value,
+        flag: languagesData[index].flag,
+      },
+      avatarDetails,
+      avatarColor,
+      userApelido
+    });
   };
 
   const getRandomAvatar = useCallback(() => {
@@ -200,34 +177,45 @@ const UserSettingsPage = () => {
     return randomAnimal;
   }, [setAvatarDetails]);
 
-  // Update handleSelectColor to include all settings
-  const handleSelectColor = useCallback((color: string) => {
-    setAvatarColor(color);
-    setColorModalOpenned(false);
-    saveUserSettings();
-  }, [saveUserSettings]);
+  const handleSelectColor = useCallback(
+    (color: string) => {
+      setAvatarColor(color);
+      setColorModalOpenned(false);
+      saveUserSettings({
+        linguaSelecionada,
+        avatarDetails,
+        avatarColor: color,
+      });
+    },
+    [saveUserSettings, linguaSelecionada, avatarDetails]
+  );
 
   const handleNameInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setUserName(e.target.value);
   }, []);
 
-  // Update handleAvatarSelect to include all settings
-  const handleAvatarSelect = (avatar: string, url: string) => {
-    setAvatarDetails({ avatarURL: url, avatarName: avatar });
-    saveUserSettings();
-  };
+  
 
   const handleFontSizeChange = (size: 'small' | 'medium' | 'large') => {
     setFontSize(size);
   };
 
   const AvatarComponent = useMemo(() => {
-    console.log('filho da puta');
+    const handleAvatarSelect = (avatar: string, url: string) => {
+      const newAvatarDetails = { avatarURL: url, avatarName: avatar };
+      setAvatarDetails(newAvatarDetails);
+      saveUserSettings({
+        linguaSelecionada,
+        avatarDetails: newAvatarDetails,
+        avatarColor,
+      });
+    };
     // if (avatarDetails.avatarURL.trim() == '') return <span>Carregando...</span>;
     return (
       <div className="flex flex-col items-center gap-3">
         <AvatarDropdown openModal={() => setColorModalOpenned((prev) => !prev)}>
           <Image
+          alt='Avatar'
             src={avatarDetails.avatarURL}
             width={120}
             height={120}
@@ -240,7 +228,7 @@ const UserSettingsPage = () => {
         <AvatarSelector onAvatarSelect={handleAvatarSelect} color={avatarColor} getRandomAvatar={getRandomAvatar} />
       </div>
     );
-  }, [avatarDetails.avatarURL, avatarColor, handleAvatarSelect, getRandomAvatar]);
+  }, [avatarDetails.avatarURL, avatarColor, getRandomAvatar, linguaSelecionada, saveUserSettings]);
 
   return (
     <div className={`flex flex-col p-4  text-gray-900 dark:text-gray-100 transition-colors duration-200 h-max`}>

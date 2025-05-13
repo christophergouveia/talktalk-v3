@@ -278,7 +278,7 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
     } catch (error) {
       console.error('Erro ao carregar histórico de mensagens:', error);
     }
-  }, [codigo, linguaSelecionadaRef.current, userData?.userToken]); // Adicionei userData?.userToken nas dependências
+  }, [codigo,  userData?.userToken]); // Adicionei userData?.userToken nas dependências
 
   // Carrega mensagens quando o componente monta
   useEffect(() => {

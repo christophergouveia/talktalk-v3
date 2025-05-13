@@ -56,13 +56,7 @@ export default function NavBar() {
     [t]
   );
 
-  useEffect(() => {
-    const currentItem = listaItems.find((item) => isActiveLink(item.href));
-    setActiveItem(currentItem || null);
-    if (pathname?.split('/').filter(Boolean)[0] !== i18n.language) {
-      i18n.changeLanguage(pathname?.split('/').filter(Boolean)[0]);
-    }
-  }, [pathname]);
+  
 
   const toggleTheme = useCallback(() => {
     theme.setTheme(theme.resolvedTheme === 'dark' ? 'light' : 'dark');
@@ -78,6 +72,14 @@ export default function NavBar() {
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
   }, []);
+
+  useEffect(() => {
+    const currentItem = listaItems.find((item) => isActiveLink(item.href));
+    setActiveItem(currentItem || null);
+    if (pathname?.split('/').filter(Boolean)[0] !== i18n.language) {
+      i18n.changeLanguage(pathname?.split('/').filter(Boolean)[0]);
+    }
+  }, [pathname, isActiveLink, listaItems]);
 
   return (
     <>
@@ -184,6 +186,7 @@ export default function NavBar() {
     </>
   );
 }
+
 
 function LanguageSwitcher() {
   const router = useRouter();
