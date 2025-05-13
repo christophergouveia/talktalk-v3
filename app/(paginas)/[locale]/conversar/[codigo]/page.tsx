@@ -434,7 +434,8 @@ export default function RoomPage({ params }: RoomPageProps) {
       try {
         if (bypass) {
           console.log('[DEBUG] Bypass ativado, conectando diretamente ao socket');
-          const socket = io(`http://${process.env.NEXT_PUBLIC_SOCKET_URL}:3001`, {
+          const protocol = typeof window !== 'undefined' && window.location.protocol === 'https:' ? 'wss' : 'ws';
+          const socket = io(`${protocol}://${process.env.NEXT_PUBLIC_SOCKET_URL}:3001`, {
             withCredentials: true,
             transports: ['websocket'],
             reconnection: false,
@@ -497,7 +498,8 @@ export default function RoomPage({ params }: RoomPageProps) {
         setUserData(payload);
 
         // Cria e configura o socket apenas uma vez
-        const socket = io(`http://${process.env.NEXT_PUBLIC_SOCKET_URL}:3001`, {
+        const protocol = typeof window !== 'undefined' && window.location.protocol === 'https:' ? 'wss' : 'ws';
+        const socket = io(`${protocol}://${process.env.NEXT_PUBLIC_SOCKET_URL}:3001`, {
           withCredentials: true,
           transports: ['websocket'],
           reconnection: false,
