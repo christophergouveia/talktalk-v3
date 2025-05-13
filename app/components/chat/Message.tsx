@@ -228,7 +228,7 @@ export default function Message({
                   <>
                     <span className="text-xs text-gray-500 ">
                       <div className="mt-1">
-                        Traduzido do {supportedLanguages[lingua]} ({lingua})''
+                        Traduzido do {supportedLanguages[lingua]} ({lingua})
                         <button onClick={() => setShowOriginal(!showOriginal)} className="ml-2 text-xs text-blue-400">
                           {showOriginal ? 'Exibir traduzido' : 'Exibir original'}
                         </button>
