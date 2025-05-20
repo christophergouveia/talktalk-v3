@@ -2,7 +2,7 @@
 
 const API_KEY = process.env.CRYPTO_API_KEY;
 const BASE_URL = process.env.NEXT_PUBLIC_VERCEL_URL ? 
-  `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : 
+  `http://${process.env.NEXT_PUBLIC_VERCEL_URL}` : 
   'http://localhost:3000';
 
 interface CryptoResponse {

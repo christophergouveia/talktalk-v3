@@ -1,24 +1,26 @@
 const express = require('express');
 const app = express();
-const https = require('https');
+const https = require("https");
+const http = require('http');
 const fs = require('fs');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 
-const httpsOptions = {
+const httpOptions = {
   key: fs.readFileSync('./server/ssl/localhost-key.pem'),
   cert: fs.readFileSync('./server/ssl/localhost.pem'),
 };
 
-app.use(cors());
+// const server = http.createServer(httpOptions, app);
+const server = http.createServer(app);
 
-const server = https.createServer(httpsOptions, app);
+app.use(cors());
 
 const io = require('socket.io')(server, {
   cors: {
-    origin: [`https://${process.env.NEXT_PUBLIC_VERCEL_URL}`, `https://127.0.0.1:${process.env.NEXT_PUBLIC_PORT}`],
+    origin: [`http://${process.env.NEXT_PUBLIC_VERCEL_URL}`, `http://127.0.0.1:${process.env.NEXT_PUBLIC_PORT}`],
     methods: ['GET', 'POST'],
     credentials: true,
     allowedHeaders: ['my-custom-header'],
@@ -61,10 +63,10 @@ io.on('connection', (socket) => {
 
       let cryptoApiBaseUrl;
       if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-        const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^https?:\/\//, '');
-        cryptoApiBaseUrl = `https://${domain}`;
+        const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^http?:\/\//, '');
+        cryptoApiBaseUrl = `http://${domain}`;
       } else {
-        cryptoApiBaseUrl = 'https://localhost:3000';
+        cryptoApiBaseUrl = 'http://localhost:3000';
       }
       const cryptoApiEndpoint = `${cryptoApiBaseUrl}/api/crypto`;
 
@@ -82,9 +84,9 @@ io.on('connection', (socket) => {
 
       if (
         process.env.NODE_ENV === 'development' &&
-        (cryptoApiEndpoint.startsWith('https://localhost') || cryptoApiEndpoint.startsWith('https://127.0.0.1'))
+        (cryptoApiEndpoint.startsWith('http://localhost') || cryptoApiEndpoint.startsWith('http://127.0.0.1'))
       ) {
-        const agent = new https.Agent({ rejectUnauthorized: false });
+        const agent = new http.Agent({ rejectUnauthorized: false });
         fetchOptionsEncrypt.agent = agent;
       }
 
@@ -141,9 +143,9 @@ io.on('connection', (socket) => {
 
           if (
             process.env.NODE_ENV === 'development' &&
-            (cryptoApiEndpoint.startsWith('https://localhost') || cryptoApiEndpoint.startsWith('https://127.0.0.1'))
+            (cryptoApiEndpoint.startsWith('http://localhost') || cryptoApiEndpoint.startsWith('http://127.0.0.1'))
           ) {
-            const agent = new https.Agent({ rejectUnauthorized: false });
+            const agent = new http.Agent({ rejectUnauthorized: false });
             fetchOptionsDecrypt.agent = agent;
           }
 
@@ -205,10 +207,10 @@ io.on('connection', (socket) => {
     try {
       let cryptoApiBaseUrlSendMessage;
       if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-        const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^https?:\/\//, '');
-        cryptoApiBaseUrlSendMessage = `https://${domain}`;
+        const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^http?:\/\//, '');
+        cryptoApiBaseUrlSendMessage = `http://${domain}`;
       } else {
-        cryptoApiBaseUrlSendMessage = 'https://localhost:3000';
+        cryptoApiBaseUrlSendMessage = 'http://localhost:3000';
       }
       const cryptoApiEndpointSendMessage = `${cryptoApiBaseUrlSendMessage}/api/crypto`;
 
@@ -226,10 +228,10 @@ io.on('connection', (socket) => {
 
       if (
         process.env.NODE_ENV === 'development' &&
-        (cryptoApiEndpointSendMessage.startsWith('https://localhost') ||
-          cryptoApiEndpointSendMessage.startsWith('https://127.0.0.1'))
+        (cryptoApiEndpointSendMessage.startsWith('http://localhost') ||
+          cryptoApiEndpointSendMessage.startsWith('http://127.0.0.1'))
       ) {
-        const agent = new https.Agent({ rejectUnauthorized: false });
+        const agent = new http.Agent({ rejectUnauthorized: false });
         fetchOptionsMessage.agent = agent;
       }
 
@@ -340,7 +342,7 @@ async function checkRooms() {
 setInterval(checkRooms, 1000 * 60 * 5); // 5 minutos
 
 app.get('/', (req, res) => {
-  res.send('Servidor HTTPS funcionando corretamente');
+  res.send('Servidor http funcionando corretamente');
 });
 
 server.listen(PORT, process.env.NEXT_PUBLIC_SOCKET_URL, () => {
