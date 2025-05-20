@@ -42,7 +42,7 @@ function MicComponent({ text }: { text: string }) {
       setProgress(0);
     };
 
-    utterance.onpause = () => setIsPlaying(false);
+    utterance.onpause = () => setIsPlaying(false)
     utterance.onresume = () => setIsPlaying(true);
 
     utterance.onboundary = (event) => {
