@@ -21,15 +21,30 @@ interface MessageProps {
   compact?: boolean;
 }
 
-function MicComponent({ text }: { text: string }) {
+function MicComponent({ text }: { text: string | React.ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(50);
   const [showVolumeControl, setShowVolumeControl] = useState(false);
   const speechRef = React.useRef<SpeechSynthesisUtterance | null>(null);
 
+  const getSpeechContent = React.useCallback((input: string | React.ReactNode): string => {
+    if (!input) return '';
+    if (typeof input === 'string') return input;
+    if (typeof input === 'object' && input !== null) {
+      if ('messageTraduzido' in input) return (input as any).messageTraduzido;
+      if ('message' in input) return (input as any).message;
+      if (typeof (input as any).toString === 'function') return (input as any).toString();
+    }
+    return '';
+  }, []);
+
+  const speechText = React.useMemo(() => getSpeechContent(text), [text, getSpeechContent]);
+
   React.useEffect(() => {
-    const utterance = new SpeechSynthesisUtterance(text);
+    if (!speechText) return;
+
+    const utterance = new SpeechSynthesisUtterance(speechText);
     speechRef.current = utterance;
 
     utterance.onstart = () => {
@@ -46,17 +61,17 @@ function MicComponent({ text }: { text: string }) {
     utterance.onresume = () => setIsPlaying(true);
 
     utterance.onboundary = (event) => {
-      const { charIndex, charLength } = event;
-      const progressValue = (charIndex / text.length) * 100;
+      const { charIndex } = event;
+      const progressValue = speechText ? (charIndex / speechText.length) * 100 : 0;
       setProgress(progressValue);
     };
 
     return () => {
       window.speechSynthesis.cancel();
     };
-  }, [text]);
+  }, [speechText]);
 
-  const handlePlayPause = () => {
+  const handlePlayPause = React.useCallback(() => {
     if (!speechRef.current) return;
 
     if (isPlaying) {
@@ -69,14 +84,17 @@ function MicComponent({ text }: { text: string }) {
         window.speechSynthesis.resume();
       }
     }
-  };
+  }, [isPlaying, progress, volume]);
 
-  const handleVolumeChange = (newVolume: number) => {
+  const handleVolumeChange = React.useCallback((newVolume: number) => {
     setVolume(newVolume);
     if (speechRef.current) {
       speechRef.current.volume = newVolume / 100;
     }
-  };
+  }, []);
+
+  // Don't render anything if there's no text to speak
+  if (!speechText) return null;
 
   return (
     <div className="flex items-center gap-1.5 rounded-full bg-gray-100/50 dark:bg-gray-800/50 px-1.5 py-0.5">
@@ -158,11 +176,37 @@ export default function Message({
     minute: '2-digit',
   });
 
+  // Handle all possible language data formats
+  const getLanguageLabel = (lang: string) => {
+    const data = supportedLanguages[lang];
+    if (!data) return lang;
+    if (typeof data === 'string') return data;
+    if (typeof data === 'object' && data !== null) {
+      // Handle both {label, value, flag} format and any other object format
+      return 'label' in data ? data.label : lang;
+    }
+    return lang;
+  };
+
+  const languageLabel = getLanguageLabel(lingua);
+
+  const getMessageContent = (input: React.ReactNode): string => {
+    if (typeof input === 'string') return input;
+    if (input === null || input === undefined) return '';
+    if (typeof input === 'object') {
+      if ('label' in input && typeof input.label === 'string') return input.label;
+      if ('message' in input && typeof input.message === 'string') return input.message;
+      if ('messageTraduzido' in input && typeof input.messageTraduzido === 'string') return input.messageTraduzido;
+      if (typeof (input as any).toString === 'function') return (input as any).toString();
+    }
+    return '';
+  };
+
   const renderContent = () => {
     if (isAudio) {
       return <audio controls src={originalMessage} className="max-w-[300px] rounded-lg" />;
     }
-    return showOriginal ? originalMessage : children;
+    return showOriginal ? originalMessage : getMessageContent(children);
   };
 
   return (
@@ -192,17 +236,25 @@ export default function Message({
               <span className="font-medium" style={{ color: senderColor }}>
                 {senderApelido}:
               </span>
-              <span className="text-sm">{showOriginal ? originalMessage : children}</span>
-              {!ownMessage && (
+              <span className="text-sm">
+                {isAudio ? (
+                  <audio controls src={originalMessage} className="max-w-[300px] rounded-lg" />
+                ) : (
+                  showOriginal ? originalMessage : getMessageContent(children)
+                )}
+              </span>
+              {!ownMessage && !isAudio && (
                 <>
-                    <span className="text-xs flex flex-col text-gray-500 mt-1">
+                  <span className="text-xs flex flex-col text-gray-500 mt-1">
                     <div className="mt-1 flex">
-                      <p>Traduzido do {supportedLanguages[lingua]} ({lingua})</p>
+                      <p>
+                        Traduzido do <span className="font-medium">{languageLabel}</span> ({lingua})
+                      </p>
                       <button onClick={() => setShowOriginal(!showOriginal)} className="ml-1 text-xs text-blue-400">
-                      {showOriginal ? 'Exibir traduzido' : 'Exibir original'}
+                        {showOriginal ? 'Exibir traduzido' : 'Exibir original'}
                       </button>
                     </div>
-                    </span>
+                  </span>
                 </>
               )}
             </div>
@@ -218,22 +270,23 @@ export default function Message({
                   {senderApelido}
                 </span>
                 <span className="text-xs text-gray-500">{formattedDate}</span>
-                {!ownMessage && <MicComponent text={children as string} />}
+                {/* Only show MicComponent for text messages */}
+                {!ownMessage && !isAudio && <MicComponent text={getMessageContent(children)} />}
               </div>
               <div
                 className={`relative mt-1 max-w-full rounded-lg p-2 ${ownMessage ? 'setinha-own bg-blue-500 text-white' : 'setinha bg-gray-200 dark:bg-zinc-800'}`}
               >
                 {renderContent()}
-                {!ownMessage && (
+                {!ownMessage && !isAudio && (
                   <>
-                    <span className="text-xs text-gray-500 ">
+                    <div className="text-xs text-gray-500 ">
                       <div className="mt-1">
-                        Traduzido do {supportedLanguages[lingua]} ({lingua})
+                        Traduzido do <span className="font-medium">{languageLabel}</span> ({lingua})
                         <button onClick={() => setShowOriginal(!showOriginal)} className="ml-2 text-xs text-blue-400">
                           {showOriginal ? 'Exibir traduzido' : 'Exibir original'}
                         </button>
                       </div>
-                    </span>{' '}
+                    </div>{' '}
                   </>
                 )}
               </div>
