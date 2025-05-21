@@ -6,15 +6,8 @@
     },
     "pagina_inicial": {
         "descricao": "Comunique-se de maneira eficiente com pessoas que não falam o mesmo idioma que você. Sem dificuldade. Com praticidade.",
-        "comece_a_conversar": "Comece a conversar agora mesmo!"
-    },
-    "footer": {
-        "copyright": "Copyright © 2025 - Todos os direitos reservados. ",
-        "desenvolvido_por": "Desenvolvido por <strong>Christopher</strong>, <strong>Gustavo</strong> e <strong>Kaike</strong>.",
-        "campus": "Instituto Federal de Educação, Ciência e Tecnologia de Assis Chateaubriand"
-    },
-    "sobre": {
-        "hero": {
+        "comece_a_conversar": "Comece a conversar agora mesmo!",
+                "hero": {
             "privacidade": {
                 "sua": "Sua",
                 "privacidade": "privacidade"
@@ -51,6 +44,14 @@
                 "backend": "Desenvolvedor BackEnd"
             }
         }
+    },
+    "footer": {
+        "copyright": "Copyright © 2025 - Todos os direitos reservados. ",
+        "desenvolvido_por": "Desenvolvido por <strong>Christopher</strong>, <strong>Gustavo</strong> e <strong>Kaike</strong>.",
+        "campus": "Instituto Federal de Educação, Ciência e Tecnologia de Assis Chateaubriand"
+    },
+    "sobre": {
+
     },
     "conversar": {
         "hero": {
