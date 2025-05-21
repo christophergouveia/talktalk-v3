@@ -6,14 +6,7 @@
     },
     "pagina_inicial": {
         "descricao": "Communicate efficiently with people who don't speak the same language as you. Without difficulties. With practicality.",
-        "comece_a_conversar": "Start chatting now!"
-    },
-    "footer": {
-        "copyright": "Copyright © 2025 - All rights reserved. ",
-        "desenvolvido_por": "Developed by <strong>Christopher</strong>, <strong>Gustavo</strong> and <strong>Kaike</strong>.",
-        "campus": "Federal Institute of Education, Science and Technology of Assis Chateaubriand"
-    },
-    "sobre": {
+        "comece_a_conversar": "Start chatting now!",
         "hero": {
             "privacidade": {
                 "sua": "Your",
@@ -51,6 +44,14 @@
                 "backend": "Backend Developer"
             }
         }
+    },
+    "footer": {
+        "copyright": "Copyright © 2025 - All rights reserved. ",
+        "desenvolvido_por": "Developed by <strong>Christopher</strong>, <strong>Gustavo</strong> and <strong>Kaike</strong>.",
+        "campus": "Federal Institute of Education, Science and Technology of Assis Chateaubriand"
+    },
+    "sobre": {
+        
     },
     "conversar": {
         "hero": {
