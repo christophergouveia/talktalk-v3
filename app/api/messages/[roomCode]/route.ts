@@ -46,7 +46,7 @@ export async function GET(request: NextRequest, props: { params: Promise<{ roomC
       try {
         // Adiciona protocolo http/https na URL
         const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL 
-          ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` 
+          ? `http://${process.env.NEXT_PUBLIC_VERCEL_URL}` 
           : 'http://localhost:3000';
 
         const decryptResponse = await fetch(`${baseUrl}/api/crypto`, {
