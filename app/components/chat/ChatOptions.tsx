@@ -60,20 +60,7 @@ export default function ChatOptions({
       <h1 className="rounded-md bg-[var(--chat-bg-header)] p-2 text-center font-bold">CONFIGURAÇÕES DA SALA</h1>
       <section className="flex-1">
         <div className="m-2 flex flex-col gap-4">
-          <Switch
-            classNames={{
-              base: 'inline-flex flex-row-reverse gap-2 w-full max-w-md bg-[--chat-bg-buttons] hover:bg-content2 items-center cursor-pointer p-4 border-2 border-transparent rounded-md transition-all duration-200',
-              wrapper: '',
-            }}
-          >
-            <div className="flex flex-col gap-1">
-              <p className="text-medium font-semibold">Chat compacto</p>
-              <p className="text-tiny text-default-600">
-                Ative o modo compacto do chat. Os espaçamentos são menores.
-              </p>
-            </div>
-          </Switch>
-          <div className="flex w-full flex-col gap-2 rounded-md bg-[--chat-bg-buttons] p-4">
+          <div>
             <div className="flex flex-col gap-1">
               <p className="text-medium font-semibold">Idioma de tradução</p>
               <p className="text-tiny text-default-600">Selecione para qual idioma as mensagens serão traduzidas</p>
@@ -83,8 +70,8 @@ export default function ChatOptions({
                 onClick={onLanguageDropdownToggle}
                 className="relative z-10 w-full rounded-md bg-[--chat-bg-buttons-secondary] px-4 py-3 pr-8 text-left hover:opacity-90 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm flex gap-2 items-center"
               >
-                <CountryFlag flag={linguaSelecionada?.flag} />
-                {linguaSelecionada?.label}
+                <CountryFlag flag={linguaSelecionada.flag} />
+                {linguaSelecionada.label}
               </button>
               <div
                 className={`absolute z-20 w-full rounded-md bg-white dark:bg-[var(--chat-bg-buttons)] shadow-lg ${
@@ -162,11 +149,11 @@ export default function ChatOptions({
             ))
           ) : (
             <div className="text-center p-4 text-gray-500 dark:text-gray-400">
-              Nenhum usuário conectado
+              Nenhum usuário online
             </div>
           )}
         </div>
       </div>
     </aside>
   );
-} 
+}

@@ -231,22 +231,22 @@ export default function RoomPage({ params }: RoomPageProps) {
     [userName, avatarDetails, avatarColor, codigo, setCookies]
   );
 
-  useEffect(() => {
-    const savedSettings = localStorage.getItem('talktalk_user_settings');
-    if (savedSettings) {
-      const settings = JSON.parse(savedSettings);
-      if (settings.linguaSelecionada) {
-        setLinguaSelecionada(settings.linguaSelecionada);
-        onLinguaChange(settings.linguaSelecionada.value);
-      }
-      if (settings.avatarDetails) {
-        setAvatarDetails(settings.avatarDetails);
-      }
-      if (settings.avatarColor) {
-        setAvatarColor(settings.avatarColor);
-      }
-    }
-  }, [ onLinguaChange]);
+  // useEffect(() => {
+  //   const savedSettings = localStorage.getItem('talktalk_user_settings');
+  //   if (savedSettings) {
+  //     const settings = JSON.parse(savedSettings);
+  //     if (settings.linguaSelecionada) {
+  //       setLinguaSelecionada(settings.linguaSelecionada);
+  //       onLinguaChange(settings.linguaSelecionada.value);
+  //     }
+  //     if (settings.avatarDetails) {
+  //       setAvatarDetails(settings.avatarDetails);
+  //     }
+  //     if (settings.avatarColor) {
+  //       setAvatarColor(settings.avatarColor);
+  //     }
+  //   }
+  // }, [ onLinguaChange]);
 
   const fetchSala = useCallback(async () => {
     try {
@@ -308,7 +308,6 @@ export default function RoomPage({ params }: RoomPageProps) {
   }, [codigo, connectToRoom, cookies.talktalk_userdata, cookies.talktalk_roomid]);
 
 
-
   useEffect(() => {
     fetchSala();
 
@@ -321,7 +320,7 @@ export default function RoomPage({ params }: RoomPageProps) {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleMessage, handleTyping, setPessoasConectadas]);
+  }, []);
 
   useEffect(() => {
     if (!socketClient) return;

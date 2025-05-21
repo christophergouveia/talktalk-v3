@@ -1,27 +1,35 @@
 const express = require('express');
 const app = express();
+const https = require("https");
 const http = require('http');
+const fs = require('fs');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+const httpOptions = {
+  key: fs.readFileSync('./server/ssl/localhost-key.pem'),
+  cert: fs.readFileSync('./server/ssl/localhost.pem'),
+};
 
+// const server = http.createServer(httpOptions, app);
 const server = http.createServer(app);
+
+app.use(cors());
 
 const io = require('socket.io')(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
-    methods: ["GET", "POST"],
+    origin: [`http://${process.env.NEXT_PUBLIC_VERCEL_URL}`, `http://127.0.0.1:${process.env.NEXT_PUBLIC_PORT}`],
+    methods: ['GET', 'POST'],
     credentials: true,
-    allowedHeaders: ["my-custom-header"],
+    allowedHeaders: ['my-custom-header'],
   },
   pingTimeout: 120000,
   pingInterval: 45000,
   transports: ['websocket', 'polling'],
   allowEIO3: true,
-  connectTimeout: 45000
+  connectTimeout: 45000,
 });
 
 io.on('connection', (socket) => {
@@ -53,17 +61,38 @@ io.on('connection', (socket) => {
         return;
       }
 
-      const encryptResponse = await import('node-fetch').then(({ default: fetch }) => fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
+      let cryptoApiBaseUrl;
+      if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+        const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^http?:\/\//, '');
+        cryptoApiBaseUrl = `http://${domain}`;
+      } else {
+        cryptoApiBaseUrl = 'http://localhost:3000';
+      }
+      const cryptoApiEndpoint = `${cryptoApiBaseUrl}/api/crypto`;
+
+      let fetchOptionsEncrypt = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.CRYPTO_API_KEY}`,
+          Authorization: `Bearer ${process.env.CRYPTO_API_KEY}`,
         },
         body: JSON.stringify({
           data: parsedUserData,
           action: 'encryptUserData',
         }),
-      }));
+      };
+
+      if (
+        process.env.NODE_ENV === 'development' &&
+        (cryptoApiEndpoint.startsWith('http://localhost') || cryptoApiEndpoint.startsWith('http://127.0.0.1'))
+      ) {
+        const agent = new http.Agent({ rejectUnauthorized: false });
+        fetchOptionsEncrypt.agent = agent;
+      }
+
+      const encryptResponse = await import('node-fetch').then(({ default: fetch }) =>
+        fetch(cryptoApiEndpoint, fetchOptionsEncrypt)
+      );
 
       const encryptResult = await encryptResponse.json();
       if (encryptResult.error) {
@@ -71,7 +100,7 @@ io.on('connection', (socket) => {
       }
 
       const sala = await prisma.salas.findUnique({
-        where: { codigoSala: room }
+        where: { codigoSala: room },
       });
 
       if (!sala) {
@@ -81,7 +110,7 @@ io.on('connection', (socket) => {
 
       const isHost = parsedUserData.userToken === sala.hostToken;
       const isUserInRoom = await prisma.salas_Usuarios.findUnique({
-        where: { codigoSala_userData: { codigoSala: room, userData: encryptResult.data } }
+        where: { codigoSala_userData: { codigoSala: room, userData: encryptResult.data } },
       });
 
       if (!isUserInRoom) {
@@ -89,33 +118,45 @@ io.on('connection', (socket) => {
           data: {
             codigoSala: room,
             userData: encryptResult.data,
-            host: isHost
-          }
+            host: isHost,
+          },
         });
       }
 
       const roomUsers = await prisma.salas_Usuarios.findMany({
-        where: { codigoSala: room }
+        where: { codigoSala: room },
       });
 
       const decryptedUsers = await Promise.all(
         roomUsers.map(async (user) => {
-          const decryptResponse = await import('node-fetch').then(({ default: fetch }) => fetch(`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/crypto`, {
+          let fetchOptionsDecrypt = {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${process.env.CRYPTO_API_KEY}`,
+              Authorization: `Bearer ${process.env.CRYPTO_API_KEY}`,
             },
             body: JSON.stringify({
               data: user.userData,
               action: 'decryptUserData',
             }),
-          }));
+          };
+
+          if (
+            process.env.NODE_ENV === 'development' &&
+            (cryptoApiEndpoint.startsWith('http://localhost') || cryptoApiEndpoint.startsWith('http://127.0.0.1'))
+          ) {
+            const agent = new http.Agent({ rejectUnauthorized: false });
+            fetchOptionsDecrypt.agent = agent;
+          }
+
+          const decryptResponse = await import('node-fetch').then(({ default: fetch }) =>
+            fetch(cryptoApiEndpoint, fetchOptionsDecrypt)
+          );
 
           const decryptResult = await decryptResponse.json();
           return {
             userData: decryptResult.data,
-            host: user.host
+            host: user.host,
           };
         })
       );
@@ -137,14 +178,14 @@ io.on('connection', (socket) => {
         await prisma.salas_Usuarios.deleteMany({
           where: {
             codigoSala: userRoom,
-            userData: userData
-          }
+            userData: userData,
+          },
         });
 
         socket.to(userRoom).emit('user-disconnected', userData);
 
         const roomUsers = await prisma.salas_Usuarios.findMany({
-          where: { codigoSala: userRoom }
+          where: { codigoSala: userRoom },
         });
 
         io.to(userRoom).emit('users-update', roomUsers);
@@ -158,31 +199,47 @@ io.on('connection', (socket) => {
     userData = null;
   });
 
-  socket.on('user-activity', ({ userToken, room }) => {
-  });
+  socket.on('user-activity', ({ userToken, room }) => {});
 
   socket.on('sendMessage', async (message, userToken, color, apelido, avatar, room, lingua, type) => {
     const actualDate = new Date().toISOString();
     console.log('[SERVER] Mensagem recebida: ' + message);
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL
-        ? `http://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-        : 'http://localhost:3000';
+      let cryptoApiBaseUrlSendMessage;
+      if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+        const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^http?:\/\//, '');
+        cryptoApiBaseUrlSendMessage = `http://${domain}`;
+      } else {
+        cryptoApiBaseUrlSendMessage = 'http://localhost:3000';
+      }
+      const cryptoApiEndpointSendMessage = `${cryptoApiBaseUrlSendMessage}/api/crypto`;
 
-      const encryptedMessage = await import('node-fetch').then(({ default: fetch }) => fetch(`${baseUrl}/api/crypto`, {
+      let fetchOptionsMessage = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.CRYPTO_API_KEY}`,
+          Authorization: `Bearer ${process.env.CRYPTO_API_KEY}`,
         },
         body: JSON.stringify({
           data: message,
           action: 'encrypt',
         }),
-      })).then(res => res.json());
+      };
 
-      if (type !== "audio") {
+      if (
+        process.env.NODE_ENV === 'development' &&
+        (cryptoApiEndpointSendMessage.startsWith('http://localhost') ||
+          cryptoApiEndpointSendMessage.startsWith('http://127.0.0.1'))
+      ) {
+        const agent = new http.Agent({ rejectUnauthorized: false });
+        fetchOptionsMessage.agent = agent;
+      }
 
+      const encryptedMessage = await import('node-fetch')
+        .then(({ default: fetch }) => fetch(cryptoApiEndpointSendMessage, fetchOptionsMessage))
+        .then((res) => res.json());
+
+      if (type !== 'audio') {
         await prisma.mensagens.create({
           data: {
             codigoSala: room.toString(),
@@ -191,7 +248,7 @@ io.on('connection', (socket) => {
             dataEnvio: new Date(actualDate),
             apelido: apelido,
             avatar: avatar,
-            linguaOriginal: lingua
+            linguaOriginal: lingua,
           },
         });
       }
@@ -204,7 +261,7 @@ io.on('connection', (socket) => {
         avatar,
         color,
         lingua,
-        type 
+        type,
       });
     } catch (error) {
       console.error('Erro ao salvar mensagem:', error);
@@ -224,7 +281,7 @@ io.on('connection', (socket) => {
     console.log('Mensagem recebida:', {
       room: data.room,
       sender: data.senderApelido,
-      message: data.message
+      message: data.message,
     });
 
     socket.to(data.room).emit('message', data);
@@ -233,12 +290,12 @@ io.on('connection', (socket) => {
   });
 });
 
-io.engine.on("connection_error", (err) => {
+io.engine.on('connection_error', (err) => {
   console.log('Erro de conexão:', {
     req: err.req,
     code: err.code,
     message: err.message,
-    context: err.context
+    context: err.context,
   });
 });
 
@@ -285,7 +342,7 @@ async function checkRooms() {
 setInterval(checkRooms, 1000 * 60 * 5); // 5 minutos
 
 app.get('/', (req, res) => {
-  res.send('Servidor HTTP funcionando corretamente');
+  res.send('Servidor http funcionando corretamente');
 });
 
 server.listen(PORT, process.env.NEXT_PUBLIC_SOCKET_URL, () => {

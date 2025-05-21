@@ -18,10 +18,11 @@ export function LanguageSelector({ selectedLanguage, onLanguageChange }: Languag
   const [filter, setFilter] = useState('');
   const [selectedIndex, setSelectedIndex] = useState<number>();
   const inputRef = useRef<HTMLInputElement>(null);
-
   const filteredLanguages = filter.length > 0
     ? linguagens.filter((idioma) => 
-        idioma.label.toLowerCase().includes(filter.toLowerCase()))
+        idioma.label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(
+          filter.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        ))
     : linguagens;
 
   useEffect(() => {
@@ -31,9 +32,12 @@ export function LanguageSelector({ selectedLanguage, onLanguageChange }: Languag
     setSelectedIndex(undefined);
   }, [isOpen]);
 
+  // Reset selection if filtered languages change
   useEffect(() => {
-    console.log(filter)
-  }, [filter])
+    if (selectedIndex !== undefined && selectedIndex >= filteredLanguages.length) {
+      setSelectedIndex(undefined);
+    }
+  }, [filteredLanguages, selectedIndex]);
 
   return (
     <div className="relative">
@@ -41,8 +45,8 @@ export function LanguageSelector({ selectedLanguage, onLanguageChange }: Languag
         onClick={() => setIsOpen(!isOpen)}
         className="relative z-10 w-full rounded-md p-2 bg-[--chat-bg-buttons-secondary] px-4 py-2 pr-8 text-left focus:outline-none sm:text-sm flex gap-2 items-center"
       >
-        <CountryFlag flag={selectedLanguage?.flag} />
-        {selectedLanguage?.label}
+        <CountryFlag flag={selectedLanguage.flag} />
+        {selectedLanguage.label}
         <ChevronDown />
       </button>
 
@@ -57,17 +61,16 @@ export function LanguageSelector({ selectedLanguage, onLanguageChange }: Languag
             <Input
               type="text"
               className="p-4"
-              placeholder="Pesquise uma língua..."
-              onChange={(e) => {
+              placeholder="Pesquise uma língua..."              onChange={(e) => {
                 setFilter(e.target.value);
-                if (linguagens.length > 0) {
-                  onLanguageChange(linguagens[0].value);
-                }
               }}
               ref={inputRef}
               onKeyDown={(e) => {
+                if (filteredLanguages.length === 0) return;
+                
                 if (e.key === 'ArrowDown') {
-                  const nextIndex = ((selectedIndex ?? 0) + 1) % filteredLanguages.length;
+                  e.preventDefault();
+                  const nextIndex = selectedIndex === undefined ? 0 : ((selectedIndex + 1) % filteredLanguages.length);
                   setSelectedIndex(nextIndex);
                   const list = document.querySelector('.custom-scrollbars');
                   const item = list?.children[nextIndex] as HTMLElement;
@@ -75,18 +78,25 @@ export function LanguageSelector({ selectedLanguage, onLanguageChange }: Languag
                     item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                   }
                 } else if (e.key === 'ArrowUp') {
-                  const prevIndex =
-                    ((selectedIndex ?? 0) - 1 + filteredLanguages.length) % filteredLanguages.length;
+                  e.preventDefault();
+                  const prevIndex = selectedIndex === undefined ? filteredLanguages.length - 1 : 
+                    ((selectedIndex - 1 + filteredLanguages.length) % filteredLanguages.length);
                   setSelectedIndex(prevIndex);
                   const list = document.querySelector('.custom-scrollbars');
                   const item = list?.children[prevIndex] as HTMLElement;
                   if (item) {
                     item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                   }
-                } else if (e.key === 'Enter' && selectedIndex !== undefined) {
-                  onLanguageChange(filteredLanguages[selectedIndex].value);
-                  setIsOpen(false);
-                  setFilter("");
+                } else if (e.key === 'Enter') {
+                  if (selectedIndex !== undefined && filteredLanguages[selectedIndex]) {
+                    onLanguageChange(filteredLanguages[selectedIndex].value);
+                    setIsOpen(false);
+                    setFilter("");
+                  } else if (filteredLanguages.length > 0) {
+                    onLanguageChange(filteredLanguages[0].value);
+                    setIsOpen(false);
+                    setFilter("");
+                  }
                 }
               }}
             />
@@ -118,4 +128,4 @@ export function LanguageSelector({ selectedLanguage, onLanguageChange }: Languag
       {isOpen && <div className="fixed inset-0" onClick={() => setIsOpen(false)} style={{ zIndex: 99 }} />}
     </div>
   );
-} 
+}

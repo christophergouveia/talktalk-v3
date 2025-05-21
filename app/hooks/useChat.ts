@@ -19,7 +19,7 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
   const [usersInRoom, setUsersInRoom] = useState<UserData[]>([]);
   const linguaSelecionadaRef = useRef<string>('');
   const [isTyping, setIsTyping] = useState<{[key: string]: boolean}>({});
-  const typingTimeoutRef = useRef<NodeJS.Timeout>();
+  const typingTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   
   const onLinguaChange = (lingua: string) => {
     linguaSelecionadaRef.current = lingua;
@@ -126,7 +126,6 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
           },
         ]);
       } else {
-        // Se for mensagem própria OU mesmo idioma, usa mensagem original
         setMensagens((prev) => [
           ...prev,
           {

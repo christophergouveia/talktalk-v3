@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, ChangeEvent, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, ChangeEvent, useMemo, useRef } from 'react';
 
 import { Image } from '@heroui/react';
 
@@ -67,13 +67,27 @@ const UserSettingsPage = () => {
     localStorage.setItem('talktalk_user_settings', JSON.stringify(settings));
   }, []);
 
+  const [linguaSelecionada, setLinguaSelecionada] = useState<{ label: string; value: string; flag: string }>({
+    label: 'Português',
+    value: 'pt',
+    flag: 'PT',
+  });
+  const isFirstLoad = useRef(true);
+
   // Add useEffect to load saved settings on component mount
   useEffect(() => {
     const savedSettings = localStorage.getItem('talktalk_user_settings');
     if (savedSettings) {
       const settings = JSON.parse(savedSettings);
       if (settings.linguaSelecionada) {
-        setLinguaSelecionada(settings.linguaSelecionada);
+        // Only update if different
+        if (
+          settings.linguaSelecionada.value !== linguaSelecionada.value ||
+          settings.linguaSelecionada.label !== linguaSelecionada.label ||
+          settings.linguaSelecionada.flag !== linguaSelecionada.flag
+        ) {
+          setLinguaSelecionada(settings.linguaSelecionada);
+        }
       }
       if (settings.avatarDetails) {
         setAvatarDetails(settings.avatarDetails);
@@ -82,6 +96,7 @@ const UserSettingsPage = () => {
         setAvatarColor(settings.avatarColor);
       }
     }
+    isFirstLoad.current = false;
   }, []);
 
   // Obter vozes disponíveis no navegador
@@ -137,15 +152,11 @@ const UserSettingsPage = () => {
     }, 1000);
   };
 
-  const [linguaSelecionada, setLinguaSelecionada] = useState<{ label: string; value: string; flag: string }>({
-    label: 'Português',
-    value: 'pt',
-    flag: 'PT',
-  });
-
   const handleLanguageChange = (language) => {
     const index = languagesData.findIndex((lang) => lang.value === language);
-    console.log(languagesData[index]);
+    if (index === -1) return;
+    // Only update if different
+    if (linguaSelecionada.value === languagesData[index].value) return;
     setLinguaSelecionada({
       label: languagesData[index].label,
       value: languagesData[index].value,
