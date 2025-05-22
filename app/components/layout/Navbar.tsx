@@ -7,10 +7,8 @@ import { useTheme } from 'next-themes';
 import { FaGithub } from 'react-icons/fa';
 import Image from 'next/image';
 import LogoSite from '/public/images/icon/logo.png';
-import { Button, Spinner } from "@heroui/react";
 import { CountryFlag } from '../countryFlags';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
-import { Phone } from 'lucide-react';
 import { IoSettingsSharp } from "react-icons/io5";
 
 import { motion } from 'framer-motion';
@@ -31,7 +29,6 @@ export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasMounted, setHasMounted] = useState<boolean>(false);
   const [activeItem, setActiveItem] = useState<NavbarItem | null>(null);
-  const [showCallDialog, setShowCallDialog] = useState(false);
 
   useEffect(() => setHasMounted(true), []);
 
@@ -167,10 +164,10 @@ export default function NavBar() {
             <div className="px-2 py-3 space-y-1">
               {listaItems.map((item) => (
                 <Link
-                  key={item.href}
-                  href={item.href}
+                  key={item.href.replace('locale', i18n.language)}
+                  href={item.href.replace('locale', i18n.language)}
                   className={`block px-3 py-2 rounded-md text-base font-medium
-                    ${isActiveLink(item.href)
+                    ${isActiveLink(item.href.replace('locale', i18n.language))
                       ? 'bg-sky-100 text-sky-600 dark:bg-sky-900'
                       : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
                     }`}
