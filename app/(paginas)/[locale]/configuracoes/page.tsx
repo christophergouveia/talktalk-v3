@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, ChangeEvent, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, ChangeEvent, useMemo, useRef, useLayoutEffect } from 'react';
 import { Image } from '@heroui/react';
 import { Save, Volume2, Moon, Sun, Globe, User, Bell, MessageSquare, Mic, Sliders, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -15,6 +15,8 @@ import { AvatarSelector } from '@/app/components/functionals/AvatarSelector';
 import { RandomNicks } from '@/app/utils/strings/randomNicks';
 import AvatarDropdown from '@/app/components/functionals/AvatarDropdown';
 import { useFontSize } from '@/app/contexts/FontSizeContext';
+import { useSpeech } from '@/app/contexts/SpeechContext';
+import SpeechSettings from '@/app/components/functionals/SpeechSettings';
 
 const UserSettingsPage = () => {
   const supportedLanguages = {
@@ -29,22 +31,19 @@ const UserSettingsPage = () => {
     'ru-RU': 'Russo (Rússia)',
     'ar-SA': 'Árabe (Arábia Saudita)',
   };
-
   // Estados para as configurações do usuário
   const [preferredLanguage, setPreferredLanguage] = useState('pt-BR');
   const [userName, setUserName] = useState('');
   const [userApelido, setUserApelido] = useState('');
   const [avatar, setAvatar] = useState('/api/placeholder/100/100');
   const [userColor, setUserColor] = useState('#3b82f6');
-  const [volume, setVolume] = useState(75);
-  const [pitch, setPitch] = useState(1);
-  const [rate, setRate] = useState(1);
   const [darkMode, setDarkMode] = useState(false);
   const [compactMode, setCompactMode] = useState(false);
   const [autoTranslate, setAutoTranslate] = useState(true);
   const [activeTab, setActiveTab] = useState('profile');
-  const [previewVoice, setPreviewVoice] = useState('');
-  const [availableVoices, setAvailableVoices] = useState([]);
+  
+  // Hook de síntese de voz
+  const { settings, updateSettings, speak } = useSpeech();
   const [isSaving, setIsSaving] = useState(false);
   const [quietHoursStart, setQuietHoursStart] = useState('22:00');
   const [quietHoursEnd, setQuietHoursEnd] = useState('07:00');
@@ -99,51 +98,35 @@ const UserSettingsPage = () => {
       }
     }
     isFirstLoad.current = false;
-  }, []);
+  }, []);  // State for managing available voices
+  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
 
-  // Obter vozes disponíveis no navegador
+  // Voice settings and initialization
   useEffect(() => {
     const loadVoices = () => {
-      if (typeof window !== 'undefined' && window.speechSynthesis) {
-        const voices = window.speechSynthesis.getVoices();
-        // setAvailableVoices(voices);
+      const voices = window.speechSynthesis.getVoices();
+      setAvailableVoices(voices);
 
-        // Escolher voz padrão baseada no idioma preferido
-        const defaultVoice = voices.find((voice) => voice.lang && voice.lang.includes(preferredLanguage));
-        if (defaultVoice) {
-          setPreviewVoice(defaultVoice.name);
-        } else if (voices.length) {
-          setPreviewVoice(voices[0].name);
+      if (settings.voice && preferredLanguage) {
+        const matchingVoice = voices.find(voice => 
+          voice.lang && voice.lang.includes(preferredLanguage)
+        );
+        if (matchingVoice && matchingVoice.name !== settings.voice) {
+          updateSettings({ voice: matchingVoice.name });
         }
       }
     };
 
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      loadVoices();
-      window.speechSynthesis.onvoiceschanged = loadVoices;
-    }
-  }, [preferredLanguage]);
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
 
-  // Função para testar configurações de voz
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, [preferredLanguage, settings.voice, updateSettings]);
+  // Test voice function now uses speech context
   const testVoice = () => {
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-
-      const utterance = new SpeechSynthesisUtterance('Olá! Esta é uma mensagem de teste para as configurações de voz.');
-
-      // Aplicar configurações de voz
-      utterance.volume = volume / 100;
-      utterance.rate = rate;
-      utterance.pitch = pitch;
-
-      // Usar voz selecionada
-      // const selectedVoice = availableVoices.find(voice => voice.name === previewVoice);
-      // if (selectedVoice) {
-      //   utterance.voice = selectedVoice;
-      // }
-
-      window.speechSynthesis.speak(utterance);
-    }
+    speak('Olá! Esta é uma mensagem de teste para as configurações de voz.');
   };
 
   // Função para simular salvamento
@@ -209,8 +192,8 @@ const UserSettingsPage = () => {
 
   
 
-  const handleFontSizeChange = (size: 'small' | 'medium' | 'large') => {
-    setFontSize(size);
+  const handleFontSizeChange = (size: string | number) => {
+    setFontSize(Number(size));
   };
 
   const AvatarComponent = useMemo(() => {
@@ -481,23 +464,35 @@ const UserSettingsPage = () => {
             >
               <h2 className="text-xl font-semibold mb-4">Configurações de Áudio</h2>
 
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="voice" className="block text-sm font-medium mb-1">
+              <div className="space-y-4">                <div>                  <label htmlFor="voice" className="block text-sm font-medium mb-1">
                     Voz para leitura
                   </label>
-                  <select
-                    id="voice"
-                    value={previewVoice}
-                    onChange={(e) => setPreviewVoice(e.target.value)}
-                    className="w-full p-2 border dark:border-gray-700 bg-white dark:bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent"
-                  >
-                    {/* {availableVoices.map((voice, index) => (
-                      <option key={index} value={voice.name}>
-                        {voice.name} ({voice.lang || 'Desconhecido'})
-                      </option>
-                    ))} */}
-                  </select>
+                  <div className="relative">
+                    <select
+                      id="voice"
+                      value={settings.voice}
+                      onChange={(e) => updateSettings({ voice: e.target.value })}
+                      className="w-full p-2 border dark:border-gray-700 bg-white dark:bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent appearance-none"
+                    >
+                      <option value="">Selecione uma voz</option>                      {availableVoices
+                        .sort((a, b) => {
+                          // Preferência para vozes em português
+                          const aPt = a.lang && a.lang.startsWith('pt');
+                          const bPt = b.lang && b.lang.startsWith('pt');
+                          if (aPt && !bPt) return -1;
+                          if (!aPt && bPt) return 1;
+                          return a.name.localeCompare(b.name);
+                        })
+                        .map((voice, index) => (
+                          <option key={index} value={voice.name}>
+                            {voice.name} ({voice.lang || 'Desconhecido'})
+                          </option>
+                        ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                      <ChevronRight size={16} className="transform rotate-90 text-gray-400" />
+                    </div>
+                  </div>
                 </div>
 
                 <div>
@@ -505,17 +500,20 @@ const UserSettingsPage = () => {
                     <label htmlFor="volume" className="text-sm font-medium">
                       Volume
                     </label>
-                    <span className="text-sm">{volume}%</span>
+                    <span className="text-sm">{settings.volume}%</span>
                   </div>
-                  <input
-                    id="volume"
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={volume}
-                    onChange={(e) => setVolume(Number(e.target.value))}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-500"
-                  />
+                  <div className="flex items-center gap-2">
+                    <Volume2 size={16} className="text-gray-600 dark:text-gray-400" />
+                    <input
+                      id="volume"
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={settings.volume}
+                      onChange={(e) => updateSettings({ volume: Number(e.target.value) })}
+                      className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-500"
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -523,7 +521,7 @@ const UserSettingsPage = () => {
                     <label htmlFor="rate" className="text-sm font-medium">
                       Velocidade
                     </label>
-                    <span className="text-sm">{rate}x</span>
+                    <span className="text-sm">{settings.rate}x</span>
                   </div>
                   <input
                     id="rate"
@@ -531,8 +529,8 @@ const UserSettingsPage = () => {
                     min="0.5"
                     max="2"
                     step="0.1"
-                    value={rate}
-                    onChange={(e) => setRate(Number(e.target.value))}
+                    value={settings.rate}
+                    onChange={(e) => updateSettings({ rate: Number(e.target.value) })}
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-500"
                   />
                 </div>
@@ -542,7 +540,7 @@ const UserSettingsPage = () => {
                     <label htmlFor="pitch" className="text-sm font-medium">
                       Tom
                     </label>
-                    <span className="text-sm">{pitch}</span>
+                    <span className="text-sm">{settings.pitch}</span>
                   </div>
                   <input
                     id="pitch"
@@ -550,19 +548,41 @@ const UserSettingsPage = () => {
                     min="0.5"
                     max="2"
                     step="0.1"
-                    value={pitch}
-                    onChange={(e) => setPitch(Number(e.target.value))}
+                    value={settings.pitch}
+                    onChange={(e) => updateSettings({ pitch: Number(e.target.value) })}
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-500"
                   />
+                </div>                <div className="space-y-2">
+                  <label htmlFor="test-text" className="text-sm font-medium">
+                    Texto para teste
+                  </label>
+                  <textarea
+                    id="test-text"
+                    rows={2}
+                    placeholder="Digite um texto para testar as configurações de voz"
+                    defaultValue="Olá! Esta é uma mensagem de teste para as configurações de voz."
+                    className="w-full p-2 border dark:border-gray-700 bg-white dark:bg-gray-700 rounded-lg resize-none"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        speak(e.currentTarget.value);
+                      }
+                    }}
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Pressione Enter para ouvir o texto ou use o botão abaixo
+                  </p>
+                  <button
+                    onClick={(e) => {
+                      const textarea = document.getElementById('test-text') as HTMLTextAreaElement;
+                      speak(textarea.value);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                  >
+                    <Mic size={18} />
+                    <span>Testar configurações de voz</span>
+                  </button>
                 </div>
-
-                <button
-                  onClick={testVoice}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                >
-                  <Mic size={18} />
-                  <span>Testar configurações de voz</span>
-                </button>
 
                 <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
                   <div className="flex items-center justify-between">
@@ -577,7 +597,12 @@ const UserSettingsPage = () => {
                     </div>
 
                     <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" className="sr-only peer" />
+                      <input
+                        type="checkbox"
+                        checked={settings.autoRead}
+                        onChange={(e) => updateSettings({ autoRead: e.target.checked })}
+                        className="sr-only peer"
+                      />
                       <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-500 peer-checked:bg-blue-500"></div>
                     </label>
                   </div>
@@ -642,44 +667,76 @@ const UserSettingsPage = () => {
                     />
                     <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-500 peer-checked:bg-blue-500"></div>
                   </label>
-                </div>
+                </div>                <div className="p-4 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-medium">Tamanho da fonte</label>
+                    <span className="text-sm font-mono">{fontSize}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="8"
+                    max="24"
+                    step="1"
+                    value={fontSize}
+                    onChange={(e) => setFontSize(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-600 accent-blue-500"
+                  />
+                  <div className="flex justify-between mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span>8px</span>
+                    <span>16px</span>
+                    <span>24px</span>
+                  </div>
+                  
+                  <div className="mt-4 grid grid-cols-4 gap-2">
+                    <button
+                      onClick={() => setFontSize(12)}
+                      className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                        fontSize === 12
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500'
+                      }`}
+                    >
+                      Pequena
+                    </button>
+                    <button
+                      onClick={() => setFontSize(16)}
+                      className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                        fontSize === 16
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500'
+                      }`}
+                    >
+                      Média
+                    </button>
+                    <button
+                      onClick={() => setFontSize(20)}
+                      className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                        fontSize === 20
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500'
+                      }`}
+                    >
+                      Grande
+                    </button>
+                    <button
+                      onClick={() => setFontSize(24)}
+                      className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                        fontSize === 24
+                          ? 'bg-blue-500 text-white'
+                          : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500'
+                      }`}
+                    >
+                      Extra Grande
+                    </button>
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-2">Tamanho da fonte</label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        name="fontSize"
-                        value="small"
-                        checked={fontSize === 'small'}
-                        onChange={(e) => handleFontSizeChange('small')}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
-                      />
-                      <span className="ms-2 text-sm">Pequeno</span>
-                    </label>
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        name="fontSize"
-                        value="medium"
-                        checked={fontSize === 'medium'}
-                        onChange={(e) => handleFontSizeChange('medium')}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
-                      />
-                      <span className="ms-2 text-sm">Médio</span>
-                    </label>
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        name="fontSize"
-                        value="large"
-                        checked={fontSize === 'large'}
-                        onChange={(e) => handleFontSizeChange('large')}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300"
-                      />
-                      <span className="ms-2 text-sm">Grande</span>
-                    </label>
+                  <div className="mt-4 p-3 bg-white dark:bg-gray-800 rounded-lg">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Exemplo de texto com o tamanho selecionado
+                    </p>
+                    <p style={{ fontSize: `${fontSize}px` }} className="mt-2">
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    </p>
                   </div>
                 </div>
 

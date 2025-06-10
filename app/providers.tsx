@@ -8,6 +8,7 @@ import { ToastContainer } from 'react-toastify';
 import { ViewTransitions } from 'next-view-transitions';
 import 'react-toastify/dist/ReactToastify.css';
 import VLibras from "vlibras-nextjs";
+import { SpeechProvider } from './contexts/SpeechContext';
 
 import "../i18n"
 
@@ -25,7 +26,9 @@ export default function Providers({ children }: { children: ReactNode }) {
       
         <CookiesProvider>
           <ThemeProvider attribute="class" enableSystem themes={['light', 'dark']}>
-            {children}
+            <SpeechProvider>
+              {children}
+            </SpeechProvider>
             <ToastContainer />
           </ThemeProvider>
         </CookiesProvider>

@@ -2,39 +2,36 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-type FontSize = 'small' | 'medium' | 'large';
-
 interface FontSizeContextType {
-  fontSize: FontSize;
-  setFontSize: (size: FontSize) => void;
+  fontSize: number;
+  setFontSize: (size: number) => void;
 }
 
 const FontSizeContext = createContext<FontSizeContextType | undefined>(undefined);
 
 export function FontSizeProvider({ children }: { children: React.ReactNode }) {
-  const [fontSize, setFontSize] = useState<FontSize>('medium');
+  const [fontSize, setFontSizeState] = useState<number>(16);
+
+  const setFontSize = (size: number) => {
+    const clampedSize = Math.min(Math.max(size, 8), 24); // Limita entre 8 e 24px
+    setFontSizeState(clampedSize);
+    document.documentElement.style.fontSize = `${clampedSize}px`;
+    localStorage.setItem('talktalk_font_size', clampedSize.toString());
+  };
 
   useEffect(() => {
-    // Load saved font size on mount
+    // Carregar tamanho da fonte salvo
     const savedSize = localStorage.getItem('talktalk_font_size');
-    if (savedSize && ['small', 'medium', 'large'].includes(savedSize)) {
-      setFontSize(savedSize as FontSize);
-      document.documentElement.classList.add(`font-size-${savedSize}`);
+    if (savedSize) {
+      const size = Number(savedSize);
+      if (size >= 8 && size <= 24) {
+        setFontSize(size);
+      }
     }
   }, []);
 
-  const handleSetFontSize = (size: FontSize) => {
-    // Remove previous font size class
-    document.documentElement.classList.remove('font-size-small', 'font-size-medium', 'font-size-large');
-    // Add new font size class
-    document.documentElement.classList.add(`font-size-${size}`);
-    
-    setFontSize(size);
-    localStorage.setItem('talktalk_font_size', size);
-  };
-
   return (
-    <FontSizeContext.Provider value={{ fontSize, setFontSize: handleSetFontSize }}>
+    <FontSizeContext.Provider value={{ fontSize, setFontSize }}>
       {children}
     </FontSizeContext.Provider>
   );

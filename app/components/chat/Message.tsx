@@ -3,9 +3,10 @@ import Image from 'next/image';
 import { Moment } from 'moment-timezone';
 import { supportedLanguages } from '@/app/api/translate/languages';
 import { useState } from 'react';
-import { Play, Pause, Volume2 } from 'lucide-react';
+import { Play, Pause } from 'lucide-react';
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSpeech } from '@/app/contexts/SpeechContext';
 import { useFontSize } from '@/app/contexts/FontSizeContext';
 
 interface MessageProps {
@@ -22,11 +23,13 @@ interface MessageProps {
 }
 
 function MicComponent({ text }: { text: string | React.ReactNode }) {
+  const { settings } = useSpeech();
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [volume, setVolume] = useState(50);
-  const [showVolumeControl, setShowVolumeControl] = useState(false);
   const speechRef = React.useRef<SpeechSynthesisUtterance | null>(null);
+
+  // Don't render if speech is disabled
+  if (!settings.enabled) return null;
 
   const getSpeechContent = React.useCallback((input: string | React.ReactNode): string => {
     if (!input) return '';
@@ -47,6 +50,19 @@ function MicComponent({ text }: { text: string | React.ReactNode }) {
     const utterance = new SpeechSynthesisUtterance(speechText);
     speechRef.current = utterance;
 
+    // Apply speech settings
+    utterance.volume = settings.volume / 100;
+    utterance.rate = settings.rate;
+    utterance.pitch = settings.pitch;
+
+    if (settings.voice) {
+      const voices = window.speechSynthesis.getVoices();
+      const selectedVoice = voices.find(v => v.name === settings.voice);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+    }
+
     utterance.onstart = () => {
       setIsPlaying(true);
       setProgress(0);
@@ -66,10 +82,15 @@ function MicComponent({ text }: { text: string | React.ReactNode }) {
       setProgress(progressValue);
     };
 
+    // Auto-read if enabled and it's a new message
+    if (settings.autoRead && progress === 0) {
+      window.speechSynthesis.speak(utterance);
+    }
+
     return () => {
       window.speechSynthesis.cancel();
     };
-  }, [speechText]);
+  }, [speechText, settings]);
 
   const handlePlayPause = React.useCallback(() => {
     if (!speechRef.current) return;
@@ -78,20 +99,12 @@ function MicComponent({ text }: { text: string | React.ReactNode }) {
       window.speechSynthesis.pause();
     } else {
       if (progress === 0) {
-        speechRef.current.volume = volume / 100;
         window.speechSynthesis.speak(speechRef.current);
       } else {
         window.speechSynthesis.resume();
       }
     }
-  }, [isPlaying, progress, volume]);
-
-  const handleVolumeChange = React.useCallback((newVolume: number) => {
-    setVolume(newVolume);
-    if (speechRef.current) {
-      speechRef.current.volume = newVolume / 100;
-    }
-  }, []);
+  }, [isPlaying, progress]);
 
   // Don't render anything if there's no text to speak
   if (!speechText) return null;
@@ -101,6 +114,7 @@ function MicComponent({ text }: { text: string | React.ReactNode }) {
       <button
         onClick={handlePlayPause}
         className="rounded-full p-1 hover:bg-gray-200/80 dark:hover:bg-gray-700/80 transition-colors"
+        title={isPlaying ? 'Pausar' : 'Reproduzir'}
       >
         {isPlaying ? (
           <Pause size={14} className="text-gray-600 dark:text-gray-300" />
@@ -127,32 +141,6 @@ function MicComponent({ text }: { text: string | React.ReactNode }) {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {isPlaying && (
-        <div className="relative">
-          <button
-            onClick={() => setShowVolumeControl(!showVolumeControl)}
-            className="p-1 rounded-full hover:bg-gray-200/80 dark:hover:bg-gray-700/80 transition-colors"
-          >
-            <Volume2 size={14} className="text-gray-600 dark:text-gray-300" />
-          </button>
-
-          {showVolumeControl && (
-            <div className="absolute bottom-full right-0 mb-2 p-1.5 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-lg z-10 border border-gray-200 dark:border-gray-700 animate-scaleIn">
-              <div className="w-24 flex items-center gap-2">
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={volume}
-                  onChange={(e) => handleVolumeChange(Number(e.target.value))}
-                  className="w-full h-1 accent-gray-400 dark:accent-gray-500"
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }
