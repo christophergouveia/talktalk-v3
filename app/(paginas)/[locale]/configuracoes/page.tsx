@@ -1,14 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, ChangeEvent, useMemo, useRef } from 'react';
-
 import { Image } from '@heroui/react';
-
 import { Save, Volume2, Moon, Sun, Globe, User, Bell, MessageSquare, Mic, Sliders, ChevronRight } from 'lucide-react';
-
 import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import languagesData from '@/app/locales/languages.json';
+import ColorBlindSettings, { ColorBlindType } from '@/app/components/functionals/ColorBlindSettings';
 
 import { LanguageSelector } from '@/app/components/functionals/LanguageSelector';
 import { colors as colorsData } from '@/app/components/functionals/ColorsSelector';
@@ -56,6 +54,7 @@ const UserSettingsPage = () => {
     avatarURL: '',
     avatarName: '',
   });
+  const [colorBlindType, setColorBlindType] = useState<ColorBlindType>('none');
 
   
   const theme = useTheme();
@@ -94,6 +93,9 @@ const UserSettingsPage = () => {
       }
       if (settings.avatarColor) {
         setAvatarColor(settings.avatarColor);
+      }
+      if (settings.colorBlindType) {
+        handleColorBlindChange(settings.colorBlindType as ColorBlindType);
       }
     }
     isFirstLoad.current = false;
@@ -240,6 +242,25 @@ const UserSettingsPage = () => {
       </div>
     );
   }, [avatarDetails.avatarURL, avatarColor, getRandomAvatar, linguaSelecionada, saveUserSettings]);
+
+  const handleColorBlindChange = useCallback((type: ColorBlindType) => {
+    setColorBlindType(type);
+    const settings = {
+      linguaSelecionada,
+      avatarDetails,
+      avatarColor,
+      colorBlindType: type
+    };
+    localStorage.setItem('talktalk_user_settings', JSON.stringify(settings));
+
+    // Aplicando o filtro CSS
+    const root = document.documentElement;
+    if (type === 'none') {
+      root.style.filter = 'none';
+    } else {
+      root.style.filter = `url("#${type}")`;
+    }
+  }, [linguaSelecionada, avatarDetails, avatarColor]);
 
   return (
     <div className={`flex flex-col p-4  text-gray-900 dark:text-gray-100 transition-colors duration-200 h-max`}>
@@ -661,6 +682,12 @@ const UserSettingsPage = () => {
                     </label>
                   </div>
                 </div>
+
+                {/* Adicione o componente ColorBlindSettings aqui */}
+                <ColorBlindSettings
+                  onColorBlindChange={handleColorBlindChange}
+                  currentType={colorBlindType}
+                />
               </div>
             </motion.div>
           )}
