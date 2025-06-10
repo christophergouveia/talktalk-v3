@@ -42,10 +42,11 @@ export const criptografarUserData = async (data: any): Promise<CriptografiaResul
 };
 
 export const descriptografarUserData = async (dadoCriptografado: string): Promise<any> => {
-  if (dadoCriptografado.trim().length < 256) {
+  if (!dadoCriptografado || !dadoCriptografado.trim() || !/^[0-9a-fA-F]+$/.test(dadoCriptografado.trim())) {
     console.error("Dado criptografado inválido");
     return '';
   }
+  
   const jwtSecret = process.env.JWT_SECRET;
   if (!jwtSecret) {
     throw new Error('JWT_SECRET não está definido');

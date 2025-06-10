@@ -206,13 +206,18 @@ const UserSettingsPage = () => {
         avatarColor,
       });
     };
-    // if (avatarDetails.avatarURL.trim() == '') return <span>Carregando...</span>;
+    
+    // Use panda as default avatar if none is set
+    const avatarSrc = avatarDetails.avatarURL && avatarDetails.avatarURL.trim() 
+      ? avatarDetails.avatarURL 
+      : '/images/avatars/panda.png';
+
     return (
       <div className="flex flex-col items-center gap-3">
         <AvatarDropdown openModal={() => setColorModalOpenned((prev) => !prev)}>
           <Image
-          alt='Avatar'
-            src={avatarDetails.avatarURL}
+            alt='Avatar do usuário'
+            src={avatarSrc}
             width={120}
             height={120}
             className={`rounded-full ${avatarColor} p-2 bg-blue-500 !opacity-100`}

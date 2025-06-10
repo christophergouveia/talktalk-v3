@@ -37,8 +37,8 @@ export default function ConversarHome() {
   const [errorInputs, setErrorInputs] = useState<ErrorInputs>({} as ErrorInputs);
   const [isLoading, setLoading] = useState<boolean>(false);
   const [avatarDetails, setAvatarDetails] = useState<{ avatarURL: string; avatarName: string }>({
-    avatarURL: '',
-    avatarName: '',
+      avatarURL: '/images/avatars/panda.png',
+      avatarName: 'Panda',
   });
   const [avatarColor, setAvatarColor] = useState('');
   const [isColorModalOpenned, setColorModalOpenned] = useState(false);
@@ -168,13 +168,16 @@ export default function ConversarHome() {
   );
 
   const AvatarComponent = useMemo(() => {
-    if (avatarDetails.avatarURL.trim() == '') return <span>Carregando...</span>;
+    // Use panda as default avatar if none is set
+    const avatarSrc = avatarDetails.avatarURL && avatarDetails.avatarURL.trim() 
+      ? avatarDetails.avatarURL 
+      : '/images/avatars/panda.png';
     return (
       <div className="flex flex-col items-center gap-3">
         <AvatarDropdown openModal={() => setColorModalOpenned((prev) => !prev)}>
           <Image
-            src={avatarDetails.avatarURL}
-            alt={apelido || 'Animal aleatório :)'}
+            src={avatarSrc}
+            alt={apelido || avatarDetails.avatarName || 'Animal aleatório :)'}
             width={120}
             height={120}
             className={`rounded-full ${avatarColor} p-2 bg-blue-500`}

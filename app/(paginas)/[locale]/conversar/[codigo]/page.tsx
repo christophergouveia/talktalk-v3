@@ -79,12 +79,11 @@ export default function RoomPage({ params }: RoomPageProps) {
   const languagesFilterDebounced = useDebounce(languagesFilter, 500);
   const [selectedIndex, setSelectedIndex] = useState<number | undefined>(undefined);
   const [showUserAlreadyInRoom, setShowUserAlreadyInRoom] = useState(false);
-  const [apelido, setApelido] = useState('');
-  const [avatarDetails, setAvatarDetails] = useState<{ avatarURL: string; avatarName: string }>({
-    avatarURL: '',
-    avatarName: '',
+  const [apelido, setApelido] = useState('');  const [avatarDetails, setAvatarDetails] = useState<{ avatarURL: string; avatarName: string }>({
+    avatarURL: '/images/avatars/panda.png',
+    avatarName: 'Panda',
   });
-  const [avatarColor, setAvatarColor] = useState('');
+  const [avatarColor, setAvatarColor] = useState('#3b82f6');
   const [isColorModalOpenned, setColorModalOpenned] = useState(false);
   const [chatCompacto, setChatCompacto] = useState(false);
   const [salaData, setSalaData] = useState<any>(null);
@@ -650,6 +649,21 @@ export default function RoomPage({ params }: RoomPageProps) {
     }
   };
 
+  useEffect(() => {
+    if (showNameInput) {
+      if (localStorage.getItem('talktalk_user_settings')) {
+        const userData = JSON.parse(localStorage.getItem('talktalk_user_settings') || '{}');
+        const { avatarDetails: savedAvatar, avatarColor: savedColor, userApelido } = userData;
+        if (savedAvatar) setAvatarDetails(savedAvatar);
+        if (savedColor) setAvatarColor(savedColor);
+        if (userApelido) setUserName(userApelido);
+      } else {
+        getRandomAvatar();
+        setAvatarColor(RandomAvatarColor.get().hex);
+      }
+    }
+  }, [showNameInput]);
+
   if (showErrorModal) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
@@ -684,7 +698,7 @@ export default function RoomPage({ params }: RoomPageProps) {
 
         <div className="relative group">
           <Image
-            src={avatarDetails.avatarURL || '/images/avatars/default.png'}
+            src={avatarDetails.avatarURL || '/images/avatars/panda.png'}
             alt="Avatar Preview"
             width={100}
             height={100}

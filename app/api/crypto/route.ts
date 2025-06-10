@@ -123,7 +123,7 @@ export async function POST(req: NextRequest) {
       }
 
       case 'decryptUserData': {
-        if (body.data.trim().length < 256) {
+        if (!body.data || !body.data.trim() || !/^[0-9a-fA-F]+$/.test(body.data.trim())) {
           return new NextResponse(JSON.stringify({ error: 'Dado criptografado inválido' }), {
             status: 400,
           });
