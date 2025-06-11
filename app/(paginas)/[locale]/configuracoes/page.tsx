@@ -6,7 +6,8 @@ import { Save, Volume2, Moon, Sun, Globe, User, Bell, MessageSquare, Mic, Slider
 import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import languagesData from '@/app/locales/languages.json';
-import ColorBlindSettings, { ColorBlindType } from '@/app/components/functionals/ColorBlindSettings';
+import ColorBlindSettings from '@/app/components/functionals/ColorBlindSettings';
+import { useColorBlind, ColorBlindType } from '@/app/contexts/ColorBlindContext';
 
 import { LanguageSelector } from '@/app/components/functionals/LanguageSelector';
 import { colors as colorsData } from '@/app/components/functionals/ColorsSelector';
@@ -70,7 +71,6 @@ const UserSettingsPage = () => {
     flag: 'PT',
   });
   const isFirstLoad = useRef(true);
-
   // Add useEffect to load saved settings on component mount
   useEffect(() => {
     const savedSettings = localStorage.getItem('talktalk_user_settings');
@@ -92,12 +92,11 @@ const UserSettingsPage = () => {
       if (settings.avatarColor) {
         setAvatarColor(settings.avatarColor);
       }
-      if (settings.colorBlindType) {
-        handleColorBlindChange(settings.colorBlindType as ColorBlindType);
-      }
+      // Note: We don't need to handle colorBlindType here anymore, 
+      // the ColorBlindContext takes care of loading and applying it
     }
     isFirstLoad.current = false;
-  }, []); // State for managing available voices
+  }, [setLinguaSelecionada]); // State for managing available voices
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
 
   // Voice settings and initialization
@@ -224,10 +223,10 @@ const UserSettingsPage = () => {
       </div>
     );
   }, [avatarDetails.avatarURL, avatarColor, getRandomAvatar, linguaSelecionada, saveUserSettings]);
-
   const handleColorBlindChange = useCallback(
     (type: ColorBlindType) => {
-      setColorBlindType(type);
+      // The setColorBlindType is now provided by the context and handles the filter application
+      // This function is kept for backward compatibility
       const settings = {
         linguaSelecionada,
         avatarDetails,
@@ -235,14 +234,6 @@ const UserSettingsPage = () => {
         colorBlindType: type,
       };
       localStorage.setItem('talktalk_user_settings', JSON.stringify(settings));
-
-      // Aplicando o filtro CSS
-      const root = document.documentElement;
-      if (type === 'none') {
-        root.style.filter = 'none';
-      } else {
-        root.style.filter = `url("#${type}")`;
-      }
     },
     [linguaSelecionada, avatarDetails, avatarColor]
   );

@@ -1,10 +1,12 @@
 'use client';
 
+import { ColorBlindType } from '@/app/contexts/ColorBlindContext';
+
 interface ColorTestProps {
-  colorBlindType: string;
+  colorBlindType: ColorBlindType | undefined;
 }
 
-const ColorBlindTest = ({ colorBlindType }: ColorTestProps) => {
+const ColorBlindTest = ({ colorBlindType = 'none' }: ColorTestProps) => {
   return (
     <div className="space-y-4">
       <h4 className="text-lg font-medium">Teste de Visualização</h4>
