@@ -171,7 +171,7 @@ export default function ConversarHome() {
     // Use panda as default avatar if none is set
     const avatarSrc = avatarDetails.avatarURL && avatarDetails.avatarURL.trim() 
       ? avatarDetails.avatarURL 
-      : '/images/avatars/panda.png';
+      : getRandomAvatar()
     return (
       <div className="flex flex-col items-center gap-3">
         <AvatarDropdown openModal={() => setColorModalOpenned((prev) => !prev)}>

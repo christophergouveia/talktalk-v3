@@ -145,6 +145,32 @@ function MicComponent({ text }: { text: string | React.ReactNode }) {
   );
 }
 
+function AudioMessage({ src }: { src: string }) {
+  const { settings } = useSpeech();
+  const audioRef = React.useRef<HTMLAudioElement>(null);
+
+  React.useEffect(() => {
+    if (audioRef.current) {
+      // Apply speech settings to audio element
+      audioRef.current.volume = settings.volume / 100;
+      audioRef.current.playbackRate = settings.rate;
+      // Note: pitch cannot be adjusted for normal audio elements
+    }
+  }, [settings.volume, settings.rate]);
+
+  return (
+    <audio
+      ref={audioRef}
+      controls
+      controlsList="nodownload"
+      className="max-w-[300px] rounded-lg"
+    >
+      <source src={src} type="audio/webm" />
+      Your browser does not support the audio element.
+    </audio>
+  );
+}
+
 export default function Message({
   isAudio,
   children,
@@ -157,45 +183,25 @@ export default function Message({
   senderColor,
   compact = false,
 }: MessageProps) {
-  const { fontSize } = useFontSize();
   const [showOriginal, setShowOriginal] = useState(false);
-  const formattedDate = moment(date).toDate().toLocaleTimeString('pt-BR', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  const { fontSize } = useFontSize();
+  const languageLabel = supportedLanguages[lingua]?.label || lingua;
 
-  // Handle all possible language data formats
-  const getLanguageLabel = (lang: string) => {
-    const data = supportedLanguages[lang];
-    if (!data) return lang;
-    if (typeof data === 'string') return data;
-    if (typeof data === 'object' && data !== null) {
-      // Handle both {label, value, flag} format and any other object format
-      return 'label' in data ? data.label : lang;
-    }
-    return lang;
-  };
-
-  const languageLabel = getLanguageLabel(lingua);
-
-  const getMessageContent = (input: React.ReactNode): string => {
-    if (typeof input === 'string') return input;
-    if (input === null || input === undefined) return '';
-    if (typeof input === 'object') {
-      if ('label' in input && typeof input.label === 'string') return input.label;
-      if ('message' in input && typeof input.message === 'string') return input.message;
-      if ('messageTraduzido' in input && typeof input.messageTraduzido === 'string') return input.messageTraduzido;
-      if (typeof (input as any).toString === 'function') return (input as any).toString();
-    }
-    return '';
+  const getMessageContent = (content: React.ReactNode): React.ReactNode => {
+    return content;
   };
 
   const renderContent = () => {
     if (isAudio) {
-      return <audio controls src={originalMessage} className="max-w-[300px] rounded-lg" />;
+      return <AudioMessage src={originalMessage} />;
     }
     return showOriginal ? originalMessage : getMessageContent(children);
   };
+
+  const formattedDate = moment(date).toDate().toLocaleTimeString('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 
   return (
     <>
@@ -226,7 +232,7 @@ export default function Message({
               </span>
               <span className="text-sm">
                 {isAudio ? (
-                  <audio controls src={originalMessage} className="max-w-[300px] rounded-lg" />
+                  <AudioMessage src={originalMessage} />
                 ) : (
                   showOriginal ? originalMessage : getMessageContent(children)
                 )}

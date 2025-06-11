@@ -41,7 +41,7 @@ const UserSettingsPage = () => {
   const [compactMode, setCompactMode] = useState(false);
   const [autoTranslate, setAutoTranslate] = useState(true);
   const [activeTab, setActiveTab] = useState('profile');
-  
+
   // Hook de síntese de voz
   const { settings, updateSettings, speak } = useSpeech();
   const [isSaving, setIsSaving] = useState(false);
@@ -55,7 +55,6 @@ const UserSettingsPage = () => {
   });
   const [colorBlindType, setColorBlindType] = useState<ColorBlindType>('none');
 
-  
   const theme = useTheme();
 
   const { fontSize, setFontSize } = useFontSize();
@@ -98,7 +97,7 @@ const UserSettingsPage = () => {
       }
     }
     isFirstLoad.current = false;
-  }, []);  // State for managing available voices
+  }, []); // State for managing available voices
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
 
   // Voice settings and initialization
@@ -108,9 +107,7 @@ const UserSettingsPage = () => {
       setAvailableVoices(voices);
 
       if (settings.voice && preferredLanguage) {
-        const matchingVoice = voices.find(voice => 
-          voice.lang && voice.lang.includes(preferredLanguage)
-        );
+        const matchingVoice = voices.find((voice) => voice.lang && voice.lang.includes(preferredLanguage));
         if (matchingVoice && matchingVoice.name !== settings.voice) {
           updateSettings({ voice: matchingVoice.name });
         }
@@ -155,7 +152,7 @@ const UserSettingsPage = () => {
       },
       avatarDetails,
       avatarColor,
-      userApelido
+      userApelido,
     });
   };
 
@@ -190,8 +187,6 @@ const UserSettingsPage = () => {
     setUserName(e.target.value);
   }, []);
 
-  
-
   const handleFontSizeChange = (size: string | number) => {
     setFontSize(Number(size));
   };
@@ -206,17 +201,16 @@ const UserSettingsPage = () => {
         avatarColor,
       });
     };
-    
+
     // Use panda as default avatar if none is set
-    const avatarSrc = avatarDetails.avatarURL && avatarDetails.avatarURL.trim() 
-      ? avatarDetails.avatarURL 
-      : '/images/avatars/panda.png';
+    const avatarSrc =
+      avatarDetails.avatarURL && avatarDetails.avatarURL.trim() ? avatarDetails.avatarURL : '/images/avatars/panda.png';
 
     return (
       <div className="flex flex-col items-center gap-3">
         <AvatarDropdown openModal={() => setColorModalOpenned((prev) => !prev)}>
           <Image
-            alt='Avatar do usuário'
+            alt="Avatar do usuário"
             src={avatarSrc}
             width={120}
             height={120}
@@ -231,41 +225,29 @@ const UserSettingsPage = () => {
     );
   }, [avatarDetails.avatarURL, avatarColor, getRandomAvatar, linguaSelecionada, saveUserSettings]);
 
-  const handleColorBlindChange = useCallback((type: ColorBlindType) => {
-    setColorBlindType(type);
-    const settings = {
-      linguaSelecionada,
-      avatarDetails,
-      avatarColor,
-      colorBlindType: type
-    };
-    localStorage.setItem('talktalk_user_settings', JSON.stringify(settings));
+  const handleColorBlindChange = useCallback(
+    (type: ColorBlindType) => {
+      setColorBlindType(type);
+      const settings = {
+        linguaSelecionada,
+        avatarDetails,
+        avatarColor,
+        colorBlindType: type,
+      };
+      localStorage.setItem('talktalk_user_settings', JSON.stringify(settings));
 
-    // Aplicando o filtro CSS
-    const root = document.documentElement;
-    if (type === 'none') {
-      root.style.filter = 'none';
-    } else {
-      root.style.filter = `url("#${type}")`;
-    }
-  }, [linguaSelecionada, avatarDetails, avatarColor]);
+      // Aplicando o filtro CSS
+      const root = document.documentElement;
+      if (type === 'none') {
+        root.style.filter = 'none';
+      } else {
+        root.style.filter = `url("#${type}")`;
+      }
+    },
+    [linguaSelecionada, avatarDetails, avatarColor]
+  );
 
-  return (
-    <div className={`flex flex-col p-4  text-gray-900 dark:text-gray-100 transition-colors duration-200 h-max`}>
-      <header className="flex items-center justify-between mb-6">
-        <button
-          className="flex items-center gap-2 px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
-          onClick={saveSettings}
-        >
-          {isSaving ? (
-            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-          ) : (
-            <Save size={18} />
-          )}
-          <span>Salvar</span>
-        </button>
-      </header>
-
+  return (    <div className={`flex flex-col p-4  text-gray-900 dark:text-gray-100 transition-colors duration-200 h-max`}>
       <div className="flex flex-col md:flex-row gap-6">
         {/* Menu lateral */}
         <nav className="md:w-64 bg-[#FAFAFA] dark:bg-[#18181B]  rounded-lg shadow-sm p-4 h-max">
@@ -385,6 +367,37 @@ const UserSettingsPage = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Save Button */}
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={() => {
+                    const settings = {
+                      userName,
+                      userApelido,
+                      avatarDetails,
+                      avatarColor,
+                    };
+                    saveUserSettings(settings);
+                    setIsSaving(true);
+                    setTimeout(() => setIsSaving(false), 800);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Salvando...
+                    </>
+                  ) : (
+                    <>
+                      <Save size={16} />
+                      Salvar alterações
+                    </>
+                  )}
+                </button>
+              </div>
             </motion.div>
           )}
 
@@ -436,24 +449,34 @@ const UserSettingsPage = () => {
                   </label>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-2">Idiomas que você fala</label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                    {Object.entries(supportedLanguages)
-                      .slice(0, 9)
-                      .map(([code, name]) => (
-                        <div key={code} className="flex items-center">
-                          <input
-                            id={`lang-${code}`}
-                            type="checkbox"
-                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600"
-                          />
-                          <label htmlFor={`lang-${code}`} className="ms-2 text-sm font-medium">
-                            {name}
-                          </label>
-                        </div>
-                      ))}
-                  </div>
+                {/* Save Button */}
+                <div className="flex justify-end mt-6">
+                  <button
+                    onClick={() => {
+                      const settings = {
+                        linguaSelecionada,
+                        preferredLanguage: linguaSelecionada.value,
+                        autoTranslate
+                      };
+                      saveUserSettings(settings);
+                      setIsSaving(true);
+                      setTimeout(() => setIsSaving(false), 800);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                    disabled={isSaving}
+                  >
+                    {isSaving ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Salvando...
+                      </>
+                    ) : (
+                      <>
+                        <Save size={16} />
+                        Salvar alterações
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
             </motion.div>
@@ -469,7 +492,11 @@ const UserSettingsPage = () => {
             >
               <h2 className="text-xl font-semibold mb-4">Configurações de Áudio</h2>
 
-              <div className="space-y-4">                <div>                  <label htmlFor="voice" className="block text-sm font-medium mb-1">
+              <div className="space-y-4">
+                {' '}
+                <div>
+                  {' '}
+                  <label htmlFor="voice" className="block text-sm font-medium mb-1">
                     Voz para leitura
                   </label>
                   <div className="relative">
@@ -479,7 +506,8 @@ const UserSettingsPage = () => {
                       onChange={(e) => updateSettings({ voice: e.target.value })}
                       className="w-full p-2 border dark:border-gray-700 bg-white dark:bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent appearance-none"
                     >
-                      <option value="">Selecione uma voz</option>                      {availableVoices
+                      <option value="">Selecione uma voz</option>{' '}
+                      {availableVoices
                         .sort((a, b) => {
                           // Preferência para vozes em português
                           const aPt = a.lang && a.lang.startsWith('pt');
@@ -499,7 +527,6 @@ const UserSettingsPage = () => {
                     </div>
                   </div>
                 </div>
-
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label htmlFor="volume" className="text-sm font-medium">
@@ -520,7 +547,6 @@ const UserSettingsPage = () => {
                     />
                   </div>
                 </div>
-
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label htmlFor="rate" className="text-sm font-medium">
@@ -539,7 +565,6 @@ const UserSettingsPage = () => {
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-500"
                   />
                 </div>
-
                 <div>
                   <div className="flex items-center justify-between mb-1">
                     <label htmlFor="pitch" className="text-sm font-medium">
@@ -557,7 +582,8 @@ const UserSettingsPage = () => {
                     onChange={(e) => updateSettings({ pitch: Number(e.target.value) })}
                     className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-500"
                   />
-                </div>                <div className="space-y-2">
+                </div>{' '}
+                <div className="space-y-2">
                   <label htmlFor="test-text" className="text-sm font-medium">
                     Texto para teste
                   </label>
@@ -588,7 +614,6 @@ const UserSettingsPage = () => {
                     <span>Testar configurações de voz</span>
                   </button>
                 </div>
-
                 <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -645,7 +670,7 @@ const UserSettingsPage = () => {
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
                       aria-label={theme.resolvedTheme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'}
-                      type="toggleThem"
+                      type="checkbox"
                       checked={darkMode}
                       onChange={() => setDarkMode(!darkMode)}
                       className="sr-only peer"
@@ -654,25 +679,7 @@ const UserSettingsPage = () => {
                   </label>
                 </div>
 
-                <div className="p-4 bg-gray-100 dark:bg-gray-700/50 rounded-lg flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <MessageSquare size={20} />
-                    <div>
-                      <p className="font-medium">Modo compacto</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Exibir mensagens em formato compacto</p>
-                    </div>
-                  </div>
-
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={compactMode}
-                      onChange={() => setCompactMode(!compactMode)}
-                      className="sr-only peer"
-                    />
-                    <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-500 peer-checked:bg-blue-500"></div>
-                  </label>
-                </div>                <div className="p-4 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
+                <div className="p-4 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <label className="text-sm font-medium">Tamanho da fonte</label>
                     <span className="text-sm font-mono">{fontSize}px</span>
@@ -691,7 +698,7 @@ const UserSettingsPage = () => {
                     <span>16px</span>
                     <span>24px</span>
                   </div>
-                  
+
                   <div className="mt-4 grid grid-cols-4 gap-2">
                     <button
                       onClick={() => setFontSize(12)}
@@ -746,10 +753,7 @@ const UserSettingsPage = () => {
                 </div>
 
                 {/* Adicione o componente ColorBlindSettings aqui */}
-                <ColorBlindSettings
-                  onColorBlindChange={handleColorBlindChange}
-                  currentType={colorBlindType}
-                />
+                <ColorBlindSettings onColorBlindChange={handleColorBlindChange} currentType={colorBlindType} />
               </div>
             </motion.div>
           )}

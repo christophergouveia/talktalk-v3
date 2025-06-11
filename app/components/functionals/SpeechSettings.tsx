@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useSpeech } from '@/app/contexts/SpeechContext';
-import { Slider, Switch } from "@heroui/react";
+import { Switch } from "@heroui/react";
 import { Volume2 } from 'lucide-react';
 
 export default function SpeechSettings() {
