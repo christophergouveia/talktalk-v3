@@ -15,8 +15,9 @@ import { GridMain, SubGrid } from '@/app/components/grids/grid';
 import PNGSecurity from '/public/images/pictures/security.png';
 import Avatar from 'react-avatar';
 import { useTranslation } from 'react-i18next';
-import ImagemGustavo from '/public/images/pictures/foto-gustavo.jpg';
-import ImagemChristopher from '/public/images/pictures/foto-christopher.jpg';
+import ImagemGustavo from '/public/images/pictures/ImagemGustavo.png';
+import ImagemKaike from '/public/images/pictures/ImagemKaike.png';
+import ImagemChristopher from '/public/images/pictures/imagemChristopher.png';
 import Link from 'next/link';
 
 function MarqueeText({ children }: { children: ReactNode }) {
@@ -355,6 +356,7 @@ export default function Home({}) {
               <CardContent
                 nome="Kaike"
                 altImagem="Foto de perfil de Kaike"
+                srcImagem={ImagemKaike.src}
                 cargo={t('desenvolvedores.cargos.frontend')}
                 tags={['FrontEnd']}
                 icon={[<FaGithub key="github" />, <FaLinkedin key="linkedin" />]}
@@ -363,7 +365,7 @@ export default function Home({}) {
               <CardContent
                 nome="Christopher"
                 altImagem="Foto de perfil de Christopher"
-                srcImagem={ImagemChristopher.src}
+                srcImagem={ImagemChristopher.src} 
                 cargo={t('desenvolvedores.cargos.backend')}
                 tags={['BackEnd']}
                 icon={[<FaGithub key="github" />, <FaLinkedin key="linkedin" />]}

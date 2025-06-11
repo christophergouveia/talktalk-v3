@@ -247,7 +247,8 @@ const UserSettingsPage = () => {
     [linguaSelecionada, avatarDetails, avatarColor]
   );
 
-  return (    <div className={`flex flex-col p-4  text-gray-900 dark:text-gray-100 transition-colors duration-200 h-max`}>
+  return (
+    <div className={`flex flex-col p-4  text-gray-900 dark:text-gray-100 transition-colors duration-200 h-max`}>
       <div className="flex flex-col md:flex-row gap-6">
         {/* Menu lateral */}
         <nav className="md:w-64 bg-[#FAFAFA] dark:bg-[#18181B]  rounded-lg shadow-sm p-4 h-max">
@@ -456,7 +457,7 @@ const UserSettingsPage = () => {
                       const settings = {
                         linguaSelecionada,
                         preferredLanguage: linguaSelecionada.value,
-                        autoTranslate
+                        autoTranslate,
                       };
                       saveUserSettings(settings);
                       setIsSaving(true);

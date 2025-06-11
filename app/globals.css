@@ -309,3 +309,82 @@ section[role='dialog'] {
   display: inline-block;
 }
 
+/* Timeline Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* Timeline Item Hover Effects */
+.timeline-item:hover .timeline-dot {
+  transform: scale(1.2);
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+}
+
+.timeline-item:hover .timeline-content {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* Timeline Styles */
+.timeline-item {
+  transition: all 0.3s ease;
+}
+
+.timeline-dot {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.timeline-dot::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.2);
+  animation: pulse 2s infinite;
+}
+
+.timeline-content {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+@keyframes timelineFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.timeline-fadeIn {
+  animation: timelineFadeIn 0.6s ease-out forwards;
+}
+
+@keyframes timeline-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
