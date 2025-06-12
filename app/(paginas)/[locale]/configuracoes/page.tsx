@@ -625,7 +625,9 @@ const UserSettingsPage = () => {
                       <div>
                         <p className="font-medium">Leitura automática</p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Quando ativado: mensagens de outros usuários serão lidas em voz alta automaticamente ao recebê-las.
+                          Quando ativado: <strong>apenas mensagens recebidas de outros usuários</strong> serão lidas em voz alta automaticamente.
+                          <br />
+                          <strong>Suas próprias mensagens nunca serão lidas automaticamente.</strong>
                           <br />
                           <strong>Padrão:</strong> Desativado (você precisa clicar no botão de play manualmente)
                         </p>
@@ -646,7 +648,7 @@ const UserSettingsPage = () => {
                   {settings.autoRead && (
                     <div className="mt-3 p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                       <p className="text-sm text-green-700 dark:text-green-300">
-                        ✓ Leitura automática ativada - novas mensagens serão lidas automaticamente
+                        ✓ Leitura automática ativada - apenas mensagens recebidas de outros usuários serão lidas automaticamente
                       </p>
                     </div>
                   )}

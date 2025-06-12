@@ -23,7 +23,7 @@ interface MessageProps {
   compact?: boolean;
 }
 
-function MicComponent({ text }: { text: string | React.ReactNode }) {
+function MicComponent({ text, isOwnMessage = false }: { text: string | React.ReactNode; isOwnMessage?: boolean }) {
   const { settings } = useSpeech();
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -106,19 +106,17 @@ function MicComponent({ text }: { text: string | React.ReactNode }) {
       const progressValue = speechText ? (charIndex / speechText.length) * 100 : 0;
       setProgress(progressValue);
     };
-    
-    // Auto-read somente se autoRead estiver habilitado e for uma mensagem nova
-    if (settings.autoRead && micDataRef.current.isNewMessage && !micDataRef.current.hasBeenRead) {
+      // Auto-read somente se autoRead estiver habilitado, for uma mensagem nova E NÃO for mensagem própria
+    if (settings.autoRead && micDataRef.current.isNewMessage && !micDataRef.current.hasBeenRead && !isOwnMessage) {
       window.speechSynthesis.speak(utterance);
       // Marcar como já lida para evitar releituras
       micDataRef.current.hasBeenRead = true;
       micDataRef.current.isNewMessage = false;
-    }    
-    
-    return () => {
+    }
+      return () => {
       window.speechSynthesis.cancel();
     };
-  }, [speechText, settings]); // Atualizando dependências
+  }, [speechText, settings, isOwnMessage]); // Adicionando isOwnMessage nas dependências
 
   // Sincronizar os dados com o elemento DOM para acesso externo
   React.useEffect(() => {
@@ -305,11 +303,10 @@ export default function Message({
               )}
             </div>
           ) : (
-            <>
-              <div className="flex items-center gap-2">
+            <>              <div className="flex items-center gap-2">
                 {ownMessage && !isAudio && (
                   <>
-                    <MicComponent text={originalMessage} />
+                    <MicComponent text={originalMessage} isOwnMessage={true} />
                   </>
                 )}
                 <span className="font-medium" style={{ color: senderColor }}>
@@ -317,7 +314,7 @@ export default function Message({
                 </span>
                 <span className="text-xs text-gray-500">{formattedDate}</span>
                 {/* Only show MicComponent for text messages */}
-                {!ownMessage && !isAudio && <MicComponent text={getMessageContent(children)} />}
+                {!ownMessage && !isAudio && <MicComponent text={getMessageContent(children)} isOwnMessage={false} />}
               </div>
               <div
                 className={`relative mt-1 max-w-full rounded-lg p-2 ${ownMessage ? 'setinha-own bg-blue-500 text-white' : 'setinha bg-gray-200 dark:bg-zinc-800'}`}
