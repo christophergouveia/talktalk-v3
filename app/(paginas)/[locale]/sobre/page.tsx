@@ -367,8 +367,7 @@ export default function SobrePage() {
       label: "Uptime",
       color: "#F59E0B"
     }
-  ];
-  const teamMembers = [
+  ];  const teamMembers = [
     {
       nome: "Gustavo Preti",
       srcImagem: "/images/pictures/imagemGustavo.png",
@@ -377,19 +376,30 @@ export default function SobrePage() {
       description: "Especialista em desenvolvimento web moderno, com foco em React, Next.js e tecnologias de tradução. Responsável pela arquitetura completa do sistema e experiência do usuário.",
       tags: ["React", "Next.js", "TypeScript", "Node.js", "Socket.IO", "UX/UI"],
       icon: [<FaGithub key="github" />, <FaLinkedin key="linkedin" />],
-      linkGithub: "https://github.com/GustavoPreti",
+      linkGithub: "https://github.com/GustavoGPreti",
       linkLinkedin: "https://linkedin.com/in/gustavo-preti"
     },
     {
-      nome: "Christopher Oliveira",
+      nome: "Christopher Gouveia",
       srcImagem: "/images/pictures/imagemChristopher.png",
       altImagem: "Foto do Christopher",
       cargo: "Backend Developer & DevOps Engineer",
       description: "Especialista em infraestrutura, segurança e otimização de performance. Responsável pela implementação do backend robusto e deployment escalável da aplicação.",
       tags: ["Node.js", "Docker", "AWS", "MongoDB", "Security", "DevOps"],
       icon: [<FaGithub key="github" />, <FaLinkedin key="linkedin" />],
-      linkGithub: "https://github.com/ChristopherOliveira",
+      linkGithub: "https://github.com/christophergouveia",
       linkLinkedin: "https://linkedin.com/in/christopher-oliveira"
+    },
+    {
+      nome: "Kaike Sathler",
+      srcImagem: "/images/pictures/imagemKaike.png",
+      altImagem: "Foto do Kaike",
+      cargo: "Frontend Developer & UI/UX Designer",
+      description: "Especialista em desenvolvimento frontend e design de interfaces, com foco em experiência do usuário e acessibilidade. Responsável pela criação de componentes reutilizáveis e design system.",
+      tags: ["React", "CSS", "UI/UX", "Design", "Frontend", "Figma"],
+      icon: [<FaGithub key="github" />, <FaLinkedin key="linkedin" />],
+      linkGithub: "https://github.com/KaikeSathler",
+      linkLinkedin: "https://linkedin.com/in/kaike-sathler"
     }
   ];
 
@@ -504,6 +514,202 @@ export default function SobrePage() {
         </div>
       </section>
 
+      {/* Privacy Hero Section */}
+      <section className="py-24 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <h2 className="text-5xl md:text-6xl font-extrabold leading-tight mb-6">
+                <span className="text-gray-900 dark:text-white">
+                  Sua{' '}
+                  <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    Privacidade
+                  </span>
+                  ,
+                </span>
+                <br />
+                <span className="text-gray-900 dark:text-white">
+                  Nossa{' '}
+                  <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                    Responsabilidade
+                  </span>
+                  .
+                </span>
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
+                Sua privacidade é nossa prioridade máxima. Implementamos as mais avançadas medidas de segurança 
+                para garantir que suas conversas permaneçam completamente privadas e protegidas.
+              </p>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 dark:text-gray-300">Criptografia de ponta a ponta</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 dark:text-gray-300">Dados nunca armazenados</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <span className="text-gray-700 dark:text-gray-300">Conformidade com LGPD</span>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="relative"
+            >
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 rounded-3xl blur-3xl opacity-30"></div>
+                <div className="relative bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-2xl border border-gray-200/50 dark:border-gray-700/50">
+                  <Image
+                    src="/images/pictures/Conversation-s.png"
+                    alt="Conversa Segura"
+                    width={400}
+                    height={400}
+                    className="w-full h-auto rounded-2xl"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Differentials Section */}
+      <section className="py-24 bg-white dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
+            <h2 className="text-5xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent uppercase">
+                Nossos Diferenciais
+              </span>
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              O que nos torna únicos no mundo da comunicação global
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Security */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 p-8 hover:shadow-2xl transition-all duration-300"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <FaShieldAlt className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
+                  Segurança Máxima
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                  Proteção avançada com criptografia de ponta a ponta, garantindo que apenas você e seu interlocutor tenham acesso às mensagens.
+                </p>
+                <div className="mt-6">
+                  <Image
+                    src="/images/pictures/security.png"
+                    alt="Segurança"
+                    width={200}
+                    height={150}
+                    className="w-full h-32 object-contain opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Free */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 p-8 hover:shadow-2xl transition-all duration-300"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <FaHeart className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
+                  100% Gratuito
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                  Acreditamos que a comunicação global deve ser acessível a todos. Nossa plataforma é completamente gratuita, sem taxas ocultas.
+                </p>
+                <div className="mt-6">
+                  <Image
+                    src="/images/pictures/Coins-amico.png"
+                    alt="Gratuito"
+                    width={200}
+                    height={150}
+                    className="w-full h-32 object-contain opacity-80 group-hover:opacity-100 transition-opacity duration-300"
+                  />
+                </div>
+              </div>
+            </motion.div>
+
+            {/* No Account */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 p-8 hover:shadow-2xl transition-all duration-300"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <HiUserGroup className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
+                  Sem Cadastro
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                  Entre e comece a conversar imediatamente. Não é necessário criar conta, fornecer email ou passar por processos burocráticos.
+                </p>
+                <div className="mt-6 flex justify-center">
+                  <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
+                    <HiChatBubbleLeftRight className="w-12 h-12 text-white" />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="py-24 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -572,9 +778,7 @@ export default function SobrePage() {
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
               Os visionários e desenvolvedores por trás da revolução na comunicação global
             </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+          </motion.div>          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
             {teamMembers.map((member, index) => (
               <div key={index} className="flex justify-center">
                 <CardContent {...member} />

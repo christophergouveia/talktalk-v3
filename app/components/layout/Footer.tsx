@@ -18,9 +18,9 @@ export default function Footer({ className }: { className?: string }) {
   const { t } = useTranslation('', { keyPrefix: 'footer' });
 
   return (
-    <footer className="relative mt-6 flex flex-col items-center justify-center gap-2 px-2 py-4 text-center text-gray-500 sm:flex-row sm:px-0">
+    <footer className="relative mt-1 flex flex-col items-center justify-center gap-1 px-2 py-2 text-center text-gray-500 sm:flex-row sm:px-0">
       <Image
-        className="left-2 top-2 w-[5rem] sm:w-[7rem]"
+        className="left-2 top-2 w-[4rem] sm:w-[5rem]"
         src={imagemLogo}
         alt="Logotipo do Instituto Federal do Paraná"
         width={500}

@@ -250,7 +250,7 @@ export default function ConversarHome() {
   }, [codigoSala, router]);
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-white to-blue-50 dark:from-[#121212] dark:to-[#1a1a1a]">
+      <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-white to-blue-50 dark:from-[#121212] dark:to-[#1a1a1a]">
       <div className="container mx-auto px-4 pt-16">
         {/* Hero Section Atualizada */}
         <div className="text-center mb-16">
