@@ -20,15 +20,14 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
   const linguaSelecionadaRef = useRef<string>('');
   const [isTyping, setIsTyping] = useState<{[key: string]: boolean}>({});
   const typingTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const [languageChangeTrigger, setLanguageChangeTrigger] = useState(0);
   
-  const onLinguaChange = (lingua: string) => {
+  const onLinguaChange = useCallback((lingua: string) => {
     linguaSelecionadaRef.current = lingua;
     console.log('Lingua selecionada:', lingua);
-    // Força recarregamento das mensagens quando o idioma muda
-    if (mensagens.length > 0) {
-      loadMessageHistory();
-    }
-  };
+    // Trigger language change to reload messages
+    setLanguageChangeTrigger(prev => prev + 1);
+  }, []);
 
   const handleTyping = useCallback((userToken: string, typing: boolean) => {
     setIsTyping(prev => ({
@@ -164,47 +163,62 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
       setMessageLoading(false);
     }
   };
-
   useEffect(() => {
+    if (!socketClient) return;
+
     let reconnectAttempts = 0;
     const maxReconnectAttempts = 5;
 
-    if (socketClient) {
-      socketClient.on('disconnect', () => {
-        const tryReconnect = () => {
-          if (reconnectAttempts < maxReconnectAttempts) {
-            socketClient.connect();
-            reconnectAttempts++;
-          } else {
-            socketClient.disconnect();
-          }
-        };
+    const handleDisconnect = () => {
+      console.log('Socket desconectado');
+      const tryReconnect = () => {
+        if (reconnectAttempts < maxReconnectAttempts && socketClient.disconnected) {
+          console.log(`Tentativa de reconexão ${reconnectAttempts + 1}/${maxReconnectAttempts}`);
+          socketClient.connect();
+          reconnectAttempts++;
+        } else if (reconnectAttempts >= maxReconnectAttempts) {
+          console.log('Máximo de tentativas de reconexão atingido');
+          socketClient.disconnect();
+        }
+      };
 
-        setTimeout(tryReconnect, 1000 * Math.min(reconnectAttempts + 1, 5));
-      });
+      // Delay progressivo para reconexão
+      setTimeout(tryReconnect, 1000 * Math.min(reconnectAttempts + 1, 5));
+    };
 
-      socketClient.on('connect', () => {
-        reconnectAttempts = 0;
-      });
-    }
+    const handleConnect = () => {
+      console.log('Socket reconectado');
+      reconnectAttempts = 0;
+    };
+
+    socketClient.on('disconnect', handleDisconnect);
+    socketClient.on('connect', handleConnect);
+
+    return () => {
+      socketClient.off('disconnect', handleDisconnect);
+      socketClient.off('connect', handleConnect);
+    };
   }, [socketClient]);
 
   useEffect(() => {
-    if (socketClient) {
-      socketClient.on('room-users-update', (users: UserData[]) => {
-        setUsersInRoom(users);
-        setPessoasConectadas(users.length);
-      });
+    if (!socketClient) return;
 
-      socketClient.on('redirect-to-home', () => {
-        window.location.href = '/';
-      });
+    const handleRoomUsersUpdate = (users: UserData[]) => {
+      setUsersInRoom(users);
+      setPessoasConectadas(users.length);
+    };
 
-      return () => {
-        socketClient.off('room-users-update');
-        socketClient.off('redirect-to-home');
-      };
-    }
+    const handleRedirectToHome = () => {
+      window.location.href = '/';
+    };
+
+    socketClient.on('room-users-update', handleRoomUsersUpdate);
+    socketClient.on('redirect-to-home', handleRedirectToHome);
+
+    return () => {
+      socketClient.off('room-users-update', handleRoomUsersUpdate);
+      socketClient.off('redirect-to-home', handleRedirectToHome);
+    };
   }, [socketClient]);
 
   const sendMessage = useCallback(() => {
@@ -229,7 +243,6 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
       emitTypingStatus(false);
     }
   }, [socketClient, mensagem, codigo, userData, emitTypingStatus]);
-
   // Função para carregar histórico de mensagens
   const loadMessageHistory = useCallback(async () => {
     try {
@@ -277,15 +290,22 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
     } catch (error) {
       console.error('Erro ao carregar histórico de mensagens:', error);
     }
-  }, [codigo,  userData?.userToken]); // Adicionei userData?.userToken nas dependências
-
-  // Carrega mensagens quando o componente monta
+  }, [codigo, userData?.userToken]);
+  // Carrega mensagens quando o componente monta - apenas uma vez
+  const hasLoadedInitialMessages = useRef(false);
   useEffect(() => {
-    if (socketClient && userData) {
+    if (socketClient && userData && !hasLoadedInitialMessages.current) {
+      hasLoadedInitialMessages.current = true;
       loadMessageHistory();
       console.log('loadMessageHistory | userData', userData);
     }
   }, [socketClient, userData, loadMessageHistory]);
+  // Recarrega mensagens quando o idioma muda
+  useEffect(() => {
+    if (hasLoadedInitialMessages.current && languageChangeTrigger > 0) {
+      loadMessageHistory();
+    }
+  }, [languageChangeTrigger, loadMessageHistory]);
 
   // Remova este useEffect que estava duplicando a chamada
   // useEffect(() => {

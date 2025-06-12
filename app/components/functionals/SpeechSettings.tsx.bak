@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useSpeech } from '@/app/contexts/SpeechContext';
 import { useTranslation } from '@/app/contexts/TranslationContext';
+import { Switch } from "@heroui/react";
 import { Volume2 } from 'lucide-react';
 
 export default function SpeechSettings() {
@@ -16,25 +17,27 @@ export default function SpeechSettings() {
 
   return (
     <div className="space-y-6 p-4 bg-white dark:bg-[#212121] rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-4">Configurações de Áudio</h2>      {/* Enable/Disable Speech */}
-      <div className="inline-flex flex-row-reverse gap-2 w-full bg-[--chat-bg-buttons] hover:bg-content2 items-center cursor-pointer p-4 border-2 border-transparent rounded-md transition-all duration-200">
-        <label className="relative inline-flex items-center cursor-pointer">
-          <input 
-            type="checkbox" 
-            className="sr-only peer"
-            checked={settings.enabled}
-            onChange={(e) => updateSettings({ enabled: e.target.checked })}
-            aria-label="Ativar ou desativar sintetização de voz"
-          />
-          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-        </label>
-        <div className="flex flex-col gap-1 w-full">
+      <h2 className="text-xl font-semibold mb-4">Configurações de Áudio</h2>
+
+      {/* Enable/Disable Speech */}
+      <Switch
+        isSelected={settings.enabled}
+        onValueChange={(checked) => updateSettings({ enabled: checked })}
+        aria-label="Ativar ou desativar sintetização de voz"
+        classNames={{
+          base: 'inline-flex flex-row-reverse gap-2 !w-full bg-[--chat-bg-buttons] hover:bg-content2 items-center cursor-pointer p-4 border-2 border-transparent rounded-md transition-all duration-200',
+          wrapper: '',
+          endContent: 'w-full',
+          label: 'w-full',
+        }}
+      >
+        <div className="flex flex-col gap-1">
           <p className="text-medium font-semibold">Ativar sintetização de voz</p>
           <p className="text-tiny text-default-600">
             Ative para que as mensagens possam ser lidas em voz alta.
           </p>
         </div>
-      </div>
+      </Switch>
 
       {settings.enabled && (
         <div className="space-y-4 mt-4">
@@ -116,27 +119,37 @@ export default function SpeechSettings() {
                 className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-gray-200 dark:bg-zinc-700"
               />
               <span className="text-sm text-gray-600 dark:text-gray-300">Agudo</span>
-            </div>
-          </div>          
-            {/* Auto-read Toggle */}
-          <div className="inline-flex flex-row-reverse gap-2 w-full bg-[--chat-bg-buttons] hover:bg-content2 items-center cursor-pointer p-4 border-2 border-transparent rounded-md transition-all duration-200">
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input 
-                type="checkbox" 
-                className="sr-only peer"
-                checked={settings.autoRead}
-                onChange={(e) => updateSettings({ autoRead: e.target.checked })}
-                aria-label="Ler mensagens automaticamente"
-              />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-            </label>
-            <div className="flex flex-col gap-1 w-full">              
+            </div>          </div>          {/* Auto-read Toggle */}
+          <Switch
+            isSelected={settings.autoRead}
+            onValueChange={(checked) => updateSettings({ autoRead: checked })}
+            aria-label="Ler mensagens automaticamente"
+            classNames={{
+              base: 'inline-flex flex-row-reverse gap-2 !w-full bg-[--chat-bg-buttons] hover:bg-content2 items-center cursor-pointer p-4 border-2 border-transparent rounded-md transition-all duration-200',
+              wrapper: '',
+              endContent: 'w-full',
+              label: 'w-full',
+            }}
+          >
+            <div className="flex flex-col gap-1">              
               <p className="text-medium font-semibold">Ler mensagens automaticamente</p>
               <p className="text-tiny text-default-600">
                 Quando ativado, as mensagens serão lidas em voz alta automaticamente ao recebê-las.
               </p>
             </div>
-          </div>
+          </Switch>
+              label: 'w-full',
+            }}
+          >
+            <div className="flex flex-col gap-1">              
+              <p className="text-medium font-semibold">Traduzir mensagens automaticamente</p>
+              <p className="text-tiny text-default-600">
+                <strong>Quando ativado:</strong> as mensagens serão exibidas já traduzidas.
+                <br/>
+                <strong>Quando desativado:</strong> as mensagens serão exibidas no idioma original e você precisa clicar no botão para ver a tradução.
+              </p>
+            </div>
+          </Switch>
 
           {/* Test Voice Section */}
           <div className="space-y-2 p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg">

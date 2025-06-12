@@ -79,11 +79,12 @@ export default function RoomPage({ params }: RoomPageProps) {
   const languagesFilterDebounced = useDebounce(languagesFilter, 500);
   const [selectedIndex, setSelectedIndex] = useState<number | undefined>(undefined);
   const [showUserAlreadyInRoom, setShowUserAlreadyInRoom] = useState(false);
-  const [apelido, setApelido] = useState('');  const [avatarDetails, setAvatarDetails] = useState<{ avatarURL: string; avatarName: string }>({
-    avatarURL: '/images/avatars/panda.png',
-    avatarName: 'Panda',
+  const [apelido, setApelido] = useState('');
+  const [avatarDetails, setAvatarDetails] = useState<{ avatarURL: string; avatarName: string }>({
+    avatarURL: '',
+    avatarName: '',
   });
-  const [avatarColor, setAvatarColor] = useState('#3b82f6');
+  const [avatarColor, setAvatarColor] = useState('');
   const [isColorModalOpenned, setColorModalOpenned] = useState(false);
   const [chatCompacto, setChatCompacto] = useState(false);
   const [salaData, setSalaData] = useState<any>(null);
@@ -131,16 +132,23 @@ export default function RoomPage({ params }: RoomPageProps) {
       setApelido(gerarNomeAnimalAleatorio());
     }
   }, [apelido]);
-
   const connectToRoom = useCallback(
     async (bypass: boolean) => {
       try {
+        // Evita criar socket duplicado
+        if (socketClient) {
+          console.log('[DEBUG] Socket já existe, reutilizando conexão');
+          return;
+        }
+
         if (bypass) {
           console.log('[DEBUG] Bypass ativado, conectando diretamente ao socket');
           const socket = io(`http://${process.env.NEXT_PUBLIC_SOCKET_URL}:3001`, {
             withCredentials: true,
             transports: ['websocket'],
-            reconnection: false,
+            reconnection: true,
+            reconnectionAttempts: 3,
+            reconnectionDelay: 1000,
             forceNew: true,
             autoConnect: false,
           });
@@ -198,12 +206,16 @@ export default function RoomPage({ params }: RoomPageProps) {
 
         // Define os dados do usuário antes de criar o socket
         setUserData(payload);
-
+        
         // Cria e configura o socket apenas uma vez
-        const socket = io(`http://${process.env.NEXT_PUBLIC_SOCKET_URL}:3001`, {
+        const socket = io(`http://${process.env.NEXT_PUBLIC_SOCKET_URL}:${process.env.NEXT_PUBLIC_SOCKET_PORT}`, {
           withCredentials: true,
           transports: ['websocket'],
-          reconnection: false,
+          reconnection: true,
+          reconnectionAttempts: 3,
+          reconnectionDelay: 1000,
+          reconnectionDelayMax: 5000,
+          timeout: 20000,
           forceNew: true,
           autoConnect: false,
         });
@@ -227,7 +239,7 @@ export default function RoomPage({ params }: RoomPageProps) {
         console.error('[DEBUG] Erro em connectToRoom:', error);
       }
     },
-    [userName, avatarDetails, avatarColor, codigo, setCookies]
+    [userName, avatarDetails, avatarColor, codigo, setCookies, socketClient]
   );
 
   // useEffect(() => {
@@ -306,9 +318,13 @@ export default function RoomPage({ params }: RoomPageProps) {
     }
   }, [codigo, connectToRoom, cookies.talktalk_userdata, cookies.talktalk_roomid]);
 
+  const fetchSalaRef = useRef(false);
 
   useEffect(() => {
-    fetchSala();
+    if (!fetchSalaRef.current) {
+      fetchSalaRef.current = true;
+      fetchSala();
+    }
 
     return () => {
       if (socketClient) {
@@ -318,8 +334,7 @@ export default function RoomPage({ params }: RoomPageProps) {
         socketClient.off('message');
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchSala, socketClient]);
 
   useEffect(() => {
     if (!socketClient) return;
@@ -367,7 +382,6 @@ export default function RoomPage({ params }: RoomPageProps) {
       setPessoasConectadas(users.length);
     };
 
-
     const handleUsersTyping = async (data: { userToken: string; typing: boolean }) => {
       if (userData?.userToken === data.userToken) return;
       console.log('[DEBUG] Users Typing Received: ', data);
@@ -403,16 +417,14 @@ export default function RoomPage({ params }: RoomPageProps) {
     socketClient.on('users-update', handleUsersUpdate);
     socketClient.on('user-disconnected', handleUserDisconnected);
     socketClient.on('message', handleMessage);
-    socketClient.on('users-typing', handleUsersTyping);
-
-    return () => {
+    socketClient.on('users-typing', handleUsersTyping);    return () => {
       socketClient.off('connect', handleConnect);
       socketClient.off('users-update', handleUsersUpdate);
       socketClient.off('user-disconnected', handleUserDisconnected);
       socketClient.off('message', handleMessage);
       socketClient.off('users-typing', handleUsersTyping);
     };
-  }, [socketClient, codigo, userData, salaData, setMensagem, handleMessage, handleTyping, setPessoasConectadas]);
+  }, [socketClient, userData, salaData?.hostToken, codigo, handleMessage, handleTyping, setPessoasConectadas]);
 
   useEffect(() => {
     if (messageListRef.current) {
@@ -649,21 +661,6 @@ export default function RoomPage({ params }: RoomPageProps) {
     }
   };
 
-  useEffect(() => {
-    if (showNameInput) {
-      if (localStorage.getItem('talktalk_user_settings')) {
-        const userData = JSON.parse(localStorage.getItem('talktalk_user_settings') || '{}');
-        const { avatarDetails: savedAvatar, avatarColor: savedColor, userApelido } = userData;
-        if (savedAvatar) setAvatarDetails(savedAvatar);
-        if (savedColor) setAvatarColor(savedColor);
-        if (userApelido) setUserName(userApelido);
-      } else {
-        getRandomAvatar();
-        setAvatarColor(RandomAvatarColor.get().hex);
-      }
-    }
-  }, [showNameInput]);
-
   if (showErrorModal) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
@@ -698,7 +695,7 @@ export default function RoomPage({ params }: RoomPageProps) {
 
         <div className="relative group">
           <Image
-            src={avatarDetails.avatarURL || '/images/avatars/panda.png'}
+            src={avatarDetails.avatarURL || '/images/avatars/default.png'}
             alt="Avatar Preview"
             width={100}
             height={100}

@@ -17,6 +17,7 @@ import { RandomNicks } from '@/app/utils/strings/randomNicks';
 import AvatarDropdown from '@/app/components/functionals/AvatarDropdown';
 import { useFontSize } from '@/app/contexts/FontSizeContext';
 import { useSpeech } from '@/app/contexts/SpeechContext';
+import { useTranslation } from '@/app/contexts/TranslationContext';
 import SpeechSettings from '@/app/components/functionals/SpeechSettings';
 
 const UserSettingsPage = () => {
@@ -45,6 +46,7 @@ const UserSettingsPage = () => {
 
   // Hook de síntese de voz
   const { settings, updateSettings, speak } = useSpeech();
+  const { settings: translationSettings, updateSettings: updateTranslationSettings } = useTranslation();
   const [isSaving, setIsSaving] = useState(false);
   const [quietHoursStart, setQuietHoursStart] = useState('22:00');
   const [quietHoursEnd, setQuietHoursEnd] = useState('07:00');
@@ -53,8 +55,8 @@ const UserSettingsPage = () => {
   const [avatarDetails, setAvatarDetails] = useState<{ avatarURL: string; avatarName: string }>({
     avatarURL: '',
     avatarName: '',
-  });
-  const [colorBlindType, setColorBlindType] = useState<ColorBlindType>('none');
+  }); // Use the ColorBlind context directly
+  const { colorBlindType, setColorBlindType } = useColorBlind();
 
   const theme = useTheme();
 
@@ -64,14 +66,14 @@ const UserSettingsPage = () => {
   const saveUserSettings = useCallback((settings: any) => {
     localStorage.setItem('talktalk_user_settings', JSON.stringify(settings));
   }, []);
-
   const [linguaSelecionada, setLinguaSelecionada] = useState<{ label: string; value: string; flag: string }>({
     label: 'Português',
     value: 'pt',
     flag: 'PT',
   });
   const isFirstLoad = useRef(true);
-  // Add useEffect to load saved settings on component mount
+
+  // Use the context for colorBlindType directly  // Add useEffect to load saved settings on component mount
   useEffect(() => {
     const savedSettings = localStorage.getItem('talktalk_user_settings');
     if (savedSettings) {
@@ -92,11 +94,11 @@ const UserSettingsPage = () => {
       if (settings.avatarColor) {
         setAvatarColor(settings.avatarColor);
       }
-      // Note: We don't need to handle colorBlindType here anymore, 
+      // Note: We don't need to handle colorBlindType here anymore,
       // the ColorBlindContext takes care of loading and applying it
     }
     isFirstLoad.current = false;
-  }, [setLinguaSelecionada]); // State for managing available voices
+  }, [setLinguaSelecionada, linguaSelecionada.value, linguaSelecionada.label, linguaSelecionada.flag]);// State for managing available voices
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
 
   // Voice settings and initialization
@@ -124,14 +126,19 @@ const UserSettingsPage = () => {
   const testVoice = () => {
     speak('Olá! Esta é uma mensagem de teste para as configurações de voz.');
   };
+  useEffect(() => {
+    // Atualiza o estado local com o valor do contexto quando a página carrega
+    setAutoTranslate(translationSettings.autoTranslate);
+  }, [translationSettings.autoTranslate]);
 
-  // Função para simular salvamento
-  const saveSettings = () => {
-    setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
-    }, 1000);
-  };
+  // Função para atualizar a configuração de tradução automática
+  const handleAutoTranslateChange = useCallback(
+    (value: boolean) => {
+      setAutoTranslate(value);
+      updateTranslationSettings({ autoTranslate: value });
+    },
+    [updateTranslationSettings]
+  );
 
   const handleLanguageChange = (language) => {
     const index = languagesData.findIndex((lang) => lang.value === language);
@@ -225,17 +232,18 @@ const UserSettingsPage = () => {
   }, [avatarDetails.avatarURL, avatarColor, getRandomAvatar, linguaSelecionada, saveUserSettings]);
   const handleColorBlindChange = useCallback(
     (type: ColorBlindType) => {
-      // The setColorBlindType is now provided by the context and handles the filter application
-      // This function is kept for backward compatibility
+      // Use the context's setColorBlindType function
+      setColorBlindType(type);
+
+      // Save other settings
       const settings = {
         linguaSelecionada,
         avatarDetails,
         avatarColor,
-        colorBlindType: type,
       };
       localStorage.setItem('talktalk_user_settings', JSON.stringify(settings));
     },
-    [linguaSelecionada, avatarDetails, avatarColor]
+    [linguaSelecionada, avatarDetails, avatarColor, setColorBlindType]
   );
 
   return (
@@ -404,6 +412,7 @@ const UserSettingsPage = () => {
               <h2 className="text-xl font-semibold mb-4">Configurações de Idioma</h2>
 
               <div className="space-y-4">
+                {' '}
                 <div>
                   <label htmlFor="preferredLanguage" className="block text-sm font-medium mb-1">
                     Idioma principal
@@ -420,35 +429,39 @@ const UserSettingsPage = () => {
                     Este é o idioma em que você deseja receber as traduções
                   </p>
                 </div>
-
-                <div className="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <MessageSquare size={18} />
-                    <div>
-                      <p className="font-medium">Tradução automática</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Traduzir mensagens automaticamente</p>
+                <div className="p-4 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Globe size={18} />
+                      <div>
+                        <p className="font-medium">Tradução automática</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          <strong>Quando ativado:</strong> as mensagens serão exibidas já traduzidas.
+                          <br />
+                          <strong>Quando desativado:</strong> as mensagens serão exibidas no idioma original e você
+                          precisa clicar no botão para ver a tradução.
+                        </p>
+                      </div>
                     </div>
+
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={translationSettings.autoTranslate}
+                        onChange={(e) => updateTranslationSettings({ autoTranslate: e.target.checked })}
+                        className="sr-only peer"
+                      />
+                      <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-500 peer-checked:bg-blue-500"></div>
+                    </label>
                   </div>
-
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={autoTranslate}
-                      onChange={() => setAutoTranslate(!autoTranslate)}
-                      className="sr-only peer"
-                    />
-                    <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-500 peer-checked:bg-blue-500"></div>
-                  </label>
                 </div>
-
                 {/* Save Button */}
                 <div className="flex justify-end mt-6">
                   <button
                     onClick={() => {
                       const settings = {
                         linguaSelecionada,
-                        preferredLanguage: linguaSelecionada.value,
-                        autoTranslate,
+                        preferredLanguage: linguaSelecionada.value
                       };
                       saveUserSettings(settings);
                       setIsSaving(true);
@@ -604,16 +617,17 @@ const UserSettingsPage = () => {
                   >
                     <Mic size={18} />
                     <span>Testar configurações de voz</span>
-                  </button>
-                </div>
-                <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                  </button>{' '}
+                </div>                <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Mic size={18} />
                       <div>
                         <p className="font-medium">Leitura automática</p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Ler mensagens automaticamente ao recebê-las
+                          Quando ativado: mensagens de outros usuários serão lidas em voz alta automaticamente ao recebê-las.
+                          <br />
+                          <strong>Padrão:</strong> Desativado (você precisa clicar no botão de play manualmente)
                         </p>
                       </div>
                     </div>
@@ -628,7 +642,16 @@ const UserSettingsPage = () => {
                       <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-500 peer-checked:bg-blue-500"></div>
                     </label>
                   </div>
+                  
+                  {settings.autoRead && (
+                    <div className="mt-3 p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                      <p className="text-sm text-green-700 dark:text-green-300">
+                        ✓ Leitura automática ativada - novas mensagens serão lidas automaticamente
+                      </p>
+                    </div>
+                  )}
                 </div>
+                
               </div>
             </motion.div>
           )}

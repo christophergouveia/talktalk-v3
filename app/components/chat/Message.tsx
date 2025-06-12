@@ -2,11 +2,12 @@ import moment from 'moment-timezone';
 import Image from 'next/image';
 import { Moment } from 'moment-timezone';
 import { supportedLanguages } from '@/app/api/translate/languages';
-import { useState } from 'react';
-import { Play, Pause } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Play, Pause, AlertCircle } from 'lucide-react';
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSpeech } from '@/app/contexts/SpeechContext';
+import { useTranslation } from '@/app/contexts/TranslationContext';
 import { useFontSize } from '@/app/contexts/FontSizeContext';
 
 interface MessageProps {
@@ -26,10 +27,21 @@ function MicComponent({ text }: { text: string | React.ReactNode }) {
   const { settings } = useSpeech();
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isNewMessage, setIsNewMessage] = React.useState(true);
   const speechRef = React.useRef<SpeechSynthesisUtterance | null>(null);
+  
+  // Referência para armazenar metadados do componente de áudio
+  const micDataRef = React.useRef({
+    isNewMessage: true,
+    hasBeenRead: false,
+    textKey: typeof text === 'string' ? text.slice(0, 20) : 'message'
+  });
 
-  // Don't render if speech is disabled
-  if (!settings.enabled) return null;
+  // Gerar um ID seguro para o componente
+  const micId = `mic-${Math.random().toString(36).substring(2, 7)}`;
+
+  // Referência para o elemento DOM
+  const micElementRef = React.useRef<HTMLDivElement>(null);
 
   const getSpeechContent = React.useCallback((input: string | React.ReactNode): string => {
     if (!input) return '';
@@ -41,9 +53,23 @@ function MicComponent({ text }: { text: string | React.ReactNode }) {
     }
     return '';
   }, []);
-
+  
   const speechText = React.useMemo(() => getSpeechContent(text), [text, getSpeechContent]);
+  
+  const handlePlayPause = React.useCallback(() => {
+    if (!speechRef.current) return;
 
+    if (isPlaying) {
+      window.speechSynthesis.pause();
+    } else {
+      if (progress === 0) {
+        window.speechSynthesis.speak(speechRef.current);
+      } else {
+        window.speechSynthesis.resume();
+      }
+    }
+  }, [isPlaying, progress]);
+    // Configure speech utterance
   React.useEffect(() => {
     if (!speechText) return;
 
@@ -74,43 +100,37 @@ function MicComponent({ text }: { text: string | React.ReactNode }) {
     };
 
     utterance.onpause = () => setIsPlaying(false);
-    utterance.onresume = () => setIsPlaying(true);
-
+    utterance.onresume = () => setIsPlaying(true);    
     utterance.onboundary = (event) => {
       const { charIndex } = event;
       const progressValue = speechText ? (charIndex / speechText.length) * 100 : 0;
       setProgress(progressValue);
     };
-
-    // Auto-read if enabled and it's a new message
-    if (settings.autoRead && progress === 0) {
+    
+    // Auto-read somente se autoRead estiver habilitado e for uma mensagem nova
+    if (settings.autoRead && micDataRef.current.isNewMessage && !micDataRef.current.hasBeenRead) {
       window.speechSynthesis.speak(utterance);
-    }
-
+      // Marcar como já lida para evitar releituras
+      micDataRef.current.hasBeenRead = true;
+      micDataRef.current.isNewMessage = false;
+    }    
+    
     return () => {
       window.speechSynthesis.cancel();
     };
-  }, [speechText, settings]);
+  }, [speechText, settings]); // Atualizando dependências
 
-  const handlePlayPause = React.useCallback(() => {
-    if (!speechRef.current) return;
-
-    if (isPlaying) {
-      window.speechSynthesis.pause();
-    } else {
-      if (progress === 0) {
-        window.speechSynthesis.speak(speechRef.current);
-      } else {
-        window.speechSynthesis.resume();
-      }
+  // Sincronizar os dados com o elemento DOM para acesso externo
+  React.useEffect(() => {
+    if (micElementRef.current) {
+      (micElementRef.current as any).__micData = micDataRef.current;
     }
-  }, [isPlaying, progress]);
-
-  // Don't render anything if there's no text to speak
+  }, []);
+  // If there's no text to speak, return null
   if (!speechText) return null;
 
   return (
-    <div className="flex items-center gap-1.5 rounded-full bg-gray-100/50 dark:bg-gray-800/50 px-1.5 py-0.5">
+    <div id={micId} ref={micElementRef} className="flex items-center gap-1.5 rounded-full bg-gray-100/50 dark:bg-gray-800/50 px-1.5 py-0.5">
       <button
         onClick={handlePlayPause}
         className="rounded-full p-1 hover:bg-gray-200/80 dark:hover:bg-gray-700/80 transition-colors"
@@ -182,15 +202,37 @@ export default function Message({
   senderAvatar,
   senderColor,
   compact = false,
-}: MessageProps) {
-  const [showOriginal, setShowOriginal] = useState(false);
+}: MessageProps) {  
   const { fontSize } = useFontSize();
-  const languageLabel = supportedLanguages[lingua]?.label || lingua;
+  const { settings } = useSpeech();
+  const { settings: translationSettings } = useTranslation();
+  
+  // Handle undefined or empty language properly
+  const hasValidLanguage = lingua && lingua.trim() !== '' && supportedLanguages[lingua];
+  const languageLabel = hasValidLanguage ? supportedLanguages[lingua]?.label || lingua : '';
+  
+  // Initialize state based on translationSettings.autoTranslate
+  const [showOriginal, setShowOriginal] = useState(!translationSettings.autoTranslate);
+  // Update showOriginal when translationSettings.autoTranslate changes
+  useEffect(() => {
+    if (!ownMessage && !isAudio) {
+      setShowOriginal(!translationSettings.autoTranslate);
+      
+      // Quando a configuração de tradução automática é alterada, marcar todas as mensagens como não sendo mais novas
+      // para evitar releituras
+      setTimeout(() => {
+        document.querySelectorAll('[id^="mic-"]').forEach((micComponent) => {
+          if ((micComponent as any).__micData) {
+            (micComponent as any).__micData.isNewMessage = false;
+          }
+        });
+      }, 0);
+    }
+  }, [translationSettings.autoTranslate, ownMessage, isAudio]);
 
   const getMessageContent = (content: React.ReactNode): React.ReactNode => {
     return content;
   };
-
   const renderContent = () => {
     if (isAudio) {
       return <AudioMessage src={originalMessage} />;
@@ -229,8 +271,7 @@ export default function Message({
               <span className="text-xs text-gray-500">{formattedDate}</span>
               <span className="font-medium" style={{ color: senderColor }}>
                 {senderApelido}:
-              </span>
-              <span className="text-sm">
+              </span>              <span className="text-sm">
                 {isAudio ? (
                   <AudioMessage src={originalMessage} />
                 ) : (
@@ -238,14 +279,25 @@ export default function Message({
                 )}
               </span>
               {!ownMessage && !isAudio && (
-                <>
-                  <span className="text-xs flex flex-col text-gray-500 mt-1">
-                    <div className="mt-1 flex">
-                      <p>
-                        Traduzido do <span className="font-medium">{languageLabel}</span> ({lingua})
-                      </p>
-                      <button onClick={() => setShowOriginal(!showOriginal)} className="ml-1 text-xs text-blue-400">
-                        {showOriginal ? 'Exibir traduzido' : 'Exibir original'}
+                <>                  <span className="text-xs flex flex-col text-gray-500 mt-1">                    <div className="mt-1 flex">                      <p>
+                        {showOriginal 
+                          ? 'Mensagem original' 
+                          : (hasValidLanguage 
+                             ? `Traduzido do ${languageLabel} (${lingua})` 
+                             : <span className="flex items-center gap-1"><AlertCircle size={12} /> Idioma não identificado</span>)}
+                      </p>                      <button onClick={() => {
+                        setShowOriginal(!showOriginal);
+                        // Quando o usuário muda o idioma manualmente, não queremos releitura
+                        // Procuramos por todos os componentes MIC na página
+                        document.querySelectorAll('[id^="mic-"]').forEach((micComponent) => {
+                          // Marcamos que não são mais mensagens novas
+                          (micComponent as any).__micData = {
+                            ...(micComponent as any).__micData,
+                            isNewMessage: false
+                          };
+                        });
+                      }} className="ml-1 text-xs text-blue-400 hover:underline">
+                        {showOriginal ? 'Ver tradução' : 'Ver original'}
                       </button>
                     </div>
                   </span>
@@ -272,12 +324,24 @@ export default function Message({
               >
                 {renderContent()}
                 {!ownMessage && !isAudio && (
-                  <>
-                    <div className="text-xs text-gray-500 ">
-                      <div className="mt-1">
-                        Traduzido do <span className="font-medium">{languageLabel}</span> ({lingua})
-                        <button onClick={() => setShowOriginal(!showOriginal)} className="ml-2 text-xs text-blue-400">
-                          {showOriginal ? 'Exibir traduzido' : 'Exibir original'}
+                  <>                    <div className="text-xs text-gray-500 ">                      <div className="mt-1">                        
+                        {showOriginal 
+                          ? 'Mensagem original' 
+                          : (hasValidLanguage 
+                             ? `Traduzido do ${languageLabel} (${lingua})` 
+                             : <span className="flex items-center gap-1"><AlertCircle size={12} /> Idioma não identificado</span>)}                        <button onClick={() => {
+                          setShowOriginal(!showOriginal);
+                          // Quando o usuário muda o idioma manualmente, não queremos releitura
+                          // Procuramos por todos os componentes MIC na página
+                          document.querySelectorAll('[id^="mic-"]').forEach((micComponent) => {
+                            // Marcamos que não são mais mensagens novas
+                            (micComponent as any).__micData = {
+                              ...(micComponent as any).__micData,
+                              isNewMessage: false
+                            };
+                          });
+                        }} className="ml-2 text-xs text-blue-400 hover:underline">
+                          {showOriginal ? 'Ver tradução' : 'Ver original'}
                         </button>
                       </div>
                     </div>{' '}

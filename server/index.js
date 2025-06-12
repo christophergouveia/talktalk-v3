@@ -8,19 +8,29 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 
-const httpOptions = {
-  key: fs.readFileSync('./server/ssl/localhost-key.pem'),
-  cert: fs.readFileSync('./server/ssl/localhost.pem'),
-};
-
-// const server = http.createServer(httpOptions, app);
-const server = http.createServer(app);
+// Check if SSL certificates exist and use HTTPS if available
+let server;
+try {
+  const httpOptions = {
+    key: fs.readFileSync('./ssl/localhost-key.pem'),
+    cert: fs.readFileSync('./ssl/localhost.pem'),
+  };
+  server = https.createServer(httpOptions, app);
+  console.log('Using HTTPS server with SSL certificates');
+} catch (error) {
+  console.log('SSL certificates not found, using HTTP server');
+  server = http.createServer(app);
+}
 
 app.use(cors());
 
 const io = require('socket.io')(server, {
   cors: {
-    origin: [`http://${process.env.NEXT_PUBLIC_VERCEL_URL}`, `http://127.0.0.1:${process.env.NEXT_PUBLIC_PORT}`],
+    origin: [
+      process.env.NEXT_PUBLIC_VERCEL_URL ? `http://${process.env.NEXT_PUBLIC_VERCEL_URL}` : 'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      'http://localhost:3000'
+    ],
     methods: ['GET', 'POST'],
     credentials: true,
     allowedHeaders: ['my-custom-header'],
@@ -345,6 +355,6 @@ app.get('/', (req, res) => {
   res.send('Servidor http funcionando corretamente');
 });
 
-server.listen(PORT, process.env.NEXT_PUBLIC_SOCKET_URL, () => {
-  console.log(`Servidor Socket.IO rodando na porta ${PORT} e URL ${process.env.NEXT_PUBLIC_SOCKET_URL}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor Socket.IO rodando na porta ${PORT}`);
 });

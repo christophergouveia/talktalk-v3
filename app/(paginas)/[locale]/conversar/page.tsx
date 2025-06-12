@@ -71,10 +71,13 @@ export default function ConversarHome() {
 
     setLoading(true);
     try {
-      let nickname = apelido;
-      if (!apelido.trim()) {
-        nickname = avatarDetails.avatarName;
+      // Set default nickname if none is provided
+      let nickname = apelido.trim();
+      if (!nickname) {
+        // Safely access avatarDetails with fallback
+        nickname = avatarDetails?.avatarName || 'Panda';
       }
+      
       // São dois tokens, um para os usuários que não são anfitrião, e um para identificar o anfitrião da sala
       // Depois acho uma maneira melhor de fazer isso...
       // TODO : Retirar o hostToken e utilizar o userToken como token do anfitrião
@@ -91,11 +94,22 @@ export default function ConversarHome() {
           path: '/',
         });
 
+        // Ensure safe access to avatarDetails with default fallbacks
+        const safeAvatarDetails = avatarDetails || {
+          avatarURL: '/images/avatars/panda.png',
+          avatarName: 'Panda',
+        };
+        
+        // Safely get avatar details with fallbacks
+        const userAvatarURL = safeAvatarDetails.avatarURL || '/images/avatars/panda.png';
+        const userAvatarName = safeAvatarDetails.avatarName || 'Panda';
+        const userColor = avatarColor || '#3b82f6'; // Default blue color
+
         // Aqui agora, irá ser criptografado os dados do usuário e o token, para saber que ele é o dono da, como apelido e avatar :D
         const userData = {
           apelido: nickname,
-          avatar: avatarDetails.avatarURL,
-          color: avatarColor,
+          avatar: userAvatarURL,
+          color: userColor,
           token,
           userToken,
         };
@@ -124,7 +138,7 @@ export default function ConversarHome() {
     } finally {
       setLoading(false);
     }
-  }, [apelido, avatarColor, avatarDetails]);
+  }, [apelido, avatarColor, avatarDetails, router, setCookie, validarApelido]);
 
   useEffect(() => {
     if (errorInputs.errorApelido) {
@@ -147,17 +161,44 @@ export default function ConversarHome() {
   }, [setAvatarDetails]);
 
   useEffect(() => {
+    let avatarSet = false;
+    let colorSet = false;
+    
     if (localStorage.getItem('talktalk_user_settings')) {
-      const userData = JSON.parse(localStorage.getItem('talktalk_user_settings') || '{}');
-      const { avatarDetails, avatarColor, userApelido } = userData;
-      setAvatarDetails(avatarDetails);
-      setAvatarColor(avatarColor);
-      setApelido(userApelido);
-    } else {
+      try {
+        const userData = JSON.parse(localStorage.getItem('talktalk_user_settings') || '{}');
+        const { avatarDetails: storedAvatarDetails, avatarColor: storedAvatarColor, userApelido } = userData;
+        
+        // Only update if the stored values are valid
+        if (storedAvatarDetails && typeof storedAvatarDetails === 'object' && storedAvatarDetails.avatarURL) {
+          setAvatarDetails(storedAvatarDetails);
+          avatarSet = true;
+        }
+        
+        if (storedAvatarColor) {
+          setAvatarColor(storedAvatarColor);
+          colorSet = true;
+        }
+        
+        if (userApelido) {
+          setApelido(userApelido);
+        }
+      } catch (error) {
+        console.error('Error parsing talktalk_user_settings:', error);
+        // Don't set avatarSet or colorSet to true if there was an error
+      }
+    }
+    
+    // If no valid avatar was found in local storage, get a random one
+    if (!avatarSet) {
       getRandomAvatar();
+    }
+    
+    // If no valid color was found in local storage, get a random one
+    if (!colorSet) {
       setAvatarColor(RandomAvatarColor.get().hex);
     }
-  }, []);
+  }, [getRandomAvatar]);
 
   const handleSelectColor = useCallback(
     (color: string) => {
@@ -168,32 +209,39 @@ export default function ConversarHome() {
   );
 
   const AvatarComponent = useMemo(() => {
+    // Safely handle the case when avatarDetails is undefined
+    const safeAvatarDetails = avatarDetails || {
+      avatarURL: '/images/avatars/panda.png',
+      avatarName: 'Panda',
+    };
+    
     // Use panda as default avatar if none is set
-    const avatarSrc = avatarDetails.avatarURL && avatarDetails.avatarURL.trim() 
-      ? avatarDetails.avatarURL 
-      : getRandomAvatar()
+    const avatarSrc = safeAvatarDetails.avatarURL && safeAvatarDetails.avatarURL.trim() 
+      ? safeAvatarDetails.avatarURL 
+      : '/images/avatars/panda.png';
+      
     return (
       <div className="flex flex-col items-center gap-3">
         <AvatarDropdown openModal={() => setColorModalOpenned((prev) => !prev)}>
           <Image
             src={avatarSrc}
-            alt={apelido || avatarDetails.avatarName || 'Animal aleatório :)'}
+            alt={apelido || safeAvatarDetails.avatarName || 'Animal aleatório :)'}
             width={120}
             height={120}
-            className={`rounded-full ${avatarColor} p-2 bg-blue-500`}
+            className={`rounded-full p-2 bg-blue-500`}
             style={{
-              backgroundColor: avatarColor,
+              backgroundColor: avatarColor || '#3b82f6',
             }}
           />
         </AvatarDropdown>
         <AvatarSelector
           onAvatarSelect={(avatar, url) => setAvatarDetails({ avatarURL: url, avatarName: avatar })}
-          color={avatarColor}
+          color={avatarColor || '#3b82f6'}
           getRandomAvatar={getRandomAvatar}
         />
       </div>
     );
-  }, [avatarDetails.avatarURL, avatarColor]);
+  }, [avatarDetails, avatarColor, apelido, getRandomAvatar, setColorModalOpenned]);
 
   const handleEntrarSala = useCallback(() => {
     if (codigoSala.trim()) {

@@ -9,6 +9,7 @@ import { ViewTransitions } from 'next-view-transitions';
 import 'react-toastify/dist/ReactToastify.css';
 import VLibras from "vlibras-nextjs";
 import { SpeechProvider } from './contexts/SpeechContext';
+import { TranslationProvider } from './contexts/TranslationContext';
 import { ColorBlindProvider } from './contexts/ColorBlindContext';
 import ColorBlindFilters from './components/global/ColorBlindFilters';
 
@@ -26,11 +27,12 @@ export default function Providers({ children }: { children: ReactNode }) {
     </div>
       <HeroUIProvider>
       
-        <CookiesProvider>          <ThemeProvider attribute="class" enableSystem themes={['light', 'dark']}>
-            <ColorBlindProvider>
+        <CookiesProvider>          <ThemeProvider attribute="class" enableSystem themes={['light', 'dark']}>            <ColorBlindProvider>
               <ColorBlindFilters />
               <SpeechProvider>
-                {children}
+                <TranslationProvider>
+                  {children}
+                </TranslationProvider>
               </SpeechProvider>
             </ColorBlindProvider>
             <ToastContainer />

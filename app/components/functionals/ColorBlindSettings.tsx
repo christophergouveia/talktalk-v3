@@ -33,8 +33,7 @@ const ColorBlindSettings = ({ onColorBlindChange, currentType: propCurrentType }
         
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {colorBlindOptions.map((option) => (
-              <button
+            {colorBlindOptions.map((option) => (              <button
                 key={option.id}
                 onClick={() => {
                   // Update global context
@@ -50,7 +49,14 @@ const ColorBlindSettings = ({ onColorBlindChange, currentType: propCurrentType }
                     : 'bg-white dark:bg-gray-800 border-transparent hover:bg-gray-50 dark:hover:bg-gray-750'
                 }`}
               >
-                <span className="font-medium">{option.name}</span>
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">{option.name}</span>
+                  {activeType === option.id && (
+                    <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-blue-500 text-white text-xs">
+                      ✓
+                    </span>
+                  )}
+                </div>
                 <span className="text-sm text-gray-500 dark:text-gray-400">{option.description}</span>
               </button>
             ))}

@@ -21,7 +21,6 @@ export const useSpeech = () => {
     voice: '',
     autoRead: false,
   });
-
   // Carregar vozes disponíveis
   useEffect(() => {
     const loadVoices = () => {
@@ -45,7 +44,14 @@ export const useSpeech = () => {
     if (savedSettings) {
       setSettings(JSON.parse(savedSettings));
     }
-  }, []);
+    
+    // Cleanup
+    return () => {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = null;
+      }
+    };
+  }, [settings.voice]);
 
   // Salvar configurações quando mudarem
   useEffect(() => {

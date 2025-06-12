@@ -47,10 +47,9 @@ const ColorBlindTest = ({ colorBlindType = 'none' }: ColorTestProps) => {
             </div>
           </div>
         </div>
-        
-        <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">
           Se você consegue ver claramente os números acima, as configurações estão ajudando na sua percepção das cores.
-          Os números devem ser visíveis como "6", "8" e "5".
+          Os números devem ser visíveis como &quot;6&quot;, &quot;8&quot; e &quot;5&quot;.
         </p>
       </div>
 
