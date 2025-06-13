@@ -54,9 +54,9 @@ export default function RoomPage({ params }: RoomPageProps) {
     value: 'pt',
     flag: 'PT',
   });
-
   const [socketClient, setSocketClient] = useState<Socket | null>(null);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('Sala indisponível ou erro desconhecido');
   const [hostModal, setHostModal] = useState<boolean>(false);
   const [cookies, setCookies] = useCookies(['talktalk_roomid', 'talktalk_userdata']);
   const messageListRef = useRef<HTMLDivElement>(null);
@@ -119,7 +119,6 @@ export default function RoomPage({ params }: RoomPageProps) {
     console.log(mensagens)
   }, [mensagens])
  
-
   useEffect(() => {
     if (isOpen && languagesFilterRef.current) {
       languagesFilterRef.current?.focus();
@@ -132,6 +131,25 @@ export default function RoomPage({ params }: RoomPageProps) {
       setApelido(gerarNomeAnimalAleatorio());
     }
   }, [apelido]);
+
+  // Load language settings on mount
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('talktalk_user_settings');
+    if (savedSettings) {
+      try {
+        const settings = JSON.parse(savedSettings);
+        if (settings.linguaSelecionada) {
+          setLinguaSelecionada(settings.linguaSelecionada);
+          onLinguaChange(settings.linguaSelecionada.value);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar configurações de idioma:', error);
+      }
+    } else {
+      // Initialize with default language if no settings exist
+      onLinguaChange('pt');
+    }
+  }, [onLinguaChange]);
   const connectToRoom = useCallback(
     async (bypass: boolean) => {
       try {
@@ -139,29 +157,44 @@ export default function RoomPage({ params }: RoomPageProps) {
         if (socketClient) {
           console.log('[DEBUG] Socket já existe, reutilizando conexão');
           return;
-        }
-
-        if (bypass) {
+        }        if (bypass) {
           console.log('[DEBUG] Bypass ativado, conectando diretamente ao socket');
-          const socket = io(`http://${process.env.NEXT_PUBLIC_SOCKET_URL}:3001`, {
+          const socketUrl = `http://${process.env.NEXT_PUBLIC_SOCKET_URL}:${process.env.NEXT_PUBLIC_SOCKET_PORT}`;
+          console.log('[DEBUG] URL do Socket:', socketUrl);
+          console.log('[DEBUG] Env vars:', {
+            SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
+            SOCKET_PORT: process.env.NEXT_PUBLIC_SOCKET_PORT
+          });
+          
+          const socket = io(socketUrl, {
             withCredentials: true,
-            transports: ['websocket'],
+            transports: ['websocket', 'polling'],
             reconnection: true,
-            reconnectionAttempts: 3,
+            reconnectionAttempts: 5,
             reconnectionDelay: 1000,
             forceNew: true,
             autoConnect: false,
           });
 
           socket.once('connect', () => {
-            console.log('[DEBUG] Socket conectado:', socket.id);
+            console.log('[DEBUG] Socket conectado com sucesso:', socket.id);
             setShowNameInput(false);
+          });
+
+          socket.on('connect_error', (error) => {
+            console.error('[DEBUG] Erro de conexão do socket:', error);
+            console.error('[DEBUG] Tentando fallback para polling...');
           });
 
           socket.on('error', (error) => {
             console.error('[DEBUG] Erro do socket:', error);
           });
 
+          socket.on('disconnect', (reason) => {
+            console.log('[DEBUG] Socket desconectado:', reason);
+          });
+
+          console.log('[DEBUG] Iniciando conexão do socket...');
           socket.connect();
           setSocketClient(socket);
           return;
@@ -202,36 +235,59 @@ export default function RoomPage({ params }: RoomPageProps) {
           expires: undefined,
           sameSite: 'strict',
           path: '/',
-        });
-
-        // Define os dados do usuário antes de criar o socket
+        });        // Define os dados do usuário antes de criar o socket
         setUserData(payload);
         
         // Cria e configura o socket apenas uma vez
-        const socket = io(`http://${process.env.NEXT_PUBLIC_SOCKET_URL}:${process.env.NEXT_PUBLIC_SOCKET_PORT}`, {
+        const socketUrl = `http://${process.env.NEXT_PUBLIC_SOCKET_URL}:${process.env.NEXT_PUBLIC_SOCKET_PORT}`;
+        console.log('[DEBUG] Criando socket normal para:', socketUrl);
+        console.log('[DEBUG] Env vars:', {
+          SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
+          SOCKET_PORT: process.env.NEXT_PUBLIC_SOCKET_PORT
+        });
+        
+        const socket = io(socketUrl, {
           withCredentials: true,
-          transports: ['websocket'],
+          transports: ['websocket', 'polling'],
           reconnection: true,
-          reconnectionAttempts: 3,
+          reconnectionAttempts: 5,
           reconnectionDelay: 1000,
           reconnectionDelayMax: 5000,
           timeout: 20000,
           forceNew: true,
           autoConnect: false,
-        });
-
-        // Configura os eventos antes de conectar
+        });        // Configura os eventos antes de conectar
         socket.once('connect', () => {
-          console.log('[DEBUG] Socket conectado:', socket.id);
+          console.log('[DEBUG] Socket conectado com sucesso:', socket.id);
           const userDataString = JSON.stringify(payload);
+          console.log('[DEBUG] Emitindo join-room para:', codigo);
           socket.emit('join-room', codigo, userDataString);
           setShowNameInput(false);
         });
 
-        socket.on('error', (error) => {
-          console.error('[DEBUG] Erro do socket:', error);
+        socket.on('connect_error', (error) => {
+          console.error('[DEBUG] Erro de conexão do socket:', error);
+          setErrorMessage('Erro de conexão com o servidor. Verifique sua internet.');
+          setShowErrorModal(true);
         });
 
+        socket.on('error', (error) => {
+          console.error('[DEBUG] Erro do socket:', error);
+          if (error.includes('cheia')) {
+            setErrorMessage('Sala está cheia! Máximo de 3 usuários permitidos.');
+          } else if (error.includes('não encontrada')) {
+            setErrorMessage('Sala não encontrada!');
+          } else {
+            setErrorMessage('Erro ao conectar na sala: ' + error);
+          }
+          setShowErrorModal(true);
+        });
+
+        socket.on('disconnect', (reason) => {
+          console.log('[DEBUG] Socket desconectado:', reason);
+        });
+
+        console.log('[DEBUG] Iniciando conexão do socket...');
         // Conecta o socket
         socket.connect();
         setSocketClient(socket);
@@ -258,7 +314,6 @@ export default function RoomPage({ params }: RoomPageProps) {
   //     }
   //   }
   // }, [ onLinguaChange]);
-
   const fetchSala = useCallback(async () => {
     try {
       const sala = await fetchRoom(codigo);
@@ -274,8 +329,11 @@ export default function RoomPage({ params }: RoomPageProps) {
       const userData = cookies.talktalk_userdata;
       const roomToken = cookies.talktalk_roomid;
 
+      // Se não há dados de usuário, mostra o input apenas uma vez
       if (userData == undefined || roomToken == undefined) {
-        setShowNameInput(true);
+        if (!showNameInput) {
+          setShowNameInput(true);
+        }
         return;
       }
 
@@ -285,7 +343,12 @@ export default function RoomPage({ params }: RoomPageProps) {
         const isValidRoom = sala.token == userDataDecrypt.data.token;
 
         if (!userDataDecrypt || !userDataDecrypt.data.apelido || !userDataDecrypt.data.userToken || !isValidRoom) {
-          setShowNameInput(true);
+          // Limpa cookies inválidos e mostra input
+          document.cookie = 'talktalk_userdata=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+          document.cookie = 'talktalk_roomid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+          if (!showNameInput) {
+            setShowNameInput(true);
+          }
           return;
         }
 
@@ -310,20 +373,28 @@ export default function RoomPage({ params }: RoomPageProps) {
         connectToRoom(true);
       } catch (error) {
         console.error('Erro ao descriptografar dados do usuário:', error);
-        setShowNameInput(true);
+        // Limpa cookies inválidos e mostra input
+        document.cookie = 'talktalk_userdata=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'talktalk_roomid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        if (!showNameInput) {
+          setShowNameInput(true);
+        }
       }
     } catch (error) {
       console.error('Erro ao buscar sala:', error);
       setShowErrorModal(true);
     }
-  }, [codigo, connectToRoom, cookies.talktalk_userdata, cookies.talktalk_roomid]);
-
+  }, [codigo, connectToRoom, cookies.talktalk_userdata, cookies.talktalk_roomid, showNameInput]);
   const fetchSalaRef = useRef(false);
+  const isInitializing = useRef(false);
 
   useEffect(() => {
-    if (!fetchSalaRef.current) {
+    if (!fetchSalaRef.current && !isInitializing.current) {
+      isInitializing.current = true;
       fetchSalaRef.current = true;
-      fetchSala();
+      fetchSala().finally(() => {
+        isInitializing.current = false;
+      });
     }
 
     return () => {
@@ -345,17 +416,21 @@ export default function RoomPage({ params }: RoomPageProps) {
         const userDataString = JSON.stringify(userData);
         socketClient.emit('join-room', codigo, userDataString);
       }
-    };
-
-    const handleUsersUpdate = async (users: any[]) => {
+    };    const handleUsersUpdate = async (users: any[]) => {
       console.log('[DEBUG] Users Update Received: ', users);
       const usersMap: { [key: string]: UserData } = {};
 
       for (const user of users) {
         try {
           if (user.userData) {
-            if (typeof user.userData == 'string') {
-              const userDataDecrypted = await descriptografarUserData(user.userData);
+            let userDataDecrypted;
+            if (typeof user.userData === 'string') {
+              userDataDecrypted = await descriptografarUserData(user.userData);
+            } else {
+              userDataDecrypted = { data: user.userData };
+            }
+            
+            if (userDataDecrypted?.data) {
               const isUserHost = userDataDecrypted.data.userToken === salaData?.hostToken;
               usersMap[userDataDecrypted.data.userToken] = {
                 ...userDataDecrypted.data,
@@ -363,14 +438,7 @@ export default function RoomPage({ params }: RoomPageProps) {
                 isTyping: false,
                 lastActivity: new Date().toISOString(),
               };
-            } else {
-              const isUserHost = user.userData.userToken === salaData?.hostToken;
-              usersMap[user.userData.userToken] = {
-                ...user.userData,
-                host: isUserHost,
-                isTyping: false,
-                lastActivity: new Date().toISOString(),
-              };
+              console.log('[DEBUG] Usuário adicionado:', userDataDecrypted.data.apelido, userDataDecrypted.data.userToken);
             }
           }
         } catch (error) {
@@ -378,6 +446,7 @@ export default function RoomPage({ params }: RoomPageProps) {
         }
       }
 
+      console.log('[DEBUG] Total de usuários processados:', Object.keys(usersMap).length);
       setUsersRoomData(usersMap);
       setPessoasConectadas(users.length);
     };
@@ -660,13 +729,14 @@ export default function RoomPage({ params }: RoomPageProps) {
       localStorage.setItem('talktalk_user_settings', JSON.stringify(settings));
     }
   };
-
   if (showErrorModal) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
-        <h2 className="text-2xl font-bold">Sala Cheia ou indisponível</h2>
+        <h2 className="text-2xl font-bold">
+          {errorMessage.includes('cheia') ? 'Sala Cheia!' : 'Erro na Sala'}
+        </h2>
         <p className="mt-2 text-gray-600">
-          Desculpe, mas ocorreu algum erro ao entrar na sala. Por favor, tente novamente mais tarde.
+          {errorMessage}
         </p>
         <Button className="mt-4" onClick={() => router.push('/conversar')}>
           Voltar para a página de sala
@@ -686,202 +756,349 @@ export default function RoomPage({ params }: RoomPageProps) {
 
   if (typeof window == null) {
     return null;
-  }
-
-  if (showNameInput) {
+  }  if (showNameInput) {
     return (
-      <div className="flex w-fit mx-auto p-6 rounded-md flex-col items-center justify-center gap-4 text-center bg-[#232124]">
-        <h2 className="text-2xl font-bold">Bem-vindo à sala!</h2>
-
-        <div className="relative group">
-          <Image
-            src={avatarDetails.avatarURL || '/images/avatars/default.png'}
-            alt="Avatar Preview"
-            width={100}
-            height={100}
-            className="rounded-full border-4 p-2"
-            style={{ borderColor: avatarColor, backgroundColor: avatarColor }}
-          />
-
-          <button
-            onClick={() => setColorModalOpenned(true)}
-            className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-          >
-            <div className="flex flex-col items-center text-white">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
-                />
-              </svg>
-              <span className="text-xs mt-1">Mudar cor</span>
-            </div>
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: avatarColor }} />
-          <span className="text-sm text-gray-400">Cor selecionada</span>
-        </div>
-
-        <p className="mt-2 text-gray-400">Para entrar na sala, digite um apelido (opcional):</p>
-        <input
-          type="text"
-          className="mt-2 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-zinc-500"
-          placeholder="Seu nome"
-          value={userName}
-          onChange={handleNameInputChange}
-        />
-        <AvatarSelector
-          onAvatarSelect={(avatar, url) => setAvatarDetails({ avatarURL: url, avatarName: avatar })}
-          color={avatarColor}
-          getRandomAvatar={getRandomAvatar}
-        />
-        <ColorSelector
-          onSelectColor={handleSelectColor}
-          isOpen={isColorModalOpenned}
-          onModalClose={() => setColorModalOpenned(false)}
-        />
-        <div className="*:block text-sm text-gray-400">
-          <span>Não se preocupe caso não insira um apelido.</span>
-          <span>Será utilizado o nome do avatar selecionado!</span>
-        </div>
-
-        <Button
-          onClick={() => connectToRoom(false)}
-          className="w-full bg-gradient-to-r from-[#38A3F5] to-[#6F90F2] hover:opacity-90 transition-opacity text-white font-semibold"
-          size="lg"
+      <div className="h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-cyan-50/40 dark:from-[#0f0f0f] dark:via-[#1a1a2e] dark:to-[#16213e] relative overflow-hidden flex items-center justify-center">
+        {/* Background Effects */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-400/8 to-cyan-400/8 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-400/6 to-blue-400/6 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/6 to-blue-400/6 rounded-full blur-2xl"></div>
+        </div><motion.div 
+          className="w-fit max-w-md mx-auto p-8 rounded-3xl flex flex-col items-center justify-center gap-8 text-center bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-white/30 dark:border-gray-700/40 shadow-2xl relative overflow-hidden"
+          initial={{ opacity: 0, scale: 0.9, y: 50 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.8, type: "spring", stiffness: 100 }}
         >
-          Entrar na Sala
-        </Button>
+          {/* Inner glow effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent rounded-full"></div>          <motion.h2 
+            className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent relative z-10"
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.8, type: "spring" }}
+          >
+            Bem-vindo à sala!
+          </motion.h2>
+
+          <motion.div 
+            className="relative group"
+            initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ delay: 0.5, duration: 0.8, type: "spring", stiffness: 120 }}
+          >
+            <div className="absolute inset-0 rounded-full animate-pulse" style={{ backgroundColor: `${avatarColor}15` }}></div>
+            <Image
+              src={avatarDetails.avatarURL || '/images/avatars/default.png'}
+              alt="Avatar Preview"
+              width={140}
+              height={140}
+              className="rounded-full border-4 p-4 shadow-2xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 relative z-10"
+              style={{ 
+                borderColor: avatarColor, 
+                backgroundColor: `${avatarColor}20`,
+                boxShadow: `0 10px 40px ${avatarColor}40, 0 0 0 1px ${avatarColor}20`,
+              }}
+            />
+
+            <motion.button
+              onClick={() => setColorModalOpenned(true)}
+              className="absolute inset-0 flex items-center justify-center rounded-full bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <div className="flex flex-col items-center text-white">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                  />
+                </svg>                <span className="text-xs mt-1">Mudar cor</span>
+              </div>
+            </motion.button>
+          </motion.div>
+
+          <motion.div 
+            className="flex items-center gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
+            <div className="w-4 h-4 rounded-full border-2 border-white shadow-md" style={{ backgroundColor: avatarColor }} />
+            <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Cor selecionada</span>
+          </motion.div>          <motion.p 
+            className="text-gray-600 dark:text-gray-300 font-medium text-lg relative z-10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+          >
+            Para entrar na sala, digite um apelido (opcional):
+          </motion.p>
+          
+          <motion.div 
+            className="w-full relative"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, type: "spring" }}
+          >
+            <input
+              type="text"
+              className="w-full px-6 py-4 rounded-2xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-white/40 dark:border-gray-600/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 focus:bg-white/90 dark:focus:bg-gray-800/90 transition-all duration-500 text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 text-lg shadow-lg hover:shadow-xl"
+              placeholder="Seu nome"
+              value={userName}
+              onChange={handleNameInputChange}
+            />
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 pointer-events-none"></div>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.9, type: "spring" }}
+            className="w-full"
+          >
+            <AvatarSelector
+              onAvatarSelect={(avatar, url) => setAvatarDetails({ avatarURL: url, avatarName: avatar })}
+              color={avatarColor}
+              getRandomAvatar={getRandomAvatar}
+            />
+          </motion.div>
+          
+          <ColorSelector
+            onSelectColor={handleSelectColor}
+            isOpen={isColorModalOpenned}
+            onModalClose={() => setColorModalOpenned(false)}
+          />
+            <motion.div 
+            className="text-sm text-gray-500 dark:text-gray-400 space-y-2 bg-blue-50/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-blue-200/30 dark:border-gray-700/30 relative z-10"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.0, type: "spring" }}
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+              <span>Não se preocupe caso não insira um apelido.</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+              <span>Será utilizado o nome do avatar selecionado!</span>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ delay: 1.1, type: "spring", stiffness: 120 }}
+            className="w-full"
+          >
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Button
+                onClick={() => connectToRoom(false)}
+                className="w-full bg-gradient-to-r from-blue-500 via-purple-600 to-blue-500 hover:from-blue-600 hover:via-purple-700 hover:to-blue-600 text-white font-bold py-4 px-8 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 border border-white/20 backdrop-blur-sm relative overflow-hidden group"
+                size="lg"
+              >
+                <span className="relative z-10 text-lg">Entrar na Sala</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </Button>
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </div>
     );
   }
-
   if (socketClient == null) {
     return null;
   }
+    return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-cyan-50/40 dark:from-[#0f0f0f] dark:via-[#1a1a2e] dark:to-[#16213e] relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-400/8 to-cyan-400/8 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-400/6 to-blue-400/6 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/6 to-blue-400/6 rounded-full blur-2xl"></div>
+      </div>
 
-  return (
-    <div className="mt-6 flex h-full items-center justify-center">
-      <Modal
-        isOpen={hostModal}
-        backdrop="opaque"
-        size="2xl"
-        isDismissable
-        onKeyUp={(e) => e.key === 'Escape' && setHostModal(false)}
-        onClose={() => setHostModal(false)}
-        classNames={{
-          footer: 'justify-center',
-          backdrop: 'bg-[#6F90F2]/30',
-        }}
-      >
-        <ModalContent>
+      <div className="relative z-10 p-4 h-screen flex flex-col lg:flex-row gap-4">
+        <Modal
+          isOpen={hostModal}
+          backdrop="opaque"
+          size="2xl"
+          isDismissable
+          onKeyUp={(e) => e.key === 'Escape' && setHostModal(false)}
+          onClose={() => setHostModal(false)}
+          classNames={{
+            footer: 'justify-center',
+            backdrop: 'bg-[#6F90F2]/30 backdrop-blur-sm',
+          }}
+        >        <ModalContent className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border border-white/20 dark:border-gray-700/30">
           <>
             <ModalBody>
-              <h1 className="text-center text-3xl font-extrabold">VOCÊ É O ANFITRIÃO DA SALA!</h1>
-              <h2 className="text-center text-xl">
-                Copie o link a seguir ou compartilhe o código para a pessoa entrar em seu bate-papo.
-              </h2>
-              <div className="flex flex-col items-center justify-center gap-3 p-2">
-                <h3 className="flex items-center justify-center gap-2 rounded-md text-center text-3xl font-bold text-[#6F90F2]">
-                  {codigo.split('').map((c, index) => (
-                    <span className="w-12 rounded-lg bg-slate-800 p-2 uppercase" key={index}>
-                      {c}
-                    </span>
-                  ))}
-                  <CopyButton copy={codigo} text="Copiar" sucessText="Copiado!" />
-                </h3>
-                <span className="text-2xl font-semibold">OU</span>
-                <div className="flex gap-2">
-                  <span className="rounded-md bg-slate-800 p-2 font-semibold text-[#6F90F2]">
-                    {process.env.NEXT_PUBLIC_VERCEL_URL}/conversar/{codigo}
-                  </span>
-                  <CopyButton
-                    copy={process.env.NEXT_PUBLIC_VERCEL_URL + '/conversar/' + codigo}
-                    text="Copiar"
-                    sucessText="Copiado!"
-                  />
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="text-center space-y-6"
+              >
+                <div className="relative">
+                  <h1 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    VOCÊ É O ANFITRIÃO DA SALA!
+                  </h1>
+                  <div className="absolute -top-2 -right-2 text-2xl animate-bounce">👑</div>
                 </div>
-              </div>
+                <h2 className="text-xl text-gray-700 dark:text-gray-300">
+                  Copie o link a seguir ou compartilhe o código para a pessoa entrar em seu bate-papo.
+                </h2>
+                <div className="flex flex-col items-center justify-center gap-6 p-4">
+                  <div className="relative group">
+                    <h3 className="flex items-center justify-center gap-2 rounded-xl text-center text-3xl font-bold">
+                      {codigo.split('').map((c, index) => (
+                        <motion.span 
+                          key={index}
+                          initial={{ opacity: 0, scale: 0.5 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="w-12 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white p-2 uppercase shadow-lg"
+                        >
+                          {c}
+                        </motion.span>
+                      ))}
+                      <CopyButton copy={codigo} text="Copiar" sucessText="Copiado!" />
+                    </h3>
+                  </div>
+                  <motion.span 
+                    className="text-2xl font-semibold text-gray-500 dark:text-gray-400"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    OU
+                  </motion.span>
+                  <motion.div 
+                    className="flex gap-2 items-center"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 }}
+                  >
+                    <span className="rounded-lg bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-blue-200/50 dark:border-blue-700/50 p-3 font-semibold text-blue-600 dark:text-blue-400">
+                      {process.env.NEXT_PUBLIC_VERCEL_URL}/conversar/{codigo}
+                    </span>
+                    <CopyButton
+                      copy={process.env.NEXT_PUBLIC_VERCEL_URL + '/conversar/' + codigo}
+                      text="Copiar"
+                      sucessText="Copiado!"
+                    />
+                  </motion.div>
+                </div>
+              </motion.div>
             </ModalBody>
             <ModalFooter>
-              <Button className="!w-[75%]" color="danger" onPress={() => setHostModal(false)}>
+              <Button 
+                className="!w-[75%] bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105" 
+                onPress={() => setHostModal(false)}
+              >
                 Fechar
               </Button>
             </ModalFooter>
           </>
         </ModalContent>
-      </Modal>
-      <section className="w-[90%] lg:w-[55%] rounded-md bg-[var(--chat-bg-geral)] shadow dark:shadow-slate-900">
-        <ChatComponent.Header className="flex w-full bg-[var(--chat-bg-header)]">
-          <ChatComponent.Settings className="flex justify-between w-full items-center gap-2 p-4">
-            <Button
-              onClick={() => setHostModal(true)}
-              className="bg-gradient-to-r from-[#38A3F5] to-[#6F90F2] dark:from-[#2563eb] dark:to-[#4f46e5] text-white dark:text-slate-100 font-semibold px-6 py-2 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300 ease-in-out flex items-center gap-2"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
-              </svg>
-              COMPARTILHAR
-            </Button>
-            <IoSettingsSharp
-              size={32}
-              style={{ marginRight: '1rem' }}
-              className="text-slate-600 dark:text-slate-300 cursor-pointer lg:hidden"
-              onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-            />
-          </ChatComponent.Settings>
-        </ChatComponent.Header>
-        <ChatComponent.Body className="h-[calc(100vh-20rem)] select-none overflow-hidden bg-[var(--chat-bg-geral)]">
-          <MessageList
-            ref={messageListRef}
-            className={`messageList h-full overflow-y-auto p-4 ${chatCompacto ? 'chat-compact' : ''}`}
-          >
-            {mensagens.map((message, index) => (
-              <Message
-                key={index}
-                date={message.date}
-                lingua={message.lingua}
-                ownMessage={message.senderId == userData?.userToken}
-                originalMessage={message.message}
-                senderApelido={message.senderApelido}
-                senderAvatar={message.senderAvatar}
-                senderColor={message.senderColor}
-                compact={chatCompacto}
-                isAudio={message.isAudio}
+      </Modal>        <motion.section 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+          className="flex-1 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-2xl border border-white/20 dark:border-gray-700/30 overflow-hidden flex flex-col"
+        >
+          <ChatComponent.Header className="flex w-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 backdrop-blur-sm border-b border-white/20 dark:border-gray-700/30">
+            <ChatComponent.Settings className="flex justify-between w-full items-center gap-2 p-4">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
               >
-                {message.isAudio ? (
-                  <audio controls
-                  controlsList="nodownload"
-                  >
-                    <source src={message.message} type="audio/webm" />
-                    Your browser does not support the audio element.
-                  </audio>
-                ) : (
-                  message.messageTraduzido
-                )}
-              </Message>
+                <Button
+                  onClick={() => setHostModal(true)}
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold px-6 py-2 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 ease-in-out flex items-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
+                  </svg>
+                  COMPARTILHAR
+                </Button>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                <IoSettingsSharp
+                  size={32}
+                  className="text-slate-600 dark:text-slate-300 cursor-pointer lg:hidden hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-300 hover:scale-110 transform"
+                  onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                />
+              </motion.div>
+            </ChatComponent.Settings>
+          </ChatComponent.Header>          <ChatComponent.Body className="flex-1 overflow-hidden bg-gradient-to-b from-white/30 to-gray-50/30 dark:from-gray-900/30 dark:to-gray-800/30">
+            <MessageList
+              ref={messageListRef}
+              className={`messageList h-full overflow-y-auto p-6 space-y-4 ${chatCompacto ? 'chat-compact' : ''}`}
+            >{mensagens.map((message, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <Message
+                  date={message.date}
+                  lingua={message.lingua}
+                  ownMessage={message.senderId == userData?.userToken}
+                  originalMessage={message.message}
+                  senderApelido={message.senderApelido}
+                  senderAvatar={message.senderAvatar}
+                  senderColor={message.senderColor}
+                  compact={chatCompacto}
+                  isAudio={message.isAudio}
+                >
+                  {message.isAudio ? (
+                    <audio controls
+                    controlsList="nodownload"
+                    className="w-full rounded-lg"
+                    >
+                      <source src={message.message} type="audio/webm" />
+                      Your browser does not support the audio element.
+                    </audio>
+                  ) : (
+                    message.messageTraduzido
+                  )}
+                </Message>
+              </motion.div>
             ))}
             {messageLoading && (
-              <div className="flex items-center justify-center">
-                <Spinner />
-              </div>
+              <motion.div 
+                className="flex items-center justify-center p-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Spinner color="primary" size="lg" />
+              </motion.div>
             )}
             <AnimatePresence>
               {usersTyping.map(({ userToken, typing }) =>
                 typing && userToken !== userData?.userToken && usersRoomData[userToken] && (
                   <motion.div
                     key={userToken}
-                    className="flex items-center justify-center gap-2 text-gray-500"
+                    className="flex items-center justify-center gap-3 text-gray-500 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-3 mx-4"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
@@ -892,12 +1109,13 @@ export default function RoomPage({ params }: RoomPageProps) {
                       alt={usersRoomData[userToken].apelido}
                       width={30}
                       height={30}
-                      className="rounded-full"
+                      className="rounded-full border-2"
+                      style={{ borderColor: usersRoomData[userToken].color }}
                     />
                     <motion.span
                       animate={{ opacity: [0.5, 1, 0.5] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
-                      className="text-sm"
+                      className="text-sm font-medium"
                       style={{ color: usersRoomData[userToken].color }}
                     >
                       {usersRoomData[userToken].apelido} está digitando...
@@ -907,130 +1125,182 @@ export default function RoomPage({ params }: RoomPageProps) {
               )}
             </AnimatePresence>
           </MessageList>
-        </ChatComponent.Body>
-        <ChatComponent.Footer className="flex items-center gap-3 border-t-2 border-t-slate-400 p-3">
-          <Textarea
-            label=""
-            placeholder="Digite uma mensagem..."
-            minRows={1}
-            maxRows={3}
-            classNames={{
-              input: 'textarea-message p-2',
-            }}
-            onChange={handleTextAreaChange}
-            onKeyUp={handleTextAreaKeyUp}
-            onKeyDown={handleTextAreaKeyDown}
-            value={mensagem}
-            size="sm"
-          />
-          <Button isIconOnly onClick={sendMessage}>
-            <IoIosSend className={'text-2xl'} />
-          </Button>
-          <Button 
-            isIconOnly 
-            onClick={recAudio}
-            color={isRecording ? "danger" : "primary"}
+        </ChatComponent.Body>        <ChatComponent.Footer className="flex items-center gap-3 border-t border-white/20 dark:border-gray-700/30 p-6 bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-900/60 dark:to-gray-800/60 backdrop-blur-sm">
+          <div className="flex-1">
+            <Textarea
+              label=""
+              placeholder="Digite uma mensagem..."
+              minRows={1}
+              maxRows={4}
+              classNames={{
+                input: 'textarea-message p-4 text-base',
+                inputWrapper: 'bg-white/95 dark:bg-gray-700/95 backdrop-blur-sm border border-gray-200/60 dark:border-gray-600/60 hover:border-blue-500/60 dark:hover:border-blue-400/60 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all duration-300 rounded-2xl shadow-lg hover:shadow-xl',
+              }}
+              onChange={handleTextAreaChange}
+              onKeyUp={handleTextAreaKeyUp}
+              onKeyDown={handleTextAreaKeyDown}
+              value={mensagem}
+              size="lg"
+            />
+          </div>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <IoMicOutline className={`text-2xl ${isRecording ? 'animate-pulse' : ''}`} />
-          </Button>
+            <Button 
+              isIconOnly 
+              onClick={sendMessage}
+              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl w-14 h-14"
+              size="lg"
+            >
+              <IoIosSend className={'text-2xl'} />
+            </Button>
+          </motion.div>          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Button 
+              isIconOnly 
+              onClick={recAudio}
+              color={isRecording ? "danger" : "primary"}              className={`${isRecording 
+                ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700' 
+                : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
+              } text-white shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl w-14 h-14`}
+              size="lg"
+            >
+              <IoMicOutline className={`text-2xl ${isRecording ? 'animate-pulse' : ''}`} />
+            </Button>
+          </motion.div>
         </ChatComponent.Footer>
-      </section>
-
-      {isSettingsOpen && (
+      </motion.section>      {isSettingsOpen && (
         <motion.div
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
         />
-      )}
-
-      <aside
+      )}      <motion.aside
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
         className={`
-          lg:relative lg:w-[400px] lg:ml-4 lg:flex lg:flex-col lg:h-full lg:shadow-none
-          fixed w-[calc(100%-2rem)] h-[calc(95%-2rem)] top-8 bg-[var(--chat-bg-geral)] overflow-y-auto shadow-xl p-4
-          ${isSettingsOpen
-            ? 'left-[50%] translate-x-[-50%] z-50 rounded-md lg:left-0 lg:translate-x-0 lg:z-0'
-            : 'left-[150%] lg:left-0'
+          lg:relative lg:w-[400px] lg:flex lg:flex-col lg:h-full
+          ${isSettingsOpen 
+            ? 'fixed inset-4 md:inset-6 lg:inset-auto z-50 lg:z-0 flex flex-col' 
+            : 'hidden lg:flex'
           }
-          transition-[left] duration-300 ease-in-out lg:transition-none
+          bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-gray-700/30 
+          overflow-hidden shadow-2xl transition-all duration-300 ease-in-out 
+          lg:bg-white/80 lg:dark:bg-gray-900/80 lg:backdrop-blur-md lg:shadow-2xl
+          max-h-screen lg:max-h-none
         `}
       >
-        <div className="sticky top-0 z-10">
-          <h1 className="rounded-md bg-[var(--chat-bg-header)] p-4 text-center font-bold flex items-center justify-between">
-            <span>CONFIGURAÇÕES DA SALA</span>
-            <motion.button
-              className="lg:hidden p-2 hover:bg-[var(--chat-bg-buttons)] rounded-full"
-              onClick={() => setIsSettingsOpen(false)}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+        <div className="h-full flex flex-col">
+          <div className="flex-none">            <motion.h1 
+              className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm border-b border-white/20 dark:border-gray-700/30 p-3 md:p-4 font-bold flex items-center justify-between"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent text-xs md:text-sm lg:text-base">
+                CONFIGURAÇÕES DA SALA
+              </span>
+              <motion.button
+                className="lg:hidden p-1.5 md:p-2 hover:bg-white/20 dark:hover:bg-gray-700/20 rounded-full transition-colors duration-300"
+                onClick={() => setIsSettingsOpen(false)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </motion.button>
-          </h1>
-        </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 md:h-6 md:w-6 text-gray-600 dark:text-gray-300"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </motion.button>
+            </motion.h1>
+          </div>
 
-        <section className="flex-1 p-4">
-          <div className="flex flex-col gap-4">
-            <div className="w-full">
-              <Switch
-                isSelected={chatCompacto}
-                onValueChange={setChatCompacto}
-                classNames={{
-                  base: 'inline-flex flex-row-reverse gap-2 !w-full bg-[--chat-bg-buttons] hover:bg-content2 items-center cursor-pointer p-4 border-2 border-transparent rounded-md transition-all duration-200',
-                  wrapper: '',
-                  endContent: 'w-full',
-                  label: 'w-full',
-                }}
+          <div className="flex-1 overflow-y-auto">            <section className="p-3 md:p-4 space-y-3 md:space-y-4">
+              <motion.div 
+                className="space-y-3 md:space-y-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
               >
-                <div className="flex flex-col gap-1">
-                  <p className="text-medium font-semibold">Chat compacto</p>
-                  <p className="text-tiny text-default-600">
-                    Ative o modo compacto do chat. Os espaçamentos são menores.
-                  </p>
+                {/* Chat Compacto Switch */}
+                <div className="w-full">
+                  <Switch
+                    isSelected={chatCompacto}
+                    onValueChange={setChatCompacto}                    classNames={{
+                      base: 'inline-flex flex-row-reverse gap-2 md:gap-3 !w-full bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-gray-800/80 items-center cursor-pointer p-3 md:p-4 border border-white/30 dark:border-gray-700/30 rounded-xl transition-all duration-200 shadow-md',
+                      wrapper: 'flex-none',
+                      endContent: 'flex-1 min-w-0',
+                      label: 'w-full',
+                    }}
+                  >
+                    <div className="flex flex-col gap-1 min-w-0">
+                      <p className="text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">Chat compacto</p>
+                      <p className="text-xs md:text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
+                        Ative o modo compacto do chat. Os espaçamentos são menores.
+                      </p>
+                    </div>
+                  </Switch>
                 </div>
-              </Switch>
-            </div>
-            <div className="flex w-full flex-col gap-2 rounded-md bg-[--chat-bg-buttons] p-4">
-              <div className="flex flex-col gap-1">
-                <p className="text-medium font-semibold">Língua de tradução</p>
-                <p className="text-tiny text-default-600">Selecione para qual língua as mensagens serão traduzidas</p>
-              </div>
-              <div className="relative">
-                <motion.button
-                  onClick={() => setIsOpen(!isOpen)}
-                  className="relative z-10 w-full rounded-md bg-[--chat-bg-buttons-secondary] px-4 py-3 pr-8 text-left hover:opacity-90 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm flex gap-2 items-center"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+
+                {/* Seletor de Língua */}                <motion.div 
+                  className="w-full rounded-xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border border-white/30 dark:border-gray-700/30 p-3 md:p-4 shadow-md"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
                 >
-                  <CountryFlag flag={linguaSelecionada?.flag} />
-                  {linguaSelecionada?.label}
-                </motion.button>
-                <motion.div
-                  className={`absolute z-20 w-full rounded-md bg-white dark:bg-[var(--chat-bg-buttons)] shadow-lg ${isOpen ? 'block' : 'hidden'
-                    }`}
-                  style={{ zIndex: 100 }}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {isOpen && (
-                    <div onClick={(e) => e.stopPropagation()}>
-                      <Input
+                  <div className="flex flex-col gap-2 md:gap-3">
+                    <div className="flex flex-col gap-1">
+                      <p className="text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200">Língua de tradução</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        Selecione para qual língua as mensagens serão traduzidas
+                      </p>
+                    </div>
+                    
+                    <div className="relative">                      <motion.button
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="relative z-10 w-full rounded-lg bg-white/90 dark:bg-gray-700/90 backdrop-blur-sm border border-white/40 dark:border-gray-600/40 px-2 md:px-3 py-2 md:py-2.5 text-left hover:bg-white dark:hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs md:text-sm flex gap-1 md:gap-2 items-center shadow-sm"
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                      >
+                        <CountryFlag flag={linguaSelecionada?.flag} />
+                        <span className="text-gray-800 dark:text-gray-200 truncate flex-1 text-xs md:text-sm">
+                          {linguaSelecionada?.label}
+                        </span>
+                        <svg className="w-3 h-3 md:w-4 md:h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </motion.button>
+                        <motion.div
+                        className={`absolute z-30 w-full mt-1 rounded-lg bg-white/95 dark:bg-gray-800/95 backdrop-blur-md border border-white/40 dark:border-gray-700/40 shadow-2xl ${
+                          isOpen ? 'block' : 'hidden'
+                        }`}
+                        style={{ zIndex: 100 }}
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: isOpen ? 1 : 0, y: isOpen ? 0 : -10 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {isOpen && (
+                          <div onClick={(e) => e.stopPropagation()}>                      <Input
                         type="text"
-                        className="p-4"
+                        className="p-2 md:p-4"
                         placeholder="Pesquise uma língua..."
                         onChange={(e) => setLanguagesFilter(e.target.value)}
                         ref={languagesFilterRef}
+                        size="sm"
+                        classNames={{
+                          inputWrapper: 'bg-white/90 dark:bg-gray-700/90 backdrop-blur-sm border-0 rounded-t-xl',
+                          input: 'text-xs md:text-sm',
+                        }}
                         onKeyDown={(e) => {
                           if (e.key === 'ArrowDown') {
                             const nextIndex = ((selectedIndex ?? 0) + 1) % filteredLanguages.length;
@@ -1055,8 +1325,7 @@ export default function RoomPage({ params }: RoomPageProps) {
                             setLanguagesFilter("");
                           }
                         }}
-                      />
-                      <ul className="py-1 h-[17rem] overflow-y-scroll custom-scrollbars text-small text-gray-700">
+                      />                      <ul className="py-1 h-[15rem] md:h-[17rem] overflow-y-scroll custom-scrollbars text-small">
                         {filteredLanguages.map((idioma, index) => (
                           <motion.li
                             key={idioma.value}
@@ -1070,54 +1339,62 @@ export default function RoomPage({ params }: RoomPageProps) {
                                 setIsOpen(false);
                                 setLanguagesFilter("");
                               }}
-                              className={`block w-full px-4 py-2 hover:bg-gray-600 ${index === selectedIndex ? 'bg-zinc-600 text-white' : ''
+                              className={`block w-full px-4 py-3 hover:bg-blue-500/10 dark:hover:bg-blue-400/10 text-left transition-colors duration-200 ${index === selectedIndex ? 'bg-blue-500/20 dark:bg-blue-400/20 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'
                                 }`}
                             >
-                              <div className="flex items-center">
+                              <div className="flex items-center flex-wrap gap-1">
                                 <CountryFlag flag={idioma.flag} />
-                                <span className="ml-2 text-default-800">{idioma.label}</span>
-                                <p className="ml-2 text-tiny text-default-600">{idioma.description}</p>
+                                <span className="ml-2 font-medium text-sm md:text-base">{idioma.label}</span>
+                                <p className="ml-2 text-tiny text-gray-500 dark:text-gray-400 hidden md:block">{idioma.description}</p>
                               </div>
                             </button>
                           </motion.li>
-                        ))}
-                      </ul>
+                        ))}                      </ul>
                     </div>
                   )}
-                </motion.div>
-                {isOpen && <div className="fixed inset-0" onClick={() => setIsOpen(false)} style={{ zIndex: 99 }} />}
+                </motion.div>                {isOpen && <div className="fixed inset-0" onClick={() => setIsOpen(false)} style={{ zIndex: 99 }} />}
+                  </div>
               </div>
-            </div>
+            </motion.div>
+              </motion.div>
+            </section>
           </div>
-        </section>
-        <div className="bg-white dark:bg-zinc-900 m-2 rounded-md shadow-sm border border-gray-200 dark:border-zinc-800">
-          <h2 className="text-medium bg-gray-50 dark:bg-zinc-800 rounded-t-md p-3 font-semibold flex items-center gap-2 border-b border-gray-200 dark:border-zinc-700">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            Usuários Online
-          </h2>
-          <div className="flex flex-col gap-3 p-3">
+          
+          <motion.div 
+            className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm m-2 rounded-xl shadow-lg border border-white/20 dark:border-gray-700/30"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}          ><h2 className="text-sm md:text-medium bg-gradient-to-r from-blue-500/10 to-purple-500/10 backdrop-blur-sm rounded-t-xl p-3 md:p-4 font-semibold flex items-center gap-2 border-b border-white/20 dark:border-gray-700/30">
+            <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-500 animate-pulse"></span>
+            <span className="text-gray-800 dark:text-gray-200">Usuários Online</span>
+          </h2><div className="flex flex-col gap-2 md:gap-3 p-3 md:p-4 max-h-60 md:max-h-80 overflow-y-auto">
             {Object.entries(usersRoomData).length > 0 ? (
               Object.values(usersRoomData).map((user, index) => (
                 <motion.div
                   key={user.userToken}
-                  className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors duration-200"
+                  className="flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-xl hover:bg-white/60 dark:hover:bg-gray-700/60 backdrop-blur-sm transition-all duration-200 border border-transparent hover:border-white/30 dark:hover:border-gray-600/30"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Image
-                    src={user.avatar}
-                    alt={user.apelido}
-                    width={60}
-                    height={60}
-                    className={`rounded-full border-2 p-2 bg-white dark:bg-transparent`}
-                    style={{ borderColor: user.color, backgroundColor: user.color }}
-                  />
-                  <div className="flex flex-col">
-                    <span className="text-medium font-medium flex items-center gap-1" style={{ color: user.color }}>
-                      {user.apelido} {user.host && <span>👑</span>}
+                  <div className="relative flex-shrink-0">
+                    <Image
+                      src={user.avatar}
+                      alt={user.apelido}
+                      width={50}
+                      height={50}
+                      className={`md:w-[60px] md:h-[60px] rounded-full border-2 p-1 md:p-2 bg-white dark:bg-transparent shadow-lg`}
+                      style={{ borderColor: user.color, backgroundColor: user.color }}
+                    />
+                    {user.host && (
+                      <div className="absolute -top-1 -right-1 text-lg md:text-xl">👑</div>
+                    )}
+                  </div>
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <span className="text-sm md:text-medium font-medium flex items-center gap-1 text-gray-800 dark:text-gray-200 truncate" style={{ color: user.color }}>
+                      {user.apelido}
                     </span>
-                    <span className="text-tiny text-gray-600 dark:text-gray-400">
+                    <span className="text-xs md:text-tiny text-gray-600 dark:text-gray-400">
                       {user.host ? 'Anfitrião' : 'Convidado'}
                     </span>
                   </div>
@@ -1131,12 +1408,11 @@ export default function RoomPage({ params }: RoomPageProps) {
                 transition={{ duration: 0.3 }}
               >
                 Nenhum usuário conectado
-              </motion.div>
-            )}
-            
-          </div>
+              </motion.div>            )}          </div>
+        </motion.div>
         </div>
-      </aside>
+      </motion.aside>
+      </div>
     </div>
   );
 }

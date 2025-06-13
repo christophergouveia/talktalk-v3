@@ -17,10 +17,29 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
   const [messageLoading, setMessageLoading] = useState(false);
   const [pessoasConectadas, setPessoasConectadas] = useState<number>(0);
   const [usersInRoom, setUsersInRoom] = useState<UserData[]>([]);
-  const linguaSelecionadaRef = useRef<string>('');
+  const linguaSelecionadaRef = useRef<string>('pt'); // Initialize with default value
   const [isTyping, setIsTyping] = useState<{[key: string]: boolean}>({});
   const typingTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const [languageChangeTrigger, setLanguageChangeTrigger] = useState(0);
+  
+  // Initialize language from localStorage on first load
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedSettings = localStorage.getItem('talktalk_user_settings');
+      if (savedSettings) {
+        try {
+          const settings = JSON.parse(savedSettings);
+          if (settings.linguaSelecionada?.value) {
+            linguaSelecionadaRef.current = settings.linguaSelecionada.value;
+            console.log('Linguagem carregada do localStorage:', settings.linguaSelecionada.value);
+          }
+        } catch (error) {
+          console.error('Erro ao carregar configurações:', error);
+          linguaSelecionadaRef.current = 'pt'; // fallback
+        }
+      }
+    }
+  }, []);
   
   const onLinguaChange = useCallback((lingua: string) => {
     linguaSelecionadaRef.current = lingua;
@@ -93,10 +112,15 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
       return;
     }
 
-    try {
-      // Só tenta traduzir se não for mensagem própria E idioma for diferente
-      if (!isOwnMessage && message.lingua !== linguaSelecionadaRef.current) {
+    try {      // Só tenta traduzir se não for mensagem própria E idioma for diferente E targetLanguage não estiver vazio
+      if (!isOwnMessage && message.lingua !== linguaSelecionadaRef.current && linguaSelecionadaRef.current.trim() !== '') {
         setMessageLoading(true);
+        console.log('Traduzindo mensagem:', {
+          text: message.message,
+          fromLanguage: message.lingua,
+          targetLanguage: linguaSelecionadaRef.current
+        });
+        
         const response = await fetch('/api/translate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -253,11 +277,16 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
       
       // Processa e traduz as mensagens se necessário
       const processedMessages = await Promise.all(messages.map(async (msg: any) => {
-        const isOwnMessage = msg.senderId === userData?.userToken;
-
-        // Só traduz se NÃO for mensagem própria E o idioma for diferente
-        if (!isOwnMessage && msg.linguaOriginal !== linguaSelecionadaRef.current) {
+        const isOwnMessage = msg.senderId === userData?.userToken;        // Só traduz se NÃO for mensagem própria E o idioma for diferente E targetLanguage não estiver vazio
+        const msgLanguage = msg.linguaOriginal || msg.lingua || 'pt';
+        if (!isOwnMessage && msgLanguage !== linguaSelecionadaRef.current && linguaSelecionadaRef.current.trim() !== '') {
           try {
+            console.log('Traduzindo mensagem do histórico:', {
+              text: msg.message,
+              fromLanguage: msgLanguage,
+              targetLanguage: linguaSelecionadaRef.current
+            });
+            
             const response = await fetch('/api/translate', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },

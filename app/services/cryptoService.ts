@@ -24,7 +24,20 @@ async function processCryptoRequest(body: any): Promise<any> {
     body: JSON.stringify(body),
   });
 
-  const result: CryptoResponse = await response.json();
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const text = await response.text();
+  let result: CryptoResponse;
+  
+  try {
+    result = JSON.parse(text);
+  } catch (error) {
+    console.error('Invalid JSON response:', text);
+    throw new Error('Invalid JSON response from crypto service');
+  }
+
   if (result.error) throw new Error(result.error);
   return result;
 }

@@ -202,11 +202,10 @@ export default function Message({
   compact = false,
 }: MessageProps) {  
   const { fontSize } = useFontSize();
-  const { settings } = useSpeech();
-  const { settings: translationSettings } = useTranslation();
+  const { settings } = useSpeech();  const { settings: translationSettings } = useTranslation();
   
   // Handle undefined or empty language properly
-  const hasValidLanguage = lingua && lingua.trim() !== '' && supportedLanguages[lingua];
+  const hasValidLanguage = lingua && typeof lingua === 'string' && lingua.trim() !== '' && supportedLanguages[lingua];
   const languageLabel = hasValidLanguage ? supportedLanguages[lingua]?.label || lingua : '';
   
   // Initialize state based on translationSettings.autoTranslate
@@ -244,22 +243,20 @@ export default function Message({
   });
 
   return (
-    <>
-      <div
+    <>      <div
         className={`
-          relative mb-2 flex items-start gap-2 
-          ${compact ? 'py-0.5' : 'py-2'} 
+          relative mb-3 flex items-start gap-3 
+          ${compact ? 'py-1' : 'py-3'} 
           ${ownMessage ? 'flex-row-reverse' : 'flex-row'}
           font-size-${fontSize}
         `}
-      >
-        {!compact && (
+      >        {!compact && (
           <Image
             src={senderAvatar}
             alt={senderApelido}
-            width={40}
-            height={40}
-            className="rounded-full border-2 p-1"
+            width={44}
+            height={44}
+            className="rounded-full border-2 p-1 shadow-lg"
             style={{ borderColor: senderColor }}
           />
         )}
@@ -315,9 +312,8 @@ export default function Message({
                 <span className="text-xs text-gray-500">{formattedDate}</span>
                 {/* Only show MicComponent for text messages */}
                 {!ownMessage && !isAudio && <MicComponent text={getMessageContent(children)} isOwnMessage={false} />}
-              </div>
-              <div
-                className={`relative mt-1 max-w-full rounded-lg p-2 ${ownMessage ? 'setinha-own bg-blue-500 text-white' : 'setinha bg-gray-200 dark:bg-zinc-800'}`}
+              </div>              <div
+                className={`relative mt-2 max-w-full rounded-2xl p-4 shadow-lg ${ownMessage ? 'setinha-own bg-blue-500 text-white' : 'setinha bg-gray-200 dark:bg-zinc-800'}`}
               >
                 {renderContent()}
                 {!ownMessage && !isAudio && (

@@ -74,13 +74,14 @@
 .setinha::before {
   content: '';
   position: absolute;
-  left: -8px;
-  top: 8px;
+  left: -10px;
+  top: 12px;
   width: 0;
   height: 0;
-  border-top: 8px solid transparent;
-  border-bottom: 8px solid transparent;
-  border-right: 8px solid #e5e7eb; /* cor do bg-gray-200 */
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 10px solid #e5e7eb; /* cor do bg-gray-200 */
+  filter: drop-shadow(-2px 0px 2px rgba(0, 0, 0, 0.1));
 }
 
 .dark .setinha::before {
@@ -94,39 +95,52 @@
 .setinha-own::after {
   content: '';
   position: absolute;
-  right: -8px;
-  top: 8px;
+  right: -10px;
+  top: 12px;
   width: 0;
   height: 0;
-  border-top: 8px solid transparent;
-  border-bottom: 8px solid transparent;
-  border-left: 8px solid #3b82f6; /* cor do bg-blue-500 */
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid #3b82f6; /* cor do bg-blue-500 */
+  filter: drop-shadow(2px 0px 2px rgba(0, 0, 0, 0.1));
 }
 
 .messageList::-webkit-scrollbar {
-  width: 10px !important;
+  width: 8px !important;
 }
 
 .messageList::-webkit-scrollbar-track {
   background: transparent !important;
+  border-radius: 4px !important;
 }
 
 .messageList::-webkit-scrollbar-thumb {
-  background: #555 !important;
-  border-radius: 5px !important;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.messageList::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
 }
 
 .textarea-message::-webkit-scrollbar {
-  width: 10px !important;
+  width: 6px !important;
 }
 
 .textarea-message::-webkit-scrollbar-track {
   background: transparent !important;
+  border-radius: 3px !important;
 }
 
 .textarea-message::-webkit-scrollbar-thumb {
-  background: #555 !important;
-  border-radius: 5px !important;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6) !important;
+  border-radius: 3px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+.textarea-message::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
 }
 
 .modal {
