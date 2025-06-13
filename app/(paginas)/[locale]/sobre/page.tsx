@@ -61,166 +61,148 @@ interface FeatureCardProps {
   delay?: number;
 }
 
-interface StatCardProps {
-  icon: ReactNode;
-  value: string;
-  label: string;
-  color: string;
-  delay?: number;
-}
+
 
 function FeatureCard({ icon, title, description, color, delay = 0 }: FeatureCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30, scale: 0.9 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.6, delay }}
-      whileHover={{ scale: 1.05, y: -5 }}
-      className="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 p-8 shadow-lg hover:shadow-2xl transition-all duration-300"
+      initial={{ 
+        opacity: 0, 
+        y: 12
+      }}
+      whileInView={{ 
+        opacity: 1, 
+        y: 0
+      }}
+      viewport={{ once: false, amount: 0.3 }}
+      transition={{ 
+        duration: 0.4, 
+        delay,
+        ease: "easeOut"
+      }}
+      whileHover={{ 
+        y: -2,
+        transition: { 
+          duration: 0.15
+        }
+      }}
+      className="group relative rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5 shadow-sm hover:shadow-md transition-all duration-200"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      {/* Minimal icon */}
       <div 
-        className="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-6 text-white text-2xl shadow-lg"
+        className="inline-flex items-center justify-center w-10 h-10 rounded-md mb-3 text-white text-lg"
         style={{ backgroundColor: color }}
       >
         {icon}
       </div>
-      <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+
+      {/* Title */}
+      <h3 className="text-base font-semibold mb-2 text-gray-900 dark:text-white">
         {title}
       </h3>
-      <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+
+      {/* Description */}
+      <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
         {description}
       </p>
-      <div 
-        className="absolute bottom-0 left-0 h-1 w-0 group-hover:w-full transition-all duration-500"
-        style={{ backgroundColor: color }}
-      />
     </motion.div>
   );
 }
 
-function StatCard({ icon, value, label, color, delay = 0 }: StatCardProps) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.6, delay }}
-      className="relative overflow-hidden rounded-xl bg-white dark:bg-gray-800/30 backdrop-blur-sm border border-gray-200/30 dark:border-gray-700/30 p-6 text-center shadow-lg hover:shadow-xl transition-all duration-300 group"
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      <div 
-        className="inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4 text-white text-xl"
-        style={{ backgroundColor: color }}
-      >
-        {icon}
-      </div>
-      <div className="text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-        {value}
-      </div>
-      <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-        {label}
-      </div>
-    </motion.div>
-  );
-}
+
 
 function CardContent({ nome, srcImagem, altImagem, cargo, tags, icon, linkGithub, linkLinkedin = '#', description }: CardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30, rotateY: -15 }}
-      whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      whileHover={{ y: -10, scale: 1.02 }}
-      className="group relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 p-8 shadow-xl hover:shadow-2xl transition-all duration-500"
+      initial={{ 
+        opacity: 0, 
+        y: 16
+      }}
+      whileInView={{ 
+        opacity: 1, 
+        y: 0
+      }}
+      viewport={{ once: false, amount: 0.3 }}
+      transition={{ 
+        duration: 0.4, 
+        ease: "easeOut"
+      }}
+      whileHover={{ 
+        y: -3,
+        transition: { 
+          duration: 0.2
+        }
+      }}
+      className="group relative rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5 shadow-sm hover:shadow-md transition-all duration-200"
     >
-      {/* Background gradient effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      
       {/* Profile section */}
-      <div className="relative flex flex-col items-center mb-6">
+      <div className="relative flex flex-col items-center mb-4">
         <div className="relative">
           {srcImagem ? (
-            <div className="relative">
-              <Image
-                src={srcImagem}
-                width={120}
-                height={120}
-                alt={altImagem ?? 'Imagem'}
-                className="rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-lg group-hover:shadow-xl transition-all duration-300"
-              />
-              <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </div>
+            <Image
+              src={srcImagem}
+              width={64}
+              height={64}
+              alt={altImagem ?? 'Imagem'}
+              className="rounded-full object-cover border border-gray-200 dark:border-gray-600"
+            />
           ) : (
             <Avatar
-              className="shadow-lg group-hover:shadow-xl transition-all duration-300 border-4 border-white dark:border-gray-700"
+              className="border border-gray-200 dark:border-gray-600"
               name={nome}
               maxInitials={2}
-              size="120"
+              size="64"
               round
             />
           )}
           
           {/* Social media icons */}
-          <div className="absolute -top-2 -right-2 flex flex-col space-y-2">
+          <div className="absolute -top-1 -right-1 flex flex-col space-y-1">
             {icon?.map((value, index) => (
-              <motion.div
+              <div
                 key={index}
-                whileHover={{ scale: 1.2, rotate: 5 }}
-                whileTap={{ scale: 0.9 }}
-                className="bg-white dark:bg-gray-800 shadow-lg rounded-full p-2 border border-gray-200 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-all duration-300"
+                className="bg-white dark:bg-gray-800 shadow-sm rounded-full p-1 border border-gray-200 dark:border-gray-600"
               >
                 <Link
                   href={index === 0 ? (linkGithub ?? '#') : linkLinkedin}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300"
+                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150 text-xs"
                 >
                   {value}
                 </Link>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
 
-        <motion.h3 
-          className="text-2xl font-bold mt-4 mb-2 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300"
-          whileHover={{ scale: 1.05 }}
-        >
+        {/* Name */}
+        <h3 className="text-lg font-semibold mt-2 mb-1 text-gray-900 dark:text-white text-center">
           {nome}
-        </motion.h3>
+        </h3>
         
-        <p className="text-blue-600 dark:text-blue-400 font-semibold mb-3">
+        <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-2 text-center">
           {cargo}
         </p>
 
         {description && (
-          <p className="text-gray-600 dark:text-gray-300 text-center text-sm leading-relaxed mb-4">
+          <p className="text-gray-600 dark:text-gray-300 text-center text-xs leading-relaxed mb-3">
             {description}
           </p>
         )}
       </div>
 
       {/* Tags */}
-      <div className="flex flex-wrap justify-center gap-2">
+      <div className="flex flex-wrap justify-center gap-1">
         {tags.map((value, index) => (
-          <motion.span
+          <span
             key={index}
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 * index }}
-            whileHover={{ scale: 1.1, y: -2 }}
-            className="inline-block px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 rounded-full border border-blue-200/50 dark:border-blue-700/50 shadow-sm hover:shadow-md transition-all duration-300"
+            className="inline-block px-2 py-0.5 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded"
           >
             {value}
-          </motion.span>
+          </span>
         ))}
       </div>
-
-      {/* Bottom gradient line */}
-      <div className="absolute bottom-0 left-0 h-1 w-0 bg-gradient-to-r from-blue-500 to-purple-500 group-hover:w-full transition-all duration-500" />
     </motion.div>
   );
 }
@@ -341,33 +323,7 @@ export default function SobrePage() {
       color: "#EC4899"
     }
   ];
-
-  const stats = [
-    {
-      icon: <BsGlobe2 />,
-      value: "50+",
-      label: "Idiomas Suportados",
-      color: "#3B82F6"
-    },
-    {
-      icon: <FaUsers />,
-      value: "1000+",
-      label: "Usuários Ativos",
-      color: "#10B981"
-    },
-    {
-      icon: <HiChatBubbleLeftRight />,
-      value: "10K+",
-      label: "Mensagens Traduzidas",
-      color: "#8B5CF6"
-    },
-    {
-      icon: <FaChartLine />,
-      value: "99.5%",
-      label: "Uptime",
-      color: "#F59E0B"
-    }
-  ];  const teamMembers = [
+const teamMembers = [
     {
       nome: "Gustavo Preti",
       srcImagem: "/images/pictures/imagemGustavo.png",
@@ -404,127 +360,94 @@ export default function SobrePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      {/* Hero Section with Parallax */}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">      {/* Hero Section with Parallax */}
       <section className="relative overflow-hidden">
-        {/* Animated background elements */}
+        {/* Subtle background elements */}
         <motion.div 
           style={{ y: y1 }}
-          className="absolute top-20 left-10 w-72 h-72 bg-blue-200/20 rounded-full blur-3xl"
+          className="absolute -top-20 -left-20 w-64 h-64 bg-gradient-to-br from-blue-200/8 to-blue-300/10 rounded-full blur-xl"
         />
         <motion.div 
           style={{ y: y2 }}
-          className="absolute top-40 right-10 w-96 h-96 bg-purple-200/20 rounded-full blur-3xl"
+          className="absolute -top-10 -right-20 w-72 h-72 bg-gradient-to-br from-purple-200/8 to-purple-300/10 rounded-full blur-xl"
         />
         
-        <div className="relative max-w-7xl mx-auto px-4 py-32 sm:px-6 lg:px-8">
+        <div className="relative max-w-7xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
           <motion.div
             className="text-center"
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: 'easeOut' }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
           >
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100/80 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium mb-8 backdrop-blur-sm border border-blue-200/50 dark:border-blue-700/50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-100/60 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium mb-6"
             >
               <HiSparkles className="w-4 h-4" />
               Conectando o mundo através da comunicação
             </motion.div>
             
             <motion.h1 
-              className="text-6xl md:text-7xl font-bold mb-8 leading-tight"
-              initial={{ opacity: 0, y: 30 }}
+              className="text-5xl md:text-6xl font-bold mb-6 leading-tight"
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.4 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
             >
               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                 Nossa Jornada
               </span>
               <br />
-              <span className="text-gray-900 dark:text-white text-5xl md:text-6xl">
+              <span className="text-gray-900 dark:text-white text-4xl md:text-5xl">
                 no TalkTalk
               </span>
             </motion.h1>
             
             <motion.p 
-              className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed mb-12"
-              initial={{ opacity: 0, y: 30 }}
+              className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed mb-8"
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.6 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
             >
               Descobra como estamos revolucionando a comunicação global com tecnologia de ponta, 
               design inclusivo e uma paixão genuína por conectar pessoas de todas as culturas.
             </motion.p>
 
             <motion.div
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-              initial={{ opacity: 0, y: 30 }}
+              className="flex flex-col sm:flex-row gap-3 justify-center items-center"
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.8 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
             >
               <Link 
                 href="/conversar"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-lg"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-sm hover:shadow-md font-medium"
               >
-                <HiChatBubbleLeftRight className="w-5 h-5" />
+                <HiChatBubbleLeftRight className="w-4 h-4" />
                 Começar a Conversar
               </Link>
               <Link 
                 href="#equipe"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-lg"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md font-medium"
               >
-                <HiUserGroup className="w-5 h-5" />
+                <HiUserGroup className="w-4 h-4" />
                 Conhecer a Equipe
               </Link>
             </motion.div>
           </motion.div>
         </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="relative py-20 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+      </section>      {/* Privacy Hero Section */}
+      <section className="py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
-              Números que <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Impressionam</span>
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Veja o impacto que estamos criando na comunicação global
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <StatCard
-                key={index}
-                {...stat}
-                delay={index * 0.1}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Privacy Hero Section */}
-      <section className="py-24 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
+              initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.4 }}
             >
-              <h2 className="text-5xl md:text-6xl font-extrabold leading-tight mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
                 <span className="text-gray-900 dark:text-white">
                   Sua{' '}
                   <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
@@ -541,214 +464,192 @@ export default function SobrePage() {
                   .
                 </span>
               </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
+              <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
                 Sua privacidade é nossa prioridade máxima. Implementamos as mais avançadas medidas de segurança 
                 para garantir que suas conversas permaneçam completamente privadas e protegidas.
               </p>
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <span className="text-gray-700 dark:text-gray-300">Criptografia de ponta a ponta</span>
+                  <span className="text-gray-700 dark:text-gray-300 text-sm">Criptografia de ponta a ponta</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <span className="text-gray-700 dark:text-gray-300">Dados nunca armazenados</span>
+                  <span className="text-gray-700 dark:text-gray-300 text-sm">Dados nunca armazenados</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <span className="text-gray-700 dark:text-gray-300">Conformidade com LGPD</span>
+                  <span className="text-gray-700 dark:text-gray-300 text-sm">Conformidade com LGPD</span>
                 </div>
               </div>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
+              initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.4 }}
               className="relative"
             >
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 rounded-3xl blur-3xl opacity-30"></div>
-                <div className="relative bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-2xl border border-gray-200/50 dark:border-gray-700/50">
-                  <Image
-                    src="/images/pictures/Conversation-s.png"
-                    alt="Conversa Segura"
-                    width={400}
-                    height={400}
-                    className="w-full h-auto rounded-2xl"
-                  />
-                </div>
+              <div className="relative bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200/50 dark:border-gray-700/50">
+                <Image
+                  src="/images/pictures/Conversation-s.png"
+                  alt="Conversa Segura"
+                  width={400}
+                  height={400}
+                  className="w-full h-auto rounded-lg"
+                />
               </div>
             </motion.div>
           </div>
         </div>
-      </section>
-
-      {/* Differentials Section */}
-      <section className="py-24 bg-white dark:bg-gray-900">
+      </section>      {/* Differentials Section */}
+      <section className="py-16 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-20"
+            viewport={{ once: false, amount: 0.3 }}
+            transition={{ duration: 0.4 }}
+            className="text-center mb-12"
           >
-            <h2 className="text-5xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent uppercase">
+            <h2 className="text-4xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Nossos Diferenciais
               </span>
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
               O que nos torna únicos no mundo da comunicação global
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Security */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 p-8 hover:shadow-2xl transition-all duration-300"
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.3 }}
+              className="group rounded-lg bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 p-6 hover:shadow-md transition-all duration-200"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <FaShieldAlt className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">
-                  Segurança Máxima
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Proteção avançada com criptografia de ponta a ponta, garantindo que apenas você e seu interlocutor tenham acesso às mensagens.
-                </p>
-                <div className="mt-6">
-                  <Image
-                    src="/images/pictures/security.png"
-                    alt="Segurança"
-                    width={200}
-                    height={150}
-                    className="w-full h-32 object-contain opacity-80 group-hover:opacity-100 transition-opacity duration-300"
-                  />
-                </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-500 rounded-lg flex items-center justify-center mb-4">
+                <FaShieldAlt className="w-6 h-6 text-white" />
               </div>
+              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
+                Segurança Máxima
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm mb-4">
+                Proteção avançada com criptografia de ponta a ponta, garantindo que apenas você e seu interlocutor tenham acesso às mensagens.
+              </p>
+              <Image
+                src="/images/pictures/security.png"
+                alt="Segurança"
+                width={150}
+                height={100}
+                className="w-full h-20 object-contain opacity-80"
+              />
             </motion.div>
 
             {/* Free */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 p-8 hover:shadow-2xl transition-all duration-300"
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+              className="group rounded-lg bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 p-6 hover:shadow-md transition-all duration-200"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <FaHeart className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
-                  100% Gratuito
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Acreditamos que a comunicação global deve ser acessível a todos. Nossa plataforma é completamente gratuita, sem taxas ocultas.
-                </p>
-                <div className="mt-6">
-                  <Image
-                    src="/images/pictures/Coins-amico.png"
-                    alt="Gratuito"
-                    width={200}
-                    height={150}
-                    className="w-full h-32 object-contain opacity-80 group-hover:opacity-100 transition-opacity duration-300"
-                  />
-                </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mb-4">
+                <FaHeart className="w-6 h-6 text-white" />
               </div>
+              <h3 className="text-xl font-bold mb-3 text-blue-600 dark:text-blue-400">
+                100% Gratuito
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm mb-4">
+                Acreditamos que a comunicação global deve ser acessível a todos. Nossa plataforma é completamente gratuita, sem taxas ocultas.
+              </p>
+              <Image
+                src="/images/pictures/Coins-amico.png"
+                alt="Gratuito"
+                width={150}
+                height={100}
+                className="w-full h-20 object-contain opacity-80"
+              />
             </motion.div>
 
             {/* No Account */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 p-8 hover:shadow-2xl transition-all duration-300"
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+              className="group rounded-lg bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 p-6 hover:shadow-md transition-all duration-200"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <HiUserGroup className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold mb-4 text-purple-600 dark:text-purple-400 group-hover:text-purple-700 dark:group-hover:text-purple-300 transition-colors">
-                  Sem Cadastro
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Entre e comece a conversar imediatamente. Não é necessário criar conta, fornecer email ou passar por processos burocráticos.
-                </p>
-                <div className="mt-6 flex justify-center">
-                  <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
-                    <HiChatBubbleLeftRight className="w-12 h-12 text-white" />
-                  </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-lg flex items-center justify-center mb-4">
+                <HiUserGroup className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-purple-600 dark:text-purple-400">
+                Sem Cadastro
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm mb-4">
+                Entre e comece a conversar imediatamente. Não é necessário criar conta, fornecer email ou passar por processos burocráticos.
+              </p>
+              <div className="flex justify-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
+                  <HiChatBubbleLeftRight className="w-8 h-8 text-white" />
                 </div>
               </div>
             </motion.div>
           </div>
         </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-24 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+      </section>      {/* Features Section */}
+      <section className="py-16 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-20"
+            viewport={{ once: false, amount: 0.3 }}
+            transition={{ duration: 0.4 }}
+            className="text-center mb-12"
           >
-            <h2 className="text-5xl font-bold mb-6 text-gray-900 dark:text-white">
+            <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
               Recursos <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Inovadores</span>
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
               Tecnologias de ponta que tornam a comunicação global acessível, rápida e segura para todos
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feature, index) => (
               <FeatureCard
                 key={index}
                 {...feature}
-                delay={index * 0.1}
+                delay={index * 0.05}
               />
             ))}
           </div>
         </div>
-      </section>
-
-      {/* Timeline Section */}
+      </section>      {/* Timeline Section */}
       <section className="py-24 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-20"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            viewport={{ once: false, amount: 0.2 }}
+            transition={{ duration: 0.6 }}
           >
             <h2 className="text-5xl font-bold mb-6 text-gray-900 dark:text-white">
               Nossa <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Evolução</span>
@@ -760,25 +661,25 @@ export default function SobrePage() {
 
           <Timeline events={timelineItems} />
         </div>
-      </section>
-
-      {/* Team Section */}
-      <section id="equipe" className="py-24 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900">
+      </section>{/* Team Section */}
+      <section id="equipe" className="py-16 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            className="text-center mb-20"
-            initial={{ opacity: 0, y: 30 }}
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            viewport={{ once: false, amount: 0.3 }}
+            transition={{ duration: 0.4 }}
           >
-            <h2 className="text-5xl font-bold mb-6 text-gray-900 dark:text-white">
+            <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
               Conheça Nossa <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Equipe</span>
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
               Os visionários e desenvolvedores por trás da revolução na comunicação global
             </p>
-          </motion.div>          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {teamMembers.map((member, index) => (
               <div key={index} className="flex justify-center">
                 <CardContent {...member} />
@@ -786,22 +687,20 @@ export default function SobrePage() {
             ))}
           </div>
         </div>
-      </section>
-
-      {/* Mission Section */}
-      <section className="py-24 bg-white dark:bg-gray-900">
+      </section>      {/* Mission Section */}
+      <section className="py-16 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
+              initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.4 }}
             >
-              <h2 className="text-5xl font-bold mb-8 text-gray-900 dark:text-white">
+              <h2 className="text-4xl font-bold mb-6 text-gray-900 dark:text-white">
                 Nossa <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Missão</span>
               </h2>
-              <div className="space-y-6 text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+              <div className="space-y-4 text-base text-gray-600 dark:text-gray-300 leading-relaxed">
                 <p>
                   <strong className="text-gray-900 dark:text-white">Quebrar barreiras linguísticas</strong> e conectar pessoas de todas as culturas através de uma comunicação instantânea, inclusiva e acessível.
                 </p>
@@ -815,70 +714,65 @@ export default function SobrePage() {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
+              initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.4 }}
               className="relative"
             >
-              <div className="relative bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl p-8 text-white">
-                <div className="absolute inset-0 bg-white/10 rounded-3xl backdrop-blur-sm"></div>
-                <div className="relative">
-                  <FaHeart className="w-12 h-12 mb-6 text-white/90" />
-                  <h3 className="text-2xl font-bold mb-4">Nossos Valores</h3>
-                  <ul className="space-y-3">
-                    <li className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                      <span>Inclusividade e acessibilidade</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                      <span>Inovação tecnológica responsável</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                      <span>Privacidade e segurança</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <div className="w-2 h-2 bg-white rounded-full"></div>
-                      <span>Experiência do usuário excepcional</span>
-                    </li>
-                  </ul>
-                </div>
+              <div className="relative bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg p-6 text-white">
+                <FaHeart className="w-10 h-10 mb-4 text-white/90" />
+                <h3 className="text-xl font-bold mb-3">Nossos Valores</h3>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                    <span>Inclusividade e acessibilidade</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                    <span>Inovação tecnológica responsável</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                    <span>Privacidade e segurança</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                    <span>Experiência do usuário excepcional</span>
+                  </li>
+                </ul>
               </div>
             </motion.div>
           </div>
         </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-24 bg-gradient-to-r from-blue-600 to-purple-600">
+      </section>      {/* CTA Section */}
+      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            viewport={{ once: false, amount: 0.3 }}
+            transition={{ duration: 0.4 }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Pronto para Quebrar Barreiras?
             </h2>
-            <p className="text-xl text-blue-100 mb-10 leading-relaxed">
+            <p className="text-lg text-blue-100 mb-8 leading-relaxed">
               Junte-se a milhares de pessoas que já estão experimentando uma nova forma de se comunicar globalmente.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link 
                 href="/conversar"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-blue-600 rounded-2xl hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-lg"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md font-medium"
               >
-                <HiChatBubbleLeftRight className="w-5 h-5" />
+                <HiChatBubbleLeftRight className="w-4 h-4" />
                 Começar Agora
               </Link>
               <Link 
                 href="/configuracoes"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-transparent text-white rounded-2xl border-2 border-white hover:bg-white hover:text-blue-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-lg"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-transparent text-white rounded-lg border border-white hover:bg-white hover:text-blue-600 transition-all duration-200 shadow-sm hover:shadow-md font-medium"
               >
-                <HiCog6Tooth className="w-5 h-5" />
+                <HiCog6Tooth className="w-4 h-4" />
                 Personalizar
               </Link>
             </div>
