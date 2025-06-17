@@ -71,8 +71,8 @@
         "comecar_conversar": "Start Chatting",
         "conhecer_equipe": "Meet the Team"
       }
-    },
-    "privacidade": {
+    },    "privacidade": {
+      "badge": "Security First",
       "titulo": {
         "parte1": "Your",
         "privacidade_palavra": "Privacy",
@@ -132,8 +132,8 @@
         "titulo": "Total Customization",
         "descricao": "Customize the interface, colors, themes and settings to create your unique experience."
       }
-    },
-    "evolucao": {
+    },    "evolucao": {
+      "badge": "Our Journey",
       "titulo": "Our Evolution",
       "subtitulo": "Follow each step of our journey, from the initial idea to today's revolutionary product",
       "timeline": {
@@ -183,8 +183,8 @@
           "descricao": "TalkTalk is made available to the public, marking the beginning of a new era in inclusive global communication."
         }
       }
-    },
-    "equipe": {
+    },    "equipe": {
+      "badge": "Meet the Team",
       "titulo": "Meet Our Team",
       "subtitulo": "The visionaries and developers behind the revolution in global communication",
       "membros": {
@@ -291,9 +291,9 @@
       "para_entrar_saia_outros": "To enter the room, you must exit from other devices.",
       "usuario_desconectado": "user disconnected",
       "audio_nao_suportado": "Your browser does not support the audio element."
-    },
-    "configuracoes": {
+    },    "configuracoes": {
       "titulo": "Settings",
+      "titulo_sala": "ROOM SETTINGS",
       "subtitulo": "Customize your TalkTalk experience",
       "categorias": "Categories",
       "abas": {
@@ -338,8 +338,8 @@
         "idioma_principal": {
           "label": "Primary language",
           "descricao": "This is the language you want to receive translations in"
-        },
-        "label": "Language",
+        },        "label": "Language",
+        "descricao_selecao": "Select which language messages will be translated to",
         "pesquisar": "Search languages...",
         "nenhum_encontrado": "No language found",
         "traducao_automatica": {
@@ -401,10 +401,87 @@
           "exemplo": "Example text with selected size",
           "texto_exemplo": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         }
-      },
-      "acessibilidade": {
+      },      "acessibilidade": {
         "titulo": "Accessibility Settings",
-        "subtitulo": "Make your experience more accessible"
+        "subtitulo": "Make your experience more accessible",
+        "daltonismo": {
+          "titulo": "Visual Accessibility Settings",
+          "opcoes": {
+            "none": {
+              "nome": "Normal Vision",
+              "descricao": "No color correction"
+            },
+            "protanopia": {
+              "nome": "Protanopia",
+              "descricao": "Complete absence of red"
+            },
+            "protanomalia": {
+              "nome": "Protanomaly",
+              "descricao": "Partial red deficiency"
+            },
+            "deuteranopia": {
+              "nome": "Deuteranopia",
+              "descricao": "Complete absence of green"
+            },
+            "deuteranomalia": {
+              "nome": "Deuteranomaly",
+              "descricao": "Partial green deficiency"
+            },
+            "tritanopia": {
+              "nome": "Tritanopia",
+              "descricao": "Complete absence of blue/yellow"
+            },
+            "tritanomalia": {
+              "nome": "Tritanomaly",
+              "descricao": "Partial blue/yellow deficiency"
+            },
+            "acromatopsia": {
+              "nome": "Achromatopsia",
+              "descricao": "Complete absence of colors (Black and white)"
+            }
+          },
+          "teste": {
+            "titulo": "Visualization Test",
+            "cores": {
+              "vermelho": "Red",
+              "verde": "Green",
+              "azul": "Blue"
+            },
+            "ishihara": {
+              "titulo": "Simplified Ishihara Test",
+              "descricao": "If you can clearly see the numbers above, the settings are helping your color perception.",
+              "numeros": "The numbers should be visible as \"6\", \"8\" and \"5\"."
+            },
+            "modo_ativo": "{tipo} mode active"
+          },          "info": "These settings help improve color visualization for people with different types of color blindness. Select the option that best suits your needs."
+        },
+        "cores": {
+          "titulo": "Select a Color",
+          "lista_aria": "Available colors list",
+          "cor_aria": "Color {nome}",
+          "nomes": {
+            "tangerina": "Tangerine",
+            "coral": "Coral",
+            "pessego": "Peach",
+            "rosa": "Pink",
+            "cinza_rosa": "Rose Gray",
+            "violeta": "Violet",
+            "laranja": "Orange",
+            "fuchsia": "Fuchsia",
+            "roxo": "Purple",
+            "lavanda": "Lavender",
+            "verde_claro": "Light Green",
+            "ciano": "Cyan",
+            "marrom": "Brown",
+            "verde_menta": "Mint Green",
+            "creme": "Cream",
+            "rosa_pastel": "Pastel Pink",
+            "laranja_pastel": "Pastel Orange",
+            "cor_de_rosa": "Rose",
+            "amarelo_claro": "Light Yellow",
+            "azul_claro": "Light Blue"
+          }
+        }
       },
       "chat_compacto": {
         "titulo": "Compact chat",
@@ -455,7 +532,7 @@
     "erros": {
       "sala_nao_encontrada": "Room not found!",
       "erro_conectar_sala": "Error connecting to room:",
-      "sala_cheia": "Room is full! Maximum of 3 users allowed.",
+      "sala_cheia": "Room is full! Maximum of 10 users allowed.",
       "erro_conexao_servidor": "Server connection error. Check your internet.",
       "servidor_indisponivel": "Could not connect to chat server. Check if server is running."
     }
@@ -463,8 +540,79 @@
   "cookies": {
     "titulo": "Cookie Consent",
     "descricao": "This site uses cookies to improve your experience and to ensure your messages are secure. Learn more by accessing the",
-    "politica_cookies": "Cookie Policy",
-    "politica_privacidade": "Privacy Policy",
+    "politica_cookies": "Cookie Policy",    "politica_privacidade": "Privacy Policy",
     "aceitar": "Accept all cookies"
+  },
+  "avatares": {
+    "jacare": "Anonymous Alligator",
+    "tamia": "Anonymous Chipmunk", 
+    "esquilo_gopher": "Anonymous Gopher",
+    "ligre": "Anonymous Liger",
+    "quagga": "Anonymous Quagga",
+    "tamandua": "Anonymous Anteater",
+    "chupacabra": "Anonymous Chupacabra",
+    "urso_pardo": "Anonymous Grizzly",
+    "lhama": "Anonymous Llama",
+    "coelho": "Anonymous Rabbit",
+    "tatu": "Anonymous Armadillo",
+    "corvo_marinho": "Anonymous Cormorant",
+    "porco_espinho": "Anonymous Hedgehog",
+    "peixe_boi": "Anonymous Manatee",
+    "guaxinim": "Anonymous Raccoon",
+    "auroque": "Anonymous Auroch",
+    "coiote": "Anonymous Coyote",
+    "hipopotamo": "Anonymous Hippo",
+    "visao": "Anonymous Mink",
+    "rinoceronte": "Anonymous Rhino",
+    "axolotl": "Anonymous Axolotl",
+    "corvo": "Anonymous Crow",
+    "hiena": "Anonymous Hyena",
+    "macaco": "Anonymous Monkey",
+    "ovelha": "Anonymous Sheep",
+    "texugo": "Anonymous Badger",
+    "dingo": "Anonymous Dingo",
+    "ibex": "Anonymous Ibex",
+    "alce": "Anonymous Moose",
+    "musaranho": "Anonymous Shrew",
+    "morcego": "Anonymous Bat",
+    "dinossauro": "Anonymous Dinosaur",
+    "ifrit": "Anonymous Ifrit",
+    "narval": "Anonymous Narwhal",
+    "gamba": "Anonymous Skunk",
+    "castor": "Anonymous Beaver",
+    "golfinho": "Anonymous Dolphin",
+    "iguana": "Anonymous Iguana",
+    "orangotango": "Anonymous Orangutan",
+    "esquilo": "Anonymous Squirrel",
+    "bufalo": "Anonymous Buffalo",
+    "pato": "Anonymous Duck",
+    "chacal": "Anonymous Jackal",
+    "lontra": "Anonymous Otter",
+    "tigre": "Anonymous Tiger",
+    "camelo": "Anonymous Camel",
+    "elefante": "Anonymous Elephant",
+    "canguru": "Anonymous Kangaroo",
+    "panda": "Anonymous Panda",
+    "tartaruga": "Anonymous Turtle",
+    "capivara": "Anonymous Capybara",
+    "furao": "Anonymous Ferret",
+    "coala": "Anonymous Koala",
+    "pinguim": "Anonymous Penguin",
+    "morsa": "Anonymous Walrus",
+    "camaleao": "Anonymous Chameleon",
+    "raposa": "Anonymous Fox",
+    "kraken": "Anonymous Kraken",
+    "ornitorrinco": "Anonymous Platypus",
+    "lobo": "Anonymous Wolf",
+    "guepardo": "Anonymous Cheetah",
+    "sapo": "Anonymous Frog",
+    "lemure": "Anonymous Lemur",
+    "abobora": "Anonymous Pumpkin",
+    "carcaju": "Anonymous Wolverine",
+    "chinchila": "Anonymous Chinchilla",
+    "girafa": "Anonymous Giraffe",
+    "leopardo": "Anonymous Leopard",
+    "python": "Anonymous Python",
+    "wombat": "Anonymous Wombat"
   }
 }

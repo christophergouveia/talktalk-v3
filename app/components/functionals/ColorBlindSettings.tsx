@@ -2,6 +2,7 @@
 
 import ColorBlindTest from './ColorBlindTest';
 import { useColorBlind, ColorBlindType } from '@/app/contexts/ColorBlindContext';
+import { useTranslation } from 'react-i18next';
 
 interface ColorBlindSettingsProps {
   onColorBlindChange?: (type: ColorBlindType) => void;
@@ -9,6 +10,7 @@ interface ColorBlindSettingsProps {
 }
 
 const ColorBlindSettings = ({ onColorBlindChange, currentType: propCurrentType }: ColorBlindSettingsProps) => {
+  const { t } = useTranslation();
   // Use the global ColorBlind context
   const { colorBlindType, setColorBlindType } = useColorBlind();
   
@@ -16,24 +18,59 @@ const ColorBlindSettings = ({ onColorBlindChange, currentType: propCurrentType }
   const activeType = propCurrentType || colorBlindType;
   
   const colorBlindOptions = [
-    { id: 'none', name: 'Visão Normal', description: 'Sem correção de cores' },
-    { id: 'protanopia', name: 'Protanopia', description: 'Ausência total de vermelho' },
-    { id: 'protanomalia', name: 'Protanomalia', description: 'Deficiência parcial de vermelho' },
-    { id: 'deuteranopia', name: 'Deuteranopia', description: 'Ausência total de verde' },
-    { id: 'deuteranomalia', name: 'Deuteranomalia', description: 'Deficiência parcial de verde' },
-    { id: 'tritanopia', name: 'Tritanopia', description: 'Ausência total de azul/amarelo' },
-    { id: 'tritanomalia', name: 'Tritanomalia', description: 'Deficiência parcial de azul/amarelo' },
-    { id: 'acromatopsia', name: 'Acromatopsia', description: 'Ausência total de cores (Preto e branco)' },
+    { 
+      id: 'none', 
+      name: t('chat.configuracoes.acessibilidade.daltonismo.opcoes.none.nome'), 
+      description: t('chat.configuracoes.acessibilidade.daltonismo.opcoes.none.descricao') 
+    },
+    { 
+      id: 'protanopia', 
+      name: t('chat.configuracoes.acessibilidade.daltonismo.opcoes.protanopia.nome'), 
+      description: t('chat.configuracoes.acessibilidade.daltonismo.opcoes.protanopia.descricao') 
+    },
+    { 
+      id: 'protanomalia', 
+      name: t('chat.configuracoes.acessibilidade.daltonismo.opcoes.protanomalia.nome'), 
+      description: t('chat.configuracoes.acessibilidade.daltonismo.opcoes.protanomalia.descricao') 
+    },
+    { 
+      id: 'deuteranopia', 
+      name: t('chat.configuracoes.acessibilidade.daltonismo.opcoes.deuteranopia.nome'), 
+      description: t('chat.configuracoes.acessibilidade.daltonismo.opcoes.deuteranopia.descricao') 
+    },
+    { 
+      id: 'deuteranomalia', 
+      name: t('chat.configuracoes.acessibilidade.daltonismo.opcoes.deuteranomalia.nome'), 
+      description: t('chat.configuracoes.acessibilidade.daltonismo.opcoes.deuteranomalia.descricao') 
+    },
+    { 
+      id: 'tritanopia', 
+      name: t('chat.configuracoes.acessibilidade.daltonismo.opcoes.tritanopia.nome'), 
+      description: t('chat.configuracoes.acessibilidade.daltonismo.opcoes.tritanopia.descricao') 
+    },
+    { 
+      id: 'tritanomalia', 
+      name: t('chat.configuracoes.acessibilidade.daltonismo.opcoes.tritanomalia.nome'), 
+      description: t('chat.configuracoes.acessibilidade.daltonismo.opcoes.tritanomalia.descricao') 
+    },
+    { 
+      id: 'acromatopsia', 
+      name: t('chat.configuracoes.acessibilidade.daltonismo.opcoes.acromatopsia.nome'), 
+      description: t('chat.configuracoes.acessibilidade.daltonismo.opcoes.acromatopsia.descricao') 
+    },
   ];
 
   return (
     <>
       <div className="p-6 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
-        <h3 className="text-lg font-semibold mb-6">Configurações de Acessibilidade Visual</h3>
+        <h3 className="text-lg font-semibold mb-6">
+          {t('chat.configuracoes.acessibilidade.daltonismo.titulo')}
+        </h3>
         
         <div className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {colorBlindOptions.map((option) => (              <button
+            {colorBlindOptions.map((option) => (
+              <button
                 key={option.id}
                 onClick={() => {
                   // Update global context
@@ -70,8 +107,7 @@ const ColorBlindSettings = ({ onColorBlindChange, currentType: propCurrentType }
           {/* Info Section */}
           <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
             <p className="text-sm text-blue-600 dark:text-blue-400">
-              Estas configurações ajudam a melhorar a visualização das cores para pessoas com diferentes tipos de daltonismo.
-              Selecione a opção que melhor se adapta à sua necessidade.
+              {t('chat.configuracoes.acessibilidade.daltonismo.info')}
             </p>
           </div>
         </div>

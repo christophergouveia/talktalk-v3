@@ -195,15 +195,13 @@ io.on('connection', (socket) => {
       });
 
       console.log('[DEBUG] Usuários na sala:', roomUsers.length);
-      console.log('[DEBUG] Dados dos usuários:', roomUsers.map(u => ({ userData: u.userData.substring(0, 20) + '...', host: u.host })));
-
-      // Verificar limite de usuários (máximo 3)
+      console.log('[DEBUG] Dados dos usuários:', roomUsers.map(u => ({ userData: u.userData.substring(0, 20) + '...', host: u.host })));      // Verificar limite de usuários (máximo 10)
       const isUserAlreadyInRoom = roomUsers.some(user => user.userData === encryptResult.data);
       console.log('[DEBUG] Usuário já está na sala?', isUserAlreadyInRoom);
       
-      if (!isUserAlreadyInRoom && roomUsers.length >= 3) {
+      if (!isUserAlreadyInRoom && roomUsers.length >= 10) {
         console.log('[DEBUG] Sala está cheia! Rejeitando entrada.');
-        socket.emit('error', 'Sala está cheia (máximo 3 usuários)');
+        socket.emit('error', 'Sala está cheia (máximo 10 usuários)');
         return;
       }
 

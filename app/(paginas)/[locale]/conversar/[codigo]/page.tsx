@@ -668,7 +668,6 @@ export default function RoomPage() {
     },
     [setAvatarColor]
   );
-
   useEffect(() => {
     if (!socketClient) return;
 
@@ -676,48 +675,97 @@ export default function RoomPage() {
     const maxReconnectAttempts = 5;
 
     const handleDisconnect = (reason: string) => {
-      console.log('Desconectado:', reason);
+      console.log('[DEBUG] Socket desconectado:', reason);
+      setConnectionStatus('disconnected');
 
       // Se for desconexão por timeout, tenta reconectar
       if (reason === 'io server disconnect' || reason === 'transport close' || reason === 'ping timeout') {
         if (reconnectAttempts < maxReconnectAttempts) {
-          console.log(`Tentativa de reconexão ${reconnectAttempts + 1} de ${maxReconnectAttempts}`);
+          console.log(`[DEBUG] Tentativa de reconexão ${reconnectAttempts + 1} de ${maxReconnectAttempts}`);
+          setConnectionStatus('connecting');
           setTimeout(
             () => {
               socketClient.connect();
               reconnectAttempts++;
             },
             1000 * Math.min(reconnectAttempts + 1, 5)
-          ); // Backoff exponencial (backoff é pra dar delay entre as tentativas gustavin)
+          ); // Backoff exponencial
         } else {
-          console.log('Número máximo de tentativas de reconexão atingido');
+          console.log('[DEBUG] Número máximo de tentativas de reconexão atingido');
+          setConnectionStatus('error');
         }
       }
     };
 
     const handleReconnect = (attempt: number) => {
-      console.log('Reconectado após tentativa:', attempt);
+      console.log('[DEBUG] Reconectado após tentativa:', attempt);
       reconnectAttempts = 0; // Reseta contador após reconexão bem sucedida
+      setConnectionStatus('connected');
       socketClient.emit('join-room', codigo);
     };
 
     const handleConnect = () => {
-      console.log('Conectado ao servidor');
+      console.log('[DEBUG] Socket conectado no useEffect');
       reconnectAttempts = 0;
+      setConnectionStatus('connected');
+    };    const handleConnecting = () => {
+      console.log('[DEBUG] Socket tentando conectar...');
+      setConnectionStatus('connecting');
     };
 
+    const handleConnectError = (error: any) => {
+      console.error('[DEBUG] Erro de conexão no useEffect:', error);
+      setConnectionStatus('error');
+    };
+
+    // Verifica status inicial do socket
+    if (socketClient.connected) {
+      setConnectionStatus('connected');
+    }
+
     socketClient.on('connect', handleConnect);
+    socketClient.on('connecting', handleConnecting);
     socketClient.on('disconnect', handleDisconnect);
     socketClient.on('reconnect', handleReconnect);
+    socketClient.on('connect_error', handleConnectError);
     socketClient.on('reconnect_error', (error) => {
-      console.error('Erro na reconexão:', error);
-    });
-
-    return () => {
+      console.error('[DEBUG] Erro na reconexão:', error);
+      setConnectionStatus('error');
+    });    return () => {
       socketClient.off('connect', handleConnect);
+      socketClient.off('connecting', handleConnecting);
       socketClient.off('disconnect', handleDisconnect);
       socketClient.off('reconnect', handleReconnect);
+      socketClient.off('connect_error', handleConnectError);
       socketClient.off('reconnect_error');
+    };
+  }, [socketClient, codigo]);
+
+  // Verificação periódica do status real da conexão
+  useEffect(() => {
+    if (!socketClient) return;
+
+    const checkConnectionStatus = () => {
+      const realStatus = socketClient.connected ? 'connected' : 
+                        socketClient.disconnected ? 'disconnected' : 'connecting';
+      
+      setConnectionStatus(prevStatus => {
+        if (prevStatus !== realStatus) {
+          console.log(`[DEBUG] Status corrigido: ${prevStatus} -> ${realStatus}`);
+          return realStatus;
+        }
+        return prevStatus;
+      });
+    };
+
+    // Verifica o status a cada 5 segundos
+    const statusInterval = setInterval(checkConnectionStatus, 5000);
+    
+    // Verifica imediatamente
+    checkConnectionStatus();
+
+    return () => {
+      clearInterval(statusInterval);
     };
   }, [socketClient, codigo]);
 

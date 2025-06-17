@@ -186,33 +186,17 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
     } finally {
       setMessageLoading(false);
     }
-  };
-  useEffect(() => {
+  };  useEffect(() => {
     if (!socketClient) return;
 
-    let reconnectAttempts = 0;
-    const maxReconnectAttempts = 5;
-
-    const handleDisconnect = () => {
-      console.log('Socket desconectado');
-      const tryReconnect = () => {
-        if (reconnectAttempts < maxReconnectAttempts && socketClient.disconnected) {
-          console.log(`Tentativa de reconexão ${reconnectAttempts + 1}/${maxReconnectAttempts}`);
-          socketClient.connect();
-          reconnectAttempts++;
-        } else if (reconnectAttempts >= maxReconnectAttempts) {
-          console.log('Máximo de tentativas de reconexão atingido');
-          socketClient.disconnect();
-        }
-      };
-
-      // Delay progressivo para reconexão
-      setTimeout(tryReconnect, 1000 * Math.min(reconnectAttempts + 1, 5));
+    // Removida a lógica de reconexão daqui pois já está no componente principal
+    // Mantendo apenas logs para debugging
+    const handleConnect = () => {
+      console.log('[useChat] Socket conectado');
     };
 
-    const handleConnect = () => {
-      console.log('Socket reconectado');
-      reconnectAttempts = 0;
+    const handleDisconnect = () => {
+      console.log('[useChat] Socket desconectado');
     };
 
     socketClient.on('disconnect', handleDisconnect);

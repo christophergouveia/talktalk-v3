@@ -70,8 +70,8 @@
         "comecar_conversar": "Começar a Conversar",
         "conhecer_equipe": "Conhecer a Equipe"
       }
-    },
-    "privacidade": {
+    },    "privacidade": {
+      "badge": "Segurança em Primeiro Lugar",
       "titulo": {
         "parte1": "Sua",
         "privacidade_palavra": "Privacidade",
@@ -131,8 +131,8 @@
         "titulo": "Personalização Total",
         "descricao": "Customize a interface, cores, temas e configurações para criar sua experiência única."
       }
-    },
-    "evolucao": {
+    },    "evolucao": {
+      "badge": "Nossa Jornada",
       "titulo": "Nossa Evolução",
       "subtitulo": "Acompanhe cada etapa da nossa jornada, desde a ideia inicial até o produto revolucionário de hoje",
       "timeline": {
@@ -182,8 +182,8 @@
           "descricao": "O TalkTalk é disponibilizado ao público, marcando o início de uma nova era na comunicação global inclusiva."
         }
       }
-    },
-    "equipe": {
+    },    "equipe": {
+      "badge": "Conheça a Equipe",
       "titulo": "Conheça Nossa Equipe",
       "subtitulo": "Os visionários e desenvolvedores por trás da revolução na comunicação global",
       "membros": {
@@ -291,6 +291,7 @@
       "audio_nao_suportado": "Your browser does not support the audio element."
     },    "configuracoes": {
       "titulo": "Configurações",
+      "titulo_sala": "CONFIGURAÇÕES DA SALA",
       "subtitulo": "Personalize sua experiência no TalkTalk",
       "categorias": "Categorias",
       "abas": {
@@ -335,8 +336,8 @@
         "idioma_principal": {
           "label": "Idioma principal",
           "descricao": "Este é o idioma em que você deseja receber as traduções"
-        },
-        "label": "Idioma",
+        },        "label": "Idioma",
+        "descricao_selecao": "Selecione para qual idioma as mensagens serão traduzidas",
         "pesquisar": "Pesquisar idiomas...",
         "nenhum_encontrado": "Nenhum idioma encontrado",
         "traducao_automatica": {
@@ -397,10 +398,87 @@
           "exemplo": "Exemplo de texto com o tamanho selecionado",
           "texto_exemplo": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         }
-      },
-      "acessibilidade": {
+      },      "acessibilidade": {
         "titulo": "Configurações de Acessibilidade",
-        "subtitulo": "Torne sua experiência mais acessível"
+        "subtitulo": "Torne sua experiência mais acessível",
+        "daltonismo": {
+          "titulo": "Configurações de Acessibilidade Visual",
+          "opcoes": {
+            "none": {
+              "nome": "Visão Normal",
+              "descricao": "Sem correção de cores"
+            },
+            "protanopia": {
+              "nome": "Protanopia",
+              "descricao": "Ausência total de vermelho"
+            },
+            "protanomalia": {
+              "nome": "Protanomalia",
+              "descricao": "Deficiência parcial de vermelho"
+            },
+            "deuteranopia": {
+              "nome": "Deuteranopia",
+              "descricao": "Ausência total de verde"
+            },
+            "deuteranomalia": {
+              "nome": "Deuteranomalia",
+              "descricao": "Deficiência parcial de verde"
+            },
+            "tritanopia": {
+              "nome": "Tritanopia",
+              "descricao": "Ausência total de azul/amarelo"
+            },
+            "tritanomalia": {
+              "nome": "Tritanomalia",
+              "descricao": "Deficiência parcial de azul/amarelo"
+            },
+            "acromatopsia": {
+              "nome": "Acromatopsia",
+              "descricao": "Ausência total de cores (Preto e branco)"
+            }
+          },
+          "teste": {
+            "titulo": "Teste de Visualização",
+            "cores": {
+              "vermelho": "Vermelho",
+              "verde": "Verde",
+              "azul": "Azul"
+            },
+            "ishihara": {
+              "titulo": "Teste de Ishihara Simplificado",
+              "descricao": "Se você consegue ver claramente os números acima, as configurações estão ajudando na sua percepção das cores.",
+              "numeros": "Os números devem ser visíveis como \"6\", \"8\" e \"5\"."
+            },
+            "modo_ativo": "Modo {tipo} ativo"
+          },          "info": "Estas configurações ajudam a melhorar a visualização das cores para pessoas com diferentes tipos de daltonismo. Selecione a opção que melhor se adapta à sua necessidade."
+        },
+        "cores": {
+          "titulo": "Selecione uma Cor",
+          "lista_aria": "Lista de cores disponíveis",
+          "cor_aria": "Cor {nome}",
+          "nomes": {
+            "tangerina": "Tangerina",
+            "coral": "Coral",
+            "pessego": "Pêssego",
+            "rosa": "Rosa",
+            "cinza_rosa": "Cinza Rosa",
+            "violeta": "Violeta",
+            "laranja": "Laranja",
+            "fuchsia": "Fuchsia",
+            "roxo": "Roxo",
+            "lavanda": "Lavanda",
+            "verde_claro": "Verde Claro",
+            "ciano": "Ciano",
+            "marrom": "Marrom",
+            "verde_menta": "Verde Menta",
+            "creme": "Creme",
+            "rosa_pastel": "Rosa Pastel",
+            "laranja_pastel": "Laranja Pastel",
+            "cor_de_rosa": "Cor de Rosa",
+            "amarelo_claro": "Amarelo Claro",
+            "azul_claro": "Azul Claro"
+          }
+        }
       },
       "chat_compacto": {
         "titulo": "Chat compacto",
@@ -451,7 +529,7 @@
     "erros": {
       "sala_nao_encontrada": "Sala não encontrada!",
       "erro_conectar_sala": "Erro ao conectar na sala:",
-      "sala_cheia": "Sala está cheia! Máximo de 3 usuários permitidos.",
+      "sala_cheia": "Sala está cheia! Máximo de 10 usuários permitidos.",
       "erro_conexao_servidor": "Erro de conexão com o servidor. Verifique sua internet.",
       "servidor_indisponivel": "Não foi possível conectar ao servidor de chat. Verifique se o servidor está funcionando."
     }
@@ -460,7 +538,78 @@
     "titulo": "Consentimento de Cookies",
     "descricao": "Este site utiliza cookies para melhorar sua experiência e para garantir que suas mensagens sejam seguras. Saiba mais acessando a",
     "politica_cookies": "Política de Cookies",
-    "politica_privacidade": "Política de Privacidade",
-    "aceitar": "Aceitar todos os cookies"
+    "politica_privacidade": "Política de Privacidade",    "aceitar": "Aceitar todos os cookies"
+  },
+  "avatares": {
+    "jacare": "Jacaré Anônimo",
+    "tamia": "Tamiá Anônimo", 
+    "esquilo_gopher": "Esquilo Anônimato",
+    "ligre": "Ligre Anônimo",
+    "quagga": "Quagga Anônimo",
+    "tamandua": "Tamanduá Anônimo",
+    "chupacabra": "Chupacabra Anônimo",
+    "urso_pardo": "Urso-pardo Anônimo",
+    "lhama": "Lhama Anônima",
+    "coelho": "Coelho Anônimo",
+    "tatu": "Tatu Anônimo",
+    "corvo_marinho": "Corvo-marinho Anônimo",
+    "porco_espinho": "Porco-espinho Anônimo",
+    "peixe_boi": "Peixe-boi Anônimo",
+    "guaxinim": "Guaxinim Anônimo",
+    "auroque": "Auroque Anônimo",
+    "coiote": "Coiote Anônimo",
+    "hipopotamo": "Hipopótamo Anônimo",
+    "visao": "Visão Anônima",
+    "rinoceronte": "Rinoceronte Anônimo",
+    "axolotl": "Axolotl Anônimo",
+    "corvo": "Corvo Anônimo",
+    "hiena": "Hiena Anônima",
+    "macaco": "Macaco Anônimo",
+    "ovelha": "Ovelha Anônima",
+    "texugo": "Texugo Anônimo",
+    "dingo": "Dingo Anônimo",
+    "ibex": "Íbex Anônimo",
+    "alce": "Alce Anônimo",
+    "musaranho": "Musaranho Anônimo",
+    "morcego": "Morcego Anônimo",
+    "dinossauro": "Dinossauro Anônimo",
+    "ifrit": "Ifrit Anônimo",
+    "narval": "Narval Anônimo",
+    "gamba": "Gambá Anônimo",
+    "castor": "Castor Anônimo",
+    "golfinho": "Golfinho Anônimo",
+    "iguana": "Iguana Anônima",
+    "orangotango": "Orangotango Anônimo",
+    "esquilo": "Esquilo Anônimo",
+    "bufalo": "Búfalo Anônimo",
+    "pato": "Pato Anônimo",
+    "chacal": "Chacal Anônimo",
+    "lontra": "Lontra Anônima",
+    "tigre": "Tigre Anônimo",
+    "camelo": "Camelo Anônimo",
+    "elefante": "Elefante Anônimo",
+    "canguru": "Canguru Anônimo",
+    "panda": "Panda Anônimo",
+    "tartaruga": "Tartaruga Anônima",
+    "capivara": "Capivara Anônima",
+    "furao": "Furão Anônimo",
+    "coala": "Coala Anônimo",
+    "pinguim": "Pinguim Anônimo",
+    "morsa": "Morsa Anônima",
+    "camaleao": "Camaleão Anônimo",
+    "raposa": "Raposa Anônima",
+    "kraken": "Kraken Anônimo",
+    "ornitorrinco": "Ornitorrinco Anônimo",
+    "lobo": "Lobo Anônimo",
+    "guepardo": "Guepardo Anônimo",
+    "sapo": "Sapo Anônimo",
+    "lemure": "Lêmure Anônimo",
+    "abobora": "Abóbora Anônima",
+    "carcaju": "Carcaju Anônimo",
+    "chinchila": "Chinchila Anônima",
+    "girafa": "Girafa Anônima",
+    "leopardo": "Leopardo Anônimo",
+    "python": "Python Anônimo",
+    "wombat": "Wombat Anônimo"
   }
 }

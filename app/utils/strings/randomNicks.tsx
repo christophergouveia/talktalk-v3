@@ -1,3 +1,78 @@
+// Avatar mapping: translation key -> English filename
+export const avatarMapping: Record<string, string> = {
+  'jacare': 'Alligator',
+  'tamia': 'Chipmunk', 
+  'esquilo_gopher': 'Gopher',
+  'ligre': 'Liger',
+  'quagga': 'Quagga',
+  'tamandua': 'Anteater',
+  'chupacabra': 'Chupacabra',
+  'urso_pardo': 'Grizzly',
+  'lhama': 'Llama',
+  'coelho': 'Rabbit',
+  'tatu': 'Armadillo',
+  'corvo_marinho': 'Cormorant',
+  'porco_espinho': 'Hedgehog',
+  'peixe_boi': 'Manatee',
+  'guaxinim': 'Raccoon',
+  'auroque': 'Auroch',
+  'coiote': 'Coyote',
+  'hipopotamo': 'Hippo',
+  'visao': 'Mink',
+  'rinoceronte': 'Rhino',
+  'axolotl': 'Axolotl',
+  'corvo': 'Crow',
+  'hiena': 'Hyena',
+  'macaco': 'Monkey',
+  'ovelha': 'Sheep',
+  'texugo': 'Badger',
+  'dingo': 'Dingo',
+  'ibex': 'Ibex',
+  'alce': 'Moose',
+  'musaranho': 'Shrew',
+  'morcego': 'Bat',
+  'dinossauro': 'Dinosaur',
+  'ifrit': 'Ifrit',
+  'narval': 'Narwhal',
+  'gamba': 'Skunk',
+  'castor': 'Beaver',
+  'golfinho': 'Dolphin',
+  'iguana': 'Iguana',
+  'orangotango': 'Orangutan',
+  'esquilo': 'Squirrel',
+  'bufalo': 'Buffalo',
+  'pato': 'Duck',
+  'chacal': 'Jackal',
+  'lontra': 'Otter',
+  'tigre': 'Tiger',
+  'camelo': 'Camel',
+  'elefante': 'Elephant',
+  'canguru': 'Kangaroo',
+  'panda': 'Panda',
+  'tartaruga': 'Turtle',
+  'capivara': 'Capybara',
+  'furao': 'Ferret',
+  'coala': 'Koala',
+  'pinguim': 'Penguin',
+  'morsa': 'Walrus',
+  'camaleao': 'Chameleon',
+  'raposa': 'Fox',
+  'kraken': 'Kraken',
+  'ornitorrinco': 'Platypus',
+  'lobo': 'Wolf',
+  'guepardo': 'Cheetah',
+  'sapo': 'Frog',
+  'lemure': 'Lemur',
+  'abobora': 'Pumpkin',
+  'carcaju': 'Wolverine',
+  'chinchila': 'Chinchilla',
+  'girafa': 'Giraffe',
+  'leopardo': 'Leopard',
+  'python': 'Python',
+  'wombat': 'Wombat',
+};
+
+// Legacy support - keep the old randomNicks for backward compatibility
 export const randomNicks: Record<string, string> = {
   'Jacaré Anônimo': 'Alligator',
   'Tamiá Anônimo': 'Chipmunk',
@@ -72,12 +147,26 @@ export const randomNicks: Record<string, string> = {
 };
 
 export class RandomNicks {
+  // New method that returns translation key instead of hardcoded Portuguese
+  static getRandomKey() {
+    const keys = Object.keys(avatarMapping);
+    const randomIndex = Math.floor(Math.random() * keys.length);
+    return keys[randomIndex];
+  }
+
+  // Get English filename from translation key
+  static getEnglishFromKey(key: string) {
+    return avatarMapping[key];
+  }
+
+  // Legacy method for backward compatibility
   static get() {
     const nicks = Object.keys(randomNicks);
     const randomIndex = Math.floor(Math.random() * nicks.length);
     return nicks[randomIndex];
   }
 
+  // Legacy method for backward compatibility
   static getEnglish(nick: string) {
     return randomNicks[nick];
   }

@@ -2,6 +2,7 @@ import { Button, Input, Switch } from "@heroui/react";
 import { CountryFlag } from '@/app/components/countryFlags';
 import Image from 'next/image';
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ChatOptionsProps {
   isOpen: boolean;
@@ -49,6 +50,7 @@ export default function ChatOptions({
   onLanguageDropdownClose,
   onKeyDown
 }: ChatOptionsProps) {
+  const { t } = useTranslation();
   const languagesFilterRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -57,13 +59,13 @@ export default function ChatOptions({
         isOpen ? 'flex' : 'hidden'
       }`}
     >
-      <h1 className="rounded-md bg-[var(--chat-bg-header)] p-2 text-center font-bold">CONFIGURAÇÕES DA SALA</h1>
+      <h1 className="rounded-md bg-[var(--chat-bg-header)] p-2 text-center font-bold">{t('chat.configuracoes.titulo_sala')}</h1>
       <section className="flex-1">
         <div className="m-2 flex flex-col gap-4">
           <div>
             <div className="flex flex-col gap-1">
-              <p className="text-medium font-semibold">Idioma de tradução</p>
-              <p className="text-tiny text-default-600">Selecione para qual idioma as mensagens serão traduzidas</p>
+              <p className="text-medium font-semibold">{t('chat.configuracoes.idioma.label')}</p>
+              <p className="text-tiny text-default-600">{t('chat.configuracoes.idioma.descricao_selecao')}</p>
             </div>
             <div className="relative">
               <button
@@ -84,7 +86,7 @@ export default function ChatOptions({
                     <Input
                       type="text"
                       className="p-4"
-                      placeholder="Pesquise uma língua..."
+                      placeholder={t('chat.configuracoes.idioma.pesquisar')}
                       onChange={(e) => onLanguageFilterChange(e.target.value)}
                       ref={languagesFilterRef}
                       onKeyDown={onKeyDown}

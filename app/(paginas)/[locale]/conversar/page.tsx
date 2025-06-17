@@ -304,7 +304,7 @@ export default function ConversarHome() {
             className="bg-white/80 dark:bg-[#18181B]/80 backdrop-blur-md rounded-xl p-4 max-w-2xl mx-auto"
           >
             <p className="text-lg text-gray-600 dark:text-gray-300" style={{ fontSize: `${fontSize}px` }}>
-              {t('hero.subtitulo')}
+              {t('conversar.hero.subtitulo')}
             </p>
           </motion.div>
         </motion.div>

@@ -432,10 +432,9 @@ const teamMembers = [
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: false, amount: 0.3 }}
               transition={{ duration: 0.7 }}
-            >
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium mb-6">
+            >              <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium mb-6">
                 <FaShieldAlt className="w-4 h-4" />
-                Segurança em Primeiro Lugar
+                {t('privacidade.badge')}
               </div>
               
               <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-6">
@@ -713,10 +712,9 @@ const teamMembers = [
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.8 }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium mb-8">
+          >            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium mb-8">
               <FaChartLine className="w-4 h-4" />
-              Nossa Jornada
+              {t('evolucao.badge')}
             </div>
             
             <h2 className="text-5xl md:text-6xl font-bold mb-8 text-gray-900 dark:text-white">
@@ -748,10 +746,9 @@ const teamMembers = [
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.3 }}
             transition={{ duration: 0.6 }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm font-medium mb-6">
+          >            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm font-medium mb-6">
               <HiUserGroup className="w-4 h-4" />
-              Conheça a Equipe
+              {t('equipe.badge')}
             </div>
             
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
