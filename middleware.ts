@@ -1,13 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
-import { i18n } from './next-i18next.config'
-const locales = i18n.locales;
 
-function getLocale(request: NextRequest) {
-  const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
+const locales = ['pt-BR', 'en-US', 'es-ES'] as const;
+const defaultLocale = 'pt-BR';
+
+function getLocale(request: NextRequest): string {
+  // Check URL for locale parameter
+  const pathname = request.nextUrl.pathname;
+  const pathnameHasLocale = locales.some(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+  );
+
+  if (pathnameHasLocale) {
+    return pathname.split('/')[1];
+  }
+
+  // Check cookie for saved locale
+  const cookieLocale = request.cookies.get('i18nextLng')?.value;
   if (cookieLocale && locales.includes(cookieLocale as any)) {
     return cookieLocale;
   }
 
+  // Check Accept-Language header
   const acceptLanguage = request.headers.get('accept-language');
   if (acceptLanguage) {
     const preferredLocale = acceptLanguage
@@ -16,12 +29,14 @@ function getLocale(request: NextRequest) {
       .join('-')
       .toLowerCase();
 
+    // Try exact match first
     for (const locale of locales) {
       if (locale.toLowerCase() === preferredLocale) {
         return locale;
       }
     }
 
+    // Try partial match (e.g., 'pt' matches 'pt-BR')
     for (const locale of locales) {
       if (preferredLocale.startsWith(locale.split('-')[0].toLowerCase())) {
         return locale;
@@ -29,12 +44,13 @@ function getLocale(request: NextRequest) {
     }
   }
 
-  return i18n.defaultLocale;
+  return defaultLocale;
 }
 
 export function middleware(request: NextRequest) {
-  const { pathname, search } = request.nextUrl;
-  
+  const { pathname } = request.nextUrl;
+
+  // Skip middleware for static files and API routes
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
@@ -44,22 +60,24 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Check if pathname already has a locale
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
 
-  if (pathnameHasLocale) {
-    return NextResponse.next();
+  if (!pathnameHasLocale) {
+    const locale = getLocale(request);
+    const newPathname = `/${locale}${pathname}`;
+    
+    return NextResponse.redirect(new URL(newPathname, request.url));
   }
 
-  const locale = getLocale(request);
-  const newUrl = new URL(`/${locale}${pathname}${search}`, request.url);
-
-  return NextResponse.redirect(newUrl);
+  return NextResponse.next();
 }
 
 export const config = {
   matcher: [
+    // Skip all internal paths (_next, api, etc.)
     '/((?!api|_next|_vercel|static|.*\\..*).*)',
   ],
-}; 
+};

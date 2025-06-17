@@ -1,98 +1,470 @@
 {
-    "navbar": {
-        "pagina_inicial": "Home",
-        "sobre_ferramenta": "About",
-        "conversar": "Chat"
+  "navbar": {
+    "pagina_inicial": "Home",
+    "sobre_ferramenta": "About",
+    "conversar": "Chat"
+  },
+  "pagina_inicial": {
+    "descricao": "Communicate efficiently with people who don't speak the same language as you. Without difficulty. With practicality.",
+    "comece_a_conversar": "Start chatting right now!",
+    "hero": {
+      "privacidade": {
+        "sua": "Your",
+        "privacidade": "privacy"
+      },
+      "responsabilidade": {
+        "nossa": "our",
+        "responsabilidade": "responsibility"
+      },
+      "descricao": "This tool has completely anonymous interaction with all user messages encrypted and secure."
     },
-    "pagina_inicial": {
-        "descricao": "Communicate efficiently with people who don't speak the same language as you. Without difficulties. With practicality.",
-        "comece_a_conversar": "Start chatting now!",
-        "hero": {
-            "privacidade": {
-                "sua": "Your",
-                "privacidade": "privacy"
-            },
-            "responsabilidade": {
-                "nossa": "our",
-                "responsabilidade": "responsibility"
-            },
-            "descricao": "This tool has completely anonymous interaction with all user messages encrypted and secure."
-        },
-        "diferencial": {
-            "titulo": "Our differential",
-            "seguranca": {
-                "titulo": "Security",
-                "descricao": "Your privacy is our priority! Our platform uses advanced encryption to ensure your conversations remain confidential."
-            },
-            "gratuidade": {
-                "titulo": "Free",
-                "descricao": "Break down language barriers without spending anything! Our tool is completely free, making global communication accessible to everyone."
-            },
-            "interface": {
-                "titulo": "Intuitive and easy to use interface",
-                "descricao": "Connecting with people from different cultures has never been easier! Our interface is designed to be as simple and easy to use as possible, start conversations with just a few clicks."
-            },
-            "sem_conta": {
-                "titulo": "No account creation needed",
-                "descricao": "Accounts? Registration? Forget complicated sign-ups. Our tool allows you to start chatting immediately, without the need to create an account."
-            }
-        },
-        "desenvolvedores": {
-            "titulo": "Developers",
-            "cargos": {
-                "frontend": "Frontend Developer",
-                "backend": "Backend Developer"
-            }
-        }
+    "diferencial": {
+      "titulo": "our differential",
+      "seguranca": {
+        "titulo": "Security",
+        "descricao": "Your privacy is a priority for us! Our platform uses advanced encryption to ensure your conversations remain confidential."
+      },
+      "gratuidade": {
+        "titulo": "Free of charge",
+        "descricao": "Reduce language barriers without spending anything! Our tool is completely free, making global communication accessible to everyone."
+      },
+      "interface": {
+        "titulo": "Intuitive and easy-to-use interface",
+        "descricao": "Connecting with people from different cultures has never been easier! Our interface was designed to be as simple and easy to use as possible, start conversations with just a few clicks."
+      },
+      "sem_conta": {
+        "titulo": "No need to create accounts",
+        "descricao": "Accounts? Registration? Forget complicated registrations. Our tool allows you to start chatting immediately, without needing to create an account."
+      }
     },
-    "footer": {
-        "copyright": "Copyright © 2025 - All rights reserved. ",
-        "desenvolvido_por": "Developed by <strong>Christopher</strong>, <strong>Gustavo</strong> and <strong>Kaike</strong>.",
-        "campus": "Federal Institute of Education, Science and Technology of Assis Chateaubriand"
+    "desenvolvedores": {
+      "titulo": "Developers",
+      "cargos": {
+        "frontend": "Frontend Developer",
+        "backend": "Backend Developer"
+      }
     },
-    "sobre": {
-        
+    "highlights": {
+      "gratuito": "100% Free",
+      "sem_cadastro": "No Registration",
+      "traducao_instantanea": "Instant Translation",
+      "totalmente_seguro": "Totally Secure"
     },
-    "conversar": {
-        "hero": {
-            "titulo": {
-                "parte1": "A",
-                "parte2": "powerful",
-                "parte3": "real-time translation tool. No need to switch tabs."
-            }
-        },
-        "criar_sala": {
-            "titulo": "Create a room",
-            "subtitulo": "Want to join an existing room? Copy the link that the room host sent you and access it.",
-            "apelido": {
-                "label": "Nickname (optional)",
-                "erro_min": "The nickname must contain at least 4 characters.",
-                "erro_max": "The nickname must contain at most 32 characters.",
-                "erro_caracteres": "Nickname must contain only letters, numbers, spaces, _ and -"
-            },
-            "avatar_alt": "Your avatar",
-            "carregando": "Creating room...",
-            "criando_sala": "Creating your room...",
-            "botao_criar": "CREATE A ROOM",
-            "dica": {
-                "parte1": "TIP:",
-                "parte2": "You can change the color of your avatar! Try clicking/touching on your animal icon. 😉"
-            }
-        },
-        "entrar_sala": {
-            "titulo": "Join a room",
-            "subtitulo": "Do you already have a room code? Enter it below and start chatting.",
-            "codigo": {
-                "label": "Room code",
-                "placeholder": "Enter the room code"
-            },
-            "botao_entrar": "Join the room"
-        },
-        "botoes_avatar": {
-            "escolher_avatar": "Choose avatar",
-            "escolher_avatar_aleatorio": "Choose random avatar",
-            "escolha_seu_avatar": "Choose your avatar",
-            "selecionado": "SELECTED"
-        }
+    "botoes": {
+      "saiba_mais": "Learn More"
     }
+  },
+  "footer": {
+    "copyright": "Copyright © 2025 - All rights reserved. ",
+    "desenvolvido_por": "Developed by <strong>Christopher</strong>, <strong>Gustavo</strong> and <strong>Kaike</strong>.",
+    "campus": "Federal Institute of Education, Science and Technology of Assis Chateaubriand"
+  },
+  "sobre": {
+    "hero": {
+      "badge": "Connecting the world through communication",
+      "titulo": {
+        "parte1": "Our Journey",
+        "parte2": "in TalkTalk"
+      },
+      "descricao": "Discover how we are revolutionizing global communication with cutting-edge technology, inclusive design and a genuine passion for connecting people from all cultures.",
+      "botoes": {
+        "comecar_conversar": "Start Chatting",
+        "conhecer_equipe": "Meet the Team"
+      }
+    },
+    "privacidade": {
+      "titulo": {
+        "parte1": "Your",
+        "privacidade_palavra": "Privacy",
+        "parte2": "Our",
+        "responsabilidade_palavra": "Responsibility"
+      },
+      "descricao": "Your privacy is our top priority. We implement the most advanced security measures to ensure that your conversations remain completely private and protected.",
+      "recursos": {
+        "criptografia": "End-to-end encryption",
+        "dados_nao_armazenados": "Data never stored",
+        "conformidade_lgpd": "GDPR compliance"
+      },
+      "imagem_alt": "Safe Conversation"
+    },
+    "diferenciais": {
+      "titulo": "Our Differentials",
+      "subtitulo": "What makes us unique in the world of global communication",
+      "seguranca": {
+        "titulo": "Maximum Security",
+        "descricao": "Advanced protection with end-to-end encryption, ensuring that only you and your interlocutor have access to messages.",
+        "imagem_alt": "Security"
+      },
+      "gratuito": {
+        "titulo": "100% Free",
+        "descricao": "We believe that global communication should be accessible to everyone. Our platform is completely free, with no hidden fees.",
+        "imagem_alt": "Free"
+      },
+      "sem_cadastro": {
+        "titulo": "No Registration",
+        "descricao": "Enter and start chatting immediately. No need to create an account, provide email or go through bureaucratic processes."
+      }
+    },
+    "recursos": {
+      "titulo": "Innovative Features",
+      "subtitulo": "Cutting-edge technologies that make global communication accessible, fast and secure for everyone",
+      "traducao_tempo_real": {
+        "titulo": "Real-time Translation",
+        "descricao": "Instant communication between people of different languages with automatic and accurate translation."
+      },
+      "sintese_voz": {
+        "titulo": "Voice Synthesis",
+        "descricao": "Transform text into speech with natural voices and customizable settings for maximum accessibility."
+      },
+      "acessibilidade_total": {
+        "titulo": "Total Accessibility",
+        "descricao": "Inclusive design with support for color blindness, multiple font sizes and simplified navigation."
+      },
+      "velocidade_extrema": {
+        "titulo": "Extreme Speed",
+        "descricao": "Real-time chat with minimal latency, ensuring fluid and natural conversations."
+      },
+      "seguranca_avancada": {
+        "titulo": "Advanced Security",
+        "descricao": "End-to-end encryption and data protection to keep your conversations always safe."
+      },
+      "personalizacao_total": {
+        "titulo": "Total Customization",
+        "descricao": "Customize the interface, colors, themes and settings to create your unique experience."
+      }
+    },
+    "evolucao": {
+      "titulo": "Our Evolution",
+      "subtitulo": "Follow each step of our journey, from the initial idea to today's revolutionary product",
+      "timeline": {
+        "janeiro_2024": {
+          "data": "January 2024",
+          "titulo": "Birth of the Idea",
+          "descricao": "The journey began with the vision of creating a platform that could connect people from different cultures and languages naturally and inclusively, breaking down language barriers."
+        },
+        "marco_2024": {
+          "data": "March 2024",
+          "titulo": "Research and Planning",
+          "descricao": "Intense period of research on translation technologies, accessibility and UX/UI, defining the fundamental pillars of the project."
+        },
+        "maio_2024": {
+          "data": "May 2024",
+          "titulo": "Initial Development",
+          "descricao": "Implementation of core functionalities: real-time translation, real-time chat with Socket.IO and establishment of the system's base architecture."
+        },
+        "julho_2024": {
+          "data": "July 2024",
+          "titulo": "Accessibility Features",
+          "descricao": "Implementation of accessibility features such as voice synthesis, support for color blind people and customizable interface settings."
+        },
+        "setembro_2024": {
+          "data": "September 2024",
+          "titulo": "Testing Phase",
+          "descricao": "Period of intensive testing with real users, feedback collection and implementation of significant improvements based on user experience."
+        },
+        "outubro_2024": {
+          "data": "October 2024",
+          "titulo": "Design Refinement",
+          "descricao": "Significant improvements to the user interface, implementation of dark/light themes and optimization to ensure an intuitive experience."
+        },
+        "novembro_2024": {
+          "data": "November 2024",
+          "titulo": "Optimizations and Security",
+          "descricao": "Implementation of advanced security measures, performance optimization and preparation for public launch."
+        },
+        "dezembro_2024": {
+          "data": "December 2024",
+          "titulo": "Beta Launch",
+          "descricao": "Beta version launch for a select group of testers, collecting final feedback and making final adjustments."
+        },
+        "janeiro_2025": {
+          "data": "January 2025",
+          "titulo": "Official Launch",
+          "descricao": "TalkTalk is made available to the public, marking the beginning of a new era in inclusive global communication."
+        }
+      }
+    },
+    "equipe": {
+      "titulo": "Meet Our Team",
+      "subtitulo": "The visionaries and developers behind the revolution in global communication",
+      "membros": {
+        "gustavo": {
+          "nome": "Gustavo Preti",
+          "cargo": "Full Stack Developer & Product Owner",
+          "descricao": "Specialist in modern web development, focusing on React, Next.js and translation technologies. Responsible for the complete system architecture and user experience.",
+          "tags": ["React", "Next.js", "TypeScript", "Node.js", "Socket.IO", "UX/UI"]
+        },
+        "christopher": {
+          "nome": "Christopher Gouveia",
+          "cargo": "Backend Developer & DevOps Engineer",
+          "descricao": "Specialist in infrastructure, security and performance optimization. Responsible for implementing the robust backend and scalable deployment of the application.",
+          "tags": ["Node.js", "Docker", "AWS", "MongoDB", "Security", "DevOps"]
+        },
+        "kaike": {
+          "nome": "Kaike Sathler",
+          "cargo": "Frontend Developer & UI/UX Designer",
+          "descricao": "Specialist in frontend development and interface design, focusing on user experience and accessibility. Responsible for creating reusable components and design system.",
+          "tags": ["React", "CSS", "UI/UX", "Design", "Frontend", "Figma"]
+        }
+      }
+    },
+    "missao": {
+      "titulo": "Our Mission",
+      "texto": {
+        "quebrar_barreiras": "Break down language barriers and connect people from all cultures through instant, inclusive and accessible communication.",
+        "tecnologia_humanidade": "We believe that technology should serve humanity, making global communication more natural and eliminating the limitations imposed by languages.",
+        "acessibilidade_total": "Our commitment is to total accessibility, ensuring that people with different needs can communicate freely."
+      },
+      "valores": {
+        "titulo": "Our Values",
+        "inclusividade": "Inclusivity and accessibility",
+        "inovacao": "Responsible technological innovation",
+        "privacidade": "Privacy and security",
+        "experiencia": "Exceptional user experience"
+      }
+    },
+    "cta": {
+      "titulo": "Ready to Break Barriers?",
+      "descricao": "Join thousands of people who are already experiencing a new way to communicate globally.",
+      "botoes": {
+        "comecar_agora": "Start Now",
+        "personalizar": "Customize"
+      }
+    },
+    "desenvolvedores": {
+      "titulo": "Developers",
+      "cargos": {
+        "frontend": "Frontend Developer",
+        "backend": "Backend Developer"
+      }
+    }
+  },
+  "conversar": {
+    "hero": {
+      "titulo": {
+        "parte1": "A",
+        "parte2": "powerful",
+        "parte3": "real-time translation tool. No need to switch tabs."
+      },
+      "subtitulo": "Connect instantly with people around the world"
+    },
+    "criar_sala": {
+      "titulo": "Create a room",
+      "subtitulo": "Want to join an existing room? Copy the link that the room host sent you and access it.",
+      "apelido": {
+        "label": "Nickname (optional)",
+        "erro_min": "The nickname must contain at least 4 characters.",
+        "erro_max": "The nickname must contain at most 32 characters.",
+        "erro_caracteres": "The nickname must contain only letters, numbers, spaces, _ and -"
+      },
+      "avatar_alt": "Your avatar",
+      "carregando": "Creating room...",
+      "criando_sala": "Creating your room...",
+      "botao_criar": "CREATE A ROOM",
+      "dica": {
+        "parte1": "TIP:",
+        "parte2": "You can change the color of your avatar! Try clicking/tapping on your animal icon. 😉"
+      }
+    },
+    "entrar_sala": {
+      "titulo": "Join a Room",
+      "subtitulo": "Enter the room code to participate in an existing conversation",
+      "codigo": {
+        "label": "Room Code",
+        "placeholder": "Enter the room code"
+      },
+      "botao_entrar": "Join Room"
+    },
+    "botoes_avatar": {
+      "escolher_avatar": "Choose avatar",
+      "escolher_avatar_aleatorio": "Choose random avatar",
+      "escolha_seu_avatar": "Choose your avatar",
+      "selecionado": "SELECTED"
+    }
+  },
+  "chat": {
+    "interface": {
+      "digite_mensagem": "Type a message...",
+      "sala_indisponivel": "Room unavailable or unknown error",
+      "voltar_pagina_sala": "Back to room page",
+      "usuario_ja_na_sala": "You are already in this room on another device!",
+      "para_entrar_saia_outros": "To enter the room, you must exit from other devices.",
+      "usuario_desconectado": "user disconnected",
+      "audio_nao_suportado": "Your browser does not support the audio element."
+    },
+    "configuracoes": {
+      "titulo": "Settings",
+      "subtitulo": "Customize your TalkTalk experience",
+      "categorias": "Categories",
+      "abas": {
+        "perfil": "Profile",
+        "idioma": "Language", 
+        "audio": "Audio",
+        "acessibilidade": "Accessibility",
+        "aparencia": "Appearance"
+      },
+      "perfil": {
+        "titulo": "Profile Settings",
+        "subtitulo": "Customize your experience",
+        "nome_completo": {
+          "label": "Full name",
+          "placeholder": "Your full name"
+        },
+        "apelido_chat": {
+          "label": "Nickname (displayed in chats)",
+          "placeholder": "How you want to be called"
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "your.email@example.com"
+        },
+        "avatar": {
+          "titulo": "Avatar",
+          "descricao": "Choose your avatar",
+          "gerar_aleatorio": "Generate Random"
+        },
+        "apelido": {
+          "label": "Nickname",
+          "placeholder": "Enter your nickname"
+        },
+        "cor": {
+          "titulo": "Avatar Color",
+          "descricao": "Choose your avatar color"
+        }
+      },
+      "idioma": {
+        "titulo": "Language Settings", 
+        "subtitulo": "Set your preferred language and translations",
+        "idioma_principal": {
+          "label": "Primary language",
+          "descricao": "This is the language you want to receive translations in"
+        },
+        "label": "Language",
+        "pesquisar": "Search languages...",
+        "nenhum_encontrado": "No language found",
+        "traducao_automatica": {
+          "titulo": "Automatic translation",
+          "quando_ativado": "When enabled",
+          "descricao_ativado": "messages will be displayed already translated",
+          "quando_desativado": "When disabled",
+          "descricao_desativado": "messages will be displayed in the original language and you need to click the button to see the translation",
+          "descricao": "Translate messages automatically"
+        }
+      },
+      "audio": {
+        "titulo": "Audio Settings",
+        "subtitulo": "Customize voice synthesis and playback",
+        "voz": {
+          "label": "Voice for reading",
+          "selecione": "Select a voice",
+          "desconhecido": "Unknown"
+        },
+        "volume": "Volume",
+        "velocidade": "Speed", 
+        "tom": "Pitch",
+        "teste": {
+          "label": "Test text",
+          "placeholder": "Type text to test voice settings",
+          "texto_padrao": "Hello! This is a test message for voice settings.",
+          "instrucao": "Press Enter to hear the text or use the button below",
+          "botao": "Test voice settings"
+        },
+        "leitura_automatica": {
+          "titulo": "Automatic reading",
+          "descricao": "When enabled:",
+          "observacao1": "Your own messages will never be read automatically.",
+          "observacao2": "Default",
+          "padrao": "Default",
+          "padrao_descricao": "Disabled (you need to click the play button manually)",
+          "confirmacao": "Automatic reading enabled - only messages received from other users will be read automatically"
+        },
+        "sintetizacao": {
+          "titulo": "Enable voice synthesis",
+          "descricao": "Enable so that messages can be read aloud."
+        }
+      },
+      "aparencia": {
+        "titulo": "Appearance",
+        "subtitulo": "Customize the theme and interface visual",
+        "modo_escuro": {
+          "titulo": "Dark mode",
+          "descricao": "Switch between light and dark themes",
+          "aria_ativar_claro": "Enable light mode",
+          "aria_ativar_escuro": "Enable dark mode"
+        },
+        "tamanho_fonte": {
+          "titulo": "Font size",
+          "pequena": "Small",
+          "media": "Medium",
+          "grande": "Large",
+          "extra_grande": "Extra Large",
+          "exemplo": "Example text with selected size",
+          "texto_exemplo": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        }
+      },
+      "acessibilidade": {
+        "titulo": "Accessibility Settings",
+        "subtitulo": "Make your experience more accessible"
+      },
+      "chat_compacto": {
+        "titulo": "Compact chat",
+        "descricao": "Messages in condensed format to save space"
+      },
+      "botoes": {
+        "salvar": "Save changes",
+        "salvando": "Saving..."
+      }
+    },
+    "status_conexao": {
+      "titulo": "Connection Status",
+      "conectado": "Connected to server",
+      "conectando": "Connecting...",
+      "erro": "Connection error",
+      "desconectado": "Disconnected"
+    },
+    "usuarios_online": {
+      "titulo": "Online Users",
+      "anfitriao": "Host",
+      "convidado": "Guest",
+      "nenhum_usuario": "No users online",
+      "nenhum_conectado": "No users connected"
+    },
+    "compartilhar": {
+      "titulo": "Share Room",
+      "descricao": "Copy the following link or share the code for the person to join your chat."
+    },
+    "mensagem": {
+      "original": "Original message",
+      "traduzido_de": "Translated from",
+      "idioma_nao_identificado": "Language not identified",
+      "ver_traducao": "View translation",
+      "ver_original": "View original",
+      "reproduzir": "Play",
+      "pausar": "Pause"
+    },
+    "audio": {
+      "gravando": "Recording audio... Click again to stop.",
+      "finalizado_automaticamente": "Recording automatically finished (1 minute limit).",
+      "enviado_sucesso": "Audio sent successfully!",
+      "erro_microfone": "Error accessing microphone:"
+    },
+    "dicas": {
+      "nao_se_preocupe_apelido": "Don't worry if you don't enter a nickname.",
+      "avatar_gerado_automaticamente": "An avatar will be generated automatically for you."
+    },
+    "erros": {
+      "sala_nao_encontrada": "Room not found!",
+      "erro_conectar_sala": "Error connecting to room:",
+      "sala_cheia": "Room is full! Maximum of 3 users allowed.",
+      "erro_conexao_servidor": "Server connection error. Check your internet.",
+      "servidor_indisponivel": "Could not connect to chat server. Check if server is running."
+    }
+  },
+  "cookies": {
+    "titulo": "Cookie Consent",
+    "descricao": "This site uses cookies to improve your experience and to ensure your messages are secure. Learn more by accessing the",
+    "politica_cookies": "Cookie Policy",
+    "politica_privacidade": "Privacy Policy",
+    "aceitar": "Accept all cookies"
+  }
 }

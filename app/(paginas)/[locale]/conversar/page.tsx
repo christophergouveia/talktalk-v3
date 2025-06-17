@@ -20,8 +20,10 @@ import ColorSelector from '@/app/components/functionals/ColorsSelector';
 import AvatarDropdown from '@/app/components/functionals/AvatarDropdown';
 import { RandomAvatarColor } from '@/app/utils/strings/randomAvatarColor';
 import { useTranslation } from 'react-i18next';
+import LanguageDetector from '../../../components/functionals/LanguageDetector';
 import { motion } from 'framer-motion';
 import { useFontSize } from '@/app/contexts/FontSizeContext';
+import { useParams } from 'next/navigation';
 
 const InputsSchema = yup.object().shape({
   apelido: yup
@@ -33,6 +35,8 @@ const InputsSchema = yup.object().shape({
 });
 
 export default function ConversarHome() {
+  const params = useParams();
+  const locale = params?.locale as string || 'pt-BR';
   const { t, i18n } = useTranslation('');
   const { fontSize } = useFontSize();
 
@@ -131,7 +135,7 @@ export default function ConversarHome() {
           path: '/',
         });
         await insertUser(sala, userDataEncrypted.data, true);
-        router.push(`/conversar/${sala}`);
+        router.push(`/${locale}/conversar/${sala}`);
       } else {
         toast('Ocorreu um erro ao criar a sala.', { type: 'error' });
       }
@@ -256,12 +260,13 @@ export default function ConversarHome() {
 
   const handleEntrarSala = useCallback(() => {
     if (codigoSala.trim()) {
-      router.push(`/conversar/${codigoSala.trim()}`);
+      router.push(`/${locale}/conversar/${codigoSala.trim()}`);
     }
-  }, [codigoSala, router]);
+  }, [codigoSala, router, locale]);
 
   return (
     <div className="h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-cyan-50/40 dark:from-[#0f0f0f] dark:via-[#1a1a2e] dark:to-[#16213e] relative overflow-hidden">
+      <LanguageDetector />
       {/* Background Effects */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-400/8 to-cyan-400/8 rounded-full blur-3xl"></div>
@@ -299,7 +304,7 @@ export default function ConversarHome() {
             className="bg-white/80 dark:bg-[#18181B]/80 backdrop-blur-md rounded-xl p-4 max-w-2xl mx-auto"
           >
             <p className="text-lg text-gray-600 dark:text-gray-300" style={{ fontSize: `${fontSize}px` }}>
-              Conecte-se instantaneamente com pessoas ao redor do mundo
+              {t('hero.subtitulo')}
             </p>
           </motion.div>
         </motion.div>

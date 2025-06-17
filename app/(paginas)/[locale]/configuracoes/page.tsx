@@ -19,8 +19,14 @@ import { useFontSize } from '@/app/contexts/FontSizeContext';
 import { useSpeech } from '@/app/contexts/SpeechContext';
 import { useTranslation } from '@/app/contexts/TranslationContext';
 import SpeechSettings from '@/app/components/functionals/SpeechSettings';
+import LanguageDetector from '../../../components/functionals/LanguageDetector';
+import { useTranslation as useI18n } from 'react-i18next';
+import { useParams } from 'next/navigation';
 
 const UserSettingsPage = () => {
+  const params = useParams();
+  const locale = params?.locale as string || 'pt-BR';
+  const { t } = useI18n();
   const supportedLanguages = {
     'pt-BR': 'Português (Brasil)',
     'en-US': 'Inglês (Estados Unidos)',
@@ -243,9 +249,9 @@ const UserSettingsPage = () => {
       localStorage.setItem('talktalk_user_settings', JSON.stringify(settings));
     },    [linguaSelecionada, avatarDetails, avatarColor, setColorBlindType]
   );
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-cyan-50/40 dark:from-[#0f0f0f] dark:via-[#1a1a2e] dark:to-[#16213e] relative overflow-hidden">
+      <LanguageDetector />
       {/* Background Effects */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-400/8 to-cyan-400/8 rounded-full blur-3xl"></div>
@@ -263,18 +269,17 @@ const UserSettingsPage = () => {
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text'
-              }}
-            >
-              Configurações
+              }}            >
+              {t('chat.configuracoes.titulo')}
             </span>
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">Personalize sua experiência no TalkTalk</p>
+          <p className="text-gray-600 dark:text-gray-400">{t('chat.configuracoes.subtitulo')}</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6 max-w-7xl mx-auto w-full">
           {/* Menu lateral */}
           <nav className="lg:w-72 bg-white/80 dark:bg-[#18181B]/80 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-6 h-fit">
-            <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Categorias</h2>
+            <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">{t('chat.configuracoes.categorias')}</h2>
             <ul className="space-y-2">
               <li>
                 <button
@@ -293,7 +298,7 @@ const UserSettingsPage = () => {
                     }`}>
                       <User size={18} />
                     </div>
-                    <span className="font-medium">Perfil</span>
+                    <span className="font-medium">{t('chat.configuracoes.abas.perfil')}</span>
                   </div>
                   <ChevronRight size={16} className={`transition-all duration-300 ${
                     activeTab === 'profile' ? 'opacity-100 rotate-90' : 'opacity-0 group-hover:opacity-50'
@@ -317,7 +322,7 @@ const UserSettingsPage = () => {
                     }`}>
                       <Globe size={18} />
                     </div>
-                    <span className="font-medium">Idiomas</span>
+                    <span className="font-medium">{t('chat.configuracoes.abas.idioma')}</span>
                   </div>
                   <ChevronRight size={16} className={`transition-all duration-300 ${
                     activeTab === 'language' ? 'opacity-100 rotate-90' : 'opacity-0 group-hover:opacity-50'
@@ -341,7 +346,7 @@ const UserSettingsPage = () => {
                     }`}>
                       <Volume2 size={18} />
                     </div>
-                    <span className="font-medium">Áudio</span>
+                    <span className="font-medium">{t('chat.configuracoes.abas.audio')}</span>
                   </div>
                   <ChevronRight size={16} className={`transition-all duration-300 ${
                     activeTab === 'audio' ? 'opacity-100 rotate-90' : 'opacity-0 group-hover:opacity-50'
@@ -365,7 +370,7 @@ const UserSettingsPage = () => {
                     }`}>
                       <Sliders size={18} />
                     </div>
-                    <span className="font-medium">Aparência</span>
+                    <span className="font-medium">{t('chat.configuracoes.abas.aparencia')}</span>
                   </div>
                   <ChevronRight size={16} className={`transition-all duration-300 ${
                     activeTab === 'appearance' ? 'opacity-100 rotate-90' : 'opacity-0 group-hover:opacity-50'
@@ -388,10 +393,9 @@ const UserSettingsPage = () => {
                 <div className="flex items-center gap-3 mb-6">
                   <div className="p-3 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl">
                     <User size={24} className="text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">Informações do Perfil</h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Configure seu avatar e dados pessoais</p>
+                  </div>                  <div>
+                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">{t('chat.configuracoes.perfil.titulo')}</h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('chat.configuracoes.perfil.subtitulo')}</p>
                   </div>
                 </div>
 
@@ -406,9 +410,8 @@ const UserSettingsPage = () => {
                   </div>
 
                   <div className="flex-1 space-y-4">
-                    <div>
-                      <label htmlFor="userName" className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-                        Nome completo
+                    <div>                      <label htmlFor="userName" className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                        {t('chat.configuracoes.perfil.nome_completo.label')}
                       </label>
                       <input
                         id="userName"
@@ -416,13 +419,12 @@ const UserSettingsPage = () => {
                         value={userName}
                         onChange={(e) => setUserName(e.target.value)}
                         className="w-full p-3 border border-gray-200 dark:border-gray-600 bg-white/90 dark:bg-gray-700/90 backdrop-blur-sm rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent transition-all duration-300 hover:shadow-md"
-                        placeholder="Seu nome completo"
+                        placeholder={t('chat.configuracoes.perfil.nome_completo.placeholder')}
                       />
                     </div>
 
-                    <div>
-                      <label htmlFor="userApelido" className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-                        Apelido (exibido nos chats)
+                    <div>                      <label htmlFor="userApelido" className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                        {t('chat.configuracoes.perfil.apelido_chat.label')}
                       </label>
                       <input
                         id="userApelido"
@@ -430,19 +432,18 @@ const UserSettingsPage = () => {
                         value={userApelido}
                         onChange={(e) => setUserApelido(e.target.value)}
                         className="w-full p-3 border border-gray-200 dark:border-gray-600 bg-white/90 dark:bg-gray-700/90 backdrop-blur-sm rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent transition-all duration-300 hover:shadow-md"
-                        placeholder="Como deseja ser chamado"
+                        placeholder={t('chat.configuracoes.perfil.apelido_chat.placeholder')}
                       />
                     </div>
 
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-                        Email
+                    <div>                      <label htmlFor="email" className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                        {t('chat.configuracoes.perfil.email.label')}
                       </label>
                       <input
                         id="email"
                         type="email"
                         className="w-full p-3 border border-gray-200 dark:border-gray-600 bg-white/90 dark:bg-gray-700/90 backdrop-blur-sm rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent transition-all duration-300 hover:shadow-md"
-                        placeholder="seu.email@exemplo.com"
+                        placeholder={t('chat.configuracoes.perfil.email.placeholder')}
                       />
                     </div>
                   </div>
@@ -462,18 +463,17 @@ const UserSettingsPage = () => {
                       setIsSaving(true);
                       setTimeout(() => setIsSaving(false), 800);
                     }}
-                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-medium"
-                    disabled={isSaving}
+                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-medium"                    disabled={isSaving}
                   >
                     {isSaving ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Salvando...
+                        {t('chat.configuracoes.botoes.salvando')}
                       </>
                     ) : (
                       <>
                         <Save size={16} />
-                        Salvar alterações
+                        {t('chat.configuracoes.botoes.salvar')}
                       </>
                     )}
                   </button>
@@ -492,17 +492,15 @@ const UserSettingsPage = () => {
                 <div className="flex items-center gap-3 mb-6">
                   <div className="p-3 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-xl">
                     <Globe size={24} className="text-green-600 dark:text-green-400" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">Configurações de Idioma</h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Defina seu idioma preferido e traduções</p>
+                  </div>                  <div>
+                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">{t('chat.configuracoes.idioma.titulo')}</h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('chat.configuracoes.idioma.subtitulo')}</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <div>
-                    <label htmlFor="preferredLanguage" className="block text-sm font-medium mb-1">
-                      Idioma principal
+                  <div>                    <label htmlFor="preferredLanguage" className="block text-sm font-medium mb-1">
+                      {t('chat.configuracoes.idioma.idioma_principal.label')}
                     </label>
                     <LanguageSelector
                       selectedLanguage={{
@@ -513,20 +511,18 @@ const UserSettingsPage = () => {
                       onLanguageChange={handleLanguageChange}
                     />
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      Este é o idioma em que você deseja receber as traduções
+                      {t('chat.configuracoes.idioma.idioma_principal.descricao')}
                     </p>
                   </div>
                   <div className="p-4 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Globe size={18} />
-                        <div>
-                          <p className="font-medium">Tradução automática</p>
+                        <Globe size={18} />                        <div>
+                          <p className="font-medium">{t('chat.configuracoes.idioma.traducao_automatica.titulo')}</p>
                           <p className="text-sm text-gray-500 dark:text-gray-400">
-                            <strong>Quando ativado:</strong> as mensagens serão exibidas já traduzidas.
+                            <strong>{t('chat.configuracoes.idioma.traducao_automatica.quando_ativado')}:</strong> {t('chat.configuracoes.idioma.traducao_automatica.descricao_ativado')}
                             <br />
-                            <strong>Quando desativado:</strong> as mensagens serão exibidas no idioma original e você
-                            precisa clicar no botão para ver a tradução.
+                            <strong>{t('chat.configuracoes.idioma.traducao_automatica.quando_desativado')}:</strong> {t('chat.configuracoes.idioma.traducao_automatica.descricao_desativado')}
                           </p>
                         </div>
                       </div>
@@ -556,17 +552,16 @@ const UserSettingsPage = () => {
                         setTimeout(() => setIsSaving(false), 800);
                       }}
                       className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-medium"
-                      disabled={isSaving}
-                    >
+                      disabled={isSaving}                    >
                       {isSaving ? (
                         <>
                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          Salvando...
+                          {t('chat.configuracoes.botoes.salvando')}
                         </>
                       ) : (
                         <>
                           <Save size={16} />
-                          Salvar alterações
+                          {t('chat.configuracoes.botoes.salvar')}
                         </>
                       )}
                     </button>
@@ -586,17 +581,15 @@ const UserSettingsPage = () => {
                 <div className="flex items-center gap-3 mb-6">
                   <div className="p-3 bg-gradient-to-r from-purple-500/20 to-violet-500/20 rounded-xl">
                     <Volume2 size={24} className="text-purple-600 dark:text-purple-400" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">Configurações de Áudio</h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Personalize a síntese de voz e reprodução</p>
+                  </div>                  <div>
+                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">{t('chat.configuracoes.audio.titulo')}</h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('chat.configuracoes.audio.subtitulo')}</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <div>
-                    <label htmlFor="voice" className="block text-sm font-medium mb-1">
-                      Voz para leitura
+                  <div>                    <label htmlFor="voice" className="block text-sm font-medium mb-1">
+                      {t('chat.configuracoes.audio.voz.label')}
                     </label>
                     <div className="relative">
                       <select
@@ -605,7 +598,7 @@ const UserSettingsPage = () => {
                         onChange={(e) => updateSettings({ voice: e.target.value })}
                         className="w-full p-2 border dark:border-gray-700 bg-white dark:bg-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent appearance-none"
                       >
-                        <option value="">Selecione uma voz</option>
+                        <option value="">{t('chat.configuracoes.audio.voz.selecione')}</option>
                         {availableVoices
                           .sort((a, b) => {
                             // Preferência para vozes em português
@@ -615,9 +608,8 @@ const UserSettingsPage = () => {
                             if (!aPt && bPt) return 1;
                             return a.name.localeCompare(b.name);
                           })
-                          .map((voice, index) => (
-                            <option key={index} value={voice.name}>
-                              {voice.name} ({voice.lang || 'Desconhecido'})
+                          .map((voice, index) => (                            <option key={index} value={voice.name}>
+                              {voice.name} ({voice.lang || t('chat.configuracoes.audio.voz.desconhecido')})
                             </option>
                           ))}
                       </select>
@@ -627,9 +619,8 @@ const UserSettingsPage = () => {
                     </div>
                   </div>
                   <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <label htmlFor="volume" className="text-sm font-medium">
-                        Volume
+                    <div className="flex items-center justify-between mb-1">                      <label htmlFor="volume" className="text-sm font-medium">
+                        {t('chat.configuracoes.audio.volume')}
                       </label>
                       <span className="text-sm">{settings.volume}%</span>
                     </div>
@@ -647,9 +638,8 @@ const UserSettingsPage = () => {
                     </div>
                   </div>
                   <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <label htmlFor="rate" className="text-sm font-medium">
-                        Velocidade
+                    <div className="flex items-center justify-between mb-1">                      <label htmlFor="rate" className="text-sm font-medium">
+                        {t('chat.configuracoes.audio.velocidade')}
                       </label>
                       <span className="text-sm">{settings.rate}x</span>
                     </div>
@@ -665,9 +655,8 @@ const UserSettingsPage = () => {
                     />
                   </div>
                   <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <label htmlFor="pitch" className="text-sm font-medium">
-                        Tom
+                    <div className="flex items-center justify-between mb-1">                      <label htmlFor="pitch" className="text-sm font-medium">
+                        {t('chat.configuracoes.audio.tom')}
                       </label>
                       <span className="text-sm">{settings.pitch}</span>
                     </div>
@@ -682,15 +671,14 @@ const UserSettingsPage = () => {
                       className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-500"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label htmlFor="test-text" className="text-sm font-medium">
-                      Texto para teste
+                  <div className="space-y-2">                    <label htmlFor="test-text" className="text-sm font-medium">
+                      {t('chat.configuracoes.audio.teste.label')}
                     </label>
                     <textarea
                       id="test-text"
                       rows={2}
-                      placeholder="Digite um texto para testar as configurações de voz"
-                      defaultValue="Olá! Esta é uma mensagem de teste para as configurações de voz."
+                      placeholder={t('chat.configuracoes.audio.teste.placeholder')}
+                      defaultValue={t('chat.configuracoes.audio.teste.texto_padrao')}
                       className="w-full p-2 border dark:border-gray-700 bg-white dark:bg-gray-700 rounded-lg resize-none"
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' && !e.shiftKey) {
@@ -698,9 +686,8 @@ const UserSettingsPage = () => {
                           speak(e.currentTarget.value);
                         }
                       }}
-                    />
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Pressione Enter para ouvir o texto ou use o botão abaixo
+                    />                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {t('chat.configuracoes.audio.teste.instrucao')}
                     </p>
                     <button
                       onClick={(e) => {
@@ -710,22 +697,21 @@ const UserSettingsPage = () => {
                       className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
                     >
                       <Mic size={18} />
-                      <span>Testar configurações de voz</span>
+                      <span>{t('chat.configuracoes.audio.teste.botao')}</span>
                     </button>
                   </div>
 
                   <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Mic size={18} />
-                        <div>
-                          <p className="font-medium">Leitura automática</p>
+                        <Mic size={18} />                        <div>
+                          <p className="font-medium">{t('chat.configuracoes.audio.leitura_automatica.titulo')}</p>
                           <p className="text-sm text-gray-500 dark:text-gray-400">
-                            Quando ativado: <strong>apenas mensagens recebidas de outros usuários</strong> serão lidas em voz alta automaticamente.
+                            {t('chat.configuracoes.audio.leitura_automatica.descricao')} <strong>{t('chat.configuracoes.audio.leitura_automatica.observacao1')}</strong>
                             <br />
-                            <strong>Suas próprias mensagens nunca serão lidas automaticamente.</strong>
+                            <strong>{t('chat.configuracoes.audio.leitura_automatica.observacao2')}</strong>
                             <br />
-                            <strong>Padrão:</strong> Desativado (você precisa clicar no botão de play manualmente)
+                            <strong>{t('chat.configuracoes.audio.leitura_automatica.padrao')}:</strong> {t('chat.configuracoes.audio.leitura_automatica.padrao_descricao')}
                           </p>
                         </div>
                       </div>
@@ -740,11 +726,10 @@ const UserSettingsPage = () => {
                         <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-500 peer-checked:bg-blue-500"></div>
                       </label>
                     </div>
-                    
-                    {settings.autoRead && (
+                      {settings.autoRead && (
                       <div className="mt-3 p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                         <p className="text-sm text-green-700 dark:text-green-300">
-                          ✓ Leitura automática ativada - apenas mensagens recebidas de outros usuários serão lidas automaticamente
+                          ✓ {t('chat.configuracoes.audio.leitura_automatica.confirmacao')}
                         </p>
                       </div>
                     )}
@@ -764,25 +749,22 @@ const UserSettingsPage = () => {
                 <div className="flex items-center gap-3 mb-6">
                   <div className="p-3 bg-gradient-to-r from-orange-500/20 to-amber-500/20 rounded-xl">
                     <Sliders size={24} className="text-orange-600 dark:text-orange-400" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">Aparência</h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Customize o tema e visual da interface</p>
+                  </div>                  <div>
+                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">{t('chat.configuracoes.aparencia.titulo')}</h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{t('chat.configuracoes.aparencia.subtitulo')}</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <div className="p-4 bg-gray-100 dark:bg-gray-700/50 rounded-lg flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      {darkMode ? <Moon size={20} /> : <Sun size={20} />}
-                      <div>
-                        <p className="font-medium">Modo escuro</p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Alterar entre temas claro e escuro</p>
+                      {darkMode ? <Moon size={20} /> : <Sun size={20} />}                      <div>
+                        <p className="font-medium">{t('chat.configuracoes.aparencia.modo_escuro.titulo')}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{t('chat.configuracoes.aparencia.modo_escuro.descricao')}</p>
                       </div>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
+                    </div>                    <label className="relative inline-flex items-center cursor-pointer">
                       <input
-                        aria-label={theme.resolvedTheme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'}
+                        aria-label={theme.resolvedTheme === 'dark' ? t('chat.configuracoes.aparencia.modo_escuro.aria_ativar_claro') : t('chat.configuracoes.aparencia.modo_escuro.aria_ativar_escuro')}
                         type="checkbox"
                         checked={darkMode}
                         onChange={() => setDarkMode(!darkMode)}
@@ -794,7 +776,7 @@ const UserSettingsPage = () => {
 
                   <div className="p-4 bg-gray-100 dark:bg-gray-700/50 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
-                      <label className="text-sm font-medium">Tamanho da fonte</label>
+                      <label className="text-sm font-medium">{t('chat.configuracoes.aparencia.tamanho_fonte.titulo')}</label>
                       <span className="text-sm font-mono">{fontSize}px</span>
                     </div>
                     <input
@@ -819,9 +801,8 @@ const UserSettingsPage = () => {
                           fontSize === 12
                             ? 'bg-blue-500 text-white'
                             : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500'
-                        }`}
-                      >
-                        Pequena
+                        }`}                      >
+                        {t('chat.configuracoes.aparencia.tamanho_fonte.pequena')}
                       </button>
                       <button
                         onClick={() => setFontSize(16)}
@@ -831,7 +812,7 @@ const UserSettingsPage = () => {
                             : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500'
                         }`}
                       >
-                        Média
+                        {t('chat.configuracoes.aparencia.tamanho_fonte.media')}
                       </button>
                       <button
                         onClick={() => setFontSize(20)}
@@ -839,9 +820,8 @@ const UserSettingsPage = () => {
                           fontSize === 20
                             ? 'bg-blue-500 text-white'
                             : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500'
-                        }`}
-                      >
-                        Grande
+                        }`}                      >
+                        {t('chat.configuracoes.aparencia.tamanho_fonte.grande')}
                       </button>
                       <button
                         onClick={() => setFontSize(24)}
@@ -851,16 +831,14 @@ const UserSettingsPage = () => {
                             : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500'
                         }`}
                       >
-                        Extra Grande
+                        {t('chat.configuracoes.aparencia.tamanho_fonte.extra_grande')}
                       </button>
-                    </div>
-
-                    <div className="mt-4 p-3 bg-white dark:bg-gray-800 rounded-lg">
+                    </div>                    <div className="mt-4 p-3 bg-white dark:bg-gray-800 rounded-lg">
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Exemplo de texto com o tamanho selecionado
+                        {t('chat.configuracoes.aparencia.tamanho_fonte.exemplo')}
                       </p>
                       <p style={{ fontSize: `${fontSize}px` }} className="mt-2">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        {t('chat.configuracoes.aparencia.tamanho_fonte.texto_exemplo')}
                       </p>
                     </div>
                   </div>

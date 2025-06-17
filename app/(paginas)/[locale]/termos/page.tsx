@@ -3,21 +3,24 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useState } from 'react';
+import LanguageDetector from '../../../components/functionals/LanguageDetector';
+import { useParams } from 'next/navigation';
 
 export default function TermosPage() {
+  const params = useParams();
+  const locale = params?.locale as string || 'pt-BR';
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [acceptedPrivacy, setAcceptedPrivacy] = useState(false);
-
   const handleConfirm = () => {
     if (acceptedTerms && acceptedPrivacy) {
       localStorage.setItem('talktalk_terms_accepted', 'true');
       localStorage.setItem('talktalk_privacy_accepted', 'true');
-      window.location.href = '/termos/confirmar';
+      window.location.href = `/${locale}/termos/confirmar`;
     }
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
+      <LanguageDetector />
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -121,9 +124,8 @@ export default function TermosPage() {
             >
               ✅ Confirmar e Continuar
             </button>
-            
-            <Link
-              href="/"
+              <Link
+              href={`/${locale}`}
               className="px-8 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
             >
               ← Voltar ao Início

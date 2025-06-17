@@ -5,6 +5,8 @@ import { useCookies } from 'react-cookie';
 import { Bounce, Fade } from 'react-awesome-reveal';
 import { FaCookieBite } from 'react-icons/fa';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
+
 interface CreateRoomModalProps {
   aberto: boolean;
 }
@@ -12,6 +14,7 @@ interface CreateRoomModalProps {
 export default function CookieConsentModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [cookieConsetiment, setCookieConsetiment] = useCookies(['cookieAceito']);
+  const { t } = useTranslation('');
 
   useEffect(() => {
     if (!cookieConsetiment.cookieAceito) {
@@ -31,14 +34,13 @@ export default function CookieConsentModal() {
                     <FaCookieBite className="text-3xl text-blue-500" />
                   </div>
                   <p className="text-center md:text-left text-sm md:text-base text-slate-200">
-                    Este site utiliza cookies para melhorar sua experiência e para garantir que suas mensagens sejam
-                    seguras. Saiba mais acessando a{' '}
+                    {t('cookies.descricao')}{' '}
                     <Link className="text-blue-400 hover:text-blue-300 underline transition-colors" href="/termos/cookies">
-                      Política de Cookies
+                      {t('cookies.politica_cookies')}
                     </Link>{' '}
                     e{' '}
                     <Link className="text-blue-400 hover:text-blue-300 underline transition-colors" href="/termos/politica">
-                      Política de Privacidade
+                      {t('cookies.politica_privacidade')}
                     </Link>
                     .
                   </p>
@@ -53,7 +55,7 @@ export default function CookieConsentModal() {
                   }}
                   className="whitespace-nowrap px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-lg hover:shadow-blue-600/20"
                 >
-                  Aceitar todos os cookies
+                  {t('cookies.aceitar')}
                 </button>
               </div>
             </div>

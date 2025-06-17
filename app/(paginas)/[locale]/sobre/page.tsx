@@ -37,8 +37,10 @@ import {
 import Avatar from 'react-avatar';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import LanguageDetector from '../../../components/functionals/LanguageDetector';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import Timeline from '@/app/components/timeline/Timeline';
 
 interface CardProps {
@@ -208,572 +210,787 @@ function CardContent({ nome, srcImagem, altImagem, cargo, tags, icon, linkGithub
 }
 
 export default function SobrePage() {
+  const params = useParams();
+  const locale = params?.locale as string || 'pt-BR';
   const t = useTranslation('', { keyPrefix: 'sobre' }).t;
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 300], [0, 100]);
   const y2 = useTransform(scrollY, [0, 300], [0, -100]);
-
   const timelineItems = [
     {
-      date: 'Janeiro 2024',
-      title: 'Nascimento da Ideia',
-      description:
-        'A jornada começou com a visão de criar uma plataforma que pudesse conectar pessoas de diferentes culturas e idiomas de forma natural e inclusiva, quebrando barreiras linguísticas.',
+      date: t('evolucao.timeline.janeiro_2024.data'),
+      title: t('evolucao.timeline.janeiro_2024.titulo'),
+      description: t('evolucao.timeline.janeiro_2024.descricao'),
       icon: <FaLightbulb size={20} />,
       color: '#4F46E5',
     },
     {
-      date: 'Março 2024',
-      title: 'Pesquisa e Planejamento',
-      description:
-        'Período intenso de pesquisa sobre tecnologias de tradução, acessibilidade e UX/UI, definindo os pilares fundamentais do projeto.',
+      date: t('evolucao.timeline.marco_2024.data'),
+      title: t('evolucao.timeline.marco_2024.titulo'),
+      description: t('evolucao.timeline.marco_2024.descricao'),
       icon: <BsGlobe2 size={20} />,
       color: '#7C3AED',
     },
     {
-      date: 'Maio 2024',
-      title: 'Desenvolvimento Inicial',
-      description:
-        'Implementação das funcionalidades core: tradução em tempo real, chat em tempo real com Socket.IO e estabelecimento da arquitetura base do sistema.',
+      date: t('evolucao.timeline.maio_2024.data'),
+      title: t('evolucao.timeline.maio_2024.titulo'),
+      description: t('evolucao.timeline.maio_2024.descricao'),
       icon: <FaCode size={20} />,
       color: '#8B5CF6',
     },
     {
-      date: 'Julho 2024',
-      title: 'Funcionalidades de Acessibilidade',
-      description:
-        'Implementação de recursos de acessibilidade como síntese de voz, suporte para daltônicos e configurações personalizáveis de interface.',
+      date: t('evolucao.timeline.julho_2024.data'),
+      title: t('evolucao.timeline.julho_2024.titulo'),
+      description: t('evolucao.timeline.julho_2024.descricao'),
       icon: <FaAccessibleIcon size={20} />,
       color: '#06B6D4',
     },
     {
-      date: 'Setembro 2024',
-      title: 'Fase de Testes',
-      description:
-        'Período de testes intensivos com usuários reais, coleta de feedback e implementação de melhorias significativas baseadas na experiência do usuário.',
+      date: t('evolucao.timeline.setembro_2024.data'),
+      title: t('evolucao.timeline.setembro_2024.titulo'),
+      description: t('evolucao.timeline.setembro_2024.descricao'),
       icon: <FaUsers size={20} />,
       color: '#F59E0B',
     },
     {
-      date: 'Outubro 2024',
-      title: 'Refinamento do Design',
-      description:
-        'Melhorias significativas na interface de usuário, implementação de temas escuro/claro e otimização para garantir uma experiência intuitiva.',
+      date: t('evolucao.timeline.outubro_2024.data'),
+      title: t('evolucao.timeline.outubro_2024.titulo'),
+      description: t('evolucao.timeline.outubro_2024.descricao'),
       icon: <BsBoxes size={20} />,
       color: '#EC4899',
     },
     {
-      date: 'Novembro 2024',
-      title: 'Otimizações e Segurança',
-      description: 'Implementação de medidas de segurança avançadas, otimização de performance e preparação para o lançamento público.',
+      date: t('evolucao.timeline.novembro_2024.data'),
+      title: t('evolucao.timeline.novembro_2024.titulo'),
+      description: t('evolucao.timeline.novembro_2024.descricao'),
       icon: <FaShieldAlt size={20} />,
       color: '#EF4444',
     },
     {
-      date: 'Dezembro 2024',
-      title: 'Lançamento Beta',
-      description: 'Lançamento da versão beta para um grupo seleto de testadores, coletando feedback final e realizando ajustes finais.',
+      date: t('evolucao.timeline.dezembro_2024.data'),
+      title: t('evolucao.timeline.dezembro_2024.titulo'),
+      description: t('evolucao.timeline.dezembro_2024.descricao'),
       icon: <BsRocket size={20} />,
       color: '#10B981',
     },
     {
-      date: 'Janeiro 2025',
-      title: 'Lançamento Oficial',
-      description: 'O TalkTalk é disponibilizado ao público, marcando o início de uma nova era na comunicação global inclusiva.',
+      date: t('evolucao.timeline.janeiro_2025.data'),
+      title: t('evolucao.timeline.janeiro_2025.titulo'),
+      description: t('evolucao.timeline.janeiro_2025.descricao'),
       icon: <FaRocket size={20} />,
       color: '#3B82F6',
     },
   ];
-
   const features = [
     {
       icon: <BsTranslate />,
-      title: "Tradução em Tempo Real",
-      description: "Comunicação instantânea entre pessoas de diferentes idiomas com tradução automática e precisa.",
+      title: t('recursos.traducao_tempo_real.titulo'),
+      description: t('recursos.traducao_tempo_real.descricao'),
       color: "#3B82F6"
     },
     {
       icon: <HiMicrophone />,
-      title: "Síntese de Voz",
-      description: "Transforme texto em fala com vozes naturais e configurações personalizáveis para máxima acessibilidade.",
+      title: t('recursos.sintese_voz.titulo'),
+      description: t('recursos.sintese_voz.descricao'),
       color: "#8B5CF6"
     },
     {
       icon: <FaAccessibleIcon />,
-      title: "Acessibilidade Total",
-      description: "Design inclusivo com suporte para daltonismo, múltiplos tamanhos de fonte e navegação simplificada.",
+      title: t('recursos.acessibilidade_total.titulo'),
+      description: t('recursos.acessibilidade_total.descricao'),
       color: "#10B981"
     },
     {
       icon: <BsLightningCharge />,
-      title: "Velocidade Extrema",
-      description: "Chat em tempo real com latência mínima, garantindo conversas fluidas e naturais.",
+      title: t('recursos.velocidade_extrema.titulo'),
+      description: t('recursos.velocidade_extrema.descricao'),
       color: "#F59E0B"
     },
     {
       icon: <BsShield />,
-      title: "Segurança Avançada",
-      description: "Criptografia de ponta a ponta e proteção de dados para manter suas conversas sempre seguras.",
+      title: t('recursos.seguranca_avancada.titulo'),
+      description: t('recursos.seguranca_avancada.descricao'),
       color: "#EF4444"
     },
     {
       icon: <HiCog6Tooth />,
-      title: "Personalização Total",
-      description: "Customize a interface, cores, temas e configurações para criar sua experiência única.",
+      title: t('recursos.personalizacao_total.titulo'),
+      description: t('recursos.personalizacao_total.descricao'),
       color: "#EC4899"
     }
   ];
 const teamMembers = [
     {
-      nome: "Gustavo Preti",
+      nome: t('equipe.membros.gustavo.nome'),
       srcImagem: "/images/pictures/imagemGustavo.png",
       altImagem: "Foto do Gustavo",
-      cargo: "Full Stack Developer & Product Owner",
-      description: "Especialista em desenvolvimento web moderno, com foco em React, Next.js e tecnologias de tradução. Responsável pela arquitetura completa do sistema e experiência do usuário.",
+      cargo: t('equipe.membros.gustavo.cargo'),
+      description: t('equipe.membros.gustavo.descricao'),
       tags: ["React", "Next.js", "TypeScript", "Node.js", "Socket.IO", "UX/UI"],
       icon: [<FaGithub key="github" />, <FaLinkedin key="linkedin" />],
       linkGithub: "https://github.com/GustavoGPreti",
       linkLinkedin: "https://linkedin.com/in/gustavo-preti"
     },
     {
-      nome: "Christopher Gouveia",
+      nome: t('equipe.membros.christopher.nome'),
       srcImagem: "/images/pictures/imagemChristopher.png",
       altImagem: "Foto do Christopher",
-      cargo: "Backend Developer & DevOps Engineer",
-      description: "Especialista em infraestrutura, segurança e otimização de performance. Responsável pela implementação do backend robusto e deployment escalável da aplicação.",
+      cargo: t('equipe.membros.christopher.cargo'),
+      description: t('equipe.membros.christopher.descricao'),
       tags: ["Node.js", "Docker", "AWS", "MongoDB", "Security", "DevOps"],
       icon: [<FaGithub key="github" />, <FaLinkedin key="linkedin" />],
       linkGithub: "https://github.com/christophergouveia",
       linkLinkedin: "https://linkedin.com/in/christopher-oliveira"
     },
     {
-      nome: "Kaike Sathler",
+      nome: t('equipe.membros.kaike.nome'),
       srcImagem: "/images/pictures/imagemKaike.png",
       altImagem: "Foto do Kaike",
-      cargo: "Frontend Developer & UI/UX Designer",
-      description: "Especialista em desenvolvimento frontend e design de interfaces, com foco em experiência do usuário e acessibilidade. Responsável pela criação de componentes reutilizáveis e design system.",
+      cargo: t('equipe.membros.kaike.cargo'),
+      description: t('equipe.membros.kaike.descricao'),
       tags: ["React", "CSS", "UI/UX", "Design", "Frontend", "Figma"],
       icon: [<FaGithub key="github" />, <FaLinkedin key="linkedin" />],
       linkGithub: "https://github.com/KaikeSathler",
       linkLinkedin: "https://linkedin.com/in/kaike-sathler"
     }
-  ];
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">      {/* Hero Section with Parallax */}
-      <section className="relative overflow-hidden">
-        {/* Subtle background elements */}
-        <motion.div 
-          style={{ y: y1 }}
-          className="absolute -top-20 -left-20 w-64 h-64 bg-gradient-to-br from-blue-200/8 to-blue-300/10 rounded-full blur-xl"
-        />
-        <motion.div 
-          style={{ y: y2 }}
-          className="absolute -top-10 -right-20 w-72 h-72 bg-gradient-to-br from-purple-200/8 to-purple-300/10 rounded-full blur-xl"
-        />
+  ];  return (
+    <div className="min-h-screen bg-white dark:bg-gray-900">
+      <LanguageDetector />
+      
+      {/* Hero Section - Enhanced with better visual hierarchy */}
+      <section className="relative py-24 bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25"></div>
         
-        <div className="relative max-w-7xl mx-auto px-4 py-24 sm:px-6 lg:px-8">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            className="text-center"
-            initial={{ opacity: 0, y: 20 }}
+            className="text-center max-w-4xl mx-auto"
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-100/60 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium mb-6"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium mb-8 shadow-sm border border-blue-200 dark:border-blue-800"
             >
-              <HiSparkles className="w-4 h-4" />
-              Conectando o mundo através da comunicação
+              <HiGlobeAlt className="w-4 h-4" />
+              {t('hero.badge')}
             </motion.div>
             
             <motion.h1 
-              className="text-5xl md:text-6xl font-bold mb-6 leading-tight"
-              initial={{ opacity: 0, y: 20 }}
+              className="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-8 text-gray-900 dark:text-white tracking-tight"
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
             >
+              {t('hero.titulo.parte1')}{' '}
               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Nossa Jornada
-              </span>
-              <br />
-              <span className="text-gray-900 dark:text-white text-4xl md:text-5xl">
-                no TalkTalk
+                {t('hero.titulo.parte2')}
               </span>
             </motion.h1>
             
             <motion.p 
-              className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed mb-8"
-              initial={{ opacity: 0, y: 20 }}
+              className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10 font-light"
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
             >
-              Descobra como estamos revolucionando a comunicação global com tecnologia de ponta, 
-              design inclusivo e uma paixão genuína por conectar pessoas de todas as culturas.
+              {t('hero.descricao')}
             </motion.p>
 
             <motion.div
-              className="flex flex-col sm:flex-row gap-3 justify-center items-center"
-              initial={{ opacity: 0, y: 20 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
             >
               <Link 
-                href="/conversar"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-sm hover:shadow-md font-medium"
+                href={`/${locale}/conversar`}
+                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg"
               >
-                <HiChatBubbleLeftRight className="w-4 h-4" />
-                Começar a Conversar
+                <HiChatBubbleLeftRight className="w-5 h-5" />
+                {t('hero.botoes.comecar_conversar')}
               </Link>
               <Link 
                 href="#equipe"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transition-all duration-200 shadow-sm hover:shadow-md font-medium"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg"
               >
-                <HiUserGroup className="w-4 h-4" />
-                Conhecer a Equipe
+                <HiUserGroup className="w-5 h-5" />
+                {t('hero.botoes.conhecer_equipe')}
               </Link>
             </motion.div>
           </motion.div>
         </div>
-      </section>      {/* Privacy Hero Section */}
-      <section className="py-16 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
+      </section>      {/* Privacy Section - Improved layout and visual appeal */}
+      <section className="py-20 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
+              initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.4 }}
+              transition={{ duration: 0.7 }}
             >
-              <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium mb-6">
+                <FaShieldAlt className="w-4 h-4" />
+                Segurança em Primeiro Lugar
+              </div>
+              
+              <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-6">
                 <span className="text-gray-900 dark:text-white">
-                  Sua{' '}
+                  {t('privacidade.titulo.parte1')}{' '}
                   <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                    Privacidade
+                    {t('privacidade.titulo.privacidade_palavra')}
                   </span>
                   ,
                 </span>
                 <br />
                 <span className="text-gray-900 dark:text-white">
-                  Nossa{' '}
+                  {t('privacidade.titulo.parte2')}{' '}
                   <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                    Responsabilidade
+                    {t('privacidade.titulo.responsabilidade_palavra')}
                   </span>
                   .
                 </span>
               </h2>
-              <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-                Sua privacidade é nossa prioridade máxima. Implementamos as mais avançadas medidas de segurança 
-                para garantir que suas conversas permaneçam completamente privadas e protegidas.
+              
+              <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
+                {t('privacidade.descricao')}
               </p>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <span className="text-gray-700 dark:text-gray-300 text-sm">Criptografia de ponta a ponta</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <span className="text-gray-700 dark:text-gray-300 text-sm">Dados nunca armazenados</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <span className="text-gray-700 dark:text-gray-300 text-sm">Conformidade com LGPD</span>
-                </div>
+              
+              <div className="space-y-4">
+                {[
+                  { icon: '🔐', text: t('privacidade.recursos.criptografia') },
+                  { icon: '🚫', text: t('privacidade.recursos.dados_nao_armazenados') },
+                  { icon: '⚖️', text: t('privacidade.recursos.conformidade_lgpd') }
+                ].map((item, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: false }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="flex items-center gap-4 p-4 bg-white/60 dark:bg-gray-800/60 rounded-lg backdrop-blur-sm border border-white/20 dark:border-gray-700/20"
+                  >
+                    <span className="text-2xl">{item.icon}</span>
+                    <span className="text-gray-700 dark:text-gray-300 font-medium">{item.text}</span>
+                  </motion.div>
+                ))}
               </div>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
+              initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.4 }}
+              transition={{ duration: 0.7 }}
               className="relative"
             >
-              <div className="relative bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200/50 dark:border-gray-700/50">
-                <Image
-                  src="/images/pictures/Conversation-s.png"
-                  alt="Conversa Segura"
-                  width={400}
-                  height={400}
-                  className="w-full h-auto rounded-lg"
-                />
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>      {/* Differentials Section */}
-      <section className="py-16 bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.4 }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Nossos Diferenciais
-              </span>
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-              O que nos torna únicos no mundo da comunicação global
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Security */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.3 }}
-              className="group rounded-lg bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 p-6 hover:shadow-md transition-all duration-200"
-            >
-              <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-500 rounded-lg flex items-center justify-center mb-4">
-                <FaShieldAlt className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
-                Segurança Máxima
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm mb-4">
-                Proteção avançada com criptografia de ponta a ponta, garantindo que apenas você e seu interlocutor tenham acesso às mensagens.
-              </p>
-              <Image
-                src="/images/pictures/security.png"
-                alt="Segurança"
-                width={150}
-                height={100}
-                className="w-full h-20 object-contain opacity-80"
-              />
-            </motion.div>
-
-            {/* Free */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
-              className="group rounded-lg bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 p-6 hover:shadow-md transition-all duration-200"
-            >
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center mb-4">
-                <FaHeart className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-blue-600 dark:text-blue-400">
-                100% Gratuito
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm mb-4">
-                Acreditamos que a comunicação global deve ser acessível a todos. Nossa plataforma é completamente gratuita, sem taxas ocultas.
-              </p>
-              <Image
-                src="/images/pictures/Coins-amico.png"
-                alt="Gratuito"
-                width={150}
-                height={100}
-                className="w-full h-20 object-contain opacity-80"
-              />
-            </motion.div>
-
-            {/* No Account */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.3, delay: 0.2 }}
-              className="group rounded-lg bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 p-6 hover:shadow-md transition-all duration-200"
-            >
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-lg flex items-center justify-center mb-4">
-                <HiUserGroup className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-bold mb-3 text-purple-600 dark:text-purple-400">
-                Sem Cadastro
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm mb-4">
-                Entre e comece a conversar imediatamente. Não é necessário criar conta, fornecer email ou passar por processos burocráticos.
-              </p>
-              <div className="flex justify-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
-                  <HiChatBubbleLeftRight className="w-8 h-8 text-white" />
+              <div className="relative bg-white/80 dark:bg-gray-800/80 rounded-2xl p-8 shadow-2xl border border-white/20 dark:border-gray-700/20 backdrop-blur-sm">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl opacity-20 blur"></div>
+                <div className="relative">
+                  <Image
+                    src="/images/pictures/Conversation-s.png"
+                    alt={t('privacidade.imagem_alt')}
+                    width={500}
+                    height={400}
+                    className="w-full h-auto rounded-xl shadow-lg"
+                  />
                 </div>
               </div>
             </motion.div>
           </div>
         </div>
-      </section>      {/* Features Section */}
-      <section className="py-16 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+      </section>{/* Key Benefits Section - Redesigned for better visual impact */}
+      <section className="py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.4 }}
-            className="text-center mb-12"
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
           >
-            <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
-              Recursos <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Inovadores</span>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                {t('diferenciais.titulo')}
+              </span>
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-              Tecnologias de ponta que tornam a comunicação global acessível, rápida e segura para todos
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              {t('diferenciais.subtitulo')}
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Security - Enhanced design */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.6 }}
+              className="group relative rounded-2xl bg-gradient-to-br from-red-50 via-pink-50 to-red-50 dark:from-red-900/20 dark:via-pink-900/20 dark:to-red-900/20 p-8 hover:shadow-2xl transition-all duration-500 border border-red-100 dark:border-red-800/30 hover:border-red-200 dark:hover:border-red-700/50 transform hover:-translate-y-2"
+            >
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-red-400/10 to-pink-400/10 rounded-full -m-6 group-hover:scale-150 transition-transform duration-500"></div>
+              
+              <div className="relative z-10">
+                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <FaShieldAlt className="w-8 h-8 text-white" />
+                </div>
+                
+                <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+                  {t('diferenciais.seguranca.titulo')}
+                </h3>
+                
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                  {t('diferenciais.seguranca.descricao')}
+                </p>
+                
+                <div className="relative overflow-hidden rounded-xl bg-white/50 dark:bg-gray-800/50 p-4">
+                  <Image
+                    src="/images/pictures/security.png"
+                    alt={t('diferenciais.seguranca.imagem_alt')}
+                    width={200}
+                    height={120}
+                    className="w-full h-24 object-contain opacity-80 group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Free - Enhanced design */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="group relative rounded-2xl bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-50 dark:from-blue-900/20 dark:via-cyan-900/20 dark:to-blue-900/20 p-8 hover:shadow-2xl transition-all duration-500 border border-blue-100 dark:border-blue-800/30 hover:border-blue-200 dark:hover:border-blue-700/50 transform hover:-translate-y-2"
+            >
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400/10 to-cyan-400/10 rounded-full -m-6 group-hover:scale-150 transition-transform duration-500"></div>
+              
+              <div className="relative z-10">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <FaHeart className="w-8 h-8 text-white" />
+                </div>
+                
+                <h3 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">
+                  {t('diferenciais.gratuito.titulo')}
+                </h3>
+                
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                  {t('diferenciais.gratuito.descricao')}
+                </p>
+                
+                <div className="relative overflow-hidden rounded-xl bg-white/50 dark:bg-gray-800/50 p-4">
+                  <Image
+                    src="/images/pictures/Coins-amico.png"
+                    alt={t('diferenciais.gratuito.imagem_alt')}
+                    width={200}
+                    height={120}
+                    className="w-full h-24 object-contain opacity-80 group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+              </div>
+            </motion.div>
+
+            {/* No Account - Enhanced design */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="group relative rounded-2xl bg-gradient-to-br from-purple-50 via-indigo-50 to-purple-50 dark:from-purple-900/20 dark:via-indigo-900/20 dark:to-purple-900/20 p-8 hover:shadow-2xl transition-all duration-500 border border-purple-100 dark:border-purple-800/30 hover:border-purple-200 dark:hover:border-purple-700/50 transform hover:-translate-y-2"
+            >
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400/10 to-indigo-400/10 rounded-full -m-6 group-hover:scale-150 transition-transform duration-500"></div>
+              
+              <div className="relative z-10">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                  <HiUserGroup className="w-8 h-8 text-white" />
+                </div>
+                
+                <h3 className="text-2xl font-bold mb-4 text-purple-600 dark:text-purple-400">
+                  {t('diferenciais.sem_cadastro.titulo')}
+                </h3>
+                
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                  {t('diferenciais.sem_cadastro.descricao')}
+                </p>
+                
+                <div className="flex justify-center">
+                  <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                    <HiChatBubbleLeftRight className="w-10 h-10 text-white" />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>      {/* Features Section - Improved with better spacing and animations */}
+      <section className="py-20 bg-white dark:bg-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: false, amount: 0.3 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium mb-6">
+              <HiSparkles className="w-4 h-4" />
+              Recursos Avançados
+            </div>
+            
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                {t('recursos.titulo')}
+              </span>
+            </h2>
+            
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              {t('recursos.subtitulo')}
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <FeatureCard
+              <motion.div
                 key={index}
-                {...feature}
-                delay={index * 0.05}
-              />
+                initial={{ 
+                  opacity: 0, 
+                  y: 20
+                }}
+                whileInView={{ 
+                  opacity: 1, 
+                  y: 0
+                }}
+                viewport={{ once: false, amount: 0.3 }}
+                transition={{ 
+                  duration: 0.5, 
+                  delay: index * 0.1,
+                  ease: "easeOut"
+                }}
+                whileHover={{ 
+                  y: -8,
+                  transition: { 
+                    duration: 0.3
+                  }
+                }}
+                className="group relative rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-8 shadow-sm hover:shadow-xl transition-all duration-300"
+              >
+                {/* Background gradient on hover */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/10 dark:to-purple-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <div className="relative z-10">
+                  {/* Icon */}
+                  <div 
+                    className="inline-flex items-center justify-center w-14 h-14 rounded-xl mb-6 text-white text-xl group-hover:scale-110 transition-transform duration-300 shadow-lg"
+                    style={{ backgroundColor: feature.color }}
+                  >
+                    {feature.icon}
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                    {feature.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                    {feature.description}
+                  </p>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
-      </section>      {/* Timeline Section */}
-      <section className="py-24 bg-white dark:bg-gray-900">
+      </section>      {/* Timeline Section - Enhanced visual presentation */}
+      <section className="py-24 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-20"
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.2 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.8 }}
           >
-            <h2 className="text-5xl font-bold mb-6 text-gray-900 dark:text-white">
-              Nossa <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Evolução</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium mb-8">
+              <FaChartLine className="w-4 h-4" />
+              Nossa Jornada
+            </div>
+            
+            <h2 className="text-5xl md:text-6xl font-bold mb-8 text-gray-900 dark:text-white">
+              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                {t('evolucao.titulo')}
+              </span>
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Acompanhe cada etapa da nossa jornada, desde a ideia inicial até o produto revolucionário de hoje
+            
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed font-light">
+              {t('evolucao.subtitulo')}
             </p>
           </motion.div>
 
-          <Timeline events={timelineItems} />
+          <div className="relative">
+            {/* Background decoration */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-100/20 via-purple-100/20 to-pink-100/20 dark:from-blue-900/10 dark:via-purple-900/10 dark:to-pink-900/10 rounded-3xl"></div>
+            
+            <div className="relative bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-xl border border-white/20 dark:border-gray-700/20">
+              <Timeline events={timelineItems} />
+            </div>
+          </div>
         </div>
-      </section>{/* Team Section */}
-      <section id="equipe" className="py-16 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900">
+      </section>      {/* Team Section - Enhanced design with better cards */}
+      <section id="equipe" className="py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: 20 }}
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.6 }}
           >
-            <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">
-              Conheça Nossa <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Equipe</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm font-medium mb-6">
+              <HiUserGroup className="w-4 h-4" />
+              Conheça a Equipe
+            </div>
+            
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                {t('equipe.titulo')}
+              </span>
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-              Os visionários e desenvolvedores por trás da revolução na comunicação global
+            
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+              {t('equipe.subtitulo')}
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
             {teamMembers.map((member, index) => (
-              <div key={index} className="flex justify-center">
-                <CardContent {...member} />
-              </div>
+              <motion.div
+                key={index}
+                initial={{ 
+                  opacity: 0, 
+                  y: 30
+                }}
+                whileInView={{ 
+                  opacity: 1, 
+                  y: 0
+                }}
+                viewport={{ once: false, amount: 0.3 }}
+                transition={{ 
+                  duration: 0.6, 
+                  delay: index * 0.1,
+                  ease: "easeOut"
+                }}
+                whileHover={{ 
+                  y: -10,
+                  transition: { 
+                    duration: 0.3
+                  }
+                }}
+                className="group relative rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-8 shadow-sm hover:shadow-2xl transition-all duration-500"
+              >
+                {/* Background gradient on hover */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/10 dark:to-purple-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <div className="relative z-10">
+                  {/* Profile section */}
+                  <div className="relative flex flex-col items-center mb-6">
+                    <div className="relative mb-4">
+                      {member.srcImagem ? (
+                        <div className="relative">
+                          <Image
+                            src={member.srcImagem}
+                            width={80}
+                            height={80}
+                            alt={member.altImagem ?? 'Imagem'}
+                            className="rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-lg group-hover:scale-110 transition-transform duration-300"
+                          />
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 group-hover:opacity-100 opacity-0 transition-opacity duration-300"></div>
+                        </div>
+                      ) : (
+                        <Avatar
+                          className="border-4 border-white dark:border-gray-700 shadow-lg group-hover:scale-110 transition-transform duration-300"
+                          name={member.nome}
+                          maxInitials={2}
+                          size="80"
+                          round
+                        />
+                      )}
+                      
+                      {/* Social media icons */}
+                      <div className="absolute -bottom-2 -right-2 flex space-x-1">
+                        {member.icon?.map((value, iconIndex) => (
+                          <div
+                            key={iconIndex}
+                            className="bg-white dark:bg-gray-800 shadow-lg rounded-full p-2 border border-gray-200 dark:border-gray-600 group-hover:scale-110 transition-transform duration-300"
+                          >
+                            <Link
+                              href={iconIndex === 0 ? (member.linkGithub ?? '#') : member.linkLinkedin}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                            >
+                              {value}
+                            </Link>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Name and role */}
+                    <h3 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white text-center group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                      {member.nome}
+                    </h3>
+                    
+                    <p className="text-blue-600 dark:text-blue-400 font-semibold text-center mb-4">
+                      {member.cargo}
+                    </p>
+
+                    {member.description && (
+                      <p className="text-gray-600 dark:text-gray-300 text-center leading-relaxed mb-6">
+                        {member.description}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {member.tags.map((tag, tagIndex) => (
+                      <span
+                        key={tagIndex}
+                        className="inline-block px-3 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors duration-300"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
-      </section>      {/* Mission Section */}
-      <section className="py-16 bg-white dark:bg-gray-900">
+      </section>      {/* Mission Section - Redesigned with better visual impact */}
+      <section className="py-20 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
+              initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.4 }}
+              transition={{ duration: 0.7 }}
             >
-              <h2 className="text-4xl font-bold mb-6 text-gray-900 dark:text-white">
-                Nossa <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Missão</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded-full text-sm font-medium mb-6">
+                <FaHeart className="w-4 h-4" />
+                Nossa Missão
+              </div>
+              
+              <h2 className="text-4xl md:text-5xl font-bold mb-8 text-gray-900 dark:text-white">
+                <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  {t('missao.titulo')}
+                </span>
               </h2>
-              <div className="space-y-4 text-base text-gray-600 dark:text-gray-300 leading-relaxed">
-                <p>
-                  <strong className="text-gray-900 dark:text-white">Quebrar barreiras linguísticas</strong> e conectar pessoas de todas as culturas através de uma comunicação instantânea, inclusiva e acessível.
-                </p>
-                <p>
-                  Acreditamos que a <strong className="text-blue-600 dark:text-blue-400">tecnologia deve servir a humanidade</strong>, tornando a comunicação global mais natural e eliminando as limitações impostas pelos idiomas.
-                </p>
-                <p>
-                  Nosso compromisso é com a <strong className="text-purple-600 dark:text-purple-400">acessibilidade total</strong>, garantindo que pessoas com diferentes necessidades possam se comunicar livremente.
-                </p>
+              
+              <div className="space-y-6 text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                >
+                  {t('missao.texto.quebrar_barreiras')}
+                </motion.p>
+                
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  {t('missao.texto.tecnologia_humanidade')}
+                </motion.p>
+                
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: false }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                >
+                  {t('missao.texto.acessibilidade_total')}
+                </motion.p>
               </div>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
+              initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: false, amount: 0.3 }}
-              transition={{ duration: 0.4 }}
+              transition={{ duration: 0.7 }}
               className="relative"
             >
-              <div className="relative bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg p-6 text-white">
-                <FaHeart className="w-10 h-10 mb-4 text-white/90" />
-                <h3 className="text-xl font-bold mb-3">Nossos Valores</h3>
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                    <span>Inclusividade e acessibilidade</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                    <span>Inovação tecnológica responsável</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                    <span>Privacidade e segurança</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                    <span>Experiência do usuário excepcional</span>
-                  </li>
-                </ul>
+              <div className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-3xl p-8 text-white shadow-2xl">
+                {/* Background decoration */}
+                <div className="absolute inset-0 bg-black/10 rounded-3xl"></div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -m-8"></div>
+                <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full -m-4"></div>
+                
+                <div className="relative z-10">
+                  <FaHeart className="w-12 h-12 mb-6 text-white/90" />
+                  
+                  <h3 className="text-2xl font-bold mb-6">{t('missao.valores.titulo')}</h3>
+                  
+                  <div className="space-y-4">
+                    {[
+                      { icon: '🤝', text: t('missao.valores.inclusividade') },
+                      { icon: '🚀', text: t('missao.valores.inovacao') },
+                      { icon: '🔒', text: t('missao.valores.privacidade') },
+                      { icon: '✨', text: t('missao.valores.experiencia') }
+                    ].map((value, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: false }}
+                        transition={{ duration: 0.5, delay: index * 0.1 }}
+                        className="flex items-center gap-4 p-3 bg-white/10 rounded-lg backdrop-blur-sm"
+                      >
+                        <span className="text-2xl">{value.icon}</span>
+                        <span className="font-medium">{value.text}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </motion.div>
           </div>
         </div>
-      </section>      {/* CTA Section */}
+      </section>{/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.3 }}
             transition={{ duration: 0.4 }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Pronto para Quebrar Barreiras?
+              {t('cta.titulo')}
             </h2>
             <p className="text-lg text-blue-100 mb-8 leading-relaxed">
-              Junte-se a milhares de pessoas que já estão experimentando uma nova forma de se comunicar globalmente.
+              {t('cta.descricao')}
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link 
-                href="/conversar"
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">              <Link 
+                href={`/${locale}/conversar`}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md font-medium"
               >
                 <HiChatBubbleLeftRight className="w-4 h-4" />
-                Começar Agora
-              </Link>
-              <Link 
-                href="/configuracoes"
+                {t('cta.botoes.comecar_agora')}
+              </Link>              <Link 
+                href={`/${locale}/configuracoes`}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-transparent text-white rounded-lg border border-white hover:bg-white hover:text-blue-600 transition-all duration-200 shadow-sm hover:shadow-md font-medium"
               >
                 <HiCog6Tooth className="w-4 h-4" />
-                Personalizar
+                {t('cta.botoes.personalizar')}
               </Link>
             </div>
           </motion.div>

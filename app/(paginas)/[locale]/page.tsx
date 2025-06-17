@@ -6,7 +6,9 @@ import { CountryFlag } from '../../components/countryFlags';
 import linguagens from '../../locales/languages.json';
 import { memo, ReactNode, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import LanguageDetector from '../../components/functionals/LanguageDetector';
 
 function MarqueeText({ children }: { children: ReactNode }) {
   return <span className="mx-6 text-gray-600 dark:text-gray-400">{children}</span>;
@@ -66,7 +68,10 @@ AnimatedFlag.displayName = 'AnimatedFlag';
 
 export default function Home({}) {
   const [flags, setFlags] = useState<FlagData[]>([]);
+  const params = useParams();
+  const locale = params?.locale as string || 'pt-BR';
   const t = useTranslation('', { keyPrefix: 'pagina_inicial' }).t;
+  
   useEffect(() => {
     const novasBandeiras = Array.from({ length: 5 }).map(() => ({
       flag: linguagens[Math.floor(Math.random() * linguagens.length)].flag,
@@ -92,9 +97,9 @@ export default function Home({}) {
       return novasBandeiras;
     });
   }, []);
-
   return (
     <>
+      <LanguageDetector />
       {flags && (
         <div className="fixed inset-0 -z-10">
           <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-blue-50/40 to-cyan-50/40 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -205,9 +210,8 @@ export default function Home({}) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 0.8 }}
                 className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-6"
-              >
-                <Link
-                  href="/conversar"
+              >                <Link
+                  href={`/${locale}/conversar`}
                   className="group relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-[#2563eb] to-[#3b82f6] rounded-xl shadow-xl shadow-blue-500/25 transition-all duration-300 hover:scale-105 hover:shadow-blue-500/40 active:scale-95 sm:text-base overflow-hidden"
                 >
                   <span className="relative z-10 flex items-center gap-2">
@@ -225,14 +229,12 @@ export default function Home({}) {
                     </svg>
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </Link>
-
-                <Link
+                </Link>                <Link
                   href="/sobre"
                   className="group inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border border-gray-200/60 dark:border-gray-600/60 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 hover:bg-white dark:hover:bg-gray-800 hover:shadow-xl hover:border-blue-300 dark:hover:border-blue-500 active:scale-95 sm:text-base"
                 >
                   <span className="flex items-center gap-2">
-                    Saiba Mais
+                    {t('botoes.saiba_mais')}
                     <svg
                       className="w-3 h-3 transition-transform group-hover:rotate-12"
                       fill="none"
@@ -256,34 +258,33 @@ export default function Home({}) {
                 transition={{ duration: 1, delay: 1 }}
                 className="flex flex-wrap justify-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-500 dark:text-gray-400"
               >
-                {' '}
-                <motion.div
+                {' '}                <motion.div
                   className="flex items-center gap-1.5 px-2.5 py-1 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
                   whileHover={{ y: -1 }}
                 >
                   <div className="w-1.5 h-1.5 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full"></div>
-                  <span className="font-medium">100% Gratuito</span>
+                  <span className="font-medium">{t('highlights.gratuito')}</span>
                 </motion.div>
                 <motion.div
                   className="flex items-center gap-1.5 px-2.5 py-1 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
                   whileHover={{ y: -1 }}
                 >
                   <div className="w-1.5 h-1.5 bg-gradient-to-r from-blue-400 to-cyan-500 rounded-full"></div>
-                  <span className="font-medium">Sem Cadastro</span>
+                  <span className="font-medium">{t('highlights.sem_cadastro')}</span>
                 </motion.div>
                 <motion.div
                   className="flex items-center gap-1.5 px-2.5 py-1 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
                   whileHover={{ y: -1 }}
                 >
                   <div className="w-1.5 h-1.5 bg-gradient-to-r from-purple-400 to-violet-500 rounded-full"></div>
-                  <span className="font-medium">Tradução Instantânea</span>
+                  <span className="font-medium">{t('highlights.traducao_instantanea')}</span>
                 </motion.div>
                 <motion.div
                   className="flex items-center gap-1.5 px-2.5 py-1 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
                   whileHover={{ y: -1 }}
                 >
                   <div className="w-1.5 h-1.5 bg-gradient-to-r from-red-400 to-pink-500 rounded-full"></div>
-                  <span className="font-medium">Totalmente Seguro</span>
+                  <span className="font-medium">{t('highlights.totalmente_seguro')}</span>
                 </motion.div>
               </motion.div>
             </motion.div>

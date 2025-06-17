@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useSpeech } from '@/app/contexts/SpeechContext';
 import { useTranslation } from '@/app/contexts/TranslationContext';
 import { useFontSize } from '@/app/contexts/FontSizeContext';
+import { useTranslation as useI18nTranslation } from 'react-i18next';
 
 interface MessageProps {
   isAudio: boolean;
@@ -25,6 +26,7 @@ interface MessageProps {
 
 function MicComponent({ text, isOwnMessage = false }: { text: string | React.ReactNode; isOwnMessage?: boolean }) {
   const { settings } = useSpeech();
+  const { t } = useI18nTranslation('');
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isNewMessage, setIsNewMessage] = React.useState(true);
@@ -128,11 +130,10 @@ function MicComponent({ text, isOwnMessage = false }: { text: string | React.Rea
   if (!speechText) return null;
 
   return (
-    <div id={micId} ref={micElementRef} className="flex items-center gap-1.5 rounded-full bg-gray-100/50 dark:bg-gray-800/50 px-1.5 py-0.5">
-      <button
+    <div id={micId} ref={micElementRef} className="flex items-center gap-1.5 rounded-full bg-gray-100/50 dark:bg-gray-800/50 px-1.5 py-0.5">      <button
         onClick={handlePlayPause}
         className="rounded-full p-1 hover:bg-gray-200/80 dark:hover:bg-gray-700/80 transition-colors"
-        title={isPlaying ? 'Pausar' : 'Reproduzir'}
+        title={isPlaying ? t('chat.mensagem.pausar') : t('chat.mensagem.reproduzir')}
       >
         {isPlaying ? (
           <Pause size={14} className="text-gray-600 dark:text-gray-300" />
@@ -165,6 +166,7 @@ function MicComponent({ text, isOwnMessage = false }: { text: string | React.Rea
 
 function AudioMessage({ src }: { src: string }) {
   const { settings } = useSpeech();
+  const { t } = useI18nTranslation('');
   const audioRef = React.useRef<HTMLAudioElement>(null);
 
   React.useEffect(() => {
@@ -184,7 +186,7 @@ function AudioMessage({ src }: { src: string }) {
       className="max-w-[300px] rounded-lg"
     >
       <source src={src} type="audio/webm" />
-      Your browser does not support the audio element.
+      {t('chat.interface.audio_nao_suportado')}
     </audio>
   );
 }
@@ -202,7 +204,9 @@ export default function Message({
   compact = false,
 }: MessageProps) {  
   const { fontSize } = useFontSize();
-  const { settings } = useSpeech();  const { settings: translationSettings } = useTranslation();
+  const { settings } = useSpeech();  
+  const { settings: translationSettings } = useTranslation();
+  const { t } = useI18nTranslation('');
   
   // Handle undefined or empty language properly
   const hasValidLanguage = lingua && typeof lingua === 'string' && lingua.trim() !== '' && supportedLanguages[lingua];
@@ -276,11 +280,11 @@ export default function Message({
               {!ownMessage && !isAudio && (
                 <>                  <span className="text-xs flex flex-col text-gray-500 mt-1">                    <div className="mt-1 flex">                      <p>
                         {showOriginal 
-                          ? 'Mensagem original' 
+                          ? t('chat.mensagem.original')
                           : (hasValidLanguage 
-                             ? `Traduzido do ${languageLabel} (${lingua})` 
-                             : <span className="flex items-center gap-1"><AlertCircle size={12} /> Idioma não identificado</span>)}
-                      </p>                      <button onClick={() => {
+                             ? `${t('chat.mensagem.traduzido_de')} ${languageLabel} (${lingua})` 
+                             : <span className="flex items-center gap-1"><AlertCircle size={12} /> {t('chat.mensagem.idioma_nao_identificado')}</span>)}
+                      </p><button onClick={() => {
                         setShowOriginal(!showOriginal);
                         // Quando o usuário muda o idioma manualmente, não queremos releitura
                         // Procuramos por todos os componentes MIC na página
@@ -290,9 +294,8 @@ export default function Message({
                             ...(micComponent as any).__micData,
                             isNewMessage: false
                           };
-                        });
-                      }} className="ml-1 text-xs text-blue-400 hover:underline">
-                        {showOriginal ? 'Ver tradução' : 'Ver original'}
+                        });                      }} className="ml-1 text-xs text-blue-400 hover:underline">
+                        {showOriginal ? t('chat.mensagem.ver_traducao') : t('chat.mensagem.ver_original')}
                       </button>
                     </div>
                   </span>
@@ -317,12 +320,11 @@ export default function Message({
               >
                 {renderContent()}
                 {!ownMessage && !isAudio && (
-                  <>                    <div className="text-xs text-gray-500 ">                      <div className="mt-1">                        
-                        {showOriginal 
-                          ? 'Mensagem original' 
+                  <>                    <div className="text-xs text-gray-500 ">                      <div className="mt-1">                          {showOriginal 
+                          ? t('chat.mensagem.original')
                           : (hasValidLanguage 
-                             ? `Traduzido do ${languageLabel} (${lingua})` 
-                             : <span className="flex items-center gap-1"><AlertCircle size={12} /> Idioma não identificado</span>)}                        <button onClick={() => {
+                             ? `${t('chat.mensagem.traduzido_de')} ${languageLabel} (${lingua})` 
+                             : <span className="flex items-center gap-1"><AlertCircle size={12} /> {t('chat.mensagem.idioma_nao_identificado')}</span>)}<button onClick={() => {
                           setShowOriginal(!showOriginal);
                           // Quando o usuário muda o idioma manualmente, não queremos releitura
                           // Procuramos por todos os componentes MIC na página
@@ -332,9 +334,8 @@ export default function Message({
                               ...(micComponent as any).__micData,
                               isNewMessage: false
                             };
-                          });
-                        }} className="ml-2 text-xs text-blue-400 hover:underline">
-                          {showOriginal ? 'Ver tradução' : 'Ver original'}
+                          });                        }} className="ml-2 text-xs text-blue-400 hover:underline">
+                          {showOriginal ? t('chat.mensagem.ver_traducao') : t('chat.mensagem.ver_original')}
                         </button>
                       </div>
                     </div>{' '}

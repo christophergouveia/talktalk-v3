@@ -36,26 +36,28 @@ import { gerarNomeAnimalAleatorio } from '@/app/utils/generators/randomAnimalNam
 import { AvatarSelector } from '@/app/components/functionals/AvatarSelector';
 import ColorSelector from '@/app/components/functionals/ColorsSelector';
 import { UserData } from '@/app/types/chat';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cleanMessage } from '../../../../utils/formatters/cleanMessage';
+import LanguageDetector from '../../../../components/functionals/LanguageDetector';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
-interface RoomPageProps {
-  params: Promise<{
-    locale: string;
-    codigo: string;
-  }>;
-}
-
-export default function RoomPage({ params }: RoomPageProps) {  const [linguaSelecionada, setLinguaSelecionada] = useState<{ label: string; value: string; flag: string }>({
+export default function RoomPage() {
+  const params = useParams();
+  const { t } = useTranslation('');
+  const codigo = (params?.codigo as string || '').toLowerCase();
+  const locale = params?.locale as string || 'pt-BR';
+  
+  const [linguaSelecionada, setLinguaSelecionada] = useState<{ label: string; value: string; flag: string }>({
     label: 'Português',
     value: 'pt-BR',
     flag: 'BR',
-  });  const [socketClient, setSocketClient] = useState<Socket | null>(null);
+  });
+  const [socketClient, setSocketClient] = useState<Socket | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error'>('disconnected');
   const [showErrorModal, setShowErrorModal] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('Sala indisponível ou erro desconhecido');
+  const [errorMessage, setErrorMessage] = useState('');
   const [hostModal, setHostModal] = useState<boolean>(false);
   const [cookies, setCookies] = useCookies(['talktalk_roomid', 'talktalk_userdata']);
   const messageListRef = useRef<HTMLDivElement>(null);
@@ -93,8 +95,6 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
   const audioChunksRef = useRef<Blob[]>([]);
 
   const router = useRouter();
-
-  const codigo = React.use(params).codigo.toLowerCase();
 
   const {
     mensagens,
@@ -191,10 +191,9 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
               console.log('[DEBUG] Tentando fallback para polling...');
               socket.io.opts.transports = ['polling'];
               setConnectionStatus('connecting');
-              socket.connect();
-            } else {
+              socket.connect();            } else {
               // Se já tentamos polling e falhou, mostrar erro
-              setErrorMessage('Não foi possível conectar ao servidor de chat. Verifique se o servidor está funcionando.');
+              setErrorMessage(t('chat.erros.servidor_indisponivel'));
               setShowErrorModal(true);
             }
           });
@@ -283,22 +282,18 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
           console.log('[DEBUG] Emitindo join-room para:', codigo);
           socket.emit('join-room', codigo, userDataString);
           setShowNameInput(false);
-        });
-
-        socket.on('connect_error', (error) => {
+        });        socket.on('connect_error', (error) => {
           console.error('[DEBUG] Erro de conexão do socket:', error);
-          setErrorMessage('Erro de conexão com o servidor. Verifique sua internet.');
+          setErrorMessage(t('chat.erros.erro_conexao_servidor'));
           setShowErrorModal(true);
-        });
-
-        socket.on('error', (error) => {
+        });socket.on('error', (error) => {
           console.error('[DEBUG] Erro do socket:', error);
           if (error.includes('cheia')) {
-            setErrorMessage('Sala está cheia! Máximo de 3 usuários permitidos.');
+            setErrorMessage(t('chat.erros.sala_cheia'));
           } else if (error.includes('não encontrada')) {
-            setErrorMessage('Sala não encontrada!');
+            setErrorMessage(t('chat.erros.sala_nao_encontrada'));
           } else {
-            setErrorMessage('Erro ao conectar na sala: ' + error);
+            setErrorMessage(t('chat.erros.erro_conectar_sala') + ' ' + error);
           }
           setShowErrorModal(true);
         });
@@ -598,9 +593,8 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
               lingua: linguaSelecionada,
               date: new Date().toISOString()
             };
-            
-            socketClient.emit('sendMessage', audioMessage.message, audioMessage.userToken, audioMessage.senderColor, audioMessage.apelido, audioMessage.avatar, audioMessage.room, audioMessage.lingua, audioMessage.type);
-            toast.success('Áudio enviado com sucesso!');
+              socketClient.emit('sendMessage', audioMessage.message, audioMessage.userToken, audioMessage.senderColor, audioMessage.apelido, audioMessage.avatar, audioMessage.room, audioMessage.lingua, audioMessage.type);
+            toast.success(t('chat.audio.enviado_sucesso'));
           }
         };
 
@@ -609,13 +603,13 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
 
       mediaRecorder.start();
       setIsRecording(true);
-      toast.info('Gravando áudio... Clique novamente para parar.');
+      toast.info(t('chat.audio.gravando'));
 
       setTimeout(() => {
         if (mediaRecorderRef.current?.state === 'recording') {
           mediaRecorderRef.current.stop();
           setIsRecording(false);
-          toast.info('Gravação finalizada automaticamente (limite de 1 minuto).');
+          toast.info(t('chat.audio.finalizado_automaticamente'));
         }
       }, 60000);
 
@@ -748,28 +742,27 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
       };
       localStorage.setItem('talktalk_user_settings', JSON.stringify(settings));
     }
-  };
-  if (showErrorModal) {
+  };  if (showErrorModal) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
+        <LanguageDetector />
         <h2 className="text-2xl font-bold">
           {errorMessage.includes('cheia') ? 'Sala Cheia!' : 'Erro na Sala'}
         </h2>
         <p className="mt-2 text-gray-600">
           {errorMessage}
-        </p>
-        <Button className="mt-4" onClick={() => router.push('/conversar')}>
-          Voltar para a página de sala
+        </p>        <Button className="mt-4" onClick={() => router.push(`/${locale}/conversar`)}>
+          {t('chat.interface.voltar_pagina_sala')}
         </Button>
       </div>
     );
   }
-
   if (showUserAlreadyInRoom) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
-        <h2 className="text-2xl font-bold">Você já está nesta sala em outro dispositivo!</h2>
-        <p className="mt-2 text-gray-600">Para entrar na sala, você deve sair de outros dispositivos.</p>
+        <LanguageDetector />
+        <h2 className="text-2xl font-bold">{t('chat.interface.usuario_ja_na_sala')}</h2>
+        <p className="mt-2 text-gray-600">{t('chat.interface.para_entrar_saia_outros')}</p>
       </div>
     );
   }
@@ -778,7 +771,9 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
     return null;
   }  if (showNameInput) {
     return (
+      
       <div className="h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-cyan-50/40 dark:from-[#0f0f0f] dark:via-[#1a1a2e] dark:to-[#16213e] relative overflow-hidden flex items-center justify-center">
+        <LanguageDetector />
         {/* Background Effects */}
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-400/8 to-cyan-400/8 rounded-full blur-3xl"></div>
@@ -902,14 +897,13 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 1.0, type: "spring" }}
-          >
-            <div className="flex items-center gap-2">
+          >            <div className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-              <span>Não se preocupe caso não insira um apelido.</span>
+              <span>{t('chat.dicas.nao_se_preocupe_apelido')}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-              <span>Será utilizado o nome do avatar selecionado!</span>
+              <span>{t('chat.dicas.avatar_gerado_automaticamente')}</span>
             </div>
           </motion.div>
 
@@ -940,8 +934,9 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
   if (socketClient == null) {
     return null;
   }
-    return (
+  return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-cyan-50/40 dark:from-[#0f0f0f] dark:via-[#1a1a2e] dark:to-[#16213e] relative overflow-hidden">
+      <LanguageDetector />
       {/* Background Effects */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-400/8 to-cyan-400/8 rounded-full blur-3xl"></div>
@@ -975,9 +970,8 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
                     VOCÊ É O ANFITRIÃO DA SALA!
                   </h1>
                   <div className="absolute -top-2 -right-2 text-2xl animate-bounce">👑</div>
-                </div>
-                <h2 className="text-xl text-gray-700 dark:text-gray-300">
-                  Copie o link a seguir ou compartilhe o código para a pessoa entrar em seu bate-papo.
+                </div>                <h2 className="text-xl text-gray-700 dark:text-gray-300">
+                  {t('chat.compartilhar.descricao')}
                 </h2>
                 <div className="flex flex-col items-center justify-center gap-6 p-4">
                   <div className="relative group">
@@ -1146,10 +1140,9 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
             </AnimatePresence>
           </MessageList>
         </ChatComponent.Body>        <ChatComponent.Footer className="flex items-center gap-3 border-t border-white/20 dark:border-gray-700/30 p-6 bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-900/60 dark:to-gray-800/60 backdrop-blur-sm">
-          <div className="flex-1">
-            <Textarea
+          <div className="flex-1">            <Textarea
               label=""
-              placeholder="Digite uma mensagem..."
+              placeholder={t('chat.interface.digite_mensagem')}
               minRows={1}
               maxRows={4}
               classNames={{
@@ -1260,15 +1253,14 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
                         connectionStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' :
                         connectionStatus === 'error' ? 'bg-red-500' : 'bg-gray-400'
                       }`}></div>
-                      <div className="flex-1">
-                        <p className="text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200">
-                          Status da Conexão
+                      <div className="flex-1">                        <p className="text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200">
+                          {t('chat.status_conexao.titulo')}
                         </p>
                         <p className="text-xs text-gray-600 dark:text-gray-400">
-                          {connectionStatus === 'connected' && 'Conectado ao servidor'}
-                          {connectionStatus === 'connecting' && 'Conectando...'}
-                          {connectionStatus === 'error' && 'Erro na conexão'}
-                          {connectionStatus === 'disconnected' && 'Desconectado'}
+                          {connectionStatus === 'connected' && t('chat.status_conexao.conectado')}
+                          {connectionStatus === 'connecting' && t('chat.status_conexao.conectando')}
+                          {connectionStatus === 'error' && t('chat.status_conexao.erro')}
+                          {connectionStatus === 'disconnected' && t('chat.status_conexao.desconectado')}
                         </p>
                       </div>
                     </div>
@@ -1285,11 +1277,10 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
                       endContent: 'flex-1 min-w-0',
                       label: 'w-full',
                     }}
-                  >
-                    <div className="flex flex-col gap-1 min-w-0">
-                      <p className="text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">Chat compacto</p>
+                  >                    <div className="flex flex-col gap-1 min-w-0">
+                      <p className="text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">{t('chat.configuracoes.chat_compacto.titulo')}</p>
                       <p className="text-xs md:text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
-                        Ative o modo compacto do chat. Os espaçamentos são menores.
+                        {t('chat.configuracoes.chat_compacto.descricao')}
                       </p>
                     </div>
                   </Switch>
@@ -1300,10 +1291,9 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                >
-                  <div className="flex flex-col gap-2 md:gap-3">
+                >                    <div className="flex flex-col gap-2 md:gap-3">
                     <div className="flex flex-col gap-1">
-                      <p className="text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200">Língua de tradução</p>
+                      <p className="text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200">{t('chat.configuracoes.idioma.label')}</p>
                       <p className="text-xs text-gray-600 dark:text-gray-400">
                         Selecione para qual língua as mensagens serão traduzidas
                       </p>
@@ -1336,7 +1326,7 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
                           <div onClick={(e) => e.stopPropagation()}>                      <Input
                         type="text"
                         className="p-2 md:p-4"
-                        placeholder="Pesquise uma língua..."
+                        placeholder={t('chat.configuracoes.idioma.pesquisar')}
                         onChange={(e) => setLanguagesFilter(e.target.value)}
                         ref={languagesFilterRef}
                         size="sm"
@@ -1409,7 +1399,7 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}          ><h2 className="text-sm md:text-medium bg-gradient-to-r from-blue-500/10 to-purple-500/10 backdrop-blur-sm rounded-t-xl p-3 md:p-4 font-semibold flex items-center gap-2 border-b border-white/20 dark:border-gray-700/30">
             <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-500 animate-pulse"></span>
-            <span className="text-gray-800 dark:text-gray-200">Usuários Online</span>
+            <span className="text-gray-800 dark:text-gray-200">{t('chat.usuarios_online.titulo')}</span>
           </h2><div className="flex flex-col gap-2 md:gap-3 p-3 md:p-4 max-h-60 md:max-h-80 overflow-y-auto">
             {Object.entries(usersRoomData).length > 0 ? (
               Object.values(usersRoomData).map((user, index) => (
@@ -1436,22 +1426,20 @@ export default function RoomPage({ params }: RoomPageProps) {  const [linguaSele
                   <div className="flex flex-col min-w-0 flex-1">
                     <span className="text-sm md:text-medium font-medium flex items-center gap-1 text-gray-800 dark:text-gray-200 truncate" style={{ color: user.color }}>
                       {user.apelido}
-                    </span>
-                    <span className="text-xs md:text-tiny text-gray-600 dark:text-gray-400">
-                      {user.host ? 'Anfitrião' : 'Convidado'}
+                    </span>                    <span className="text-xs md:text-tiny text-gray-600 dark:text-gray-400">
+                      {user.host ? t('chat.usuarios_online.anfitriao') : t('chat.usuarios_online.convidado')}
                     </span>
                   </div>
                 </motion.div>
               ))
-            ) : (
-              <motion.div
+            ) : (              <motion.div
                 className="text-center p-4 text-gray-500 dark:text-gray-400"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
               >
-                Nenhum usuário conectado
-              </motion.div>            )}          </div>
+                {t('chat.usuarios_online.nenhum_conectado')}
+              </motion.div>)}          </div>
         </motion.div>
         </div>
       </motion.aside>

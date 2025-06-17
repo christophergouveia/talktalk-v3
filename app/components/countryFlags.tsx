@@ -1,12 +1,4 @@
-import { countries } from 'country-flag-icons';
 import Image from 'next/image';
-
-//Só para não dar problema :)
-type FlagComponent = {
-  [key: string]: any;
-};
-
-const flagIcons: FlagComponent = countries;
 
 export function CountryFlag({ className, flag }: { className?: string; flag: string }) {
   return (

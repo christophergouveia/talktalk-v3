@@ -1,98 +1,470 @@
 {
-    "navbar": {
-        "pagina_inicial": "Inicio",
-        "sobre_ferramenta": "Sobre la Herramienta",
-        "conversar": "Chatear"
+  "navbar": {
+    "pagina_inicial": "Inicio",
+    "sobre_ferramenta": "Acerca de la Herramienta",
+    "conversar": "Conversar"
+  },
+  "pagina_inicial": {
+    "descricao": "Comunícate de manera eficiente con personas que no hablan tu mismo idioma. Sin dificultad. Con practicidad.",
+    "comece_a_conversar": "¡Comienza a conversar ahora mismo!",
+    "hero": {
+      "privacidade": {
+        "sua": "Tu",
+        "privacidade": "privacidad"
+      },
+      "responsabilidade": {
+        "nossa": "nuestra",
+        "responsabilidade": "responsabilidad"
+      },
+      "descricao": "Esta herramienta tiene interacción totalmente anónima con todos los mensajes del usuario cifrados y seguros."
     },
-    "pagina_inicial": {
-        "descricao": "Comunique-se de manera eficiente con personas que no hablan el mismo idioma que tú. Sin dificultades. Con prácticidad.",
-        "comece_a_conversar": "¡Comienza a chatear ahora mismo!",
-        "hero": {
-            "privacidade": {
-                "sua": "Su",
-                "privacidade": "privacidad"
-            },
-            "responsabilidade": {
-                "nossa": "nuestra",
-                "responsabilidade": "responsabilidad"
-            },
-            "descricao": "Esta herramienta tiene una interacción completamente anónima con todos los mensajes de usuario encriptados y seguros."
-        },
-        "diferencial": {
-            "titulo": "Nuestro diferencial",
-            "seguranca": {
-                "titulo": "Seguridad",
-                "descricao": "¡Tu privacidad es nuestra prioridad! Nuestra plataforma utiliza encriptación avanzada para garantizar que tus conversaciones permanezcan confidenciales."
-            },
-            "gratuidade": {
-                "titulo": "Gratuito",
-                "descricao": "¡Rompe las barreras del idioma sin gastar nada! Nuestra herramienta es completamente gratuita, haciendo la comunicación global accesible para todos."
-            },
-            "interface": {
-                "titulo": "Interfaz intuitiva y fácil de usar",
-                "descricao": "¡Conectar con personas de diferentes culturas nunca fue tan fácil! Nuestra interfaz está diseñada para ser lo más simple y fácil de usar posible, inicia conversaciones con pocos clics."
-            },
-            "sem_conta": {
-                "titulo": "Sin necesidad de crear cuenta",
-                "descricao": "¿Cuentas? ¿Registro? Olvídate de registros complicados. Nuestra herramienta te permite comenzar a chatear inmediatamente, sin necesidad de crear una cuenta."
-            }
-        },
-        "desenvolvedores": {
-            "titulo": "Desarrolladores",
-            "cargos": {
-                "frontend": "Desarrollador Frontend",
-                "backend": "Desarrollador Backend"
-            }
-        }
+    "diferencial": {
+      "titulo": "nuestro diferencial",
+      "seguranca": {
+        "titulo": "Seguridad",
+        "descricao": "¡Tu privacidad es prioridad para nosotros! Nuestra plataforma utiliza cifrado avanzado para garantizar que tus conversaciones permanezcan confidenciales."
+      },
+      "gratuidade": {
+        "titulo": "Gratuidad",
+        "descricao": "¡Disminuye las barreras lingüísticas sin gastar nada! Nuestra herramienta es totalmente gratuita, haciendo la comunicación global accesible para todos."
+      },
+      "interface": {
+        "titulo": "Interfaz intuitiva y fácil de usar",
+        "descricao": "¡Conectar con personas de diferentes culturas nunca fue tan fácil! Nuestra interfaz fue pensada para ser lo más simple y fácil de usar, inicia conversaciones con pocos clics."
+      },
+      "sem_conta": {
+        "titulo": "Sin necesidad de crear cuentas",
+        "descricao": "¿Cuentas? ¿Registro? Olvida los registros complicados. Nuestra herramienta te permite comenzar a conversar inmediatamente, sin necesidad de crear una cuenta."
+      }
     },
-    "footer": {
-        "copyright": "Copyright © 2025 - Todos los derechos reservados. ",
-        "desenvolvido_por": "Desarrollado por <strong>Christopher</strong>, <strong>Gustavo</strong> y <strong>Kaike</strong>.",
-        "campus": "Instituto Federal de Educación, Ciencia y Tecnología de Assis Chateaubriand"
+    "desenvolvedores": {
+      "titulo": "Desarrolladores",
+      "cargos": {
+        "frontend": "Desarrollador FrontEnd",
+        "backend": "Desarrollador BackEnd"
+      }
     },
-    "sobre": {
-        
+    "highlights": {
+      "gratuito": "100% Gratuito",
+      "sem_cadastro": "Sin Registro", 
+      "traducao_instantanea": "Traducción Instantánea",
+      "totalmente_seguro": "Totalmente Seguro"
     },
-    "conversar": {
-        "hero": {
-            "titulo": {
-                "parte1": "Una",
-                "parte2": "poderosa",
-                "parte3": "herramienta de traducción en tiempo real. Sin necesidad de cambiar pestañas."
-            }
-        },
-        "criar_sala": {
-            "titulo": "Crea una sala",
-            "subtitulo": "¿Quieres unirte a una sala existente? Copia el enlace que te envió el anfitrión de la sala y accede.",
-            "apelido": {
-                "label": "Apodo (opcional)",
-                "erro_min": "El apodo debe contener al menos 4 caracteres.",
-                "erro_max": "El apodo debe contener como máximo 32 caracteres.",
-                "erro_caracteres": "El apodo debe contener solo letras, números, espacios, _ y -"
-            },
-            "avatar_alt": "Tu avatar",
-            "carregando": "Creando sala...",
-            "criando_sala": "Creando tu sala...",
-            "botao_criar": "CREAR UNA SALA",
-            "dica": {
-                "parte1": "CONSEJO:",
-                "parte2": "¡Puedes cambiar el color usado en tus avatares! Prueba tocando/haciendo clic en tu icono 😉"
-            }
-        },
-        "entrar_sala": {
-            "titulo": "Unirse a una sala",
-            "subtitulo": "¿Ya tienes un código de sala? ¡Únete a una sala existente!",
-            "codigo": {
-                "label": "Código de sala",
-                "placeholder": "Ingresa el código de la sala"
-            },
-            "botao_entrar": "Unirse a la sala"
-        },
-        "botoes_avatar": {
-            "escolher_avatar": "Escoger avatar",
-            "escolher_avatar_aleatorio": "Escoger avatar aleatorio",
-            "escolha_seu_avatar": "Escoge tu avatar",
-            "selecionado": "SELECCIONADO"
-        }
+    "botoes": {
+      "saiba_mais": "Saber Más"
     }
+  },
+  "footer": {
+    "copyright": "Copyright © 2025 - Todos los derechos reservados. ",
+    "desenvolvido_por": "Desarrollado por <strong>Christopher</strong>, <strong>Gustavo</strong> y <strong>Kaike</strong>.",
+    "campus": "Instituto Federal de Educación, Ciencia y Tecnología de Assis Chateaubriand"
+  },
+  "sobre": {
+    "hero": {
+      "badge": "Conectando el mundo a través de la comunicación",
+      "titulo": {
+        "parte1": "Nuestro Viaje",
+        "parte2": "en TalkTalk"
+      },
+      "descricao": "Descubre cómo estamos revolucionando la comunicación global con tecnología de punta, diseño inclusivo y una pasión genuina por conectar personas de todas las culturas.",
+      "botoes": {
+        "comecar_conversar": "Comenzar a Conversar",
+        "conhecer_equipe": "Conocer al Equipo"
+      }
+    },
+    "privacidade": {
+      "titulo": {
+        "parte1": "Tu",
+        "privacidade_palavra": "Privacidad",
+        "parte2": "Nuestra",
+        "responsabilidade_palavra": "Responsabilidad"
+      },
+      "descricao": "Tu privacidad es nuestra máxima prioridad. Implementamos las más avanzadas medidas de seguridad para garantizar que tus conversaciones permanezcan completamente privadas y protegidas.",
+      "recursos": {
+        "criptografia": "Cifrado de extremo a extremo",
+        "dados_nao_armazenados": "Datos nunca almacenados",
+        "conformidade_lgpd": "Conformidad con LGPD"
+      },
+      "imagem_alt": "Conversación Segura"
+    },
+    "diferenciais": {
+      "titulo": "Nuestros Diferenciales",
+      "subtitulo": "Lo que nos hace únicos en el mundo de la comunicación global",
+      "seguranca": {
+        "titulo": "Seguridad Máxima",
+        "descricao": "Protección avanzada con cifrado de extremo a extremo, garantizando que solo tú y tu interlocutor tengan acceso a los mensajes.",
+        "imagem_alt": "Seguridad"
+      },
+      "gratuito": {
+        "titulo": "100% Gratuito",
+        "descricao": "Creemos que la comunicación global debe ser accesible para todos. Nuestra plataforma es completamente gratuita, sin tarifas ocultas.",
+        "imagem_alt": "Gratuito"
+      },
+      "sem_cadastro": {
+        "titulo": "Sin Registro",
+        "descricao": "Entra y comienza a conversar inmediatamente. No es necesario crear cuenta, proporcionar email o pasar por procesos burocráticos."
+      }
+    },
+    "recursos": {
+      "titulo": "Recursos Innovadores",
+      "subtitulo": "Tecnologías de punta que hacen la comunicación global accesible, rápida y segura para todos",
+      "traducao_tempo_real": {
+        "titulo": "Traducción en Tiempo Real",
+        "descricao": "Comunicación instantánea entre personas de diferentes idiomas con traducción automática y precisa."
+      },
+      "sintese_voz": {
+        "titulo": "Síntesis de Voz",
+        "descricao": "Transforma texto en habla con voces naturales y configuraciones personalizables para máxima accesibilidad."
+      },
+      "acessibilidade_total": {
+        "titulo": "Accesibilidad Total",
+        "descricao": "Diseño inclusivo con soporte para daltonismo, múltiples tamaños de fuente y navegación simplificada."
+      },
+      "velocidade_extrema": {
+        "titulo": "Velocidad Extrema",
+        "descricao": "Chat en tiempo real con latencia mínima, garantizando conversaciones fluidas y naturales."
+      },
+      "seguranca_avancada": {
+        "titulo": "Seguridad Avanzada",
+        "descricao": "Cifrado de extremo a extremo y protección de datos para mantener tus conversaciones siempre seguras."
+      },
+      "personalizacao_total": {
+        "titulo": "Personalización Total",
+        "descricao": "Personaliza la interfaz, colores, temas y configuraciones para crear tu experiencia única."
+      }
+    },
+    "evolucao": {
+      "titulo": "Nuestra Evolución",
+      "subtitulo": "Acompaña cada etapa de nuestro viaje, desde la idea inicial hasta el producto revolucionario de hoy",
+      "timeline": {
+        "janeiro_2024": {
+          "data": "Enero 2024",
+          "titulo": "Nacimiento de la Idea",
+          "descricao": "El viaje comenzó con la visión de crear una plataforma que pudiera conectar personas de diferentes culturas e idiomas de forma natural e inclusiva, rompiendo barreras lingüísticas."
+        },
+        "marco_2024": {
+          "data": "Marzo 2024",
+          "titulo": "Investigación y Planificación",
+          "descricao": "Período intenso de investigación sobre tecnologías de traducción, accesibilidad y UX/UI, definiendo los pilares fundamentales del proyecto."
+        },
+        "maio_2024": {
+          "data": "Mayo 2024",
+          "titulo": "Desarrollo Inicial",
+          "descricao": "Implementación de las funcionalidades core: traducción en tiempo real, chat en tiempo real con Socket.IO y establecimiento de la arquitectura base del sistema."
+        },
+        "julho_2024": {
+          "data": "Julio 2024",
+          "titulo": "Funcionalidades de Accesibilidad",
+          "descricao": "Implementación de recursos de accesibilidad como síntesis de voz, soporte para daltónicos y configuraciones personalizables de interfaz."
+        },
+        "setembro_2024": {
+          "data": "Septiembre 2024",
+          "titulo": "Fase de Pruebas",
+          "descricao": "Período de pruebas intensivas con usuarios reales, recolección de feedback e implementación de mejoras significativas basadas en la experiencia del usuario."
+        },
+        "outubro_2024": {
+          "data": "Octubre 2024",
+          "titulo": "Refinamiento del Diseño",
+          "descricao": "Mejoras significativas en la interfaz de usuario, implementación de temas claro/oscuro y optimización para garantizar una experiencia intuitiva."
+        },
+        "novembro_2024": {
+          "data": "Noviembre 2024",
+          "titulo": "Optimizaciones y Seguridad",
+          "descricao": "Implementación de medidas de seguridad avanzadas, optimización de performance y preparación para el lanzamiento público."
+        },
+        "dezembro_2024": {
+          "data": "Diciembre 2024",
+          "titulo": "Lanzamiento Beta",
+          "descricao": "Lanzamiento de la versión beta para un grupo selecto de testers, recolectando feedback final y realizando ajustes finales."
+        },
+        "janeiro_2025": {
+          "data": "Enero 2025",
+          "titulo": "Lanzamiento Oficial",
+          "descricao": "TalkTalk se pone a disposición del público, marcando el inicio de una nueva era en la comunicación global inclusiva."
+        }
+      }
+    },
+    "equipe": {
+      "titulo": "Conoce Nuestro Equipo",
+      "subtitulo": "Los visionarios y desarrolladores detrás de la revolución en la comunicación global",
+      "membros": {
+        "gustavo": {
+          "nome": "Gustavo Preti",
+          "cargo": "Full Stack Developer & Product Owner",
+          "descricao": "Especialista en desarrollo web moderno, con enfoque en React, Next.js y tecnologías de traducción. Responsable de la arquitectura completa del sistema y experiencia del usuario.",
+          "tags": ["React", "Next.js", "TypeScript", "Node.js", "Socket.IO", "UX/UI"]
+        },
+        "christopher": {
+          "nome": "Christopher Gouveia",
+          "cargo": "Backend Developer & DevOps Engineer",
+          "descricao": "Especialista en infraestructura, seguridad y optimización de performance. Responsable de la implementación del backend robusto y deployment escalable de la aplicación.",
+          "tags": ["Node.js", "Docker", "AWS", "MongoDB", "Security", "DevOps"]
+        },
+        "kaike": {
+          "nome": "Kaike Sathler",
+          "cargo": "Frontend Developer & UI/UX Designer",
+          "descricao": "Especialista en desarrollo frontend y diseño de interfaces, con enfoque en experiencia del usuario y accesibilidad. Responsable de la creación de componentes reutilizables y design system.",
+          "tags": ["React", "CSS", "UI/UX", "Design", "Frontend", "Figma"]
+        }
+      }
+    },
+    "missao": {
+      "titulo": "Nuestra Misión",
+      "texto": {
+        "quebrar_barreiras": "Romper barreras lingüísticas y conectar personas de todas las culturas a través de una comunicación instantánea, inclusiva y accesible.",
+        "tecnologia_humanidade": "Creemos que la tecnología debe servir a la humanidad, haciendo la comunicación global más natural y eliminando las limitaciones impuestas por los idiomas.",
+        "acessibilidade_total": "Nuestro compromiso es con la accesibilidad total, garantizando que personas con diferentes necesidades puedan comunicarse libremente."
+      },
+      "valores": {
+        "titulo": "Nuestros Valores",
+        "inclusividade": "Inclusividad y accesibilidad",
+        "inovacao": "Innovación tecnológica responsable",
+        "privacidade": "Privacidad y seguridad",
+        "experiencia": "Experiencia de usuario excepcional"
+      }
+    },
+    "cta": {
+      "titulo": "¿Listo para Romper Barreras?",
+      "descricao": "Únete a miles de personas que ya están experimentando una nueva forma de comunicarse globalmente.",
+      "botoes": {
+        "comecar_agora": "Comenzar Ahora",
+        "personalizar": "Personalizar"
+      }
+    },
+    "desenvolvedores": {
+      "titulo": "Desarrolladores",
+      "cargos": {
+        "frontend": "Desarrollador FrontEnd",
+        "backend": "Desarrollador BackEnd"
+      }
+    }
+  },
+  "conversar": {
+    "hero": {
+      "titulo": {
+        "parte1": "Una",
+        "parte2": "poderosa",
+        "parte3": "herramienta de traducción en tiempo real. Sin necesidad de cambiar pestañas."
+      },
+      "subtitulo": "Conéctate instantáneamente con personas alrededor del mundo"
+    },
+    "criar_sala": {
+      "titulo": "Crea una sala",
+      "subtitulo": "¿Deseas entrar en una sala ya existente? Copia el enlace que el anfitrión de la sala te envió y accede.",
+      "apelido": {
+        "label": "Apodo (opcional)",
+        "erro_min": "Es necesario que el apodo contenga al menos 4 caracteres.",
+        "erro_max": "Es necesario que el apodo contenga máximo 32 caracteres.",
+        "erro_caracteres": "El apodo debe contener solo letras, números, espacios, _ y -"
+      },
+      "avatar_alt": "Tu avatar",
+      "carregando": "Creando sala...",
+      "criando_sala": "Creando tu sala...",
+      "botao_criar": "CREAR UNA SALA",
+      "dica": {
+        "parte1": "CONSEJO:",
+        "parte2": "¡Puedes cambiar el color de tu avatar! Intenta hacer clic/tocar en el ícono de tu animal. 😉"
+      }
+    },
+    "entrar_sala": {
+      "titulo": "Entrar en una Sala",
+      "subtitulo": "Ingresa el código de la sala para participar en una conversación existente",
+      "codigo": {
+        "label": "Código de la Sala",
+        "placeholder": "Ingresa el código de la sala"
+      },
+      "botao_entrar": "Entrar en la Sala"
+    },
+    "botoes_avatar": {
+      "escolher_avatar": "Elegir avatar",
+      "escolher_avatar_aleatorio": "Elegir avatar aleatorio",
+      "escolha_seu_avatar": "Elige tu avatar",
+      "selecionado": "SELECCIONADO"
+    }
+  },
+  "chat": {
+    "interface": {
+      "digite_mensagem": "Escribe un mensaje...",
+      "sala_indisponivel": "Sala no disponible o error desconocido",
+      "voltar_pagina_sala": "Volver a la página de sala",
+      "usuario_ja_na_sala": "¡Ya estás en esta sala en otro dispositivo!",
+      "para_entrar_saia_outros": "Para entrar en la sala, debes salir de otros dispositivos.",
+      "usuario_desconectado": "usuario desconectado",
+      "audio_nao_suportado": "Tu navegador no soporta el elemento de audio."
+    },
+    "configuracoes": {
+      "titulo": "Configuraciones",
+      "subtitulo": "Personaliza tu experiencia en TalkTalk",
+      "categorias": "Categorías",
+      "abas": {
+        "perfil": "Perfil",
+        "idioma": "Idioma",
+        "audio": "Audio",
+        "acessibilidade": "Accesibilidad",
+        "aparencia": "Apariencia"
+      },
+      "perfil": {
+        "titulo": "Configuraciones de Perfil",
+        "subtitulo": "Personaliza tu experiencia",
+        "nome_completo": {
+          "label": "Nombre completo",
+          "placeholder": "Tu nombre completo"
+        },
+        "apelido_chat": {
+          "label": "Apodo (mostrado en chats)",
+          "placeholder": "Cómo deseas ser llamado"
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "tu.email@ejemplo.com"
+        },
+        "avatar": {
+          "titulo": "Avatar",
+          "descricao": "Elige tu avatar",
+          "gerar_aleatorio": "Generar Aleatorio"
+        },
+        "apelido": {
+          "label": "Apodo",
+          "placeholder": "Ingresa tu apodo"
+        },
+        "cor": {
+          "titulo": "Color del Avatar",
+          "descricao": "Elige el color de tu avatar"
+        }
+      },
+      "idioma": {
+        "titulo": "Configuraciones de Idioma",
+        "subtitulo": "Define tu idioma preferido y traducciones",
+        "idioma_principal": {
+          "label": "Idioma principal",
+          "descricao": "Este es el idioma en que deseas recibir las traducciones"
+        },
+        "label": "Idioma",
+        "pesquisar": "Buscar idiomas...",
+        "nenhum_encontrado": "Ningún idioma encontrado",
+        "traducao_automatica": {
+          "titulo": "Traducción automática",
+          "quando_ativado": "Cuando activado",
+          "descricao_ativado": "los mensajes se mostrarán ya traducidos",
+          "quando_desativado": "Cuando desactivado",
+          "descricao_desativado": "los mensajes se mostrarán en el idioma original y necesitas hacer clic en el botón para ver la traducción",
+          "descricao": "Traducir mensajes automáticamente"
+        }
+      },
+      "audio": {
+        "titulo": "Configuraciones de Audio",
+        "subtitulo": "Personaliza la síntesis de voz y reproducción",
+        "voz": {
+          "label": "Voz para lectura",
+          "selecione": "Selecciona una voz",
+          "desconhecido": "Desconocido"
+        },
+        "volume": "Volumen",
+        "velocidade": "Velocidad",
+        "tom": "Tono",
+        "teste": {
+          "label": "Texto para prueba",
+          "placeholder": "Ingresa un texto para probar las configuraciones de voz",
+          "texto_padrao": "¡Hola! Este es un mensaje de prueba para las configuraciones de voz.",
+          "instrucao": "Presiona Enter para escuchar el texto o usa el botón abajo",
+          "botao": "Probar configuraciones de voz"
+        },
+        "leitura_automatica": {
+          "titulo": "Lectura automática",
+          "descricao": "Cuando activado:",
+          "observacao1": "Tus propios mensajes nunca serán leídos automáticamente.",
+          "observacao2": "Predeterminado",
+          "padrao": "Predeterminado",
+          "padrao_descricao": "Desactivado (necesitas hacer clic en el botón de play manualmente)",
+          "confirmacao": "Lectura automática activada - solo mensajes recibidos de otros usuarios serán leídos automáticamente"
+        },
+        "sintetizacao": {
+          "titulo": "Activar sintetización de voz",
+          "descricao": "Activa para que los mensajes puedan ser leídos en voz alta."
+        }
+      },
+      "aparencia": {
+        "titulo": "Apariencia",
+        "subtitulo": "Personaliza el tema y visual de la interfaz",
+        "modo_escuro": {
+          "titulo": "Modo oscuro",
+          "descricao": "Alternar entre temas claro y oscuro",
+          "aria_ativar_claro": "Activar modo claro",
+          "aria_ativar_escuro": "Activar modo oscuro"
+        },
+        "tamanho_fonte": {
+          "titulo": "Tamaño de fuente",
+          "pequena": "Pequeña",
+          "media": "Mediana",
+          "grande": "Grande",
+          "extra_grande": "Extra Grande",
+          "exemplo": "Ejemplo de texto con el tamaño seleccionado",
+          "texto_exemplo": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        }
+      },
+      "acessibilidade": {
+        "titulo": "Configuraciones de Accesibilidad",
+        "subtitulo": "Haz tu experiencia más accesible"
+      },
+      "chat_compacto": {
+        "titulo": "Chat compacto",
+        "descricao": "Mensajes en formato condensado para ahorrar espacio"
+      },
+      "botoes": {
+        "salvar": "Guardar cambios",
+        "salvando": "Guardando..."
+      }
+    },
+    "status_conexao": {
+      "titulo": "Estado de la Conexión",
+      "conectado": "Conectado al servidor",
+      "conectando": "Conectando...",
+      "erro": "Error en la conexión",
+      "desconectado": "Desconectado"
+    },
+    "usuarios_online": {
+      "titulo": "Usuarios en Línea",
+      "anfitriao": "Anfitrión",
+      "convidado": "Invitado",
+      "nenhum_usuario": "Ningún usuario en línea",
+      "nenhum_conectado": "Ningún usuario conectado"
+    },
+    "compartilhar": {
+      "titulo": "Compartir Sala",
+      "descricao": "Copia el enlace a continuación o comparte el código para que la persona entre en tu chat."
+    },
+    "mensagem": {
+      "original": "Mensaje original",
+      "traduzido_de": "Traducido del",
+      "idioma_nao_identificado": "Idioma no identificado",
+      "ver_traducao": "Ver traducción",
+      "ver_original": "Ver original",
+      "reproduzir": "Reproducir",
+      "pausar": "Pausar"
+    },
+    "audio": {
+      "gravando": "Grabando audio... Haz clic nuevamente para parar.",
+      "finalizado_automaticamente": "Grabación finalizada automáticamente (límite de 1 minuto).",
+      "enviado_sucesso": "¡Audio enviado con éxito!",
+      "erro_microfone": "Error al acceder al micrófono:"
+    },
+    "dicas": {
+      "nao_se_preocupe_apelido": "No te preocupes si no ingresas un apodo.",
+      "avatar_gerado_automaticamente": "Se generará un avatar automáticamente para ti."
+    },
+    "erros": {
+      "sala_nao_encontrada": "¡Sala no encontrada!",
+      "erro_conectar_sala": "Error al conectar en la sala:",
+      "sala_cheia": "¡Sala está llena! Máximo de 3 usuarios permitidos.",
+      "erro_conexao_servidor": "Error de conexión con el servidor. Verifica tu internet.",
+      "servidor_indisponivel": "No fue posible conectar al servidor de chat. Verifica si el servidor está funcionando."
+    }
+  },
+  "cookies": {
+    "titulo": "Consentimiento de Cookies",
+    "descricao": "Este sitio utiliza cookies para mejorar tu experiencia y para garantizar que tus mensajes sean seguros. Saber más accediendo a la",
+    "politica_cookies": "Política de Cookies",
+    "politica_privacidade": "Política de Privacidad",
+    "aceitar": "Aceptar todas las cookies"
+  }
 }
