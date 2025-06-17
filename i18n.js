@@ -7,13 +7,28 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .use(resourcesToBackend((language, namespace, callback) => {
-    import(`./app/locales/${language}/${namespace}.json`)
+    // Map 'pt' to 'pt-BR' to avoid missing translation files
+    const mappedLanguage = language === 'pt' ? 'pt-BR' : language;
+    
+    import(`./app/locales/${mappedLanguage}/${namespace}.json`)
       .then((resources) => {
         callback(null, resources)
       })
       .catch((error) => {
-        console.log(error)
-        callback(error, null)
+        console.log(`Error loading translation for ${mappedLanguage}/${namespace}:`, error)
+        // Fallback to pt-BR if the requested language fails
+        if (mappedLanguage !== 'pt-BR') {
+          import(`./app/locales/pt-BR/${namespace}.json`)
+            .then((resources) => {
+              callback(null, resources)
+            })
+            .catch((fallbackError) => {
+              console.log('Fallback to pt-BR also failed:', fallbackError)
+              callback(fallbackError, null)
+            })
+        } else {
+          callback(error, null)
+        }
       })
   }))
   .init({
@@ -22,6 +37,12 @@ i18n
     debug: true,
     interpolation: {
       escapeValue: false,
+    },
+    // Add language detection configuration
+    detection: {
+      order: ['localStorage', 'navigator', 'htmlTag'],
+      caches: ['localStorage'],
+      lookupLocalStorage: 'i18nextLng',
     }
   });
 

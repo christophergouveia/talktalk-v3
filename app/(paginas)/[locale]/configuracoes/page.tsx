@@ -65,11 +65,10 @@ const UserSettingsPage = () => {
   // Add new function to save settings
   const saveUserSettings = useCallback((settings: any) => {
     localStorage.setItem('talktalk_user_settings', JSON.stringify(settings));
-  }, []);
-  const [linguaSelecionada, setLinguaSelecionada] = useState<{ label: string; value: string; flag: string }>({
+  }, []);  const [linguaSelecionada, setLinguaSelecionada] = useState<{ label: string; value: string; flag: string }>({
     label: 'Português',
-    value: 'pt',
-    flag: 'PT',
+    value: 'pt-BR',
+    flag: 'BR',
   });
   const isFirstLoad = useRef(true);
 

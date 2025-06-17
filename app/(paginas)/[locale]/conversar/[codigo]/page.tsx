@@ -48,13 +48,12 @@ interface RoomPageProps {
   }>;
 }
 
-export default function RoomPage({ params }: RoomPageProps) {
-  const [linguaSelecionada, setLinguaSelecionada] = useState<{ label: string; value: string; flag: string }>({
+export default function RoomPage({ params }: RoomPageProps) {  const [linguaSelecionada, setLinguaSelecionada] = useState<{ label: string; value: string; flag: string }>({
     label: 'Português',
-    value: 'pt',
-    flag: 'PT',
-  });
-  const [socketClient, setSocketClient] = useState<Socket | null>(null);
+    value: 'pt-BR',
+    flag: 'BR',
+  });  const [socketClient, setSocketClient] = useState<Socket | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error'>('disconnected');
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('Sala indisponível ou erro desconhecido');
   const [hostModal, setHostModal] = useState<boolean>(false);
@@ -144,10 +143,9 @@ export default function RoomPage({ params }: RoomPageProps) {
         }
       } catch (error) {
         console.error('Erro ao carregar configurações de idioma:', error);
-      }
-    } else {
+      }    } else {
       // Initialize with default language if no settings exist
-      onLinguaChange('pt');
+      onLinguaChange('pt-BR');
     }
   }, [onLinguaChange]);
   const connectToRoom = useCallback(
@@ -166,6 +164,8 @@ export default function RoomPage({ params }: RoomPageProps) {
             SOCKET_PORT: process.env.NEXT_PUBLIC_SOCKET_PORT
           });
           
+          setConnectionStatus('connecting');
+          
           const socket = io(socketUrl, {
             withCredentials: true,
             transports: ['websocket', 'polling'],
@@ -178,20 +178,40 @@ export default function RoomPage({ params }: RoomPageProps) {
 
           socket.once('connect', () => {
             console.log('[DEBUG] Socket conectado com sucesso:', socket.id);
+            setConnectionStatus('connected');
             setShowNameInput(false);
-          });
-
-          socket.on('connect_error', (error) => {
+          });          socket.on('connect_error', (error) => {
             console.error('[DEBUG] Erro de conexão do socket:', error);
-            console.error('[DEBUG] Tentando fallback para polling...');
+            console.error('[DEBUG] Socket URL tentada:', socketUrl);
+            setConnectionStatus('error');
+            
+            // Tentar fallback para polling apenas
+            const currentTransports = socket.io.opts.transports;
+            if (currentTransports && Array.isArray(currentTransports) && currentTransports.some(t => t === 'websocket')) {
+              console.log('[DEBUG] Tentando fallback para polling...');
+              socket.io.opts.transports = ['polling'];
+              setConnectionStatus('connecting');
+              socket.connect();
+            } else {
+              // Se já tentamos polling e falhou, mostrar erro
+              setErrorMessage('Não foi possível conectar ao servidor de chat. Verifique se o servidor está funcionando.');
+              setShowErrorModal(true);
+            }
           });
 
           socket.on('error', (error) => {
             console.error('[DEBUG] Erro do socket:', error);
+            console.error('[DEBUG] Detalhes do erro:', {
+              message: error.message,
+              type: error.type,
+              description: error.description
+            });
+            setConnectionStatus('error');
           });
 
           socket.on('disconnect', (reason) => {
             console.log('[DEBUG] Socket desconectado:', reason);
+            setConnectionStatus('disconnected');
           });
 
           console.log('[DEBUG] Iniciando conexão do socket...');
@@ -1225,13 +1245,36 @@ export default function RoomPage({ params }: RoomPageProps) {
             </motion.h1>
           </div>
 
-          <div className="flex-1 overflow-y-auto">            <section className="p-3 md:p-4 space-y-3 md:space-y-4">
-              <motion.div 
+          <div className="flex-1 overflow-y-auto">            <section className="p-3 md:p-4 space-y-3 md:space-y-4">              <motion.div 
                 className="space-y-3 md:space-y-4"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
+                {/* Connection Status */}
+                <div className="w-full">
+                  <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border border-white/30 dark:border-gray-700/30 rounded-xl p-3 md:p-4 shadow-md">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${
+                        connectionStatus === 'connected' ? 'bg-green-500 animate-pulse' :
+                        connectionStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' :
+                        connectionStatus === 'error' ? 'bg-red-500' : 'bg-gray-400'
+                      }`}></div>
+                      <div className="flex-1">
+                        <p className="text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200">
+                          Status da Conexão
+                        </p>
+                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                          {connectionStatus === 'connected' && 'Conectado ao servidor'}
+                          {connectionStatus === 'connecting' && 'Conectando...'}
+                          {connectionStatus === 'error' && 'Erro na conexão'}
+                          {connectionStatus === 'disconnected' && 'Desconectado'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Chat Compacto Switch */}
                 <div className="w-full">
                   <Switch

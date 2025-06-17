@@ -28,22 +28,44 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid targetLanguage - must be non-empty string' }, { status: 400 });
     }
 
-    //if (!(targetLanguage in supportedLanguages)) {
-      //return NextResponse.json({ error: 'Unsupported language' }, { status: 400 });
-    //}
+    // Map common language codes to standardized format
+    const languageMapping: { [key: string]: string } = {
+      'pt-BR': 'pt',
+      'pt-PT': 'pt', 
+      'en-US': 'en',
+      'en-GB': 'en',
+      'es-ES': 'es',
+      'es-MX': 'es',
+      'fr-FR': 'fr',
+      'de-DE': 'de',
+      'it-IT': 'it',
+      'ja-JP': 'ja',
+      'zh-CN': 'zh',
+      'zh-TW': 'zh',
+      'ru-RU': 'ru',
+      'ar-SA': 'ar'
+    };
 
-    const translation = await translate(text, { to: targetLanguage.trim(), autoCorrect: true });
+    const mappedLanguage = languageMapping[targetLanguage.trim()] || targetLanguage.trim();
+    
+    console.log('[DEBUG] Mapeamento de idioma:', { 
+      original: targetLanguage.trim(), 
+      mapped: mappedLanguage 
+    });
+
+    const translation = await translate(text, { to: mappedLanguage, autoCorrect: true });
     const translationText = Array.isArray(translation) ? translation[0].text : translation.text;
+    const translationTextStr = typeof translationText === 'string' ? translationText : String(translationText);
 
     console.log('[DEBUG] Tradução realizada com sucesso:', {
       originalLength: text.length,
-      translatedLength: translationText.length,
-      targetLanguage: targetLanguage.trim()
+      translatedLength: translationTextStr.length,
+      targetLanguage: mappedLanguage
     });
 
     return NextResponse.json({
       result: translationText,
-      language: supportedLanguages[targetLanguage as SupportedLanguage],
+      language: supportedLanguages[targetLanguage as SupportedLanguage] || supportedLanguages[mappedLanguage as SupportedLanguage] || 'Idioma desconhecido',
     });
   } catch (error) {
     console.error('[ERROR] Erro na tradução:', error);
