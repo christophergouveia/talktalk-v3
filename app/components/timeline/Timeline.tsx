@@ -11,6 +11,7 @@ export interface TimelineEvent {
   icon?: ReactNode;
   color?: string;
   image?: string;
+  imageAlt?: string;
 }
 
 interface TimelineProps {
@@ -21,13 +22,51 @@ interface TimelineProps {
 const Timeline: FC<TimelineProps> = ({ events, className = '' }) => {
   return (
     <div className={`max-w-7xl mx-auto py-8 px-4 ${className}`}>
-      {/* Timeline container with vertical line */}
+      {/* Timeline container with enhanced vertical line */}
       <div className="relative">
-        {/* Background vertical line */}
-        <div className="absolute left-1/2 top-0 bottom-0 -ml-0.5 w-0.5 bg-gray-200 dark:bg-gray-700"></div>
+        {/* Enhanced gradient background line */}
+        <motion.div 
+          className="absolute left-1/2 top-8 bottom-8 w-1 -translate-x-1/2 rounded-full opacity-60"
+          style={{
+            background: 'linear-gradient(to bottom, #3B82F6, #8B5CF6, #EC4899, #EF4444, #F59E0B, #10B981)',
+            boxShadow: '0 0 20px rgba(59, 130, 246, 0.3)',
+          }}
+          initial={{ scaleY: 0, opacity: 0 }}
+          animate={{ scaleY: 1, opacity: 0.6 }}
+          transition={{ duration: 1.5, ease: 'easeOut' }}
+        />
+
+        {/* Timeline start decoration */}
+        <motion.div
+          className="absolute left-1/2 top-0 w-6 h-6 -translate-x-1/2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 shadow-lg border-4 border-white dark:border-gray-900 z-30"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+        >
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 animate-ping opacity-20" />
+        </motion.div>
+
+        {/* Timeline end decoration */}
+        <motion.div
+          className="absolute left-1/2 bottom-0 w-8 h-8 -translate-x-1/2 rounded-full bg-gradient-to-r from-green-500 to-blue-600 shadow-lg border-4 border-white dark:border-gray-900 z-30 flex items-center justify-center"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 1 }}
+        >
+          {/* Star icon for completion */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4 text-white"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-green-500 to-blue-600 animate-pulse opacity-30" />
+        </motion.div>
 
         {/* Timeline events */}
-        <div className="relative space-y-12">
+        <div className="relative space-y-12 pt-8 pb-8">
           {events.map((event, index) => (
             <motion.div
               key={`${event.title}-${index}`}
@@ -44,6 +83,7 @@ const Timeline: FC<TimelineProps> = ({ events, className = '' }) => {
                 isLeft={index % 2 === 0}
                 color={event.color || '#3B82F6'}
                 image={event.image}
+                imageAlt={event.imageAlt}
                 isLast={index === events.length - 1}
               />
             </motion.div>

@@ -1,39 +1,24 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { 
-  FaCode, 
-  FaRocket, 
-  FaUsers, 
-  FaLightbulb, 
-  FaBuilding, 
-  FaStar, 
-  FaGithub, 
+import {
+  FaCode,
+  FaRocket,
+  FaUsers,
+  FaLightbulb,
+  FaBuilding,
+  FaStar,
+  FaGithub,
   FaLinkedin,
   FaGlobe,
   FaComments,
   FaAccessibleIcon,
   FaShieldAlt,
   FaHeart,
-  FaChartLine
+  FaChartLine,
 } from 'react-icons/fa';
-import { 
-  BsBoxes, 
-  BsTranslate, 
-  BsLightningCharge, 
-  BsPeople,
-  BsShield,
-  BsGlobe2,
-  BsRocket
-} from 'react-icons/bs';
-import { 
-  HiSparkles, 
-  HiChatBubbleLeftRight, 
-  HiGlobeAlt,
-  HiUserGroup,
-  HiCog6Tooth,
-  HiMicrophone
-} from 'react-icons/hi2';
+import { BsBoxes, BsTranslate, BsLightningCharge, BsPeople, BsShield, BsGlobe2, BsRocket } from 'react-icons/bs';
+import { HiSparkles, HiChatBubbleLeftRight, HiGlobeAlt, HiUserGroup, HiCog6Tooth, HiMicrophone } from 'react-icons/hi2';
 import Avatar from 'react-avatar';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -42,6 +27,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import Timeline from '@/app/components/timeline/Timeline';
+import { DotGothic16 } from 'next/font/google';
 
 interface CardProps {
   nome: string;
@@ -63,35 +49,33 @@ interface FeatureCardProps {
   delay?: number;
 }
 
-
-
 function FeatureCard({ icon, title, description, color, delay = 0 }: FeatureCardProps) {
   return (
     <motion.div
-      initial={{ 
-        opacity: 0, 
-        y: 12
+      initial={{
+        opacity: 0,
+        y: 12,
       }}
-      whileInView={{ 
-        opacity: 1, 
-        y: 0
+      whileInView={{
+        opacity: 1,
+        y: 0,
       }}
       viewport={{ once: false, amount: 0.3 }}
-      transition={{ 
-        duration: 0.4, 
+      transition={{
+        duration: 0.4,
         delay,
-        ease: "easeOut"
+        ease: 'easeOut',
       }}
-      whileHover={{ 
+      whileHover={{
         y: -2,
-        transition: { 
-          duration: 0.15
-        }
+        transition: {
+          duration: 0.15,
+        },
       }}
       className="group relative rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5 shadow-sm hover:shadow-md transition-all duration-200"
     >
       {/* Minimal icon */}
-      <div 
+      <div
         className="inline-flex items-center justify-center w-10 h-10 rounded-md mb-3 text-white text-lg"
         style={{ backgroundColor: color }}
       >
@@ -99,41 +83,45 @@ function FeatureCard({ icon, title, description, color, delay = 0 }: FeatureCard
       </div>
 
       {/* Title */}
-      <h3 className="text-base font-semibold mb-2 text-gray-900 dark:text-white">
-        {title}
-      </h3>
+      <h3 className="text-base font-semibold mb-2 text-gray-900 dark:text-white">{title}</h3>
 
       {/* Description */}
-      <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
-        {description}
-      </p>
+      <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{description}</p>
     </motion.div>
   );
 }
 
-
-
-function CardContent({ nome, srcImagem, altImagem, cargo, tags, icon, linkGithub, linkLinkedin = '#', description }: CardProps) {
+function CardContent({
+  nome,
+  srcImagem,
+  altImagem,
+  cargo,
+  tags,
+  icon,
+  linkGithub,
+  linkLinkedin = '#',
+  description,
+}: CardProps) {
   return (
     <motion.div
-      initial={{ 
-        opacity: 0, 
-        y: 16
+      initial={{
+        opacity: 0,
+        y: 16,
       }}
-      whileInView={{ 
-        opacity: 1, 
-        y: 0
+      whileInView={{
+        opacity: 1,
+        y: 0,
       }}
       viewport={{ once: false, amount: 0.3 }}
-      transition={{ 
-        duration: 0.4, 
-        ease: "easeOut"
+      transition={{
+        duration: 0.4,
+        ease: 'easeOut',
       }}
-      whileHover={{ 
+      whileHover={{
         y: -3,
-        transition: { 
-          duration: 0.2
-        }
+        transition: {
+          duration: 0.2,
+        },
       }}
       className="group relative rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5 shadow-sm hover:shadow-md transition-all duration-200"
     >
@@ -157,7 +145,7 @@ function CardContent({ nome, srcImagem, altImagem, cargo, tags, icon, linkGithub
               round
             />
           )}
-          
+
           {/* Social media icons */}
           <div className="absolute -top-1 -right-1 flex flex-col space-y-1">
             {icon?.map((value, index) => (
@@ -179,18 +167,12 @@ function CardContent({ nome, srcImagem, altImagem, cargo, tags, icon, linkGithub
         </div>
 
         {/* Name */}
-        <h3 className="text-lg font-semibold mt-2 mb-1 text-gray-900 dark:text-white text-center">
-          {nome}
-        </h3>
-        
-        <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-2 text-center">
-          {cargo}
-        </p>
+        <h3 className="text-lg font-semibold mt-2 mb-1 text-gray-900 dark:text-white text-center">{nome}</h3>
+
+        <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-2 text-center">{cargo}</p>
 
         {description && (
-          <p className="text-gray-600 dark:text-gray-300 text-center text-xs leading-relaxed mb-3">
-            {description}
-          </p>
+          <p className="text-gray-600 dark:text-gray-300 text-center text-xs leading-relaxed mb-3">{description}</p>
         )}
       </div>
 
@@ -211,25 +193,24 @@ function CardContent({ nome, srcImagem, altImagem, cargo, tags, icon, linkGithub
 
 export default function SobrePage() {
   const params = useParams();
-  const locale = params?.locale as string || 'pt-BR';
+  const locale = (params?.locale as string) || 'pt-BR';
   const t = useTranslation('', { keyPrefix: 'sobre' }).t;
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 300], [0, 100]);
-  const y2 = useTransform(scrollY, [0, 300], [0, -100]);
-  const timelineItems = [
+  const y2 = useTransform(scrollY, [0, 300], [0, -100]);  const timelineItems = [
     {
       date: t('evolucao.timeline.janeiro_2024.data'),
       title: t('evolucao.timeline.janeiro_2024.titulo'),
       description: t('evolucao.timeline.janeiro_2024.descricao'),
       icon: <FaLightbulb size={20} />,
-      color: '#4F46E5',
+      color: '#4F46E5'
     },
     {
       date: t('evolucao.timeline.marco_2024.data'),
       title: t('evolucao.timeline.marco_2024.titulo'),
       description: t('evolucao.timeline.marco_2024.descricao'),
       icon: <BsGlobe2 size={20} />,
-      color: '#7C3AED',
+      color: '#7C3AED'
     },
     {
       date: t('evolucao.timeline.maio_2024.data'),
@@ -237,6 +218,8 @@ export default function SobrePage() {
       description: t('evolucao.timeline.maio_2024.descricao'),
       icon: <FaCode size={20} />,
       color: '#8B5CF6',
+      image: '/images/pictures/scientif.png',
+      imageAlt: 'Desenvolvimento inicial - primeiras linhas de código',
     },
     {
       date: t('evolucao.timeline.julho_2024.data'),
@@ -244,6 +227,8 @@ export default function SobrePage() {
       description: t('evolucao.timeline.julho_2024.descricao'),
       icon: <FaAccessibleIcon size={20} />,
       color: '#06B6D4',
+      image: '/images/pictures/Iftech.png',
+      imageAlt: 'Funcionalidades de acessibilidade - design inclusivo',
     },
     {
       date: t('evolucao.timeline.setembro_2024.data'),
@@ -251,6 +236,8 @@ export default function SobrePage() {
       description: t('evolucao.timeline.setembro_2024.descricao'),
       icon: <FaUsers size={20} />,
       color: '#F59E0B',
+      image: '/images/pictures/bancafinal.png',
+      imageAlt: 'Fase de testes - feedback dos usuários',
     },
     {
       date: t('evolucao.timeline.outubro_2024.data'),
@@ -258,6 +245,8 @@ export default function SobrePage() {
       description: t('evolucao.timeline.outubro_2024.descricao'),
       icon: <BsBoxes size={20} />,
       color: '#EC4899',
+      image: '/images/pictures/vedang.jpg',
+      imageAlt: 'Refinamento do design - interface otimizada',
     },
     {
       date: t('evolucao.timeline.novembro_2024.data'),
@@ -265,6 +254,8 @@ export default function SobrePage() {
       description: t('evolucao.timeline.novembro_2024.descricao'),
       icon: <FaShieldAlt size={20} />,
       color: '#EF4444',
+      image: '/images/pictures/vedang.jpg',
+      imageAlt: 'Otimizações e segurança - proteção avançada',
     },
     {
       date: t('evolucao.timeline.dezembro_2024.data'),
@@ -272,6 +263,8 @@ export default function SobrePage() {
       description: t('evolucao.timeline.dezembro_2024.descricao'),
       icon: <BsRocket size={20} />,
       color: '#10B981',
+      image: '/images/pictures/nocoins.png',
+      imageAlt: 'Lançamento beta - versão de testes',
     },
     {
       date: t('evolucao.timeline.janeiro_2025.data'),
@@ -279,6 +272,8 @@ export default function SobrePage() {
       description: t('evolucao.timeline.janeiro_2025.descricao'),
       icon: <FaRocket size={20} />,
       color: '#3B82F6',
+      image: '/images/pictures/Conversation-s.png',
+      imageAlt: 'Lançamento oficial - TalkTalk ao público',
     },
   ];
   const features = [
@@ -286,88 +281,88 @@ export default function SobrePage() {
       icon: <BsTranslate />,
       title: t('recursos.traducao_tempo_real.titulo'),
       description: t('recursos.traducao_tempo_real.descricao'),
-      color: "#3B82F6"
+      color: '#3B82F6',
     },
     {
       icon: <HiMicrophone />,
       title: t('recursos.sintese_voz.titulo'),
       description: t('recursos.sintese_voz.descricao'),
-      color: "#8B5CF6"
+      color: '#8B5CF6',
     },
     {
       icon: <FaAccessibleIcon />,
       title: t('recursos.acessibilidade_total.titulo'),
       description: t('recursos.acessibilidade_total.descricao'),
-      color: "#10B981"
+      color: '#10B981',
     },
     {
       icon: <BsLightningCharge />,
       title: t('recursos.velocidade_extrema.titulo'),
       description: t('recursos.velocidade_extrema.descricao'),
-      color: "#F59E0B"
+      color: '#F59E0B',
     },
     {
       icon: <BsShield />,
       title: t('recursos.seguranca_avancada.titulo'),
       description: t('recursos.seguranca_avancada.descricao'),
-      color: "#EF4444"
+      color: '#EF4444',
     },
     {
       icon: <HiCog6Tooth />,
       title: t('recursos.personalizacao_total.titulo'),
       description: t('recursos.personalizacao_total.descricao'),
-      color: "#EC4899"
-    }
+      color: '#EC4899',
+    },
   ];
-const teamMembers = [
+  const teamMembers = [
     {
       nome: t('equipe.membros.gustavo.nome'),
-      srcImagem: "/images/pictures/imagemGustavo.png",
-      altImagem: "Foto do Gustavo",
+      srcImagem: '/images/pictures/imagemGustavo.png',
+      altImagem: 'Foto do Gustavo',
       cargo: t('equipe.membros.gustavo.cargo'),
       description: t('equipe.membros.gustavo.descricao'),
-      tags: ["React", "Next.js", "TypeScript", "Node.js", "Socket.IO", "UX/UI"],
+      tags: ['React', 'Next.js', 'TypeScript', 'Node.js', 'Socket.IO', 'UX/UI'],
       icon: [<FaGithub key="github" />, <FaLinkedin key="linkedin" />],
-      linkGithub: "https://github.com/GustavoGPreti",
-      linkLinkedin: "https://linkedin.com/in/gustavo-preti"
+      linkGithub: 'https://github.com/GustavoGPreti',
+      linkLinkedin: 'https://linkedin.com/in/gustavo-preti',
     },
     {
       nome: t('equipe.membros.christopher.nome'),
-      srcImagem: "/images/pictures/imagemChristopher.png",
-      altImagem: "Foto do Christopher",
+      srcImagem: '/images/pictures/imagemChristopher.png',
+      altImagem: 'Foto do Christopher',
       cargo: t('equipe.membros.christopher.cargo'),
       description: t('equipe.membros.christopher.descricao'),
-      tags: ["Node.js", "Docker", "AWS", "MongoDB", "Security", "DevOps"],
+      tags: ['Node.js', 'Docker', 'AWS', 'MongoDB', 'Security', 'DevOps'],
       icon: [<FaGithub key="github" />, <FaLinkedin key="linkedin" />],
-      linkGithub: "https://github.com/christophergouveia",
-      linkLinkedin: "https://linkedin.com/in/christopher-oliveira"
+      linkGithub: 'https://github.com/christophergouveia',
+      linkLinkedin: 'https://linkedin.com/in/christopher-oliveira',
     },
     {
       nome: t('equipe.membros.kaike.nome'),
-      srcImagem: "/images/pictures/imagemKaike.png",
-      altImagem: "Foto do Kaike",
+      srcImagem: '/images/pictures/imagemKaike.png',
+      altImagem: 'Foto do Kaike',
       cargo: t('equipe.membros.kaike.cargo'),
       description: t('equipe.membros.kaike.descricao'),
-      tags: ["React", "CSS", "UI/UX", "Design", "Frontend", "Figma"],
+      tags: ['React', 'CSS', 'UI/UX', 'Design', 'Frontend', 'Figma'],
       icon: [<FaGithub key="github" />, <FaLinkedin key="linkedin" />],
-      linkGithub: "https://github.com/KaikeSathler",
-      linkLinkedin: "https://linkedin.com/in/kaike-sathler"
-    }
-  ];  return (
+      linkGithub: 'https://github.com/KaikeSathler',
+      linkLinkedin: 'https://linkedin.com/in/kaike-sathler',
+    },
+  ];
+  return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       <LanguageDetector />
-      
       {/* Hero Section - Enhanced with better visual hierarchy */}
       <section className="relative py-24 bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25"></div>
-        
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center max-w-4xl mx-auto"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -378,8 +373,8 @@ const teamMembers = [
               <HiGlobeAlt className="w-4 h-4" />
               {t('hero.badge')}
             </motion.div>
-            
-            <motion.h1 
+
+            <motion.h1
               className="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-8 text-gray-900 dark:text-white tracking-tight"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -390,8 +385,8 @@ const teamMembers = [
                 {t('hero.titulo.parte2')}
               </span>
             </motion.h1>
-            
-            <motion.p 
+
+            <motion.p
               className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed mb-10 font-light"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -406,14 +401,14 @@ const teamMembers = [
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
             >
-              <Link 
+              <Link
                 href={`/${locale}/conversar`}
                 className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg"
               >
                 <HiChatBubbleLeftRight className="w-5 h-5" />
                 {t('hero.botoes.comecar_conversar')}
               </Link>
-              <Link 
+              <Link
                 href="#equipe"
                 className="inline-flex items-center gap-3 px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg"
               >
@@ -423,7 +418,8 @@ const teamMembers = [
             </motion.div>
           </motion.div>
         </div>
-      </section>      {/* Privacy Section - Improved layout and visual appeal */}
+      </section>{' '}
+      {/* Privacy Section - Improved layout and visual appeal */}
       <section className="py-20 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -432,11 +428,12 @@ const teamMembers = [
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: false, amount: 0.3 }}
               transition={{ duration: 0.7 }}
-            >              <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium mb-6">
+            >
+              {' '}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium mb-6">
                 <FaShieldAlt className="w-4 h-4" />
                 {t('privacidade.badge')}
               </div>
-              
               <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-6">
                 <span className="text-gray-900 dark:text-white">
                   {t('privacidade.titulo.parte1')}{' '}
@@ -454,16 +451,14 @@ const teamMembers = [
                   .
                 </span>
               </h2>
-              
               <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
                 {t('privacidade.descricao')}
               </p>
-              
               <div className="space-y-4">
                 {[
                   { icon: '🔐', text: t('privacidade.recursos.criptografia') },
                   { icon: '🚫', text: t('privacidade.recursos.dados_nao_armazenados') },
-                  { icon: '⚖️', text: t('privacidade.recursos.conformidade_lgpd') }
+                  { icon: '⚖️', text: t('privacidade.recursos.conformidade_lgpd') },
                 ].map((item, index) => (
                   <motion.div
                     key={index}
@@ -502,7 +497,8 @@ const teamMembers = [
             </motion.div>
           </div>
         </div>
-      </section>{/* Key Benefits Section - Redesigned for better visual impact */}
+      </section>
+      {/* Key Benefits Section - Redesigned for better visual impact */}
       <section className="py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -532,20 +528,20 @@ const teamMembers = [
               className="group relative rounded-2xl bg-gradient-to-br from-red-50 via-pink-50 to-red-50 dark:from-red-900/20 dark:via-pink-900/20 dark:to-red-900/20 p-8 hover:shadow-2xl transition-all duration-500 border border-red-100 dark:border-red-800/30 hover:border-red-200 dark:hover:border-red-700/50 transform hover:-translate-y-2"
             >
               <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-red-400/10 to-pink-400/10 rounded-full -m-6 group-hover:scale-150 transition-transform duration-500"></div>
-              
+
               <div className="relative z-10">
                 <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   <FaShieldAlt className="w-8 h-8 text-white" />
                 </div>
-                
+
                 <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
                   {t('diferenciais.seguranca.titulo')}
                 </h3>
-                
+
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
                   {t('diferenciais.seguranca.descricao')}
                 </p>
-                
+
                 <div className="relative overflow-hidden rounded-xl bg-white/50 dark:bg-gray-800/50 p-4">
                   <Image
                     src="/images/pictures/security.png"
@@ -567,20 +563,20 @@ const teamMembers = [
               className="group relative rounded-2xl bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-50 dark:from-blue-900/20 dark:via-cyan-900/20 dark:to-blue-900/20 p-8 hover:shadow-2xl transition-all duration-500 border border-blue-100 dark:border-blue-800/30 hover:border-blue-200 dark:hover:border-blue-700/50 transform hover:-translate-y-2"
             >
               <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-400/10 to-cyan-400/10 rounded-full -m-6 group-hover:scale-150 transition-transform duration-500"></div>
-              
+
               <div className="relative z-10">
                 <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   <FaHeart className="w-8 h-8 text-white" />
                 </div>
-                
+
                 <h3 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">
                   {t('diferenciais.gratuito.titulo')}
                 </h3>
-                
+
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
                   {t('diferenciais.gratuito.descricao')}
                 </p>
-                
+
                 <div className="relative overflow-hidden rounded-xl bg-white/50 dark:bg-gray-800/50 p-4">
                   <Image
                     src="/images/pictures/Coins-amico.png"
@@ -602,20 +598,20 @@ const teamMembers = [
               className="group relative rounded-2xl bg-gradient-to-br from-purple-50 via-indigo-50 to-purple-50 dark:from-purple-900/20 dark:via-indigo-900/20 dark:to-purple-900/20 p-8 hover:shadow-2xl transition-all duration-500 border border-purple-100 dark:border-purple-800/30 hover:border-purple-200 dark:hover:border-purple-700/50 transform hover:-translate-y-2"
             >
               <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-400/10 to-indigo-400/10 rounded-full -m-6 group-hover:scale-150 transition-transform duration-500"></div>
-              
+
               <div className="relative z-10">
                 <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   <HiUserGroup className="w-8 h-8 text-white" />
                 </div>
-                
+
                 <h3 className="text-2xl font-bold mb-4 text-purple-600 dark:text-purple-400">
                   {t('diferenciais.sem_cadastro.titulo')}
                 </h3>
-                
+
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
                   {t('diferenciais.sem_cadastro.descricao')}
                 </p>
-                
+
                 <div className="flex justify-center">
                   <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
                     <HiChatBubbleLeftRight className="w-10 h-10 text-white" />
@@ -625,7 +621,8 @@ const teamMembers = [
             </motion.div>
           </div>
         </div>
-      </section>      {/* Features Section - Improved with better spacing and animations */}
+      </section>{' '}
+      {/* Features Section - Improved with better spacing and animations */}
       <section className="py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -639,13 +636,13 @@ const teamMembers = [
               <HiSparkles className="w-4 h-4" />
               Recursos Avançados
             </div>
-            
+
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 {t('recursos.titulo')}
               </span>
             </h2>
-            
+
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
               {t('recursos.subtitulo')}
             </p>
@@ -655,34 +652,34 @@ const teamMembers = [
             {features.map((feature, index) => (
               <motion.div
                 key={index}
-                initial={{ 
-                  opacity: 0, 
-                  y: 20
+                initial={{
+                  opacity: 0,
+                  y: 20,
                 }}
-                whileInView={{ 
-                  opacity: 1, 
-                  y: 0
+                whileInView={{
+                  opacity: 1,
+                  y: 0,
                 }}
                 viewport={{ once: false, amount: 0.3 }}
-                transition={{ 
-                  duration: 0.5, 
+                transition={{
+                  duration: 0.5,
                   delay: index * 0.1,
-                  ease: "easeOut"
+                  ease: 'easeOut',
                 }}
-                whileHover={{ 
+                whileHover={{
                   y: -8,
-                  transition: { 
-                    duration: 0.3
-                  }
+                  transition: {
+                    duration: 0.3,
+                  },
                 }}
                 className="group relative rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-8 shadow-sm hover:shadow-xl transition-all duration-300"
               >
                 {/* Background gradient on hover */}
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/10 dark:to-purple-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                
+
                 <div className="relative z-10">
                   {/* Icon */}
-                  <div 
+                  <div
                     className="inline-flex items-center justify-center w-14 h-14 rounded-xl mb-6 text-white text-xl group-hover:scale-110 transition-transform duration-300 shadow-lg"
                     style={{ backgroundColor: feature.color }}
                   >
@@ -695,15 +692,14 @@ const teamMembers = [
                   </h3>
 
                   {/* Description */}
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                    {feature.description}
-                  </p>
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{feature.description}</p>
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
-      </section>      {/* Timeline Section - Enhanced visual presentation */}
+      </section>{' '}
+      {/* Timeline Section - Enhanced visual presentation */}
       <section className="py-24 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -712,17 +708,17 @@ const teamMembers = [
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.8 }}
-          >            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium mb-8">
+          >
+            {' '}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium mb-8">
               <FaChartLine className="w-4 h-4" />
               {t('evolucao.badge')}
             </div>
-            
             <h2 className="text-5xl md:text-6xl font-bold mb-8 text-gray-900 dark:text-white">
               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                 {t('evolucao.titulo')}
               </span>
             </h2>
-            
             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed font-light">
               {t('evolucao.subtitulo')}
             </p>
@@ -731,13 +727,14 @@ const teamMembers = [
           <div className="relative">
             {/* Background decoration */}
             <div className="absolute inset-0 bg-gradient-to-r from-blue-100/20 via-purple-100/20 to-pink-100/20 dark:from-blue-900/10 dark:via-purple-900/10 dark:to-pink-900/10 rounded-3xl"></div>
-            
+
             <div className="relative bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-xl border border-white/20 dark:border-gray-700/20">
               <Timeline events={timelineItems} />
             </div>
           </div>
         </div>
-      </section>      {/* Team Section - Enhanced design with better cards */}
+      </section>{' '}
+      {/* Team Section - Enhanced design with better cards */}
       <section id="equipe" className="py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -746,17 +743,17 @@ const teamMembers = [
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.3 }}
             transition={{ duration: 0.6 }}
-          >            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm font-medium mb-6">
+          >
+            {' '}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-sm font-medium mb-6">
               <HiUserGroup className="w-4 h-4" />
               {t('equipe.badge')}
             </div>
-            
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 {t('equipe.titulo')}
               </span>
             </h2>
-            
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
               {t('equipe.subtitulo')}
             </p>
@@ -766,31 +763,31 @@ const teamMembers = [
             {teamMembers.map((member, index) => (
               <motion.div
                 key={index}
-                initial={{ 
-                  opacity: 0, 
-                  y: 30
+                initial={{
+                  opacity: 0,
+                  y: 30,
                 }}
-                whileInView={{ 
-                  opacity: 1, 
-                  y: 0
+                whileInView={{
+                  opacity: 1,
+                  y: 0,
                 }}
                 viewport={{ once: false, amount: 0.3 }}
-                transition={{ 
-                  duration: 0.6, 
+                transition={{
+                  duration: 0.6,
                   delay: index * 0.1,
-                  ease: "easeOut"
+                  ease: 'easeOut',
                 }}
-                whileHover={{ 
+                whileHover={{
                   y: -10,
-                  transition: { 
-                    duration: 0.3
-                  }
+                  transition: {
+                    duration: 0.3,
+                  },
                 }}
                 className="group relative rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-8 shadow-sm hover:shadow-2xl transition-all duration-500"
               >
                 {/* Background gradient on hover */}
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/10 dark:to-purple-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                
+
                 <div className="relative z-10">
                   {/* Profile section */}
                   <div className="relative flex flex-col items-center mb-6">
@@ -815,7 +812,7 @@ const teamMembers = [
                           round
                         />
                       )}
-                      
+
                       {/* Social media icons */}
                       <div className="absolute -bottom-2 -right-2 flex space-x-1">
                         {member.icon?.map((value, iconIndex) => (
@@ -840,10 +837,8 @@ const teamMembers = [
                     <h3 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white text-center group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
                       {member.nome}
                     </h3>
-                    
-                    <p className="text-blue-600 dark:text-blue-400 font-semibold text-center mb-4">
-                      {member.cargo}
-                    </p>
+
+                    <p className="text-blue-600 dark:text-blue-400 font-semibold text-center mb-4">{member.cargo}</p>
 
                     {member.description && (
                       <p className="text-gray-600 dark:text-gray-300 text-center leading-relaxed mb-6">
@@ -868,7 +863,8 @@ const teamMembers = [
             ))}
           </div>
         </div>
-      </section>      {/* Mission Section - Redesigned with better visual impact */}
+      </section>{' '}
+      {/* Mission Section - Redesigned with better visual impact */}
       <section className="py-20 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -882,13 +878,13 @@ const teamMembers = [
                 <FaHeart className="w-4 h-4" />
                 Nossa Missão
               </div>
-              
+
               <h2 className="text-4xl md:text-5xl font-bold mb-8 text-gray-900 dark:text-white">
                 <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                   {t('missao.titulo')}
                 </span>
               </h2>
-              
+
               <div className="space-y-6 text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
@@ -898,7 +894,7 @@ const teamMembers = [
                 >
                   {t('missao.texto.quebrar_barreiras')}
                 </motion.p>
-                
+
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -907,7 +903,7 @@ const teamMembers = [
                 >
                   {t('missao.texto.tecnologia_humanidade')}
                 </motion.p>
-                
+
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -931,18 +927,18 @@ const teamMembers = [
                 <div className="absolute inset-0 bg-black/10 rounded-3xl"></div>
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -m-8"></div>
                 <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full -m-4"></div>
-                
+
                 <div className="relative z-10">
                   <FaHeart className="w-12 h-12 mb-6 text-white/90" />
-                  
+
                   <h3 className="text-2xl font-bold mb-6">{t('missao.valores.titulo')}</h3>
-                  
+
                   <div className="space-y-4">
                     {[
                       { icon: '🤝', text: t('missao.valores.inclusividade') },
                       { icon: '🚀', text: t('missao.valores.inovacao') },
                       { icon: '🔒', text: t('missao.valores.privacidade') },
-                      { icon: '✨', text: t('missao.valores.experiencia') }
+                      { icon: '✨', text: t('missao.valores.experiencia') },
                     ].map((value, index) => (
                       <motion.div
                         key={index}
@@ -962,27 +958,29 @@ const teamMembers = [
             </motion.div>
           </div>
         </div>
-      </section>{/* CTA Section */}
+      </section>
+      {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">          <motion.div
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          {' '}
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.3 }}
             transition={{ duration: 0.4 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              {t('cta.titulo')}
-            </h2>
-            <p className="text-lg text-blue-100 mb-8 leading-relaxed">
-              {t('cta.descricao')}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">              <Link 
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{t('cta.titulo')}</h2>
+            <p className="text-lg text-blue-100 mb-8 leading-relaxed">{t('cta.descricao')}</p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              {' '}
+              <Link
                 href={`/${locale}/conversar`}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md font-medium"
               >
                 <HiChatBubbleLeftRight className="w-4 h-4" />
                 {t('cta.botoes.comecar_agora')}
-              </Link>              <Link 
+              </Link>{' '}
+              <Link
                 href={`/${locale}/configuracoes`}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-transparent text-white rounded-lg border border-white hover:bg-white hover:text-blue-600 transition-all duration-200 shadow-sm hover:shadow-md font-medium"
               >

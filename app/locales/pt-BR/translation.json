@@ -46,7 +46,7 @@
     },
     "highlights": {
       "gratuito": "100% Gratuito",
-      "sem_cadastro": "Sem Cadastro", 
+      "sem_cadastro": "Sem Cadastro",
       "traducao_instantanea": "Tradução Instantânea",
       "totalmente_seguro": "Totalmente Seguro"
     },
@@ -58,7 +58,8 @@
     "copyright": "Copyright © 2025 - Todos os direitos reservados. ",
     "desenvolvido_por": "Desenvolvido por <strong>Christopher</strong>, <strong>Gustavo</strong> e <strong>Kaike</strong>.",
     "campus": "Instituto Federal de Educação, Ciência e Tecnologia de Assis Chateaubriand"
-  },  "sobre": {
+  },
+  "sobre": {
     "hero": {
       "badge": "Conectando o mundo através da comunicação",
       "titulo": {
@@ -70,7 +71,8 @@
         "comecar_conversar": "Começar a Conversar",
         "conhecer_equipe": "Conhecer a Equipe"
       }
-    },    "privacidade": {
+    },
+    "privacidade": {
       "badge": "Segurança em Primeiro Lugar",
       "titulo": {
         "parte1": "Sua",
@@ -131,45 +133,46 @@
         "titulo": "Personalização Total",
         "descricao": "Customize a interface, cores, temas e configurações para criar sua experiência única."
       }
-    },    "evolucao": {
+    },
+    "evolucao": {
       "badge": "Nossa Jornada",
       "titulo": "Nossa Evolução",
       "subtitulo": "Acompanhe cada etapa da nossa jornada, desde a ideia inicial até o produto revolucionário de hoje",
       "timeline": {
         "janeiro_2024": {
-          "data": "Janeiro 2024",
+          "data": "Outubro 2023",
           "titulo": "Nascimento da Ideia",
-          "descricao": "A jornada começou com a visão de criar uma plataforma que pudesse conectar pessoas de diferentes culturas e idiomas de forma natural e inclusiva, quebrando barreiras linguísticas."
+          "descricao": "A jornada começou com a visão de criar uma plataforma que pudesse conectar pessoas de diferentes culturas e idiomas de forma natural e inclusiva, quebrando barreiras linguísticas encontradas com alunos itercambistas do IFPR - campus Assis Chateaubriand. Com isso, incentivados pela orientadora do projeto, se iniciou o desenvolvimento do.TalkTalk."
         },
         "marco_2024": {
-          "data": "Março 2024",
-          "titulo": "Pesquisa e Planejamento",
-          "descricao": "Período intenso de pesquisa sobre tecnologias de tradução, acessibilidade e UX/UI, definindo os pilares fundamentais do projeto."
+          "data": "Novembro 2023",
+          "titulo": "Desenvolvimento da Ferramenta",
+          "descricao": "Iniciamos a implementação do TalkTalk, utilizando tecnologias como Next.js, Socket.IO e VLibras. O sistema foi estruturado para oferecer tradução em tempo real, suporte a múltiplos idiomas e recursos visuais adaptados, garantindo uma experiência eficiente para todos os usuários."
         },
         "maio_2024": {
-          "data": "Maio 2024",
-          "titulo": "Desenvolvimento Inicial",
-          "descricao": "Implementação das funcionalidades core: tradução em tempo real, chat em tempo real com Socket.IO e estabelecimento da arquitetura base do sistema."
+          "data": "Setembro 2024",
+          "titulo": "Participação na ScientIF",
+          "descricao": "Apresentamos o TalkTalk na ScientIF – Mostra Científica e Cultural do IFPR, evidenciando seu potencial para promover inclusão e acessibilidade na comunicação. A participação possibilitou a troca de experiências, validação da proposta e fortalecimento do projeto no meio acadêmico."
         },
         "julho_2024": {
-          "data": "Julho 2024",
-          "titulo": "Funcionalidades de Acessibilidade",
-          "descricao": "Implementação de recursos de acessibilidade como síntese de voz, suporte para daltônicos e configurações personalizáveis de interface."
+          "data": "Novembro 2024",
+          "titulo": "Apresentação no IF-Tech",
+          "descricao": "O TalkTalk foi apresentado no IF-Tech, evento de inovação e tecnologia do IFPR, como uma solução voltada à acessibilidade e inclusão digital. A participação destacou as funcionalidades do sistema em tempo real e reforçou seu papel como ferramenta educacional transformadora."
         },
         "setembro_2024": {
-          "data": "Setembro 2024",
-          "titulo": "Fase de Testes",
-          "descricao": "Período de testes intensivos com usuários reais, coleta de feedback e implementação de melhorias significativas baseadas na experiência do usuário."
+          "data": "Dezembro 2024",
+          "titulo": "Final da Primeira Etapa do TalkTalk",
+          "descricao": "A primeira parte do TalkTalk foi finalizada com sucesso, resultando em um sistema funcional de tradução em tempo real. Essa etapa representou o núcleo do desenvolvimento, reunindo as principais funcionalidades e definindo a identidade técnica do projeto."
         },
         "outubro_2024": {
-          "data": "Outubro 2024",
-          "titulo": "Refinamento do Design",
-          "descricao": "Melhorias significativas na interface de usuário, implementação de temas escuro/claro e otimização para garantir uma experiência intuitiva."
+          "data": "Fevereiro 2024",
+          "titulo": "segunda Etapa: Acessibilidade e Inclusão",
+          "descricao": "Na segunda etapa, o TalkTalk teve seu foco ampliado para incluir recursos de acessibilidade, com destaque para a integração da tradução em Libras via VLibras e adaptações visuais para diferentes necessidades dos usuários. Essa fase garantiu que a plataforma se tornasse mais inclusiva, promovendo uma comunicação efetiva para todos."
         },
         "novembro_2024": {
-          "data": "Novembro 2024",
-          "titulo": "Otimizações e Segurança",
-          "descricao": "Implementação de medidas de segurança avançadas, otimização de performance e preparação para o lançamento público."
+          "data": "Maio 2024",
+          "titulo": "Teste com Aluno Intercambista",
+          "descricao": "Realizamos um teste com um aluno intercambista da Índia para validar a eficácia da tradução em tempo real do TalkTalk. A experiência demonstrou o potencial do sistema em facilitar a comunicação entre pessoas de diferentes idiomas em ambientes educacionais. O feedback foi positivo e reforçou a utilidade prática da ferramenta."
         },
         "dezembro_2024": {
           "data": "Dezembro 2024",
@@ -182,7 +185,8 @@
           "descricao": "O TalkTalk é disponibilizado ao público, marcando o início de uma nova era na comunicação global inclusiva."
         }
       }
-    },    "equipe": {
+    },
+    "equipe": {
       "badge": "Conheça a Equipe",
       "titulo": "Conheça Nossa Equipe",
       "subtitulo": "Os visionários e desenvolvedores por trás da revolução na comunicação global",
@@ -191,19 +195,40 @@
           "nome": "Gustavo Preti",
           "cargo": "Full Stack Developer & Product Owner",
           "descricao": "Especialista em desenvolvimento web moderno, com foco em React, Next.js e tecnologias de tradução. Responsável pela arquitetura completa do sistema e experiência do usuário.",
-          "tags": ["React", "Next.js", "TypeScript", "Node.js", "Socket.IO", "UX/UI"]
+          "tags": [
+            "React",
+            "Next.js",
+            "TypeScript",
+            "Node.js",
+            "Socket.IO",
+            "UX/UI"
+          ]
         },
         "christopher": {
           "nome": "Christopher Gouveia",
           "cargo": "Backend Developer & DevOps Engineer",
           "descricao": "Especialista em infraestrutura, segurança e otimização de performance. Responsável pela implementação do backend robusto e deployment escalável da aplicação.",
-          "tags": ["Node.js", "Docker", "AWS", "MongoDB", "Security", "DevOps"]
+          "tags": [
+            "Node.js",
+            "Docker",
+            "AWS",
+            "MongoDB",
+            "Security",
+            "DevOps"
+          ]
         },
         "kaike": {
           "nome": "Kaike Sathler",
           "cargo": "Frontend Developer & UI/UX Designer",
           "descricao": "Especialista em desenvolvimento frontend e design de interfaces, com foco em experiência do usuário e acessibilidade. Responsável pela criação de componentes reutilizáveis e design system.",
-          "tags": ["React", "CSS", "UI/UX", "Design", "Frontend", "Figma"]
+          "tags": [
+            "React",
+            "CSS",
+            "UI/UX",
+            "Design",
+            "Frontend",
+            "Figma"
+          ]
         }
       }
     },
@@ -273,7 +298,8 @@
         "placeholder": "Digite o código da sala"
       },
       "botao_entrar": "Entrar na Sala"
-    },    "botoes_avatar": {
+    },
+    "botoes_avatar": {
       "escolher_avatar": "Escolher avatar",
       "escolher_avatar_aleatorio": "Escolher avatar aleatório",
       "escolha_seu_avatar": "Escolha seu avatar",
@@ -289,14 +315,15 @@
       "para_entrar_saia_outros": "Para entrar na sala, você deve sair de outros dispositivos.",
       "usuario_desconectado": "usuário desconectado",
       "audio_nao_suportado": "Your browser does not support the audio element."
-    },    "configuracoes": {
+    },
+    "configuracoes": {
       "titulo": "Configurações",
       "titulo_sala": "CONFIGURAÇÕES DA SALA",
       "subtitulo": "Personalize sua experiência no TalkTalk",
       "categorias": "Categorias",
       "abas": {
         "perfil": "Perfil",
-        "idioma": "Idioma", 
+        "idioma": "Idioma",
         "audio": "Áudio",
         "acessibilidade": "Acessibilidade",
         "aparencia": "Aparência"
@@ -331,12 +358,13 @@
         }
       },
       "idioma": {
-        "titulo": "Configurações de Idioma", 
+        "titulo": "Configurações de Idioma",
         "subtitulo": "Defina seu idioma preferido e traduções",
         "idioma_principal": {
           "label": "Idioma principal",
           "descricao": "Este é o idioma em que você deseja receber as traduções"
-        },        "label": "Idioma",
+        },
+        "label": "Idioma",
         "descricao_selecao": "Selecione para qual idioma as mensagens serão traduzidas",
         "pesquisar": "Pesquisar idiomas...",
         "nenhum_encontrado": "Nenhum idioma encontrado",
@@ -358,7 +386,7 @@
           "desconhecido": "Desconhecido"
         },
         "volume": "Volume",
-        "velocidade": "Velocidade", 
+        "velocidade": "Velocidade",
         "tom": "Tom",
         "teste": {
           "label": "Texto para teste",
@@ -380,7 +408,8 @@
           "titulo": "Ativar sintetização de voz",
           "descricao": "Ative para que as mensagens possam ser lidas em voz alta."
         }
-      },      "aparencia": {
+      },
+      "aparencia": {
         "titulo": "Aparência",
         "subtitulo": "Customize o tema e visual da interface",
         "modo_escuro": {
@@ -398,7 +427,8 @@
           "exemplo": "Exemplo de texto com o tamanho selecionado",
           "texto_exemplo": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         }
-      },      "acessibilidade": {
+      },
+      "acessibilidade": {
         "titulo": "Configurações de Acessibilidade",
         "subtitulo": "Torne sua experiência mais acessível",
         "daltonismo": {
@@ -450,7 +480,8 @@
               "numeros": "Os números devem ser visíveis como \"6\", \"8\" e \"5\"."
             },
             "modo_ativo": "Modo {tipo} ativo"
-          },          "info": "Estas configurações ajudam a melhorar a visualização das cores para pessoas com diferentes tipos de daltonismo. Selecione a opção que melhor se adapta à sua necessidade."
+          },
+          "info": "Estas configurações ajudam a melhorar a visualização das cores para pessoas com diferentes tipos de daltonismo. Selecione a opção que melhor se adapta à sua necessidade."
         },
         "cores": {
           "titulo": "Selecione uma Cor",
@@ -538,11 +569,12 @@
     "titulo": "Consentimento de Cookies",
     "descricao": "Este site utiliza cookies para melhorar sua experiência e para garantir que suas mensagens sejam seguras. Saiba mais acessando a",
     "politica_cookies": "Política de Cookies",
-    "politica_privacidade": "Política de Privacidade",    "aceitar": "Aceitar todos os cookies"
+    "politica_privacidade": "Política de Privacidade",
+    "aceitar": "Aceitar todos os cookies"
   },
   "avatares": {
     "jacare": "Jacaré Anônimo",
-    "tamia": "Tamiá Anônimo", 
+    "tamia": "Tamiá Anônimo",
     "esquilo_gopher": "Esquilo Anônimato",
     "ligre": "Ligre Anônimo",
     "quagga": "Quagga Anônimo",
