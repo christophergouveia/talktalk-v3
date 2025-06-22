@@ -135,47 +135,46 @@
     },    "evolucao": {
       "badge": "Nuestro Viaje",
       "titulo": "Nuestra Evolución",
-      "subtitulo": "Acompaña cada etapa de nuestro viaje, desde la idea inicial hasta el producto revolucionario de hoy",
-      "timeline": {
+      "subtitulo": "Acompaña cada etapa de nuestro viaje, desde la idea inicial hasta el producto revolucionario de hoy",      "timeline": {
         "janeiro_2024": {
-          "data": "Enero 2024",
+          "data": "Octubre 2023",
           "titulo": "Nacimiento de la Idea",
-          "descricao": "El viaje comenzó con la visión de crear una plataforma que pudiera conectar personas de diferentes culturas e idiomas de forma natural e inclusiva, rompiendo barreras lingüísticas."
+          "descricao": "El viaje comenzó con la visión de crear una plataforma que pudiera conectar personas de diferentes culturas e idiomas de forma natural e inclusiva, rompiendo barreras lingüísticas encontradas con estudiantes de intercambio del IFPR - campus Assis Chateaubriand. Con esto, incentivados por la orientadora del proyecto, se inició el desarrollo de TalkTalk."
         },
         "marco_2024": {
-          "data": "Marzo 2024",
-          "titulo": "Investigación y Planificación",
-          "descricao": "Período intenso de investigación sobre tecnologías de traducción, accesibilidad y UX/UI, definiendo los pilares fundamentales del proyecto."
+          "data": "Noviembre 2023",
+          "titulo": "Desarrollo de la Herramienta",
+          "descricao": "Iniciamos la implementación de TalkTalk, utilizando tecnologías como Next.js, Socket.IO y VLibras. El sistema fue estructurado para ofrecer traducción en tiempo real, soporte a múltiples idiomas y recursos visuales adaptados, garantizando una experiencia eficiente para todos los usuarios."
         },
         "maio_2024": {
-          "data": "Mayo 2024",
-          "titulo": "Desarrollo Inicial",
-          "descricao": "Implementación de las funcionalidades core: traducción en tiempo real, chat en tiempo real con Socket.IO y establecimiento de la arquitectura base del sistema."
+          "data": "Septiembre 2024",
+          "titulo": "Participación en ScientIF",
+          "descricao": "Presentamos TalkTalk en ScientIF – Muestra Científica y Cultural del IFPR, evidenciando su potencial para promover inclusión y accesibilidad en la comunicación. La participación posibilitó el intercambio de experiencias, validación de la propuesta y fortalecimiento del proyecto en el medio académico."
         },
         "julho_2024": {
-          "data": "Julio 2024",
-          "titulo": "Funcionalidades de Accesibilidad",
-          "descricao": "Implementación de recursos de accesibilidad como síntesis de voz, soporte para daltónicos y configuraciones personalizables de interfaz."
+          "data": "Noviembre 2024",
+          "titulo": "Presentación en IF-Tech",
+          "descricao": "TalkTalk fue presentado en IF-Tech, evento de innovación y tecnología del IFPR, como una solución enfocada en accesibilidad e inclusión digital. La participación destacó las funcionalidades del sistema en tiempo real y reforzó su papel como herramienta educacional transformadora."
         },
         "setembro_2024": {
-          "data": "Septiembre 2024",
-          "titulo": "Fase de Pruebas",
-          "descricao": "Período de pruebas intensivas con usuarios reales, recolección de feedback e implementación de mejoras significativas basadas en la experiencia del usuario."
+          "data": "Diciembre 2024",
+          "titulo": "Final de la Primera Etapa de TalkTalk",
+          "descricao": "La primera parte de TalkTalk fue finalizada con éxito, resultando en un sistema funcional de traducción en tiempo real. Esta etapa representó el núcleo del desarrollo, reuniendo las principales funcionalidades y definiendo la identidad técnica del proyecto."
         },
         "outubro_2024": {
-          "data": "Octubre 2024",
-          "titulo": "Refinamiento del Diseño",
-          "descricao": "Mejoras significativas en la interfaz de usuario, implementación de temas claro/oscuro y optimización para garantizar una experiencia intuitiva."
+          "data": "Febrero 2025",
+          "titulo": "Segunda Etapa: Accesibilidad e Inclusión",
+          "descricao": "En la segunda etapa, TalkTalk tuvo su enfoque ampliado para incluir recursos de accesibilidad, con destaque para la integración de la traducción en lengua de señas vía VLibras y adaptaciones visuales para diferentes necesidades de los usuarios. Esta fase garantizó que la plataforma se volviera más inclusiva, promoviendo una comunicación efectiva para todos."
         },
         "novembro_2024": {
-          "data": "Noviembre 2024",
-          "titulo": "Optimizaciones y Seguridad",
-          "descricao": "Implementación de medidas de seguridad avanzadas, optimización de performance y preparación para el lanzamiento público."
+          "data": "Mayo 2025",
+          "titulo": "Prueba con Estudiante de Intercambio",
+          "descricao": "Realizamos una prueba con un estudiante de intercambio de la India para validar la eficacia de la traducción en tiempo real de TalkTalk. La experiencia demostró el potencial del sistema en facilitar la comunicación entre personas de diferentes idiomas en ambientes educacionales. El feedback fue positivo y reforzó la utilidad práctica de la herramienta."
         },
         "dezembro_2024": {
-          "data": "Diciembre 2024",
-          "titulo": "Lanzamiento Beta",
-          "descricao": "Lanzamiento de la versión beta para un grupo selecto de testers, recolectando feedback final y realizando ajustes finales."
+          "data": "Junio 2025",
+          "titulo": "Clasificación en la Etapa Virtual de FEBIC",
+          "descricao": "El proyecto TalkTalk fue clasificado para la etapa virtual de FEBIC (Feria Brasileña de Iniciación Científica), reconociendo su potencial innovador en el área de tecnologías educacionales. Esta conquista destaca la relevancia del sistema en el escenario nacional e incentiva la continuidad del desarrollo y de la investigación."
         },
         "janeiro_2025": {
           "data": "Enero 2025",
@@ -532,7 +531,7 @@
     "erros": {
       "sala_nao_encontrada": "¡Sala no encontrada!",
       "erro_conectar_sala": "Error al conectar en la sala:",
-      "sala_cheia": "¡Sala está llena! Máximo de 10 usuarios permitidos.",
+      "sala_cheia": "¡Sala está llena! Máximo de 4 usuarios permitidos.",
       "erro_conexao_servidor": "Error de conexión con el servidor. Verifica tu internet.",
       "servidor_indisponivel": "No fue posible conectar al servidor de chat. Verifica si el servidor está funcionando."
     }

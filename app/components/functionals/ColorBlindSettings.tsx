@@ -79,17 +79,14 @@ const ColorBlindSettings = ({ onColorBlindChange, currentType: propCurrentType }
                   if (onColorBlindChange) {
                     onColorBlindChange(option.id as ColorBlindType);
                   }
-                }}
-                className={`flex flex-col gap-2 p-4 rounded-lg border-2 transition-all text-left ${
+                }}                className={`flex flex-col gap-2 p-4 rounded-lg border-2 transition-all text-left ${
                   activeType === option.id
-                    ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-500 dark:border-blue-400'
+                    ? 'bg-primary-50 dark:bg-primary-900/30 border-primary-500 dark:border-primary-500'
                     : 'bg-white dark:bg-gray-800 border-transparent hover:bg-gray-50 dark:hover:bg-gray-750'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">{option.name}</span>
-                  {activeType === option.id && (
-                    <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-blue-500 text-white text-xs">
+                  <span className="font-medium">{option.name}</span>                  {activeType === option.id && (                    <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-primary-500 text-white text-xs">
                       ✓
                     </span>
                   )}
@@ -104,9 +101,8 @@ const ColorBlindSettings = ({ onColorBlindChange, currentType: propCurrentType }
             <ColorBlindTest colorBlindType={activeType} />
           </div>
 
-          {/* Info Section */}
-          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-            <p className="text-sm text-blue-600 dark:text-blue-400">
+          {/* Info Section */}          <div className="mt-4 p-4 rounded-lg" style={{ backgroundColor: '#BFCCF2', color: '#786FF2' }}>
+            <p className="text-sm">
               {t('chat.configuracoes.acessibilidade.daltonismo.info')}
             </p>
           </div>

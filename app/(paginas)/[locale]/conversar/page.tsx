@@ -265,7 +265,7 @@ export default function ConversarHome() {
   }, [codigoSala, router, locale]);
 
   return (
-    <div className="h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-cyan-50/40 dark:from-[#0f0f0f] dark:via-[#1a1a2e] dark:to-[#16213e] relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-cyan-50/40 dark:from-[#0f0f0f] dark:via-[#1a1a2e] dark:to-[#16213e] relative">
       <LanguageDetector />
       {/* Background Effects */}
       <div className="absolute inset-0 -z-10">
@@ -274,7 +274,7 @@ export default function ConversarHome() {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/6 to-blue-400/6 rounded-full blur-2xl"></div>
       </div>
 
-      <div className="relative z-10 h-full flex flex-col container mx-auto px-4 py-8">
+      <div className="relative z-10 min-h-screen flex flex-col container mx-auto px-4 py-8">
         {/* Hero Section Imersiva */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -310,7 +310,7 @@ export default function ConversarHome() {
         </motion.div>
 
         {/* Cards Container com Glassmorphism */}
-        <div className="flex-1 flex flex-col items-center justify-center">
+        <div className="flex-1 flex flex-col items-center justify-center py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl w-full">
             {/* Card Criar Sala - Melhorado */}
             <motion.section 

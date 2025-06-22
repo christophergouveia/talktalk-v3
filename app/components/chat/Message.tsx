@@ -128,17 +128,16 @@ function MicComponent({ text, isOwnMessage = false }: { text: string | React.Rea
   }, []);
   // If there's no text to speak, return null
   if (!speechText) return null;
-
   return (
-    <div id={micId} ref={micElementRef} className="flex items-center gap-1.5 rounded-full bg-gray-100/50 dark:bg-gray-800/50 px-1.5 py-0.5">      <button
+    <div id={micId} ref={micElementRef} className="flex items-center gap-1.5 rounded-full bg-primary-50/50 dark:bg-primary-900/20 px-1.5 py-0.5">      <button
         onClick={handlePlayPause}
-        className="rounded-full p-1 hover:bg-gray-200/80 dark:hover:bg-gray-700/80 transition-colors"
+        className="rounded-full p-1 hover:bg-primary-100/80 dark:hover:bg-primary-800/30 transition-colors"
         title={isPlaying ? t('chat.mensagem.pausar') : t('chat.mensagem.reproduzir')}
       >
         {isPlaying ? (
-          <Pause size={14} className="text-gray-600 dark:text-gray-300" />
+          <Pause size={14} className="text-primary-600 dark:text-primary-400" />
         ) : (
-          <Play size={14} className="text-gray-600 dark:text-gray-300 ml-0.5" />
+          <Play size={14} className="text-primary-600 dark:text-primary-400 ml-0.5" />
         )}
       </button>
 
@@ -151,9 +150,9 @@ function MicComponent({ text, isOwnMessage = false }: { text: string | React.Rea
             transition={{ duration: 0.3, ease: 'easeOut' }}
             className="relative overflow-hidden"
           >
-            <div className="w-16 h-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
+            <div className="w-16 h-0.5 bg-primary-200 dark:bg-primary-700 rounded-full">
               <div
-                className="h-full bg-gray-400 dark:bg-gray-500 transition-all duration-100"
+                className="h-full bg-primary-500 dark:bg-primary-400 transition-all duration-100"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -294,7 +293,7 @@ export default function Message({
                             ...(micComponent as any).__micData,
                             isNewMessage: false
                           };
-                        });                      }} className="ml-1 text-xs text-blue-400 hover:underline">
+                        });                      }} className="ml-1 text-xs text-primary-400 hover:text-primary-500 hover:underline">
                         {showOriginal ? t('chat.mensagem.ver_traducao') : t('chat.mensagem.ver_original')}
                       </button>
                     </div>
@@ -316,7 +315,7 @@ export default function Message({
                 {/* Only show MicComponent for text messages */}
                 {!ownMessage && !isAudio && <MicComponent text={getMessageContent(children)} isOwnMessage={false} />}
               </div>              <div
-                className={`relative mt-2 max-w-full rounded-2xl p-4 shadow-lg ${ownMessage ? 'setinha-own bg-blue-500 text-white' : 'setinha bg-gray-200 dark:bg-zinc-800'}`}
+                className={`relative mt-2 max-w-full rounded-2xl p-4 shadow-lg ${ownMessage ? 'setinha-own bg-primary-500 text-white' : 'setinha bg-gray-200 dark:bg-zinc-800'}`}
               >
                 {renderContent()}
                 {!ownMessage && !isAudio && (
@@ -334,7 +333,7 @@ export default function Message({
                               ...(micComponent as any).__micData,
                               isNewMessage: false
                             };
-                          });                        }} className="ml-2 text-xs text-blue-400 hover:underline">
+                          });                        }} className="ml-2 text-xs text-primary-400 hover:text-primary-500 hover:underline">
                           {showOriginal ? t('chat.mensagem.ver_traducao') : t('chat.mensagem.ver_original')}
                         </button>
                       </div>

@@ -29,11 +29,16 @@ export default function UsersOnline({ users }: UsersOnlineProps) {
                 height={40}
                 className="rounded-full border-2 p-1"
                 style={{ borderColor: user.color }}
-              />
-              <div className="flex flex-col">
+              />              <div className="flex flex-col">
+                {user.host && (
+                  <div className="relative">
+                    <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg animate-pulse">
+                      <span className="text-[8px]">👑</span>
+                    </div>
+                  </div>
+                )}
                 <span className="font-medium" style={{ color: user.color }}>
                   {user.apelido}
-                  {user.host && <span className="ml-1">👑</span>}
                 </span>
                 <span className="text-xs text-gray-500">
                   {user.host ? t('chat.usuarios_online.anfitriao') : t('chat.usuarios_online.convidado')}

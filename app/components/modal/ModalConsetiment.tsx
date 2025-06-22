@@ -29,17 +29,16 @@ export default function CookieConsentModal() {
           <Fade triggerOnce={true} duration={300}>
             <div className="max-w-7xl mx-auto">
               <div className="flex flex-col md:flex-row justify-between items-center gap-6 p-6 bg-slate-800/90 dark:bg-slate-900/90 rounded-xl shadow-lg border border-slate-700/50">
-                <div className='flex flex-col md:flex-row items-center gap-6 md:gap-4'>
-                  <div className="bg-blue-600/20 p-4 rounded-full">
-                    <FaCookieBite className="text-3xl text-blue-500" />
+                <div className='flex flex-col md:flex-row items-center gap-6 md:gap-4'>                  <div className="bg-primary-600/20 p-4 rounded-full">
+                    <FaCookieBite className="text-3xl text-primary-500" />
                   </div>
                   <p className="text-center md:text-left text-sm md:text-base text-slate-200">
                     {t('cookies.descricao')}{' '}
-                    <Link className="text-blue-400 hover:text-blue-300 underline transition-colors" href="/termos/cookies">
+                    <Link className="text-primary-400 hover:text-primary-300 underline transition-colors" href="/termos/cookies">
                       {t('cookies.politica_cookies')}
                     </Link>{' '}
                     e{' '}
-                    <Link className="text-blue-400 hover:text-blue-300 underline transition-colors" href="/termos/politica">
+                    <Link className="text-primary-400 hover:text-primary-300 underline transition-colors" href="/termos/politica">
                       {t('cookies.politica_privacidade')}
                     </Link>
                     .
@@ -53,7 +52,7 @@ export default function CookieConsentModal() {
                     });
                     setIsOpen(false);
                   }}
-                  className="whitespace-nowrap px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-lg hover:shadow-blue-600/20"
+                  className="whitespace-nowrap px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-lg hover:shadow-primary-600/20"
                 >
                   {t('cookies.aceitar')}
                 </button>

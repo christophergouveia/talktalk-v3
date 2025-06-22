@@ -157,11 +157,18 @@ export default function RoomPage() {
           return;
         }        if (bypass) {
           console.log('[DEBUG] Bypass ativado, conectando diretamente ao socket');
-          const socketUrl = `http://${process.env.NEXT_PUBLIC_SOCKET_URL}:${process.env.NEXT_PUBLIC_SOCKET_PORT}`;
+          
+          // Add fallback values for environment variables
+          const socketHost = process.env.NEXT_PUBLIC_SOCKET_URL || 'localhost';
+          const socketPort = process.env.NEXT_PUBLIC_SOCKET_PORT || '3005';
+          const socketUrl = `http://${socketHost}:${socketPort}`;
+          
           console.log('[DEBUG] URL do Socket:', socketUrl);
           console.log('[DEBUG] Env vars:', {
             SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
-            SOCKET_PORT: process.env.NEXT_PUBLIC_SOCKET_PORT
+            SOCKET_PORT: process.env.NEXT_PUBLIC_SOCKET_PORT,
+            FALLBACK_HOST: socketHost,
+            FALLBACK_PORT: socketPort
           });
           
           setConnectionStatus('connecting');
@@ -183,6 +190,17 @@ export default function RoomPage() {
           });          socket.on('connect_error', (error) => {
             console.error('[DEBUG] Erro de conexão do socket:', error);
             console.error('[DEBUG] Socket URL tentada:', socketUrl);
+            console.error('[DEBUG] Tipo do erro:', (error as any)?.type);
+            console.error('[DEBUG] Descrição do erro:', (error as any)?.description);
+            console.error('[DEBUG] Context do erro:', (error as any)?.context);
+            console.error('[DEBUG] Configurações do socket:', {
+              // url: socket.io.uri, // Removido pois é privado
+              transports: socket.io.opts.transports,
+              timeout: socket.io.opts.timeout,
+              withCredentials: socket.io.opts.withCredentials,
+              forceNew: socket.io.opts.forceNew,
+              // hostname and port are private and cannot be accessed here
+            });
             setConnectionStatus('error');
             
             // Tentar fallback para polling apenas
@@ -193,6 +211,7 @@ export default function RoomPage() {
               setConnectionStatus('connecting');
               socket.connect();            } else {
               // Se já tentamos polling e falhou, mostrar erro
+              console.error('[DEBUG] Fallback para polling também falhou');
               setErrorMessage(t('chat.erros.servidor_indisponivel'));
               setShowErrorModal(true);
             }
@@ -256,13 +275,23 @@ export default function RoomPage() {
           path: '/',
         });        // Define os dados do usuário antes de criar o socket
         setUserData(payload);
-        
-        // Cria e configura o socket apenas uma vez
-        const socketUrl = `http://${process.env.NEXT_PUBLIC_SOCKET_URL}:${process.env.NEXT_PUBLIC_SOCKET_PORT}`;
-        console.log('[DEBUG] Criando socket normal para:', socketUrl);
-        console.log('[DEBUG] Env vars:', {
+          // Cria e configura o socket apenas uma vez
+        console.log('[DEBUG] Environment variables no modo normal:', {
           SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
-          SOCKET_PORT: process.env.NEXT_PUBLIC_SOCKET_PORT
+          SOCKET_PORT: process.env.NEXT_PUBLIC_SOCKET_PORT,
+          NODE_ENV: process.env.NODE_ENV        });
+        
+        // Add fallback values for environment variables
+        const socketHost = process.env.NEXT_PUBLIC_SOCKET_URL || 'localhost';
+        const socketPort = process.env.NEXT_PUBLIC_SOCKET_PORT || '3005';
+        const socketUrl = `http://${socketHost}:${socketPort}`;
+        
+        console.log('[DEBUG] Criando socket normal para:', socketUrl);
+        console.log('[DEBUG] Verificando se socketUrl é válido:', {
+          isValidUrl: socketUrl.includes('undefined') ? 'CONTÉM undefined!' : 'Parece válido',
+          length: socketUrl.length,
+          socketHost,
+          socketPort
         });
         
         const socket = io(socketUrl, {
@@ -274,19 +303,24 @@ export default function RoomPage() {
           reconnectionDelayMax: 5000,
           timeout: 20000,
           forceNew: true,
-          autoConnect: false,
-        });        // Configura os eventos antes de conectar
+          autoConnect: false,        });
+
+        // Configura os eventos antes de conectar
         socket.once('connect', () => {
           console.log('[DEBUG] Socket conectado com sucesso:', socket.id);
           const userDataString = JSON.stringify(payload);
           console.log('[DEBUG] Emitindo join-room para:', codigo);
-          socket.emit('join-room', codigo, userDataString);
+          socket.emit('join-room', codigo, userDataString, locale);
           setShowNameInput(false);
-        });        socket.on('connect_error', (error) => {
+        });
+
+        socket.on('connect_error', (error) => {
           console.error('[DEBUG] Erro de conexão do socket:', error);
           setErrorMessage(t('chat.erros.erro_conexao_servidor'));
           setShowErrorModal(true);
-        });socket.on('error', (error) => {
+        });
+
+        socket.on('error', (error) => {
           console.error('[DEBUG] Erro do socket:', error);
           if (error.includes('cheia')) {
             setErrorMessage(t('chat.erros.sala_cheia'));
@@ -326,9 +360,9 @@ export default function RoomPage() {
   //     }
   //     if (settings.avatarColor) {
   //       setAvatarColor(settings.avatarColor);
-  //     }
-  //   }
+  //     }  //   }
   // }, [ onLinguaChange]);
+
   const fetchSala = useCallback(async () => {
     try {
       const sala = await fetchRoom(codigo);
@@ -423,15 +457,13 @@ export default function RoomPage() {
   }, [fetchSala, socketClient]);
 
   useEffect(() => {
-    if (!socketClient) return;
-
-    const handleConnect = () => {
+    if (!socketClient) return;    const handleConnect = () => {
       console.log('Conectado ao servidor');
       if (userData) {
         const userDataString = JSON.stringify(userData);
-        socketClient.emit('join-room', codigo, userDataString);
+        socketClient.emit('join-room', codigo, userDataString, locale);
       }
-    };    const handleUsersUpdate = async (users: any[]) => {
+    };const handleUsersUpdate = async (users: any[]) => {
       console.log('[DEBUG] Users Update Received: ', users);
       const usersMap: { [key: string]: UserData } = {};
 
@@ -816,8 +848,7 @@ export default function RoomPage() {
   }
 
   if (typeof window == null) {
-    return null;
-  }  if (showNameInput) {
+    return null;  }  if (showNameInput) {
     return (
       
       <div className="h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-cyan-50/40 dark:from-[#0f0f0f] dark:via-[#1a1a2e] dark:to-[#16213e] relative overflow-hidden flex items-center justify-center">
@@ -826,8 +857,7 @@ export default function RoomPage() {
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-400/8 to-cyan-400/8 rounded-full blur-3xl"></div>
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-400/6 to-blue-400/6 rounded-full blur-3xl"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/6 to-blue-400/6 rounded-full blur-2xl"></div>
-        </div><motion.div 
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/6 to-blue-400/6 rounded-full blur-2xl"></div>        </div><motion.div 
           className="w-fit max-w-md mx-auto p-8 rounded-3xl flex flex-col items-center justify-center gap-8 text-center bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-white/30 dark:border-gray-700/40 shadow-2xl relative overflow-hidden"
           initial={{ opacity: 0, scale: 0.9, y: 50 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -981,18 +1011,16 @@ export default function RoomPage() {
   }
   if (socketClient == null) {
     return null;
-  }
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-cyan-50/40 dark:from-[#0f0f0f] dark:via-[#1a1a2e] dark:to-[#16213e] relative overflow-hidden">
+  }  return (    <div className="h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-cyan-50/40 dark:from-[#0f0f0f] dark:via-[#1a1a2e] dark:to-[#16213e] relative overflow-hidden prevent-mobile-scroll">
       <LanguageDetector />
       {/* Background Effects */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-400/8 to-cyan-400/8 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-400/6 to-blue-400/6 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/6 to-blue-400/6 rounded-full blur-2xl"></div>
+        <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-primary-400/8 to-cyan-400/8 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-secondary-400/6 to-primary-400/6 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/6 to-primary-400/6 rounded-full blur-2xl"></div>
       </div>
 
-      <div className="relative z-10 p-4 h-screen flex flex-col lg:flex-row gap-4">
+      <div className="relative z-10 p-2 sm:p-4 h-screen flex flex-col lg:flex-row gap-2 sm:gap-4 max-w-full overflow-hidden">
         <Modal
           isOpen={hostModal}
           backdrop="opaque"
@@ -1010,15 +1038,18 @@ export default function RoomPage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="text-center space-y-6"
+                transition={{ duration: 0.6 }}                className="text-center space-y-6"
               >
                 <div className="relative">
-                  <h1 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg animate-pulse">
+                      <span className="text-lg">👑</span>
+                    </div>
+                  </div>
+                  <h1 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent pt-4">
                     VOCÊ É O ANFITRIÃO DA SALA!
                   </h1>
-                  <div className="absolute -top-2 -right-2 text-2xl animate-bounce">👑</div>
-                </div>                <h2 className="text-xl text-gray-700 dark:text-gray-300">
+                </div><h2 className="text-xl text-gray-700 dark:text-gray-300">
                   {t('chat.compartilhar.descricao')}
                 </h2>
                 <div className="flex flex-col items-center justify-center gap-6 p-4">
@@ -1079,32 +1110,30 @@ export default function RoomPage() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6 }}
           className="flex-1 rounded-2xl bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-2xl border border-white/20 dark:border-gray-700/30 overflow-hidden flex flex-col"
-        >
-          <ChatComponent.Header className="flex w-full bg-gradient-to-r from-blue-500/10 to-purple-500/10 backdrop-blur-sm border-b border-white/20 dark:border-gray-700/30">
+        >          <ChatComponent.Header className="flex w-full bg-gradient-to-r from-primary-500/10 to-secondary-500/10 backdrop-blur-sm border-b border-white/20 dark:border-gray-700/30">
             <ChatComponent.Settings className="flex justify-between w-full items-center gap-2 p-4">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
-              >
-                <Button
+              >                <Button
                   onClick={() => setHostModal(true)}
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold px-6 py-2 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 ease-in-out flex items-center gap-2"
+                  className="bg-gradient-to-r from-primary-500 to-secondary-600 hover:from-primary-600 hover:to-secondary-700 text-white font-semibold px-3 sm:px-6 py-2 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 ease-in-out flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
                   </svg>
-                  COMPARTILHAR
+                  <span className="hidden sm:inline">COMPARTILHAR</span>
+                  <span className="sm:hidden">SHARE</span>
                 </Button>
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
-              >
-                <IoSettingsSharp
-                  size={32}
-                  className="text-slate-600 dark:text-slate-300 cursor-pointer lg:hidden hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-300 hover:scale-110 transform"
+              >                <IoSettingsSharp
+                  size={24} /* Reduzido de 32 para 24 em telas pequenas */
+                  className="text-slate-600 dark:text-slate-300 cursor-pointer lg:hidden hover:text-primary-500 dark:hover:text-primary-400 transition-colors duration-300 hover:scale-110 transform"
                   onClick={() => setIsSettingsOpen(!isSettingsOpen)}
                 />
               </motion.div>
@@ -1112,7 +1141,7 @@ export default function RoomPage() {
           </ChatComponent.Header>          <ChatComponent.Body className="flex-1 overflow-hidden bg-gradient-to-b from-white/30 to-gray-50/30 dark:from-gray-900/30 dark:to-gray-800/30">
             <MessageList
               ref={messageListRef}
-              className={`messageList h-full overflow-y-auto p-6 space-y-4 ${chatCompacto ? 'chat-compact' : ''}`}
+              className={`messageList h-full overflow-y-auto p-3 sm:p-6 space-y-3 sm:space-y-4 ${chatCompacto ? 'chat-compact' : ''}`}
             >{mensagens.map((message, index) => (
               <motion.div
                 key={index}
@@ -1157,10 +1186,9 @@ export default function RoomPage() {
             )}
             <AnimatePresence>
               {usersTyping.map(({ userToken, typing }) =>
-                typing && userToken !== userData?.userToken && usersRoomData[userToken] && (
-                  <motion.div
+                typing && userToken !== userData?.userToken && usersRoomData[userToken] && (                  <motion.div
                     key={userToken}
-                    className="flex items-center justify-center gap-3 text-gray-500 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-3 mx-4"
+                    className="flex items-center justify-center gap-2 sm:gap-3 text-gray-500 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-2 sm:p-3 mx-2 sm:mx-4"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
@@ -1173,11 +1201,10 @@ export default function RoomPage() {
                       height={30}
                       className="rounded-full border-2"
                       style={{ borderColor: usersRoomData[userToken].color }}
-                    />
-                    <motion.span
+                    />                    <motion.span
                       animate={{ opacity: [0.5, 1, 0.5] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
-                      className="text-sm font-medium"
+                      className="text-xs sm:text-sm font-medium"
                       style={{ color: usersRoomData[userToken].color }}
                     >
                       {usersRoomData[userToken].apelido} está digitando...
@@ -1187,15 +1214,14 @@ export default function RoomPage() {
               )}
             </AnimatePresence>
           </MessageList>
-        </ChatComponent.Body>        <ChatComponent.Footer className="flex items-center gap-3 border-t border-white/20 dark:border-gray-700/30 p-6 bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-900/60 dark:to-gray-800/60 backdrop-blur-sm">
+        </ChatComponent.Body>        <ChatComponent.Footer className="flex items-center gap-2 sm:gap-3 border-t border-white/20 dark:border-gray-700/30 p-3 sm:p-6 bg-gradient-to-r from-white/60 to-gray-50/60 dark:from-gray-900/60 dark:to-gray-800/60 backdrop-blur-sm">
           <div className="flex-1">            <Textarea
               label=""
               placeholder={t('chat.interface.digite_mensagem')}
               minRows={1}
-              maxRows={4}
-              classNames={{
-                input: 'textarea-message p-4 text-base',
-                inputWrapper: 'bg-white/95 dark:bg-gray-700/95 backdrop-blur-sm border border-gray-200/60 dark:border-gray-600/60 hover:border-blue-500/60 dark:hover:border-blue-400/60 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all duration-300 rounded-2xl shadow-lg hover:shadow-xl',
+              maxRows={4}              classNames={{
+                input: 'textarea-message p-2 sm:p-4 text-sm sm:text-base',
+                inputWrapper: 'bg-white/95 dark:bg-gray-700/95 backdrop-blur-sm border border-gray-200/60 dark:border-gray-600/60 hover:border-primary-500/60 dark:hover:border-primary-400/60 focus-within:border-primary-500 dark:focus-within:border-primary-400 transition-all duration-300 rounded-2xl shadow-lg hover:shadow-xl',
               }}
               onChange={handleTextAreaChange}
               onKeyUp={handleTextAreaKeyUp}
@@ -1211,25 +1237,24 @@ export default function RoomPage() {
             <Button 
               isIconOnly 
               onClick={sendMessage}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl w-14 h-14"
+              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl w-12 h-12 sm:w-14 sm:h-14"
               size="lg"
             >
-              <IoIosSend className={'text-2xl'} />
+              <IoIosSend className={'text-xl sm:text-2xl'} />
             </Button>
           </motion.div>          <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-          >
-            <Button 
+          >            <Button 
               isIconOnly 
               onClick={recAudio}
               color={isRecording ? "danger" : "primary"}              className={`${isRecording 
                 ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700' 
-                : 'bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700'
-              } text-white shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl w-14 h-14`}
+                : 'bg-gradient-to-r from-primary-500 to-secondary-600 hover:from-primary-600 hover:to-secondary-700'
+              } text-white shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl w-12 h-12 sm:w-14 sm:h-14`}
               size="lg"
             >
-              <IoMicOutline className={`text-2xl ${isRecording ? 'animate-pulse' : ''}`} />
+              <IoMicOutline className={`text-xl sm:text-2xl ${isRecording ? 'animate-pulse' : ''}`} />
             </Button>
           </motion.div>
         </ChatComponent.Footer>
@@ -1244,17 +1269,16 @@ export default function RoomPage() {
       )}      <motion.aside
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className={`
+        transition={{ duration: 0.6, delay: 0.2 }}        className={`
           lg:relative lg:w-[400px] lg:flex lg:flex-col lg:h-full
           ${isSettingsOpen 
-            ? 'fixed inset-4 md:inset-6 lg:inset-auto z-50 lg:z-0 flex flex-col' 
+            ? 'fixed inset-2 sm:inset-4 md:inset-6 lg:inset-auto z-50 lg:z-0 flex flex-col' 
             : 'hidden lg:flex'
           }
           bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-gray-700/30 
           overflow-hidden shadow-2xl transition-all duration-300 ease-in-out 
           lg:bg-white/80 lg:dark:bg-gray-900/80 lg:backdrop-blur-md lg:shadow-2xl
-          max-h-screen lg:max-h-none
+          max-h-screen lg:max-h-none w-auto
         `}
       >
         <div className="h-full flex flex-col">
@@ -1286,7 +1310,7 @@ export default function RoomPage() {
             </motion.h1>
           </div>
 
-          <div className="flex-1 overflow-y-auto">            <section className="p-3 md:p-4 space-y-3 md:space-y-4">              <motion.div 
+          <div className="flex-1 overflow-y-auto">            <section className="padding-responsive space-y-3 md:space-y-4">              <motion.div 
                 className="space-y-3 md:space-y-4"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -1325,9 +1349,8 @@ export default function RoomPage() {
                       endContent: 'flex-1 min-w-0',
                       label: 'w-full',
                     }}
-                  >                    <div className="flex flex-col gap-1 min-w-0">
-                      <p className="text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">{t('chat.configuracoes.chat_compacto.titulo')}</p>
-                      <p className="text-xs md:text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
+                  >                    <div className="flex flex-col gap-1 min-w-0">                      <p className="text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200 truncate text-responsive">{t('chat.configuracoes.chat_compacto.titulo')}</p>
+                      <p className="text-xs md:text-xs text-gray-600 dark:text-gray-400 line-clamp-2 text-responsive">
                         {t('chat.configuracoes.chat_compacto.descricao')}
                       </p>
                     </div>
@@ -1467,9 +1490,6 @@ export default function RoomPage() {
                       className={`md:w-[60px] md:h-[60px] rounded-full border-2 p-1 md:p-2 bg-white dark:bg-transparent shadow-lg`}
                       style={{ borderColor: user.color, backgroundColor: user.color }}
                     />
-                    {user.host && (
-                      <div className="absolute -top-1 -right-1 text-lg md:text-xl">👑</div>
-                    )}
                   </div>
                   <div className="flex flex-col min-w-0 flex-1">
                     <span className="text-sm md:text-medium font-medium flex items-center gap-1 text-gray-800 dark:text-gray-200 truncate" style={{ color: user.color }}>

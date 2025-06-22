@@ -157,7 +157,7 @@ function CardContent({
                   href={index === 0 ? (linkGithub ?? '#') : linkLinkedin}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150 text-xs"
+                  className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-150 text-xs"
                 >
                   {value}
                 </Link>
@@ -169,7 +169,7 @@ function CardContent({
         {/* Name */}
         <h3 className="text-lg font-semibold mt-2 mb-1 text-gray-900 dark:text-white text-center">{nome}</h3>
 
-        <p className="text-blue-600 dark:text-blue-400 font-medium text-sm mb-2 text-center">{cargo}</p>
+        <p className="text-primary-600 dark:text-primary-400 font-medium text-sm mb-2 text-center">{cargo}</p>
 
         {description && (
           <p className="text-gray-600 dark:text-gray-300 text-center text-xs leading-relaxed mb-3">{description}</p>
@@ -197,27 +197,29 @@ export default function SobrePage() {
   const t = useTranslation('', { keyPrefix: 'sobre' }).t;
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 300], [0, 100]);
-  const y2 = useTransform(scrollY, [0, 300], [0, -100]);  const timelineItems = [
+  const y2 = useTransform(scrollY, [0, 300], [0, -100]);
+
+  const timelineItems = [
     {
       date: t('evolucao.timeline.janeiro_2024.data'),
       title: t('evolucao.timeline.janeiro_2024.titulo'),
       description: t('evolucao.timeline.janeiro_2024.descricao'),
       icon: <FaLightbulb size={20} />,
-      color: '#4F46E5'
+      color: '#38A3F5', // azul claro intenso
     },
     {
       date: t('evolucao.timeline.marco_2024.data'),
       title: t('evolucao.timeline.marco_2024.titulo'),
       description: t('evolucao.timeline.marco_2024.descricao'),
       icon: <BsGlobe2 size={20} />,
-      color: '#7C3AED'
+      color: '#786FF2', // roxo azulado
     },
     {
       date: t('evolucao.timeline.maio_2024.data'),
       title: t('evolucao.timeline.maio_2024.titulo'),
       description: t('evolucao.timeline.maio_2024.descricao'),
       icon: <FaCode size={20} />,
-      color: '#8B5CF6',
+      color: '#6F90F2', // azul médio
       image: '/images/pictures/scientif.png',
       imageAlt: 'Desenvolvimento inicial - primeiras linhas de código',
     },
@@ -226,7 +228,7 @@ export default function SobrePage() {
       title: t('evolucao.timeline.julho_2024.titulo'),
       description: t('evolucao.timeline.julho_2024.descricao'),
       icon: <FaAccessibleIcon size={20} />,
-      color: '#06B6D4',
+      color: '#6FE3F2', // azul piscina
       image: '/images/pictures/Iftech.png',
       imageAlt: 'Funcionalidades de acessibilidade - design inclusivo',
     },
@@ -235,7 +237,7 @@ export default function SobrePage() {
       title: t('evolucao.timeline.setembro_2024.titulo'),
       description: t('evolucao.timeline.setembro_2024.descricao'),
       icon: <FaUsers size={20} />,
-      color: '#F59E0B',
+      color: '#A46FF2', // lilás vibrante
       image: '/images/pictures/bancafinal.png',
       imageAlt: 'Fase de testes - feedback dos usuários',
     },
@@ -244,74 +246,66 @@ export default function SobrePage() {
       title: t('evolucao.timeline.outubro_2024.titulo'),
       description: t('evolucao.timeline.outubro_2024.descricao'),
       icon: <BsBoxes size={20} />,
-      color: '#EC4899',
-      image: '/images/pictures/vedang.jpg',
-      imageAlt: 'Refinamento do design - interface otimizada',
+      color: '#BFCCF2', // azul bem claro
     },
     {
       date: t('evolucao.timeline.novembro_2024.data'),
       title: t('evolucao.timeline.novembro_2024.titulo'),
       description: t('evolucao.timeline.novembro_2024.descricao'),
       icon: <FaShieldAlt size={20} />,
-      color: '#EF4444',
+      color: '#38A3F5', // azul claro intenso
       image: '/images/pictures/vedang.jpg',
       imageAlt: 'Otimizações e segurança - proteção avançada',
-    },
-    {
+    },    {
       date: t('evolucao.timeline.dezembro_2024.data'),
       title: t('evolucao.timeline.dezembro_2024.titulo'),
       description: t('evolucao.timeline.dezembro_2024.descricao'),
-      icon: <BsRocket size={20} />,
-      color: '#10B981',
-      image: '/images/pictures/nocoins.png',
-      imageAlt: 'Lançamento beta - versão de testes',
+      icon: <FaStar size={20} />,
+      color: '#786FF2', // roxo azulado
     },
     {
       date: t('evolucao.timeline.janeiro_2025.data'),
       title: t('evolucao.timeline.janeiro_2025.titulo'),
       description: t('evolucao.timeline.janeiro_2025.descricao'),
       icon: <FaRocket size={20} />,
-      color: '#3B82F6',
-      image: '/images/pictures/Conversation-s.png',
-      imageAlt: 'Lançamento oficial - TalkTalk ao público',
+      color: '#6F90F2', // azul médio
     },
-  ];
-  const features = [
+  ];const features = [
     {
       icon: <BsTranslate />,
       title: t('recursos.traducao_tempo_real.titulo'),
       description: t('recursos.traducao_tempo_real.descricao'),
-      color: '#3B82F6',
+      color: '#38A3F5', // azul claro intenso
     },
     {
       icon: <HiMicrophone />,
       title: t('recursos.sintese_voz.titulo'),
       description: t('recursos.sintese_voz.descricao'),
-      color: '#8B5CF6',
+      color: '#786FF2', // roxo azulado
     },
     {
       icon: <FaAccessibleIcon />,
       title: t('recursos.acessibilidade_total.titulo'),
       description: t('recursos.acessibilidade_total.descricao'),
-      color: '#10B981',
+      color: '#6FE3F2', // azul piscina
     },
     {
       icon: <BsLightningCharge />,
       title: t('recursos.velocidade_extrema.titulo'),
       description: t('recursos.velocidade_extrema.descricao'),
-      color: '#F59E0B',
+      color: '#6F90F2', // azul médio
     },
     {
       icon: <BsShield />,
       title: t('recursos.seguranca_avancada.titulo'),
       description: t('recursos.seguranca_avancada.descricao'),
-      color: '#EF4444',
+      color: '#A46FF2', // lilás vibrante
     },
     {
       icon: <HiCog6Tooth />,
       title: t('recursos.personalizacao_total.titulo'),
       description: t('recursos.personalizacao_total.descricao'),
-      color: '#EC4899',
+      color: '#BFCCF2', // azul bem claro
     },
   ];
   const teamMembers = [
@@ -353,7 +347,7 @@ export default function SobrePage() {
     <div className="min-h-screen bg-white dark:bg-gray-900">
       <LanguageDetector />
       {/* Hero Section - Enhanced with better visual hierarchy */}
-      <section className="relative py-24 bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
+      <section className="relative py-24 bg-gradient-to-br from-primary-50 via-secondary-50 to-cyan-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25"></div>
 
@@ -368,7 +362,7 @@ export default function SobrePage() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium mb-8 shadow-sm border border-blue-200 dark:border-blue-800"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-full text-sm font-medium mb-8 shadow-sm border border-primary-200 dark:border-primary-800"
             >
               <HiGlobeAlt className="w-4 h-4" />
               {t('hero.badge')}
@@ -378,10 +372,9 @@ export default function SobrePage() {
               className="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-8 text-gray-900 dark:text-white tracking-tight"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-            >
+              transition={{ duration: 0.8, delay: 0.3 }}            >
               {t('hero.titulo.parte1')}{' '}
-              <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary-600 via-secondary-600 to-cyan-600 bg-clip-text text-transparent">
                 {t('hero.titulo.parte2')}
               </span>
             </motion.h1>
@@ -400,17 +393,16 @@ export default function SobrePage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-            >
-              <Link
+            >              <Link
                 href={`/${locale}/conversar`}
-                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-xl hover:from-primary-700 hover:to-secondary-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg"
               >
                 <HiChatBubbleLeftRight className="w-5 h-5" />
                 {t('hero.botoes.comecar_conversar')}
               </Link>
               <Link
                 href="#equipe"
-                className="inline-flex items-center gap-3 px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-500 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-xl border border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-500 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg"
               >
                 <HiUserGroup className="w-5 h-5" />
                 {t('hero.botoes.conhecer_equipe')}
@@ -420,7 +412,7 @@ export default function SobrePage() {
         </div>
       </section>{' '}
       {/* Privacy Section - Improved layout and visual appeal */}
-      <section className="py-20 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
+      <section className="py-20 bg-gradient-to-br from-primary-50 via-secondary-50 to-cyan-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -473,26 +465,21 @@ export default function SobrePage() {
                   </motion.div>
                 ))}
               </div>
-            </motion.div>
-
-            <motion.div
+            </motion.div>            <motion.div
               initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: false, amount: 0.3 }}
               transition={{ duration: 0.7 }}
               className="relative"
             >
-              <div className="relative bg-white/80 dark:bg-gray-800/80 rounded-2xl p-8 shadow-2xl border border-white/20 dark:border-gray-700/20 backdrop-blur-sm">
-                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl opacity-20 blur"></div>
-                <div className="relative">
-                  <Image
-                    src="/images/pictures/Conversation-s.png"
-                    alt={t('privacidade.imagem_alt')}
-                    width={500}
-                    height={400}
-                    className="w-full h-auto rounded-xl shadow-lg"
-                  />
-                </div>
+              <div className="relative">
+                <Image
+                  src="/images/pictures/Conversation-s.png"
+                  alt={t('privacidade.imagem_alt')}
+                  width={500}
+                  height={400}
+                  className="w-full h-auto rounded-xl shadow-lg"
+                />
               </div>
             </motion.div>
           </div>
@@ -540,9 +527,7 @@ export default function SobrePage() {
 
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
                   {t('diferenciais.seguranca.descricao')}
-                </p>
-
-                <div className="relative overflow-hidden rounded-xl bg-white/50 dark:bg-gray-800/50 p-4">
+                </p>                <div className="relative overflow-hidden rounded-xl">
                   <Image
                     src="/images/pictures/security.png"
                     alt={t('diferenciais.seguranca.imagem_alt')}
@@ -575,9 +560,7 @@ export default function SobrePage() {
 
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
                   {t('diferenciais.gratuito.descricao')}
-                </p>
-
-                <div className="relative overflow-hidden rounded-xl bg-white/50 dark:bg-gray-800/50 p-4">
+                </p>                <div className="relative overflow-hidden rounded-xl">
                   <Image
                     src="/images/pictures/Coins-amico.png"
                     alt={t('diferenciais.gratuito.imagem_alt')}
@@ -635,9 +618,7 @@ export default function SobrePage() {
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium mb-6">
               <HiSparkles className="w-4 h-4" />
               Recursos Avançados
-            </div>
-
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
+            </div>            <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-gray-900 dark:text-white">
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 {t('recursos.titulo')}
               </span>
@@ -958,36 +939,114 @@ export default function SobrePage() {
             </motion.div>
           </div>
         </div>
-      </section>
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          {' '}
+      </section>      {/* CTA Section - Full Screen */}
+      <section className="min-h-screen bg-gradient-to-br from-primary-600 via-secondary-600 to-cyan-600 relative overflow-hidden flex items-center justify-center">
+        {/* Background Effects */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/15 rounded-full blur-2xl"></div>
+        </div>
+
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false, amount: 0.3 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{t('cta.titulo')}</h2>
-            <p className="text-lg text-blue-100 mb-8 leading-relaxed">{t('cta.descricao')}</p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              {' '}
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm text-white rounded-full text-sm font-medium border border-white/30"
+            >
+              <HiGlobeAlt className="w-5 h-5" />
+              Pronto para começar?
+            </motion.div>
+
+            {/* Main Title */}
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-8 leading-tight"
+            >
+              {t('cta.titulo')}
+            </motion.h2>
+
+            {/* Description */}
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="text-xl md:text-2xl text-white/90 mb-12 leading-relaxed max-w-4xl mx-auto"
+            >
+              {t('cta.descricao')}
+            </motion.p>
+
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="flex flex-col sm:flex-row gap-6 justify-center items-center"
+            >
               <Link
                 href={`/${locale}/conversar`}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md font-medium"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-white text-primary-600 rounded-xl hover:bg-gray-50 transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-white/20 font-semibold text-lg min-w-[200px]"
               >
-                <HiChatBubbleLeftRight className="w-4 h-4" />
+                <HiChatBubbleLeftRight className="w-6 h-6" />
                 {t('cta.botoes.comecar_agora')}
-              </Link>{' '}
+              </Link>
+
               <Link
                 href={`/${locale}/configuracoes`}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-transparent text-white rounded-lg border border-white hover:bg-white hover:text-blue-600 transition-all duration-200 shadow-sm hover:shadow-md font-medium"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-transparent text-white rounded-xl border-2 border-white hover:bg-white hover:text-primary-600 transform hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-white/20 font-semibold text-lg min-w-[200px]"
               >
-                <HiCog6Tooth className="w-4 h-4" />
+                <HiCog6Tooth className="w-6 h-6" />
                 {t('cta.botoes.personalizar')}
               </Link>
-            </div>
+            </motion.div>
+
+            {/* Additional Info */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: false }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="pt-12 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
+            >
+              <div className="text-center">
+                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <FaAccessibleIcon className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">100% Acessível</h3>
+                <p className="text-white/80 text-sm">Para todos os tipos de deficiência</p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <FaHeart className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Totalmente Gratuito</h3>
+                <p className="text-white/80 text-sm">Sem taxas ou assinaturas</p>
+              </div>
+
+              <div className="text-center">
+                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <FaShieldAlt className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Privacidade Total</h3>
+                <p className="text-white/80 text-sm">Sem cadastro ou dados pessoais</p>
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </section>

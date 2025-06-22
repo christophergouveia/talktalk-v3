@@ -50,21 +50,33 @@
   --cor-azul: #38A3F5;
   --cor-roxa: #786FF2;
   --cor-azul2: #6F90F2;
-  --chat-bg-geral: #2b2b2b;
-  --chat-bg-header: #1e1e1e;
-  --chat-bg-buttons: #1c1c1c;
-  --chat-bg-buttons-secondary: #282828;
+  --cor-azul-piscina: #6FE3F2;
+  --cor-lilas: #A46FF2;
+  --cor-azul-claro: #BFCCF2;
+  --chat-bg-geral: #1a1a1a;
+  --chat-bg-header: #111111;
+  --chat-bg-buttons: #2a2a2a;
+  --chat-bg-buttons-secondary: #333333;
+  --primary-gradient: linear-gradient(135deg, #38A3F5, #786FF2);
+  --secondary-gradient: linear-gradient(135deg, #6F90F2, #A46FF2);
+  --accent-gradient: linear-gradient(135deg, #6FE3F2, #BFCCF2);
 }
 .light,
 [data-theme='light'] {
-  --cor-azul: #0d475c;
-  --cor-roxa: #5c3a8b;
-  --cor-azul2: #3999cc;
-  --chat-bg-geral: hsl(0, 0%, 95%);
-  --chat-bg-header: #dcdcdc;
-  --chat-bg-buttons: #ccc;
-  --chat-bg-buttons-secondary: #e6e6e6;
-  --chat-header-text: #333;
+  --cor-azul: #38A3F5;
+  --cor-roxa: #786FF2;
+  --cor-azul2: #6F90F2;
+  --cor-azul-piscina: #6FE3F2;
+  --cor-lilas: #A46FF2;
+  --cor-azul-claro: #BFCCF2;
+  --chat-bg-geral: #f8fafc;
+  --chat-bg-header: #ffffff;
+  --chat-bg-buttons: #e2e8f0;
+  --chat-bg-buttons-secondary: #f1f5f9;
+  --chat-header-text: #1e293b;
+  --primary-gradient: linear-gradient(135deg, #38A3F5, #786FF2);
+  --secondary-gradient: linear-gradient(135deg, #6F90F2, #A46FF2);
+  --accent-gradient: linear-gradient(135deg, #6FE3F2, #BFCCF2);
 }
 
 .setinha {
@@ -101,7 +113,7 @@
   height: 0;
   border-top: 10px solid transparent;
   border-bottom: 10px solid transparent;
-  border-left: 10px solid #3b82f6; /* cor do bg-blue-500 */
+  border-left: 10px solid #38A3F5; /* nova cor azul claro intenso */
   filter: drop-shadow(2px 0px 2px rgba(0, 0, 0, 0.1));
 }
 
@@ -115,13 +127,13 @@
 }
 
 .messageList::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6) !important;
+  background: linear-gradient(135deg, #38A3F5, #786FF2) !important;
   border-radius: 4px !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
 .messageList::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+  background: linear-gradient(135deg, #6F90F2, #A46FF2) !important;
 }
 
 .textarea-message::-webkit-scrollbar {
@@ -134,13 +146,13 @@
 }
 
 .textarea-message::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #3b82f6, #8b5cf6) !important;
+  background: linear-gradient(135deg, #38A3F5, #786FF2) !important;
   border-radius: 3px !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
 }
 
 .textarea-message::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+  background: linear-gradient(135deg, #6F90F2, #A46FF2) !important;
 }
 
 .modal {
@@ -399,6 +411,30 @@ section[role='dialog'] {
   100% {
     transform: scale(1);
     opacity: 1;
+  }
+}
+
+@layer utilities {
+  /* Prevenção de scroll horizontal em dispositivos móveis */
+  .prevent-mobile-scroll {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  
+  /* Otimização de toque para mobile */
+  .touch-optimized {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Responsividade de texto */
+  .text-responsive {
+    font-size: clamp(0.875rem, 2.5vw, 1rem);
+  }
+  
+  /* Padding responsivo */
+  .padding-responsive {
+    padding: clamp(0.5rem, 4vw, 1.5rem);
   }
 }
 

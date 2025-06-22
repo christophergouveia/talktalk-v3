@@ -3,6 +3,15 @@ import { Modal, ModalContent, ModalHeader, ModalBody, Button, Tooltip } from "@h
 import { useTranslation } from 'react-i18next';
 
 export const colors = [
+  // Nova paleta TalkTalk
+  { name: 'azul_claro_intenso', hex: '#38A3F5' },
+  { name: 'roxo_azulado', hex: '#786FF2' },
+  { name: 'azul_medio', hex: '#6F90F2' },
+  { name: 'azul_piscina', hex: '#6FE3F2' },
+  { name: 'lilas_vibrante', hex: '#A46FF2' },
+  { name: 'azul_bem_claro', hex: '#BFCCF2' },
+  
+  // Cores complementares
   { name: 'tangerina', hex: '#FFDDC1' },
   { name: 'coral', hex: '#FFABAB' },
   { name: 'pessego', hex: '#FFC3A0' },
@@ -17,12 +26,6 @@ export const colors = [
   { name: 'ciano', hex: '#A0E7E5' },
   { name: 'marrom', hex: '#786C3B' },
   { name: 'verde_menta', hex: '#B9EBC1' },
-  { name: 'creme', hex: '#F9D5BB' },
-  { name: 'rosa_pastel', hex: '#F1C0E8' },
-  { name: 'laranja_pastel', hex: '#F3C6A8' },
-  { name: 'cor_de_rosa', hex: '#FF9A8B' },
-  { name: 'amarelo_claro', hex: '#FFE156' },
-  { name: 'azul_claro', hex: '#C0E0DE' },
 ];
 
 interface ColorSelectorI {

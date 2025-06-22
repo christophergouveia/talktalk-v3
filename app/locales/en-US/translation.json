@@ -135,47 +135,46 @@
     },    "evolucao": {
       "badge": "Our Journey",
       "titulo": "Our Evolution",
-      "subtitulo": "Follow each step of our journey, from the initial idea to today's revolutionary product",
-      "timeline": {
+      "subtitulo": "Follow each step of our journey, from the initial idea to today's revolutionary product",      "timeline": {
         "janeiro_2024": {
-          "data": "January 2024",
+          "data": "October 2023",
           "titulo": "Birth of the Idea",
-          "descricao": "The journey began with the vision of creating a platform that could connect people from different cultures and languages naturally and inclusively, breaking down language barriers."
+          "descricao": "The journey began with the vision of creating a platform that could connect people from different cultures and languages naturally and inclusively, breaking language barriers found with exchange students at IFPR - Assis Chateaubriand campus. With this, encouraged by the project advisor, the development of TalkTalk began."
         },
         "marco_2024": {
-          "data": "March 2024",
-          "titulo": "Research and Planning",
-          "descricao": "Intense period of research on translation technologies, accessibility and UX/UI, defining the fundamental pillars of the project."
+          "data": "November 2023",
+          "titulo": "Tool Development",
+          "descricao": "We initiated the implementation of TalkTalk, using technologies such as Next.js, Socket.IO and VLibras. The system was structured to offer real-time translation, support for multiple languages and adapted visual resources, ensuring an efficient experience for all users."
         },
         "maio_2024": {
-          "data": "May 2024",
-          "titulo": "Initial Development",
-          "descricao": "Implementation of core functionalities: real-time translation, real-time chat with Socket.IO and establishment of the system's base architecture."
+          "data": "September 2024",
+          "titulo": "ScientIF Participation",
+          "descricao": "We presented TalkTalk at ScientIF – IFPR Scientific and Cultural Exhibition, highlighting its potential to promote inclusion and accessibility in communication. The participation enabled experience exchange, proposal validation and project strengthening in the academic environment."
         },
         "julho_2024": {
-          "data": "July 2024",
-          "titulo": "Accessibility Features",
-          "descricao": "Implementation of accessibility features such as voice synthesis, support for color blind people and customizable interface settings."
+          "data": "November 2024",
+          "titulo": "IF-Tech Presentation",
+          "descricao": "TalkTalk was presented at IF-Tech, IFPR's innovation and technology event, as a solution focused on accessibility and digital inclusion. The participation highlighted the system's real-time functionalities and reinforced its role as a transformative educational tool."
         },
         "setembro_2024": {
-          "data": "September 2024",
-          "titulo": "Testing Phase",
-          "descricao": "Period of intensive testing with real users, feedback collection and implementation of significant improvements based on user experience."
+          "data": "December 2024",
+          "titulo": "End of TalkTalk's First Stage",
+          "descricao": "The first part of TalkTalk was successfully completed, resulting in a functional real-time translation system. This stage represented the core of development, bringing together the main functionalities and defining the project's technical identity."
         },
         "outubro_2024": {
-          "data": "October 2024",
-          "titulo": "Design Refinement",
-          "descricao": "Significant improvements to the user interface, implementation of dark/light themes and optimization to ensure an intuitive experience."
+          "data": "February 2025",
+          "titulo": "Second Stage: Accessibility and Inclusion",
+          "descricao": "In the second stage, TalkTalk had its focus expanded to include accessibility features, highlighting the integration of sign language translation via VLibras and visual adaptations for different user needs. This phase ensured that the platform became more inclusive, promoting effective communication for everyone."
         },
         "novembro_2024": {
-          "data": "November 2024",
-          "titulo": "Optimizations and Security",
-          "descricao": "Implementation of advanced security measures, performance optimization and preparation for public launch."
+          "data": "May 2025",
+          "titulo": "Test with Exchange Student",
+          "descricao": "We conducted a test with an exchange student from India to validate the effectiveness of TalkTalk's real-time translation. The experience demonstrated the system's potential in facilitating communication between people of different languages in educational environments. The feedback was positive and reinforced the tool's practical utility."
         },
         "dezembro_2024": {
-          "data": "December 2024",
-          "titulo": "Beta Launch",
-          "descricao": "Beta version launch for a select group of testers, collecting final feedback and making final adjustments."
+          "data": "June 2025",
+          "titulo": "FEBIC Virtual Stage Classification",
+          "descricao": "The TalkTalk project was classified for the virtual stage of FEBIC (Brazilian Fair of Scientific Initiation), recognizing its innovative potential in the area of educational technologies. This achievement highlights the system's relevance on the national scene and encourages the continuity of development and research."
         },
         "janeiro_2025": {
           "data": "January 2025",
@@ -532,7 +531,7 @@
     "erros": {
       "sala_nao_encontrada": "Room not found!",
       "erro_conectar_sala": "Error connecting to room:",
-      "sala_cheia": "Room is full! Maximum of 10 users allowed.",
+      "sala_cheia": "Room is full! Maximum of 4 users allowed.",
       "erro_conexao_servidor": "Server connection error. Check your internet.",
       "servidor_indisponivel": "Could not connect to chat server. Check if server is running."
     }

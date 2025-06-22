@@ -9,6 +9,7 @@ const http = require('http');
 const fs = require('fs');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
+const { getTranslation } = require('./translations');
 
 console.log('[DEBUG] Environment check:', {
   DATABASE_URL: process.env.DATABASE_URL ? 'SET' : 'NOT SET',
@@ -24,7 +25,9 @@ const prisma = new PrismaClient();
     await prisma.$connect();
     console.log('[DEBUG] Database connection successful');
   } catch (error) {
-    console.error('[DEBUG] Database connection failed:', error);
+    console.error('[DEBUG] Database connection failed:', error.message);
+    // Continue without database for now
+    console.log('[DEBUG] Continuing without database connection...');
   }
 })();
 const PORT = process.env.SOCKET_PORT || 3005;
@@ -81,12 +84,11 @@ io.on('connection', (socket) => {
 
   let userRoom = null;
   let userData = null;
-
-  socket.on('join-room', async (room, userDataParam) => {
+  socket.on('join-room', async (room, userDataParam, userLanguage = 'pt-BR') => {
     try {
       if (!room || !userDataParam) {
         console.error('[DEBUG] Dados inválidos:', { room, userDataParam });
-        socket.emit('error', 'Dados inválidos para entrar na sala');
+        socket.emit('error', getTranslation(userLanguage, 'userDataError'));
         return;
       }
 
@@ -95,15 +97,15 @@ io.on('connection', (socket) => {
         parsedUserData = typeof userDataParam === 'string' ? JSON.parse(userDataParam) : userDataParam;
       } catch (e) {
         console.error('[DEBUG] Erro ao fazer parse dos dados do usuário:', e);
-        socket.emit('error', 'Dados do usuário inválidos');
+        socket.emit('error', getTranslation(userLanguage, 'userDataError'));
         return;
       }
 
       if (!parsedUserData.userToken || !parsedUserData.apelido) {
         console.error('[DEBUG] Dados do usuário incompletos:', parsedUserData);
-        socket.emit('error', 'Dados do usuário incompletos');
+        socket.emit('error', getTranslation(userLanguage, 'userDataError'));
         return;
-      }      let cryptoApiBaseUrl;
+      }let cryptoApiBaseUrl;
       if (process.env.NEXT_PUBLIC_VERCEL_URL) {
         const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^http?:\/\//, '');
         cryptoApiBaseUrl = `http://${domain}`;
@@ -150,13 +152,11 @@ io.on('connection', (socket) => {
         where: { codigoSala: room },
       });
 
-      console.log('[DEBUG] Sala encontrada:', !!sala, sala ? sala.codigoSala : 'N/A');
-
-      if (!sala) {
+      console.log('[DEBUG] Sala encontrada:', !!sala, sala ? sala.codigoSala : 'N/A');      if (!sala) {
         console.log('[DEBUG] Sala não encontrada, emitindo erro');
-        socket.emit('error', 'Sala não encontrada');
+        socket.emit('error', getTranslation(userLanguage, 'roomNotFound'));
         return;
-      }      const isHost = parsedUserData.userToken === sala.hostToken;
+      }const isHost = parsedUserData.userToken === sala.hostToken;
       console.log('[DEBUG] Verificando se é host:', isHost, {
         userToken: parsedUserData.userToken?.substring(0, 10) + '...',
         hostToken: sala.hostToken?.substring(0, 10) + '...'
@@ -182,8 +182,7 @@ io.on('connection', (socket) => {
           if (createError.code === 'P2002') {
             console.log('[DEBUG] Usuário já existe na sala (constraint violation), continuando...');
           } else {
-            console.error('[DEBUG] Erro ao inserir usuário:', createError);
-            socket.emit('error', 'Erro ao inserir usuário na sala');
+            console.error('[DEBUG] Erro ao inserir usuário:', createError);            socket.emit('error', getTranslation(userLanguage, 'errorJoiningRoom'));
             return;
           }
         }
@@ -195,13 +194,12 @@ io.on('connection', (socket) => {
       });
 
       console.log('[DEBUG] Usuários na sala:', roomUsers.length);
-      console.log('[DEBUG] Dados dos usuários:', roomUsers.map(u => ({ userData: u.userData.substring(0, 20) + '...', host: u.host })));      // Verificar limite de usuários (máximo 10)
+      console.log('[DEBUG] Dados dos usuários:', roomUsers.map(u => ({ userData: u.userData.substring(0, 20) + '...', host: u.host })));      // Verificar limite de usuários (máximo 4)
       const isUserAlreadyInRoom = roomUsers.some(user => user.userData === encryptResult.data);
       console.log('[DEBUG] Usuário já está na sala?', isUserAlreadyInRoom);
-      
-      if (!isUserAlreadyInRoom && roomUsers.length >= 10) {
-        console.log('[DEBUG] Sala está cheia! Rejeitando entrada.');
-        socket.emit('error', 'Sala está cheia (máximo 10 usuários)');
+        if (!isUserAlreadyInRoom && roomUsers.length >= 4) {
+        console.log('[DEBUG] Sala está cheia! Rejeitando entrada (máximo 4 usuários).');
+        socket.emit('error', getTranslation(userLanguage, 'roomFull'));
         return;
       }
 
@@ -249,6 +247,12 @@ io.on('connection', (socket) => {
       userRoom = room;
       userData = encryptResult.data;
 
+      // Atualizar timestamp da sala para indicar atividade
+      await prisma.salas.update({
+        where: { codigoSala: room },
+        data: { updateAt: new Date() }
+      });
+
       console.log('[DEBUG] Enviando users-update com', decryptedUsers.length, 'usuários');
       console.log('[DEBUG] Usuários enviados:', decryptedUsers.map(u => ({ 
         apelido: u.userData?.apelido, 
@@ -256,20 +260,24 @@ io.on('connection', (socket) => {
         userToken: u.userData?.userToken?.substring(0, 10) + '...'
       })));
       
-      io.to(room).emit('users-update', decryptedUsers);
-    } catch (error) {
+      io.to(room).emit('users-update', decryptedUsers);    } catch (error) {
       console.error('[DEBUG] Erro ao processar entrada do usuário:', error);
-      socket.emit('error', 'Erro ao entrar na sala');
+      socket.emit('error', getTranslation(userLanguage, 'errorJoiningRoom'));
     }
   });
   socket.on('disconnect', async () => {
     if (userRoom && userData) {
-      try {
-        await prisma.salas_Usuarios.deleteMany({
+      try {        await prisma.salas_Usuarios.deleteMany({
           where: {
             codigoSala: userRoom,
             userData: userData,
           },
+        });
+
+        // Atualizar timestamp da sala após desconexão
+        await prisma.salas.update({
+          where: { codigoSala: userRoom },
+          data: { updateAt: new Date() }
         });
 
         socket.to(userRoom).emit('user-disconnected', userData);
@@ -460,9 +468,62 @@ io.engine.on('connection_error', (err) => {
 
 async function checkRooms() {
   try {
-    const inactivityThreshold = 1000 * 60 * 60 * 24;
+    // Check if Prisma is connected before running cleanup
+    if (!prisma) {
+      console.log('[DEBUG] Prisma not available, skipping room cleanup');
+      return;
+    }
 
-    const inactiveRooms = await prisma.salas.findMany({
+    console.log('[DEBUG] Iniciando verificação de salas...');
+
+    // Verificar salas vazias (sem usuários por 5 minutos)
+    const emptyRoomsThreshold = 1000 * 60 * 5; // 5 minutos
+    
+    // Buscar todas as salas
+    const allRooms = await prisma.salas.findMany();
+    console.log(`[DEBUG] Total de salas encontradas: ${allRooms.length}`);
+
+    for (const room of allRooms) {
+      try {
+        // Verificar se a sala tem usuários
+        const roomUsers = await prisma.salas_Usuarios.findMany({
+          where: { codigoSala: room.codigoSala },
+        });
+
+        // Se a sala está vazia e foi atualizada há mais de 5 minutos
+        if (roomUsers.length === 0) {
+          const timeSinceUpdate = Date.now() - new Date(room.updateAt).getTime();
+          
+          if (timeSinceUpdate > emptyRoomsThreshold) {
+            console.log(`[DEBUG] Removendo sala vazia: ${room.codigoSala} (vazia há ${Math.round(timeSinceUpdate / 1000 / 60)} minutos)`);
+            
+            await prisma.$transaction([
+              prisma.mensagens.deleteMany({
+                where: { codigoSala: room.codigoSala },
+              }),
+              prisma.salas_Usuarios.deleteMany({
+                where: { codigoSala: room.codigoSala },
+              }),
+              prisma.salas.delete({
+                where: { codigoSala: room.codigoSala },
+              }),
+            ]);
+            
+            console.log(`[DEBUG] Sala ${room.codigoSala} removida com sucesso`);
+          } else {
+            console.log(`[DEBUG] Sala ${room.codigoSala} está vazia há ${Math.round(timeSinceUpdate / 1000 / 60)} minutos (aguardando 5 minutos)`);
+          }
+        } else {
+          console.log(`[DEBUG] Sala ${room.codigoSala} tem ${roomUsers.length} usuários ativos`);
+        }
+      } catch (error) {
+        console.error(`[DEBUG] Erro ao verificar sala ${room.codigoSala}:`, error);
+      }
+    }
+
+    // Também verificar salas muito antigas (24 horas) como backup
+    const inactivityThreshold = 1000 * 60 * 60 * 24; // 24 horas
+    const oldInactiveRooms = await prisma.salas.findMany({
       where: {
         updateAt: {
           lte: new Date(Date.now() - inactivityThreshold),
@@ -470,35 +531,34 @@ async function checkRooms() {
       },
     });
 
-    if (inactiveRooms.length === 0) {
-      return;
-    }
-
-    for (const room of inactiveRooms) {
-      try {
-        await prisma.$transaction([
-          prisma.mensagens.deleteMany({
-            where: { codigoSala: room.codigoSala },
-          }),
-          prisma.salas_Usuarios.deleteMany({
-            where: { codigoSala: room.codigoSala },
-          }),
-          prisma.salas.delete({
-            where: { codigoSala: room.codigoSala },
-          }),
-        ]);
-      } catch (error) {
-        console.error(`Erro ao deletar sala ${room.codigoSala}:`, error);
+    if (oldInactiveRooms.length > 0) {
+      console.log(`[DEBUG] Encontradas ${oldInactiveRooms.length} salas antigas (24h+) para remoção`);
+      
+      for (const room of oldInactiveRooms) {
+        try {
+          await prisma.$transaction([
+            prisma.mensagens.deleteMany({
+              where: { codigoSala: room.codigoSala },
+            }),
+            prisma.salas_Usuarios.deleteMany({
+              where: { codigoSala: room.codigoSala },
+            }),
+            prisma.salas.delete({
+              where: { codigoSala: room.codigoSala },
+            }),
+          ]);
+          console.log(`[DEBUG] Sala antiga ${room.codigoSala} removida`);
+        } catch (error) {
+          console.error(`[DEBUG] Erro ao deletar sala antiga ${room.codigoSala}:`, error);
+        }
       }
-    }
-  } catch (error) {
+    }} catch (error) {
     console.error('Erro ao deletar salas inativas:', error);
-  } finally {
-    await prisma.$disconnect();
   }
+  // Don't disconnect Prisma here as it's used throughout the app lifecycle
 }
 
-setInterval(checkRooms, 1000 * 60 * 5); // 5 minutos
+setInterval(checkRooms, 1000 * 60 * 5); // Verificar salas vazias a cada 5 minutos
 
 app.get('/', (req, res) => {
   res.send('Servidor http funcionando corretamente');
@@ -506,4 +566,13 @@ app.get('/', (req, res) => {
 
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor Socket.IO rodando na porta ${PORT}`);
+});
+
+// Add global error handlers to prevent crashes
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });

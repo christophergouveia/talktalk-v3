@@ -118,15 +118,13 @@ export default function NavBar() {
               {listaItems.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.href}
-                  className={`relative text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors
-                    ${isActiveLink(item.href) ? '!text-sky-600' : ''}`}
+                  href={item.href}                  className={`relative text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors
+                    ${isActiveLink(item.href) ? '!text-primary-600' : ''}`}
                 >
                   {item.name}
-                  {isActiveLink(item.href) && (
-                    <motion.div
+                  {isActiveLink(item.href) && (                    <motion.div
                       layoutId="activeIndicator"
-                      className="absolute bottom-[-20px] left-0 right-0 h-0.5 bg-sky-600"
+                      className="absolute bottom-[-20px] left-0 right-0 h-0.5 bg-primary-600"
                       initial={false}
                       transition={{
                         type: 'spring',
@@ -145,25 +143,23 @@ export default function NavBar() {
                   <button
                     onClick={toggleTheme}
                     aria-label={theme.resolvedTheme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro'}
-                    className="p-1.5 rounded-full text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                    className="p-1.5 rounded-full text-gray-600 hover:bg-primary-100 hover:text-primary-600 dark:text-gray-300 dark:hover:bg-primary-900 dark:hover:text-primary-400 transition-colors"
                   >
                     {theme.resolvedTheme === 'dark' ? <IoIosMoon size={18} /> : <IoSunny size={18} />}
                   </button>
-                  <div className="hidden sm:block w-px h-6 bg-gray-300 dark:bg-gray-700" />
-                  <a
+                  <div className="hidden sm:block w-px h-6 bg-gray-300 dark:bg-gray-700" />                  <a
                     href="https://github.com"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Visitar GitHub"
-                    className="hidden sm:block p-1.5 rounded-full text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                    className="hidden sm:block p-1.5 rounded-full text-gray-600 hover:bg-primary-100 hover:text-primary-600 dark:text-gray-300 dark:hover:bg-primary-900 dark:hover:text-primary-400 transition-colors"
                   >
                     <FaGithub size={18} />
                   </a>
-                  <div className="hidden sm:block w-px h-6 bg-gray-300 dark:bg-gray-700" />
-                  <Link
+                  <div className="hidden sm:block w-px h-6 bg-gray-300 dark:bg-gray-700" />                  <Link
                     href={`/${locale}/configuracoes`}
                     aria-label="Configurações"
-                    className="hidden sm:block p-1.5 rounded-full text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                    className="hidden sm:block p-1.5 rounded-full text-gray-600 hover:bg-primary-100 hover:text-primary-600 dark:text-gray-300 dark:hover:bg-primary-900 dark:hover:text-primary-400 transition-colors"
                   >
                     <IoSettingsSharp size={18} />
                   </Link>
@@ -173,7 +169,7 @@ export default function NavBar() {
                     onClick={toggleMenu}
                     aria-label="Menu principal"
                     aria-expanded={isMenuOpen}
-                    className="md:hidden p-1.5 rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800"
+                    className="md:hidden p-1.5 rounded-lg text-gray-600 hover:bg-primary-100 hover:text-primary-600 dark:text-gray-300 dark:hover:bg-primary-900 dark:hover:text-primary-400 transition-colors"
                   >
                     <IoMenu size={18} />
                   </button>
@@ -189,10 +185,9 @@ export default function NavBar() {
               {listaItems.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.href}
-                  className={`block px-3 py-2 rounded-md text-base font-medium
+                  href={item.href}                  className={`block px-3 py-2 rounded-md text-base font-medium
                     ${isActiveLink(item.href)
-                      ? 'bg-sky-100 text-sky-600 dark:bg-sky-900'
+                      ? 'bg-primary-100 text-primary-600 dark:bg-primary-900'
                       : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
                     }`}
                   onClick={() => setIsMenuOpen(false)}
@@ -294,7 +289,7 @@ function LanguageSwitcher() {
           {({ active }) => (
             <button
               onClick={() => handleLanguageChange('pt-BR')}
-              className={`group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 ${active ? 'bg-gray-100 dark:bg-gray-700' : ''}`}
+              className={`group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-gray-700 dark:text-gray-200 hover:bg-primary-100 dark:hover:bg-primary-900 hover:text-primary-600 dark:hover:text-primary-400 transition-colors ${active ? 'bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400' : ''}`}
             >
               {isChangingLocale ? (
                 <span>Carregando...</span>
@@ -306,24 +301,20 @@ function LanguageSwitcher() {
               )}
             </button>
           )}
-        </MenuItem>
-
-        <MenuItem disabled={isChangingLocale}>
+        </MenuItem>        <MenuItem disabled={isChangingLocale}>
           <button
             onClick={() => handleLanguageChange('es-ES')}
-            className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-gray-700 dark:text-gray-200 hover:bg-primary-100 dark:hover:bg-primary-900 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
           >
             <span className="text-sm flex items-center gap-2">
               <CountryFlag className="w-8 h-8" flag="ES" />
               {getLanguageName('es-ES')}
             </span>
           </button>
-        </MenuItem>
-
-        <MenuItem disabled={isChangingLocale}>
+        </MenuItem>        <MenuItem disabled={isChangingLocale}>
           <button
             onClick={() => handleLanguageChange('en-US')}
-            className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 text-gray-700 dark:text-gray-200 hover:bg-primary-100 dark:hover:bg-primary-900 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
           >
             <span className="text-sm flex items-center gap-2">
               <CountryFlag className="w-8 h-8" flag="US" />

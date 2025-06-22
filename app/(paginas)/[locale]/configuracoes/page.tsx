@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, ChangeEvent, useMemo, useRef, useLayoutEffect } from 'react';
 import { Image } from '@heroui/react';
-import { Save, Volume2, Moon, Sun, Globe, User, Bell, MessageSquare, Mic, Sliders, ChevronRight } from 'lucide-react';
+import { Save, Volume2, Moon, Sun, Globe, User, Bell, MessageSquare, Mic, Sliders, ChevronRight, Gauge, Music } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import languagesData from '@/app/locales/languages.json';
@@ -283,74 +283,59 @@ const UserSettingsPage = () => {
             <ul className="space-y-2">
               <li>
                 <button
-                  onClick={() => setActiveTab('profile')}
-                  className={`w-full flex items-center justify-between p-4 rounded-xl transition-all duration-300 group ${
+                  onClick={() => setActiveTab('profile')}                  className={`w-full flex items-center justify-between p-4 rounded-xl transition-all duration-300 group ${
                     activeTab === 'profile' 
-                      ? 'bg-gradient-to-r from-blue-500/10 to-cyan-500/10 text-blue-600 dark:text-blue-400 shadow-lg border border-blue-200/50 dark:border-blue-700/50' 
+                      ? 'bg-gradient-to-r from-primary-500/10 to-secondary-500/10 text-primary-600 dark:text-primary-400 shadow-lg border border-primary-200/50 dark:border-primary-700/50' 
                       : 'hover:bg-gray-100/80 dark:hover:bg-gray-700/50 hover:scale-[1.02]'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg transition-colors ${
+                  <div className="flex items-center gap-3">                    <div className={`p-2 rounded-lg transition-colors ${
                       activeTab === 'profile' 
-                        ? 'bg-blue-500/20 text-blue-600 dark:text-blue-400' 
-                        : 'bg-gray-200/80 dark:bg-gray-700/80 group-hover:bg-blue-500/10'
+                        ? 'bg-primary-500/20 text-primary-600 dark:text-primary-400' 
+                        : 'bg-gray-200/80 dark:bg-gray-700/80 group-hover:bg-primary-500/10'
                     }`}>
                       <User size={18} />
                     </div>
                     <span className="font-medium">{t('chat.configuracoes.abas.perfil')}</span>
                   </div>
-                  <ChevronRight size={16} className={`transition-all duration-300 ${
-                    activeTab === 'profile' ? 'opacity-100 rotate-90' : 'opacity-0 group-hover:opacity-50'
-                  }`} />
                 </button>
               </li>
               <li>
                 <button
-                  onClick={() => setActiveTab('language')}
-                  className={`w-full flex items-center justify-between p-4 rounded-xl transition-all duration-300 group ${
+                  onClick={() => setActiveTab('language')}                  className={`w-full flex items-center justify-between p-4 rounded-xl transition-all duration-300 group ${
                     activeTab === 'language' 
-                      ? 'bg-gradient-to-r from-green-500/10 to-emerald-500/10 text-green-600 dark:text-green-400 shadow-lg border border-green-200/50 dark:border-green-700/50' 
+                      ? 'bg-gradient-to-r from-accent-500/10 to-cyan-500/10 text-accent-600 dark:text-accent-400 shadow-lg border border-accent-200/50 dark:border-accent-700/50' 
                       : 'hover:bg-gray-100/80 dark:hover:bg-gray-700/50 hover:scale-[1.02]'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg transition-colors ${
+                  <div className="flex items-center gap-3">                    <div className={`p-2 rounded-lg transition-colors ${
                       activeTab === 'language' 
-                        ? 'bg-green-500/20 text-green-600 dark:text-green-400' 
-                        : 'bg-gray-200/80 dark:bg-gray-700/80 group-hover:bg-green-500/10'
+                        ? 'bg-accent-500/20 text-accent-600 dark:text-accent-400' 
+                        : 'bg-gray-200/80 dark:bg-gray-700/80 group-hover:bg-accent-500/10'
                     }`}>
                       <Globe size={18} />
                     </div>
                     <span className="font-medium">{t('chat.configuracoes.abas.idioma')}</span>
                   </div>
-                  <ChevronRight size={16} className={`transition-all duration-300 ${
-                    activeTab === 'language' ? 'opacity-100 rotate-90' : 'opacity-0 group-hover:opacity-50'
-                  }`} />
                 </button>
               </li>
               <li>
                 <button
-                  onClick={() => setActiveTab('audio')}
-                  className={`w-full flex items-center justify-between p-4 rounded-xl transition-all duration-300 group ${
+                  onClick={() => setActiveTab('audio')}                  className={`w-full flex items-center justify-between p-4 rounded-xl transition-all duration-300 group ${
                     activeTab === 'audio' 
-                      ? 'bg-gradient-to-r from-purple-500/10 to-violet-500/10 text-purple-600 dark:text-purple-400 shadow-lg border border-purple-200/50 dark:border-purple-700/50' 
+                      ? 'bg-gradient-to-r from-secondary-500/10 to-purple-500/10 text-secondary-600 dark:text-secondary-400 shadow-lg border border-secondary-200/50 dark:border-secondary-700/50' 
                       : 'hover:bg-gray-100/80 dark:hover:bg-gray-700/50 hover:scale-[1.02]'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg transition-colors ${
+                  <div className="flex items-center gap-3">                    <div className={`p-2 rounded-lg transition-colors ${
                       activeTab === 'audio' 
-                        ? 'bg-purple-500/20 text-purple-600 dark:text-purple-400' 
-                        : 'bg-gray-200/80 dark:bg-gray-700/80 group-hover:bg-purple-500/10'
+                        ? 'bg-secondary-500/20 text-secondary-600 dark:text-secondary-400' 
+                        : 'bg-gray-200/80 dark:bg-gray-700/80 group-hover:bg-secondary-500/10'
                     }`}>
                       <Volume2 size={18} />
                     </div>
                     <span className="font-medium">{t('chat.configuracoes.abas.audio')}</span>
                   </div>
-                  <ChevronRight size={16} className={`transition-all duration-300 ${
-                    activeTab === 'audio' ? 'opacity-100 rotate-90' : 'opacity-0 group-hover:opacity-50'
-                  }`} />
                 </button>
               </li>
               <li>
@@ -372,9 +357,6 @@ const UserSettingsPage = () => {
                     </div>
                     <span className="font-medium">{t('chat.configuracoes.abas.aparencia')}</span>
                   </div>
-                  <ChevronRight size={16} className={`transition-all duration-300 ${
-                    activeTab === 'appearance' ? 'opacity-100 rotate-90' : 'opacity-0 group-hover:opacity-50'
-                  }`} />
                 </button>
               </li>
             </ul>
@@ -390,10 +372,9 @@ const UserSettingsPage = () => {
                 transition={{ duration: 0.3 }}
                 className="space-y-6"
               >
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl">
-                    <User size={24} className="text-blue-600 dark:text-blue-400" />
-                  </div>                  <div>
+                <div className="flex items-center gap-3 mb-6">                  <div className="p-3 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-xl">
+                    <User size={24} className="text-primary-600 dark:text-primary-400" />
+                  </div><div>
                     <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">{t('chat.configuracoes.perfil.titulo')}</h2>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{t('chat.configuracoes.perfil.subtitulo')}</p>
                   </div>
@@ -551,7 +532,7 @@ const UserSettingsPage = () => {
                         setIsSaving(true);
                         setTimeout(() => setIsSaving(false), 800);
                       }}
-                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-medium"
+                      className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-accent-500 to-cyan-600 hover:from-accent-600 hover:to-cyan-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-medium"
                       disabled={isSaving}                    >
                       {isSaving ? (
                         <>
@@ -638,38 +619,46 @@ const UserSettingsPage = () => {
                     </div>
                   </div>
                   <div>
-                    <div className="flex items-center justify-between mb-1">                      <label htmlFor="rate" className="text-sm font-medium">
+                    <div className="flex items-center justify-between mb-1">
+                      <label htmlFor="rate" className="text-sm font-medium">
                         {t('chat.configuracoes.audio.velocidade')}
                       </label>
                       <span className="text-sm">{settings.rate}x</span>
                     </div>
-                    <input
-                      id="rate"
-                      type="range"
-                      min="0.5"
-                      max="2"
-                      step="0.1"
-                      value={settings.rate}
-                      onChange={(e) => updateSettings({ rate: Number(e.target.value) })}
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-500"
-                    />
+                    <div className="flex items-center gap-2">
+                      <Gauge size={16} className="text-gray-600 dark:text-gray-400" />
+                      <input
+                        id="rate"
+                        type="range"
+                        min="0.5"
+                        max="2"
+                        step="0.1"
+                        value={settings.rate}
+                        onChange={(e) => updateSettings({ rate: Number(e.target.value) })}
+                        className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-500"
+                      />
+                    </div>
                   </div>
                   <div>
-                    <div className="flex items-center justify-between mb-1">                      <label htmlFor="pitch" className="text-sm font-medium">
+                    <div className="flex items-center justify-between mb-1">
+                      <label htmlFor="pitch" className="text-sm font-medium">
                         {t('chat.configuracoes.audio.tom')}
                       </label>
                       <span className="text-sm">{settings.pitch}</span>
                     </div>
-                    <input
-                      id="pitch"
-                      type="range"
-                      min="0.5"
-                      max="2"
-                      step="0.1"
-                      value={settings.pitch}
-                      onChange={(e) => updateSettings({ pitch: Number(e.target.value) })}
-                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-500"
-                    />
+                    <div className="flex items-center gap-2">
+                      <Music size={16} className="text-gray-600 dark:text-gray-400" />
+                      <input
+                        id="pitch"
+                        type="range"
+                        min="0.5"
+                        max="2"
+                        step="0.1"
+                        value={settings.pitch}
+                        onChange={(e) => updateSettings({ pitch: Number(e.target.value) })}
+                        className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-blue-500"
+                      />
+                    </div>
                   </div>
                   <div className="space-y-2">                    <label htmlFor="test-text" className="text-sm font-medium">
                       {t('chat.configuracoes.audio.teste.label')}
@@ -796,39 +785,35 @@ const UserSettingsPage = () => {
 
                     <div className="mt-4 grid grid-cols-4 gap-2">
                       <button
-                        onClick={() => setFontSize(12)}
-                        className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                        onClick={() => setFontSize(12)}                        className={`px-3 py-2 rounded-lg text-sm transition-colors ${
                           fontSize === 12
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500'
-                        }`}                      >
+                            ? 'bg-primary-500 text-white'
+                            : 'bg-gray-200 dark:bg-gray-600 hover:bg-primary-100 dark:hover:bg-primary-900 hover:text-primary-600 dark:hover:text-primary-400'
+                        }`}>
                         {t('chat.configuracoes.aparencia.tamanho_fonte.pequena')}
                       </button>
                       <button
-                        onClick={() => setFontSize(16)}
-                        className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                        onClick={() => setFontSize(16)}                        className={`px-3 py-2 rounded-lg text-sm transition-colors ${
                           fontSize === 16
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500'
+                            ? 'bg-primary-500 text-white'
+                            : 'bg-gray-200 dark:bg-gray-600 hover:bg-primary-100 dark:hover:bg-primary-900 hover:text-primary-600 dark:hover:text-primary-400'
                         }`}
                       >
                         {t('chat.configuracoes.aparencia.tamanho_fonte.media')}
                       </button>
                       <button
-                        onClick={() => setFontSize(20)}
-                        className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                        onClick={() => setFontSize(20)}                        className={`px-3 py-2 rounded-lg text-sm transition-colors ${
                           fontSize === 20
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500'
-                        }`}                      >
+                            ? 'bg-primary-500 text-white'
+                            : 'bg-gray-200 dark:bg-gray-600 hover:bg-primary-100 dark:hover:bg-primary-900 hover:text-primary-600 dark:hover:text-primary-400'
+                        }`}>
                         {t('chat.configuracoes.aparencia.tamanho_fonte.grande')}
                       </button>
                       <button
-                        onClick={() => setFontSize(24)}
-                        className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+                        onClick={() => setFontSize(24)}                        className={`px-3 py-2 rounded-lg text-sm transition-colors ${
                           fontSize === 24
-                            ? 'bg-blue-500 text-white'
-                            : 'bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500'
+                            ? 'bg-primary-500 text-white'
+                            : 'bg-gray-200 dark:bg-gray-600 hover:bg-primary-100 dark:hover:bg-primary-900 hover:text-primary-600 dark:hover:text-primary-400'
                         }`}
                       >
                         {t('chat.configuracoes.aparencia.tamanho_fonte.extra_grande')}

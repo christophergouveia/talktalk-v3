@@ -163,21 +163,20 @@
           "data": "Dezembro 2024",
           "titulo": "Final da Primeira Etapa do TalkTalk",
           "descricao": "A primeira parte do TalkTalk foi finalizada com sucesso, resultando em um sistema funcional de tradução em tempo real. Essa etapa representou o núcleo do desenvolvimento, reunindo as principais funcionalidades e definindo a identidade técnica do projeto."
-        },
-        "outubro_2024": {
-          "data": "Fevereiro 2024",
-          "titulo": "segunda Etapa: Acessibilidade e Inclusão",
+        },        "outubro_2024": {
+          "data": "Fevereiro 2025",
+          "titulo": "Segunda Etapa: Acessibilidade e Inclusão",
           "descricao": "Na segunda etapa, o TalkTalk teve seu foco ampliado para incluir recursos de acessibilidade, com destaque para a integração da tradução em Libras via VLibras e adaptações visuais para diferentes necessidades dos usuários. Essa fase garantiu que a plataforma se tornasse mais inclusiva, promovendo uma comunicação efetiva para todos."
         },
         "novembro_2024": {
-          "data": "Maio 2024",
+          "data": "Maio 2025",
           "titulo": "Teste com Aluno Intercambista",
           "descricao": "Realizamos um teste com um aluno intercambista da Índia para validar a eficácia da tradução em tempo real do TalkTalk. A experiência demonstrou o potencial do sistema em facilitar a comunicação entre pessoas de diferentes idiomas em ambientes educacionais. O feedback foi positivo e reforçou a utilidade prática da ferramenta."
         },
         "dezembro_2024": {
-          "data": "Dezembro 2024",
-          "titulo": "Lançamento Beta",
-          "descricao": "Lançamento da versão beta para um grupo seleto de testadores, coletando feedback final e realizando ajustes finais."
+          "data": "Junho 2025",
+          "titulo": "Classificação na Etapa Virtual da FEBIC",
+          "descricao": "O projeto TalkTalk foi classificado para a etapa virtual da FEBIC (Feira Brasileira de Iniciação Científica), reconhecendo seu potencial inovador na área de tecnologias educacionais. Essa conquista destaca a relevância do sistema no cenário nacional e incentiva a continuidade do desenvolvimento e da pesquisa."
         },
         "janeiro_2025": {
           "data": "Janeiro 2025",
@@ -560,7 +559,7 @@
     "erros": {
       "sala_nao_encontrada": "Sala não encontrada!",
       "erro_conectar_sala": "Erro ao conectar na sala:",
-      "sala_cheia": "Sala está cheia! Máximo de 10 usuários permitidos.",
+      "sala_cheia": "Sala está cheia! Máximo de 4 usuários permitidos.",
       "erro_conexao_servidor": "Erro de conexão com o servidor. Verifique sua internet.",
       "servidor_indisponivel": "Não foi possível conectar ao servidor de chat. Verifique se o servidor está funcionando."
     }

@@ -2,7 +2,8 @@
    "name": "talktalk",
    "version": "0.1.0",
    "private": true,   "scripts": {
-      "dev": "next dev -p 3002",
+      "dev": "concurrently \"next dev -p 3002\" \"dotenv -e ./.env -- nodemon server/index.js\"",
+      "dev:simple": "next dev -p 3002",
       "dev:full": "concurrently \"next dev -p 3002\" \"dotenv -e ./.env -- nodemon server/index.js\"",
       "dev:https": "concurrently \"next dev --experimental-https\" \"dotenv -e ./.env -- nodemon server/index.js\"",
       "dev:nonodemon": "next dev",

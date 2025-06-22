@@ -138,10 +138,16 @@ export default function ChatOptions({
                   height={60}
                   className={`rounded-full border-2 p-2 bg-white dark:bg-transparent`}
                   style={{ borderColor: user.color, backgroundColor: user.color }}
-                />
-                <div className="flex flex-col">
+                />                <div className="flex flex-col">
+                  {user.host && (
+                    <div className="relative">
+                      <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg animate-pulse">
+                        <span className="text-[8px]">👑</span>
+                      </div>
+                    </div>
+                  )}
                   <span className="text-medium font-medium flex items-center gap-1" style={{ color: user.color }}>
-                    {user.apelido} {user.host && <span>👑</span>}
+                    {user.apelido}
                   </span>
                   <span className="text-tiny text-gray-600 dark:text-gray-400">
                     {user.host ? 'Anfitrião' : 'Convidado'}

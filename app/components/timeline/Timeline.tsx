@@ -21,34 +21,21 @@ interface TimelineProps {
 
 const Timeline: FC<TimelineProps> = ({ events, className = '' }) => {
   return (
-    <div className={`max-w-7xl mx-auto py-8 px-4 ${className}`}>
-      {/* Timeline container with enhanced vertical line */}
+    <div className={`max-w-7xl mx-auto py-8 px-4 ${className}`}>      {/* Timeline container */}
       <div className="relative">
-        {/* Enhanced gradient background line */}
-        <motion.div 
-          className="absolute left-1/2 top-8 bottom-8 w-1 -translate-x-1/2 rounded-full opacity-60"
-          style={{
-            background: 'linear-gradient(to bottom, #3B82F6, #8B5CF6, #EC4899, #EF4444, #F59E0B, #10B981)',
-            boxShadow: '0 0 20px rgba(59, 130, 246, 0.3)',
-          }}
-          initial={{ scaleY: 0, opacity: 0 }}
-          animate={{ scaleY: 1, opacity: 0.6 }}
-          transition={{ duration: 1.5, ease: 'easeOut' }}
-        />
-
         {/* Timeline start decoration */}
         <motion.div
-          className="absolute left-1/2 top-0 w-6 h-6 -translate-x-1/2 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 shadow-lg border-4 border-white dark:border-gray-900 z-30"
+          className="absolute left-1/2 top-0 w-6 h-6 -translate-x-1/2 rounded-full bg-gradient-to-r from-primary-500 to-secondary-600 shadow-lg border-4 border-white dark:border-gray-900 z-30"
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 animate-ping opacity-20" />
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary-500 to-secondary-600 animate-ping opacity-20" />
         </motion.div>
 
         {/* Timeline end decoration */}
         <motion.div
-          className="absolute left-1/2 bottom-0 w-8 h-8 -translate-x-1/2 rounded-full bg-gradient-to-r from-green-500 to-blue-600 shadow-lg border-4 border-white dark:border-gray-900 z-30 flex items-center justify-center"
+          className="absolute left-1/2 bottom-0 w-8 h-8 -translate-x-1/2 rounded-full bg-gradient-to-r from-cyan-500 to-primary-600 shadow-lg border-4 border-white dark:border-gray-900 z-30 flex items-center justify-center"
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.6, delay: 1 }}
