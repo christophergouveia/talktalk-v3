@@ -160,8 +160,9 @@ export default function RoomPage() {
           
           // Add fallback values for environment variables
           const socketHost = process.env.NEXT_PUBLIC_SOCKET_URL || 'localhost';
-          const socketPort = process.env.NEXT_PUBLIC_SOCKET_PORT || '3005';
-          const socketUrl = `http://${socketHost}:${socketPort}`;
+          const socketPort = process.env.NEXT_PUBLIC_SOCKET_PORT || '3001';
+          const socketProtocol = process.env.NEXT_PUBLIC_PROTOCOL || 'http';
+          const socketUrl = `${socketProtocol}://${socketHost}:${socketPort}`;
           
           console.log('[DEBUG] URL do Socket:', socketUrl);
           console.log('[DEBUG] Env vars:', {
@@ -283,8 +284,9 @@ export default function RoomPage() {
         
         // Add fallback values for environment variables
         const socketHost = process.env.NEXT_PUBLIC_SOCKET_URL || 'localhost';
-        const socketPort = process.env.NEXT_PUBLIC_SOCKET_PORT || '3005';
-        const socketUrl = `http://${socketHost}:${socketPort}`;
+        const socketPort = process.env.NEXT_PUBLIC_SOCKET_PORT || '3001';
+        const socketProtocol = process.env.NEXT_PUBLIC_PROTOCOL || 'http';
+        const socketUrl = `${socketProtocol}://${socketHost}:${socketPort}`;
         
         console.log('[DEBUG] Criando socket normal para:', socketUrl);
         console.log('[DEBUG] Verificando se socketUrl é válido:', {

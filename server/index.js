@@ -17,20 +17,33 @@ console.log('[DEBUG] Environment check:', {
   NODE_ENV: process.env.NODE_ENV
 });
 
-const prisma = new PrismaClient();
+let prisma;
+try {
+  const { PrismaClient } = require('@prisma/client');
+  prisma = new PrismaClient({
+    log: ['error'], // Reduced logging to avoid issues
+  });
+  console.log('[DEBUG] Prisma client initialized');
+} catch (error) {
+  console.error('[DEBUG] Prisma client initialization failed:', error.message);
+  console.log('[DEBUG] Continuing without database...');
+  prisma = null;
+}
 
 // Test database connection
-(async () => {
-  try {
-    await prisma.$connect();
-    console.log('[DEBUG] Database connection successful');
-  } catch (error) {
-    console.error('[DEBUG] Database connection failed:', error.message);
-    // Continue without database for now
-    console.log('[DEBUG] Continuing without database connection...');
-  }
-})();
-const PORT = process.env.SOCKET_PORT || 3005;
+if (prisma) {
+  (async () => {
+    try {
+      await prisma.$connect();
+      console.log('[DEBUG] Database connection successful');
+    } catch (error) {
+      console.error('[DEBUG] Database connection failed:', error.message);
+      // Continue without database for now
+      console.log('[DEBUG] Continuing without database connection...');
+    }
+  })();
+}
+const PORT = process.env.SOCKET_PORT || 3001;
 
 // Check if SSL certificates exist and use HTTPS if available
 let server;
@@ -58,15 +71,9 @@ app.use(cors());
 const io = require('socket.io')(server, {
   cors: {
     origin: [
-      process.env.NEXT_PUBLIC_VERCEL_URL ? `http://${process.env.NEXT_PUBLIC_VERCEL_URL}` : 'http://localhost:3000',
+      process.env.NEXT_PUBLIC_VERCEL_URL ? `${process.env.NEXT_PUBLIC_PROTOCOL}://${process.env.NEXT_PUBLIC_VERCEL_URL}` : 'http://localhost:3000',
       'http://127.0.0.1:3000',
-      'http://localhost:3000',
-      'http://localhost:3002',
-      'http://127.0.0.1:3002',
-      'http://localhost:3003',
-      'http://127.0.0.1:3003',
-      'http://localhost:3004',
-      'http://127.0.0.1:3004'
+      'http://localhost:3000'
     ],
     methods: ['GET', 'POST'],
     credentials: true,
@@ -110,7 +117,7 @@ io.on('connection', (socket) => {
         const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^http?:\/\//, '');
         cryptoApiBaseUrl = `http://${domain}`;
       } else {
-        cryptoApiBaseUrl = 'http://localhost:3002';
+        cryptoApiBaseUrl = 'http://localhost:3000';
       }
       const cryptoApiEndpoint = `${cryptoApiBaseUrl}/api/crypto`;
 
@@ -296,7 +303,7 @@ io.on('connection', (socket) => {
                 const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^http?:\/\//, '');
                 cryptoApiEndpoint = `http://${domain}/api/crypto`;
               } else {
-                cryptoApiEndpoint = 'http://localhost:3002/api/crypto';
+                cryptoApiEndpoint = 'http://localhost:3000/api/crypto';
               }
 
               let fetchOptionsDecrypt = {
@@ -369,7 +376,7 @@ io.on('connection', (socket) => {
         const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^http?:\/\//, '');
         cryptoApiBaseUrlSendMessage = `http://${domain}`;
       } else {
-        cryptoApiBaseUrlSendMessage = 'http://localhost:3002';
+        cryptoApiBaseUrlSendMessage = 'http://localhost:3000';
       }
       const cryptoApiEndpointSendMessage = `${cryptoApiBaseUrlSendMessage}/api/crypto`;
 

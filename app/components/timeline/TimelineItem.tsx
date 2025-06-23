@@ -159,14 +159,26 @@ const TimelineItem: FC<TimelineItemProps> = ({
         
         {/* Empty div for alternating layout when no image */}
         {!image && <div className="hidden md:block"></div>}
-      </div>
-
-      {/* Vertical connecting line with current icon color */}
+      </div>      {/* Vertical connecting line with current icon color */}
       {!isLast && (
         <motion.div
-          className="absolute left-[49.7%] top-14 w-1 h-[calc(100%-14px)] -translate-x-1/2 z-0"
+          className="absolute left-1/2 top-16 w-1 h-[calc(100%-64px)] -translate-x-1/2 z-0"
           style={{
             background: `linear-gradient(to bottom, ${color} 0%, ${color} 80%, transparent 100%)`,
+            boxShadow: `0 0 8px ${color}40`,
+          }}
+          initial={{ scaleY: 0, opacity: 0 }}
+          animate={isInView ? { scaleY: 1, opacity: 1 } : { scaleY: 0, opacity: 0 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+        />
+      )}
+      
+      {/* Linha para o último item - conecta até a decoração final */}
+      {isLast && (
+        <motion.div
+          className="absolute left-1/2 top-16 w-1 h-[calc(100%+32px)] -translate-x-1/2 z-0"
+          style={{
+            background: `linear-gradient(to bottom, ${color} 0%, ${color} 70%, transparent 100%)`,
             boxShadow: `0 0 8px ${color}40`,
           }}
           initial={{ scaleY: 0, opacity: 0 }}

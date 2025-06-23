@@ -16,6 +16,8 @@ import {
   FaShieldAlt,
   FaHeart,
   FaChartLine,
+  FaUniversity,
+  FaGraduationCap,
 } from 'react-icons/fa';
 import { BsBoxes, BsTranslate, BsLightningCharge, BsPeople, BsShield, BsGlobe2, BsRocket } from 'react-icons/bs';
 import { HiSparkles, HiChatBubbleLeftRight, HiGlobeAlt, HiUserGroup, HiCog6Tooth, HiMicrophone } from 'react-icons/hi2';
@@ -307,15 +309,14 @@ export default function SobrePage() {
       description: t('recursos.personalizacao_total.descricao'),
       color: '#BFCCF2', // azul bem claro
     },
-  ];
-  const teamMembers = [
+  ];  const teamMembers = [
     {
       nome: t('equipe.membros.gustavo.nome'),
       srcImagem: '/images/pictures/imagemGustavo.png',
       altImagem: 'Foto do Gustavo',
       cargo: t('equipe.membros.gustavo.cargo'),
       description: t('equipe.membros.gustavo.descricao'),
-      tags: ['React', 'Next.js', 'TypeScript', 'Node.js', 'Socket.IO', 'UX/UI'],
+      tags: [],
       icon: [<FaGithub key="github" />, <FaLinkedin key="linkedin" />],
       linkGithub: 'https://github.com/GustavoGPreti',
       linkLinkedin: 'https://linkedin.com/in/gustavo-preti',
@@ -326,21 +327,30 @@ export default function SobrePage() {
       altImagem: 'Foto do Christopher',
       cargo: t('equipe.membros.christopher.cargo'),
       description: t('equipe.membros.christopher.descricao'),
-      tags: ['Node.js', 'Docker', 'AWS', 'MongoDB', 'Security', 'DevOps'],
+      tags: [],
       icon: [<FaGithub key="github" />, <FaLinkedin key="linkedin" />],
       linkGithub: 'https://github.com/christophergouveia',
       linkLinkedin: 'https://linkedin.com/in/christopher-oliveira',
-    },
-    {
+    },    {
       nome: t('equipe.membros.kaike.nome'),
       srcImagem: '/images/pictures/imagemKaike.png',
       altImagem: 'Foto do Kaike',
       cargo: t('equipe.membros.kaike.cargo'),
       description: t('equipe.membros.kaike.descricao'),
-      tags: ['React', 'CSS', 'UI/UX', 'Design', 'Frontend', 'Figma'],
+      tags: [],
       icon: [<FaGithub key="github" />, <FaLinkedin key="linkedin" />],
       linkGithub: 'https://github.com/KaikeSathler',
       linkLinkedin: 'https://linkedin.com/in/kaike-sathler',
+    },    {
+      nome: t('equipe.membros.michelli.nome'),
+      srcImagem: null, // Usar Avatar gerado
+      altImagem: 'Avatar da Professora Michelli',
+      cargo: t('equipe.membros.michelli.cargo'),
+      description: t('equipe.membros.michelli.descricao'),
+      tags: [],
+      icon: [<FaUniversity key="university" />, <FaGraduationCap key="graduation" />],
+      linkGithub: '#',
+      linkLinkedin: '#',
     },
   ];
   return (
@@ -738,9 +748,7 @@ export default function SobrePage() {
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
               {t('equipe.subtitulo')}
             </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
+          </motion.div>          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
             {teamMembers.map((member, index) => (
               <motion.div
                 key={index}

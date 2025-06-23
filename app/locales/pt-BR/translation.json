@@ -1,7 +1,7 @@
 {
   "navbar": {
     "pagina_inicial": "Início",
-    "sobre_ferramenta": "Sobre a Ferramenta",
+    "sobre_ferramenta": "Sobre a ferramenta",
     "conversar": "Conversar"
   },
   "pagina_inicial": {
@@ -9,49 +9,41 @@
     "comece_a_conversar": "Comece a conversar agora mesmo!",
     "hero": {
       "privacidade": {
-        "sua": "Sua",
         "privacidade": "privacidade"
       },
       "responsabilidade": {
-        "nossa": "nossa",
         "responsabilidade": "responsabilidade"
       },
       "descricao": "Esta ferramenta tem interação totalmente anônima com todas as mensagens do usuário criptografadas e seguras."
     },
     "diferencial": {
-      "titulo": "nosso diferencial",
+      "titulo": "Nosso diferencial",
       "seguranca": {
-        "titulo": "Segurança",
         "descricao": "A sua privacidade é prioridade para nós! Nossa plataforma utiliza criptografia avançada para garantir que suas conversas permaneçam confidenciais."
       },
       "gratuidade": {
-        "titulo": "Gratuidade",
         "descricao": "Diminua barreiras linguísticas sem gastar nada! Nossa ferramenta é totalmente gratuita, tornando a comunicação global acessível a todos."
       },
       "interface": {
-        "titulo": "Interface intuitiva e fácil de usar",
         "descricao": "Conectar-se com pessoas de diferentes culturas nunca foi tão fácil! Nossa interface foi pensada para ser o mais simples e fácil de usar, inicie conversas com poucos clicks."
       },
       "sem_conta": {
         "titulo": "Sem necessidade de criação de contas",
         "descricao": "Contas? Registro? Esqueça cadastros complicados. Nossa ferramenta permite que você comece a conversar imediatamente, sem necessidade de criar uma conta."
       }
-    },
-    "desenvolvedores": {
+    },    "desenvolvedores": {
       "titulo": "Desenvolvedores",
       "cargos": {
-        "frontend": "Desenvolvedor FrontEnd",
-        "backend": "Desenvolvedor BackEnd"
+        "frontend": "Desenvolvedor frontend",
+        "backend": "Desenvolvedor backend"
       }
-    },
-    "highlights": {
-      "gratuito": "100% Gratuito",
-      "sem_cadastro": "Sem Cadastro",
-      "traducao_instantanea": "Tradução Instantânea",
-      "totalmente_seguro": "Totalmente Seguro"
-    },
-    "botoes": {
-      "saiba_mais": "Saiba Mais"
+    },    "highlights": {
+      "gratuito": "100% gratuito",
+      "sem_cadastro": "Sem cadastro",
+      "traducao_instantanea": "Tradução instantânea",
+      "totalmente_seguro": "Totalmente seguro"
+    },    "botoes": {
+      "saiba_mais": "Saiba mais"
     }
   },
   "footer": {
@@ -61,92 +53,87 @@
   },
   "sobre": {
     "hero": {
-      "badge": "Conectando o mundo através da comunicação",
-      "titulo": {
-        "parte1": "Nossa Jornada",
-        "parte2": "no TalkTalk"
+      "badge": "Conectando o mundo através da comunicação",      "titulo": {
+        "parte1": "Nossa jornada no ",
+        "parte2": "TalkTalk"
       },
       "descricao": "Descobra como estamos revolucionando a comunicação global com tecnologia de ponta, design inclusivo e uma paixão genuína por conectar pessoas de todas as culturas.",
       "botoes": {
-        "comecar_conversar": "Começar a Conversar",
-        "conhecer_equipe": "Conhecer a Equipe"
+        "comecar_conversar": "Começar a conversar",
+        "conhecer_equipe": "Conhecer a equipe"
       }
-    },
-    "privacidade": {
-      "badge": "Segurança em Primeiro Lugar",
+    },    "privacidade": {
+      "badge": "Segurança em primeiro lugar",
       "titulo": {
         "parte1": "Sua",
-        "privacidade_palavra": "Privacidade",
-        "parte2": "Nossa",
-        "responsabilidade_palavra": "Responsabilidade"
+        "privacidade_palavra": "privacidade",
+        "parte2": "nossa",
+        "responsabilidade_palavra": "responsabilidade"
       },
       "descricao": "Sua privacidade é nossa prioridade máxima. Implementamos as mais avançadas medidas de segurança para garantir que suas conversas permaneçam completamente privadas e protegidas.",
       "recursos": {
         "criptografia": "Criptografia de ponta a ponta",
         "dados_nao_armazenados": "Dados nunca armazenados",
         "conformidade_lgpd": "Conformidade com LGPD"
-      },
-      "imagem_alt": "Conversa Segura"
+      },      "imagem_alt": "Conversa segura"
     },
     "diferenciais": {
-      "titulo": "Nossos Diferenciais",
-      "subtitulo": "O que nos torna únicos no mundo da comunicação global",
-      "seguranca": {
-        "titulo": "Segurança Máxima",
+      "titulo": "Nossos diferenciais",
+      "subtitulo": "O que nos torna únicos no mundo da comunicação global",      "seguranca": {
+        "titulo": "Segurança máxima",
         "descricao": "Proteção avançada com criptografia de ponta a ponta, garantindo que apenas você e seu interlocutor tenham acesso às mensagens.",
         "imagem_alt": "Segurança"
       },
       "gratuito": {
-        "titulo": "100% Gratuito",
+        "titulo": "100% gratuito",
         "descricao": "Acreditamos que a comunicação global deve ser acessível a todos. Nossa plataforma é completamente gratuita, sem taxas ocultas.",
         "imagem_alt": "Gratuito"
       },
       "sem_cadastro": {
-        "titulo": "Sem Cadastro",
+        "titulo": "Sem cadastro",
         "descricao": "Entre e comece a conversar imediatamente. Não é necessário criar conta, fornecer email ou passar por processos burocráticos."
       }
     },
     "recursos": {
-      "titulo": "Recursos Inovadores",
+      "titulo": "Recursos inovadores",
       "subtitulo": "Tecnologias de ponta que tornam a comunicação global acessível, rápida e segura para todos",
       "traducao_tempo_real": {
-        "titulo": "Tradução em Tempo Real",
+        "titulo": "Tradução em tempo real",
         "descricao": "Comunicação instantânea entre pessoas de diferentes idiomas com tradução automática e precisa."
       },
       "sintese_voz": {
-        "titulo": "Síntese de Voz",
+        "titulo": "Síntese de voz",
         "descricao": "Transforme texto em fala com vozes naturais e configurações personalizáveis para máxima acessibilidade."
       },
       "acessibilidade_total": {
-        "titulo": "Acessibilidade Total",
+        "titulo": "Acessibilidade total",
         "descricao": "Design inclusivo com suporte para daltonismo, múltiplos tamanhos de fonte e navegação simplificada."
       },
       "velocidade_extrema": {
-        "titulo": "Velocidade Extrema",
+        "titulo": "Velocidade extrema",
         "descricao": "Chat em tempo real com latência mínima, garantindo conversas fluidas e naturais."
       },
       "seguranca_avancada": {
-        "titulo": "Segurança Avançada",
+        "titulo": "Segurança avançada",
         "descricao": "Criptografia de ponta a ponta e proteção de dados para manter suas conversas sempre seguras."
       },
       "personalizacao_total": {
-        "titulo": "Personalização Total",
+        "titulo": "Personalização total",
         "descricao": "Customize a interface, cores, temas e configurações para criar sua experiência única."
       }
     },
-    "evolucao": {
-      "badge": "Nossa Jornada",
-      "titulo": "Nossa Evolução",
+    "evolucao": {      "badge": "Nossa jornada",
+      "titulo": "Nossa evolução",
       "subtitulo": "Acompanhe cada etapa da nossa jornada, desde a ideia inicial até o produto revolucionário de hoje",
       "timeline": {
         "janeiro_2024": {
           "data": "Outubro 2023",
-          "titulo": "Nascimento da Ideia",
+          "titulo": "Nascimento da ideia",
           "descricao": "A jornada começou com a visão de criar uma plataforma que pudesse conectar pessoas de diferentes culturas e idiomas de forma natural e inclusiva, quebrando barreiras linguísticas encontradas com alunos itercambistas do IFPR - campus Assis Chateaubriand. Com isso, incentivados pela orientadora do projeto, se iniciou o desenvolvimento do.TalkTalk."
         },
         "marco_2024": {
           "data": "Novembro 2023",
-          "titulo": "Desenvolvimento da Ferramenta",
+          "titulo": "Desenvolvimento da ferramenta",
           "descricao": "Iniciamos a implementação do TalkTalk, utilizando tecnologias como Next.js, Socket.IO e VLibras. O sistema foi estruturado para oferecer tradução em tempo real, suporte a múltiplos idiomas e recursos visuais adaptados, garantindo uma experiência eficiente para todos os usuários."
         },
         "maio_2024": {
@@ -161,85 +148,65 @@
         },
         "setembro_2024": {
           "data": "Dezembro 2024",
-          "titulo": "Final da Primeira Etapa do TalkTalk",
+          "titulo": "Final da primeira etapa do TalkTalk",
           "descricao": "A primeira parte do TalkTalk foi finalizada com sucesso, resultando em um sistema funcional de tradução em tempo real. Essa etapa representou o núcleo do desenvolvimento, reunindo as principais funcionalidades e definindo a identidade técnica do projeto."
         },        "outubro_2024": {
           "data": "Fevereiro 2025",
-          "titulo": "Segunda Etapa: Acessibilidade e Inclusão",
+          "titulo": "Segunda etapa: acessibilidade e inclusão",
           "descricao": "Na segunda etapa, o TalkTalk teve seu foco ampliado para incluir recursos de acessibilidade, com destaque para a integração da tradução em Libras via VLibras e adaptações visuais para diferentes necessidades dos usuários. Essa fase garantiu que a plataforma se tornasse mais inclusiva, promovendo uma comunicação efetiva para todos."
         },
         "novembro_2024": {
           "data": "Maio 2025",
-          "titulo": "Teste com Aluno Intercambista",
+          "titulo": "Teste com aluno intercambista",
           "descricao": "Realizamos um teste com um aluno intercambista da Índia para validar a eficácia da tradução em tempo real do TalkTalk. A experiência demonstrou o potencial do sistema em facilitar a comunicação entre pessoas de diferentes idiomas em ambientes educacionais. O feedback foi positivo e reforçou a utilidade prática da ferramenta."
         },
         "dezembro_2024": {
           "data": "Junho 2025",
-          "titulo": "Classificação na Etapa Virtual da FEBIC",
+          "titulo": "Classificação na etapa virtual da FEBIC",
           "descricao": "O projeto TalkTalk foi classificado para a etapa virtual da FEBIC (Feira Brasileira de Iniciação Científica), reconhecendo seu potencial inovador na área de tecnologias educacionais. Essa conquista destaca a relevância do sistema no cenário nacional e incentiva a continuidade do desenvolvimento e da pesquisa."
         },
         "janeiro_2025": {
           "data": "Janeiro 2025",
-          "titulo": "Lançamento Oficial",
+          "titulo": "Lançamento oficial",
           "descricao": "O TalkTalk é disponibilizado ao público, marcando o início de uma nova era na comunicação global inclusiva."
         }
       }
     },
-    "equipe": {
-      "badge": "Conheça a Equipe",
-      "titulo": "Conheça Nossa Equipe",
+    "equipe": {      "badge": "Conheça a equipe",
+      "titulo": "Conheça nossa equipe",
       "subtitulo": "Os visionários e desenvolvedores por trás da revolução na comunicação global",
-      "membros": {
-        "gustavo": {
+      "membros": {        "gustavo": {
           "nome": "Gustavo Preti",
-          "cargo": "Full Stack Developer & Product Owner",
+          "cargo": "Desenvolvedor",
           "descricao": "Especialista em desenvolvimento web moderno, com foco em React, Next.js e tecnologias de tradução. Responsável pela arquitetura completa do sistema e experiência do usuário.",
-          "tags": [
-            "React",
-            "Next.js",
-            "TypeScript",
-            "Node.js",
-            "Socket.IO",
-            "UX/UI"
-          ]
-        },
-        "christopher": {
+          "tags": []
+        },        "christopher": {
           "nome": "Christopher Gouveia",
-          "cargo": "Backend Developer & DevOps Engineer",
+          "cargo": "Desenvolvedor",
           "descricao": "Especialista em infraestrutura, segurança e otimização de performance. Responsável pela implementação do backend robusto e deployment escalável da aplicação.",
-          "tags": [
-            "Node.js",
-            "Docker",
-            "AWS",
-            "MongoDB",
-            "Security",
-            "DevOps"
-          ]
-        },
-        "kaike": {
+          "tags": []
+        },        "kaike": {
           "nome": "Kaike Sathler",
-          "cargo": "Frontend Developer & UI/UX Designer",
+          "cargo": "Desenvolvedor",
           "descricao": "Especialista em desenvolvimento frontend e design de interfaces, com foco em experiência do usuário e acessibilidade. Responsável pela criação de componentes reutilizáveis e design system.",
-          "tags": [
-            "React",
-            "CSS",
-            "UI/UX",
-            "Design",
-            "Frontend",
-            "Figma"
-          ]
+          "tags": []
+        },        "michelli": {
+          "nome": "Michelli Cristina Galli",
+          "cargo": "Orientadora do Projeto",
+          "descricao": "Professora e orientadora responsável pela supervisão acadêmica do projeto, fornecendo direcionamento técnico e metodológico para o desenvolvimento do TalkTalk.",
+          "tags": []
         }
       }
     },
     "missao": {
-      "titulo": "Nossa Missão",
+      "titulo": "Nossa missão",
       "texto": {
         "quebrar_barreiras": "Quebrar barreiras linguísticas e conectar pessoas de todas as culturas através de uma comunicação instantânea, inclusiva e acessível.",
         "tecnologia_humanidade": "Acreditamos que a tecnologia deve servir a humanidade, tornando a comunicação global mais natural e eliminando as limitações impostas pelos idiomas.",
         "acessibilidade_total": "Nosso compromisso é com a acessibilidade total, garantindo que pessoas com diferentes necessidades possam se comunicar livremente."
       },
       "valores": {
-        "titulo": "Nossos Valores",
+        "titulo": "Nossos valores",
         "inclusividade": "Inclusividade e acessibilidade",
         "inovacao": "Inovação tecnológica responsável",
         "privacidade": "Privacidade e segurança",
@@ -247,18 +214,16 @@
       }
     },
     "cta": {
-      "titulo": "Pronto para Quebrar Barreiras?",
+      "titulo": "Pronto para quebrar barreiras?",
       "descricao": "Junte-se a milhares de pessoas que já estão experimentando uma nova forma de se comunicar globalmente.",
-      "botoes": {
-        "comecar_agora": "Começar Agora",
+      "botoes": {        "comecar_agora": "Começar agora",
         "personalizar": "Personalizar"
       }
     },
     "desenvolvedores": {
       "titulo": "Desenvolvedores",
-      "cargos": {
-        "frontend": "Desenvolvedor FrontEnd",
-        "backend": "Desenvolvedor BackEnd"
+      "cargos": {        "frontend": "Desenvolvedor frontend",
+        "backend": "Desenvolvedor backend"
       }
     }
   },
@@ -290,13 +255,13 @@
       }
     },
     "entrar_sala": {
-      "titulo": "Entrar em uma Sala",
+      "titulo": "Entrar em uma sala",
       "subtitulo": "Digite o código da sala para participar de uma conversa existente",
       "codigo": {
-        "label": "Código da Sala",
+        "label": "Código da sala",
         "placeholder": "Digite o código da sala"
       },
-      "botao_entrar": "Entrar na Sala"
+      "botao_entrar": "Entrar na sala"
     },
     "botoes_avatar": {
       "escolher_avatar": "Escolher avatar",
@@ -328,7 +293,7 @@
         "aparencia": "Aparência"
       },
       "perfil": {
-        "titulo": "Configurações de Perfil",
+        "titulo": "Configurações de perfil",
         "subtitulo": "Personalize sua experiência",
         "nome_completo": {
           "label": "Nome completo",
@@ -345,19 +310,19 @@
         "avatar": {
           "titulo": "Avatar",
           "descricao": "Escolha seu avatar",
-          "gerar_aleatorio": "Gerar Aleatório"
+          "gerar_aleatorio": "Gerar aleatório"
         },
         "apelido": {
           "label": "Apelido",
           "placeholder": "Digite seu apelido"
         },
         "cor": {
-          "titulo": "Cor do Avatar",
+          "titulo": "Cor do avatar",
           "descricao": "Escolha a cor do seu avatar"
         }
       },
       "idioma": {
-        "titulo": "Configurações de Idioma",
+        "titulo": "Configurações de idioma",
         "subtitulo": "Defina seu idioma preferido e traduções",
         "idioma_principal": {
           "label": "Idioma principal",
@@ -377,7 +342,7 @@
         }
       },
       "audio": {
-        "titulo": "Configurações de Áudio",
+        "titulo": "Configurações de áudio",
         "subtitulo": "Personalize a síntese de voz e reprodução",
         "voz": {
           "label": "Voz para leitura",
@@ -428,13 +393,13 @@
         }
       },
       "acessibilidade": {
-        "titulo": "Configurações de Acessibilidade",
+        "titulo": "Configurações de acessibilidade",
         "subtitulo": "Torne sua experiência mais acessível",
         "daltonismo": {
-          "titulo": "Configurações de Acessibilidade Visual",
+          "titulo": "Configurações de acessibilidade visual",
           "opcoes": {
             "none": {
-              "nome": "Visão Normal",
+              "nome": "Visão normal",
               "descricao": "Sem correção de cores"
             },
             "protanopia": {
@@ -467,14 +432,14 @@
             }
           },
           "teste": {
-            "titulo": "Teste de Visualização",
+            "titulo": "Teste de visualização",
             "cores": {
               "vermelho": "Vermelho",
               "verde": "Verde",
               "azul": "Azul"
             },
             "ishihara": {
-              "titulo": "Teste de Ishihara Simplificado",
+              "titulo": "Teste de Ishihara simplificado",
               "descricao": "Se você consegue ver claramente os números acima, as configurações estão ajudando na sua percepção das cores.",
               "numeros": "Os números devem ser visíveis como \"6\", \"8\" e \"5\"."
             },
@@ -483,7 +448,7 @@
           "info": "Estas configurações ajudam a melhorar a visualização das cores para pessoas com diferentes tipos de daltonismo. Selecione a opção que melhor se adapta à sua necessidade."
         },
         "cores": {
-          "titulo": "Selecione uma Cor",
+          "titulo": "Selecione uma cor",
           "lista_aria": "Lista de cores disponíveis",
           "cor_aria": "Cor {nome}",
           "nomes": {
@@ -520,21 +485,21 @@
       }
     },
     "status_conexao": {
-      "titulo": "Status da Conexão",
+      "titulo": "Status da conexão",
       "conectado": "Conectado ao servidor",
       "conectando": "Conectando...",
       "erro": "Erro na conexão",
       "desconectado": "Desconectado"
     },
     "usuarios_online": {
-      "titulo": "Usuários Online",
+      "titulo": "Usuários online",
       "anfitriao": "Anfitrião",
       "convidado": "Convidado",
       "nenhum_usuario": "Nenhum usuário online",
       "nenhum_conectado": "Nenhum usuário conectado"
     },
     "compartilhar": {
-      "titulo": "Compartilhar Sala",
+      "titulo": "Compartilhar sala",
       "descricao": "Copie o link a seguir ou compartilhe o código para a pessoa entrar em seu bate-papo."
     },
     "mensagem": {
@@ -565,10 +530,10 @@
     }
   },
   "cookies": {
-    "titulo": "Consentimento de Cookies",
+    "titulo": "Consentimento de cookies",
     "descricao": "Este site utiliza cookies para melhorar sua experiência e para garantir que suas mensagens sejam seguras. Saiba mais acessando a",
-    "politica_cookies": "Política de Cookies",
-    "politica_privacidade": "Política de Privacidade",
+    "politica_cookies": "Política de cookies",
+    "politica_privacidade": "Política de privacidade",
     "aceitar": "Aceitar todos os cookies"
   },
   "avatares": {
