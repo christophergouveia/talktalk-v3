@@ -55,8 +55,8 @@ if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
 } else {
   try {
     const httpOptions = {
-      key: fs.readFileSync('./ssl/localhost-key.pem'),
-      cert: fs.readFileSync('./ssl/localhost.pem'),
+      key: fs.readFileSync('./ssl/private.pem'),
+      cert: fs.readFileSync('./ssl/certificate.pem'),
     };
     server = https.createServer(httpOptions, app);
     console.log('Production mode: using HTTPS server with SSL certificates');
