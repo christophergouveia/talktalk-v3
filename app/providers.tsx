@@ -20,8 +20,7 @@ export default function Providers({ children }: { children: ReactNode }) {
   return (
     <ViewTransitions>
       <div>
-        {/* only worked in production in tests with nextjs applications maybe you can solve this! */}
-        {process.env.NODE_ENV === 'development' && <VLibras forceOnload />}
+        <VLibras forceOnload />
       </div>
       <HeroUIProvider>
         <CookiesProvider>
