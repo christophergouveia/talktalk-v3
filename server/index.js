@@ -70,11 +70,13 @@ app.use(cors());
 
 const io = require('socket.io')(server, {
   cors: {
-    origin: [
-      process.env.NEXT_PUBLIC_VERCEL_URL ? `${process.env.NEXT_PUBLIC_PROTOCOL}://${process.env.NEXT_PUBLIC_VERCEL_URL}` : 'http://localhost:3000',
-      'http://127.0.0.1:3000',
-      'http://localhost:3000'
-    ],
+    origin: process.env.NODE_ENV === 'production'
+      ? ['https://talktalkchat.com.br']
+      : [
+          process.env.NEXT_PUBLIC_VERCEL_URL ? `${process.env.NEXT_PUBLIC_PROTOCOL}://${process.env.NEXT_PUBLIC_VERCEL_URL}` : 'http://localhost:3000',
+          'http://127.0.0.1:3000',
+          'http://localhost:3000'
+        ],
     methods: ['GET', 'POST'],
     credentials: true,
     allowedHeaders: ['my-custom-header'],
@@ -114,8 +116,8 @@ io.on('connection', (socket) => {
         return;
       }let cryptoApiBaseUrl;
       if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-        const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^http?:\/\//, '');
-        cryptoApiBaseUrl = `http://${domain}`;
+        const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^http[s]?:\/\//, '');
+        cryptoApiBaseUrl = `${process.env.NEXT_PUBLIC_PROTOCOL || 'https'}://${domain}`;
       } else {
         cryptoApiBaseUrl = 'http://localhost:3000';
       }
@@ -300,8 +302,8 @@ io.on('connection', (socket) => {
             try {
               let cryptoApiEndpoint;
               if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-                const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^http?:\/\//, '');
-                cryptoApiEndpoint = `http://${domain}/api/crypto`;
+                const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^http[s]?:\/\//, '');
+                cryptoApiEndpoint = `${process.env.NEXT_PUBLIC_PROTOCOL || 'https'}://${domain}/api/crypto`;
               } else {
                 cryptoApiEndpoint = 'http://localhost:3000/api/crypto';
               }
@@ -373,8 +375,8 @@ io.on('connection', (socket) => {
     console.log('[SERVER] Mensagem recebida: ' + message);
     try {      let cryptoApiBaseUrlSendMessage;
       if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-        const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^http?:\/\//, '');
-        cryptoApiBaseUrlSendMessage = `http://${domain}`;
+        const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^http[s]?:\/\//, '');
+        cryptoApiBaseUrlSendMessage = `${process.env.NEXT_PUBLIC_PROTOCOL || 'https'}://${domain}`;
       } else {
         cryptoApiBaseUrlSendMessage = 'http://localhost:3000';
       }

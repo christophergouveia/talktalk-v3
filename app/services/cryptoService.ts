@@ -1,10 +1,13 @@
-"use server";
+'use server';
 
 const API_KEY = process.env.CRYPTO_API_KEY;
 console.log('[DEBUG] API_KEY:', API_KEY);
-const BASE_URL = process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_VERCEL_URL ? 
-  `${process.env.NEXT_PUBLIC_PROTOCOL}://${process.env.NEXT_PUBLIC_VERCEL_URL}` : 
-  'http://localhost:3000';
+const BASE_URL =
+  process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_VERCEL_URL
+    ? `${process.env.NEXT_PUBLIC_PROTOCOL}://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+    : 'http://localhost:3000';
+
+console.log('[DEBUG] BASE_URL:', BASE_URL);
 
 interface CryptoResponse {
   data: any;
@@ -20,7 +23,7 @@ async function processCryptoRequest(body: any): Promise<any> {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${API_KEY}`,
+      Authorization: `Bearer ${API_KEY}`,
     },
     body: JSON.stringify(body),
   });
@@ -31,7 +34,7 @@ async function processCryptoRequest(body: any): Promise<any> {
 
   const text = await response.text();
   let result: CryptoResponse;
-  
+
   try {
     result = JSON.parse(text);
   } catch (error) {

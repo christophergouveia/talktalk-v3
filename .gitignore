@@ -42,3 +42,5 @@ prisma/migrations
 certificates
 # Million Lint
 .million
+
+bun.lock
