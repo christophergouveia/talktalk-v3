@@ -200,7 +200,6 @@ export default function SobrePage() {
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 300], [0, 100]);
   const y2 = useTransform(scrollY, [0, 300], [0, -100]);
-
   const timelineItems = [
     {
       date: t('evolucao.timeline.janeiro_2024.data'),
@@ -213,7 +212,7 @@ export default function SobrePage() {
       date: t('evolucao.timeline.marco_2024.data'),
       title: t('evolucao.timeline.marco_2024.titulo'),
       description: t('evolucao.timeline.marco_2024.descricao'),
-      icon: <BsGlobe2 size={20} />,
+      icon: <HiGlobeAlt size={20} />,
       color: '#786FF2', // roxo azulado
     },
     {
@@ -238,7 +237,7 @@ export default function SobrePage() {
       date: t('evolucao.timeline.setembro_2024.data'),
       title: t('evolucao.timeline.setembro_2024.titulo'),
       description: t('evolucao.timeline.setembro_2024.descricao'),
-      icon: <FaUsers size={20} />,
+      icon: <HiUserGroup size={20} />,
       color: '#A46FF2', // lilás vibrante
       image: '/images/pictures/bancafinal.png',
       imageAlt: 'Fase de testes - feedback dos usuários',
@@ -247,7 +246,7 @@ export default function SobrePage() {
       date: t('evolucao.timeline.outubro_2024.data'),
       title: t('evolucao.timeline.outubro_2024.titulo'),
       description: t('evolucao.timeline.outubro_2024.descricao'),
-      icon: <BsBoxes size={20} />,
+      icon: <HiCog6Tooth size={20} />,
       color: '#BFCCF2', // azul bem claro
     },
     {
@@ -266,10 +265,10 @@ export default function SobrePage() {
       color: '#786FF2', // roxo azulado
     },
     {
-      date: t('evolucao.timeline.janeiro_2025.data'),
+      date: 'Indefinido',
       title: t('evolucao.timeline.janeiro_2025.titulo'),
       description: t('evolucao.timeline.janeiro_2025.descricao'),
-      icon: <FaRocket size={20} />,
+      icon: <HiSparkles size={20} />,
       color: '#6F90F2', // azul médio
     },
   ];const features = [
@@ -352,9 +351,8 @@ export default function SobrePage() {
       linkGithub: '#',
       linkLinkedin: '#',
     },
-  ];
-  return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+  ];  return (
+    <div className="min-h-screen bg-white dark:bg-gray-900 sobre-page" data-page="sobre">
       <LanguageDetector />
       {/* Hero Section - Enhanced with better visual hierarchy */}
       <section className="relative py-24 bg-gradient-to-br from-primary-50 via-secondary-50 to-cyan-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
