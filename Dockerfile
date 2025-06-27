@@ -27,6 +27,9 @@ RUN apk add --no-cache openssl
 
 RUN ln -s /usr/lib/libssl.so.3 /lib/libssl.so.3
 
+# Instalar a última versão do prisma e @prisma/client antes de gerar o client
+RUN npm install -D prisma@latest --legacy-peer-deps && npm install @prisma/client@latest --legacy-peer-deps
+
 # Gerar Prisma Client após instalação das dependências
 RUN npx prisma generate
 
@@ -47,6 +50,7 @@ RUN apk add --no-cache openssl
 RUN ln -s /usr/lib/libssl.so.3 /lib/libssl.so.3
 
 # Gerar o Prisma Client
+RUN npm install -D prisma@latest --legacy-peer-deps && npm install @prisma/client@latest --legacy-peer-deps
 RUN npx prisma generate
 RUN npx prisma db push
 
