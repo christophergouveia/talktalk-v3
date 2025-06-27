@@ -31,18 +31,21 @@
         "titulo": "Sin necesidad de crear cuentas",
         "descricao": "¿Cuentas? ¿Registro? Olvida los registros complicados. Nuestra herramienta te permite comenzar a conversar inmediatamente, sin necesidad de crear una cuenta."
       }
-    },    "desenvolvedores": {
+    },
+    "desenvolvedores": {
       "titulo": "Desarrolladores",
       "cargos": {
         "frontend": "Desarrollador frontend",
         "backend": "Desarrollador backend"
       }
-    },    "highlights": {
+    },
+    "highlights": {
       "gratuito": "100% gratuito",
       "sem_cadastro": "Sin registro",
       "traducao_instantanea": "Traducción instantánea",
       "totalmente_seguro": "Totalmente seguro"
-    },    "botoes": {
+    },
+    "botoes": {
       "saiba_mais": "Saber más"
     }
   },
@@ -53,7 +56,8 @@
   },
   "sobre": {
     "hero": {
-      "badge": "Conectando el mundo a través de la comunicación",      "titulo": {
+      "badge": "Conectando el mundo a través de la comunicación",
+      "titulo": {
         "parte1": "Nuestro viaje en ",
         "parte2": "TalkTalk"
       },
@@ -62,7 +66,8 @@
         "comecar_conversar": "Comenzar a conversar",
         "conhecer_equipe": "Conocer al equipo"
       }
-    },    "privacidade": {
+    },
+    "privacidade": {
       "badge": "Seguridad primero",
       "titulo": {
         "parte1": "Tu",
@@ -123,9 +128,12 @@
         "titulo": "Personalización total",
         "descricao": "Personaliza la interfaz, colores, temas y configuraciones para crear tu experiencia única."
       }
-    },    "evolucao": {      "badge": "Nuestro viaje",
+    },
+    "evolucao": {
+      "badge": "Nuestro viaje",
       "titulo": "Nuestra evolución",
-      "subtitulo": "Acompaña cada etapa de nuestro viaje, desde la idea inicial hasta el producto revolucionario de hoy",      "timeline": {
+      "subtitulo": "Acompaña cada etapa de nuestro viaje, desde la idea inicial hasta el producto revolucionario de hoy",
+      "timeline": {
         "janeiro_2024": {
           "data": "Octubre 2023",
           "titulo": "Nacimiento de la idea",
@@ -172,25 +180,31 @@
           "descricao": "TalkTalk se pone a disposición del público, marcando el inicio de una nueva era en la comunicación global inclusiva."
         }
       }
-    },    "equipe": {      "badge": "Conoce al equipo",
+    },
+    "equipe": {
+      "badge": "Conoce al equipo",
       "titulo": "Conoce nuestro equipo",
       "subtitulo": "Los visionarios y desarrolladores detrás de la revolución en la comunicación global",
-      "membros": {        "gustavo": {
+      "membros": {
+        "gustavo": {
           "nome": "Gustavo Preti",
           "cargo": "Desarrollador",
           "descricao": "Especialista en desarrollo web moderno, con enfoque en React, Next.js y tecnologías de traducción. Responsable de la arquitectura completa del sistema y experiencia del usuario.",
           "tags": []
-        },        "christopher": {
+        },
+        "christopher": {
           "nome": "Christopher Gouveia",
           "cargo": "Desarrollador",
           "descricao": "Especialista en infraestructura, seguridad y optimización de performance. Responsable de la implementación del backend robusto y deployment escalable de la aplicación.",
           "tags": []
-        },        "kaike": {
+        },
+        "kaike": {
           "nome": "Kaike Sathler",
           "cargo": "Desarrollador",
           "descricao": "Especialista en desarrollo frontend y diseño de interfaces, con enfoque en experiencia del usuario y accesibilidad. Responsable de la creación de componentes reutilizables y design system.",
           "tags": []
-        },        "michelli": {
+        },
+        "michelli": {
           "nome": "Michelli Cristina Galli",
           "cargo": "Asesora del Proyecto",
           "descricao": "Profesora doctora e investigadora con amplia experiencia en ingeniería de software y supervisión de proyectos académicos. Responsable de la orientación académica y validación de la metodología del proyecto.",
@@ -216,15 +230,11 @@
     "cta": {
       "titulo": "¿Listo para romper barreras?",
       "descricao": "Únete a miles de personas que ya están experimentando una nueva forma de comunicarse globalmente.",
-      "botoes": {        "comecar_agora": "Comenzar ahora",
-        "personalizar": "Personalizar"
-      }
+      "botoes": { "comecar_agora": "Comenzar ahora", "personalizar": "Personalizar" }
     },
     "desenvolvedores": {
       "titulo": "Desarrolladores",
-      "cargos": {        "frontend": "Desarrollador frontend",
-        "backend": "Desarrollador backend"
-      }
+      "cargos": { "frontend": "Desarrollador frontend", "backend": "Desarrollador backend" }
     }
   },
   "conversar": {
@@ -233,8 +243,7 @@
         "parte1": "Una",
         "parte2": "poderosa",
         "parte3": "herramienta de traducción en tiempo real. Sin necesidad de cambiar pestañas."
-      },
-      "subtitulo": "Conéctate instantáneamente con personas alrededor del mundo"
+      }
     },
     "criar_sala": {
       "titulo": "Crea una sala",
@@ -279,7 +288,8 @@
       "para_entrar_saia_outros": "Para entrar en la sala, debes salir de otros dispositivos.",
       "usuario_desconectado": "usuario desconectado",
       "audio_nao_suportado": "Tu navegador no soporta el elemento de audio."
-    },    "configuracoes": {
+    },
+    "configuracoes": {
       "titulo": "Configuraciones",
       "titulo_sala": "Configuraciones de la sala",
       "subtitulo": "Personaliza tu experiencia en TalkTalk",
@@ -326,7 +336,8 @@
         "idioma_principal": {
           "label": "Idioma principal",
           "descricao": "Este es el idioma en que deseas recibir las traducciones"
-        },        "label": "Idioma",
+        },
+        "label": "Idioma",
         "descricao_selecao": "Selecciona a qué idioma se traducirán los mensajes",
         "pesquisar": "Buscar idiomas...",
         "nenhum_encontrado": "Ningún idioma encontrado",
@@ -389,7 +400,8 @@
           "exemplo": "Ejemplo de texto con el tamaño seleccionado",
           "texto_exemplo": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         }
-      },      "acessibilidade": {
+      },
+      "acessibilidade": {
         "titulo": "Configuraciones de accesibilidad",
         "subtitulo": "Haz tu experiencia más accesible",
         "daltonismo": {
@@ -441,7 +453,8 @@
               "numeros": "Los números deben ser visibles como \"6\", \"8\" y \"5\"."
             },
             "modo_ativo": "Modo {tipo} activo"
-          },          "info": "Estas configuraciones ayudan a mejorar la visualización de colores para personas con diferentes tipos de daltonismo. Selecciona la opción que mejor se adapte a tus necesidades."
+          },
+          "info": "Estas configuraciones ayudan a mejorar la visualización de colores para personas con diferentes tipos de daltonismo. Selecciona la opción que mejor se adapte a tus necesidades."
         },
         "cores": {
           "titulo": "Selecciona un color",
@@ -528,12 +541,13 @@
   "cookies": {
     "titulo": "Consentimiento de cookies",
     "descricao": "Este sitio utiliza cookies para mejorar tu experiencia y para garantizar que tus mensajes sean seguros. Saber más accediendo a la",
-    "politica_cookies": "Política de cookies",    "politica_privacidade": "Política de privacidad",
+    "politica_cookies": "Política de cookies",
+    "politica_privacidade": "Política de privacidad",
     "aceitar": "Aceptar todas las cookies"
   },
   "avatares": {
     "jacare": "Cocodrilo Anónimo",
-    "tamia": "Ardilla Listada Anónima", 
+    "tamia": "Ardilla Listada Anónima",
     "esquilo_gopher": "Tuza Anónima",
     "ligre": "Ligre Anónimo",
     "quagga": "Cuaga Anónima",

@@ -1,4 +1,3 @@
-// Load environment variables
 require('dotenv').config({ path: './.env' });
 require('dotenv').config({ path: '../.env' });
 
@@ -11,8 +10,8 @@ const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
 const { getTranslation } = require('./translations');
 
-console.log('[DEBUG] Environment check:', {
-  DATABASE_URL: process.env.DATABASE_URL ? 'SET' : 'NOT SET',
+console.log('[DEBUG] Verificação de ambiente:', {
+  DATABASE_URL: process.env.DATABASE_URL,
   SOCKET_PORT: process.env.SOCKET_PORT,
   NODE_ENV: process.env.NODE_ENV
 });
@@ -21,36 +20,32 @@ let prisma;
 try {
   const { PrismaClient } = require('@prisma/client');
   prisma = new PrismaClient({
-    log: ['error'], // Reduced logging to avoid issues
+    log: ['error'],
   });
-  console.log('[DEBUG] Prisma client initialized');
+  console.log('[DEBUG] Prisma client inicializado');
 } catch (error) {
-  console.error('[DEBUG] Prisma client initialization failed:', error.message);
-  console.log('[DEBUG] Continuing without database...');
+  console.error('[DEBUG] Falha ao inicializar Prisma client:', error.message);
+  console.log('[DEBUG] Continuando sem banco de dados...');
   prisma = null;
 }
 
-// Test database connection
 if (prisma) {
   (async () => {
     try {
       await prisma.$connect();
-      console.log('[DEBUG] Database connection successful');
+      console.log('[DEBUG] Conexão com banco de dados bem-sucedida');
     } catch (error) {
-      console.error('[DEBUG] Database connection failed:', error.message);
-      // Continue without database for now
-      console.log('[DEBUG] Continuing without database connection...');
+      console.error('[DEBUG] Falha na conexão com banco de dados:', error.message);
+      console.log('[DEBUG] Continuando sem conexão com banco de dados...');
     }
   })();
 }
 const PORT = process.env.SOCKET_PORT || 3001;
 
-// Check if SSL certificates exist and use HTTPS if available
 let server;
 
-// Force HTTP in development for easier debugging
 if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
-  console.log('Development mode: using HTTP server');
+  console.log('Modo desenvolvimento: usando servidor HTTP');
   server = http.createServer(app);
 } else {
   try {
@@ -59,9 +54,9 @@ if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
       cert: fs.readFileSync('./ssl/certificate.pem'),
     };
     server = https.createServer(httpOptions, app);
-    console.log('Production mode: using HTTPS server with SSL certificates');
+    console.log('Modo produção: usando servidor HTTPS com certificados SSL');
   } catch (error) {
-    console.log('SSL certificates not found, using HTTP server');
+    console.log('Certificados SSL não encontrados, usando servidor HTTP');
     server = http.createServer(app);
   }
 }
@@ -114,7 +109,8 @@ io.on('connection', (socket) => {
         console.error('[DEBUG] Dados do usuário incompletos:', parsedUserData);
         socket.emit('error', getTranslation(userLanguage, 'userDataError'));
         return;
-      }let cryptoApiBaseUrl;
+      }
+      let cryptoApiBaseUrl;
       if (process.env.NEXT_PUBLIC_VERCEL_URL) {
         const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^http[s]?:\/\//, '');
         cryptoApiBaseUrl = `${process.env.NEXT_PUBLIC_PROTOCOL || 'https'}://${domain}`;
@@ -141,7 +137,8 @@ io.on('connection', (socket) => {
       ) {
         const agent = new http.Agent({ rejectUnauthorized: false });
         fetchOptionsEncrypt.agent = agent;
-      }      const encryptResponse = await import('node-fetch').then(({ default: fetch }) =>
+      }
+      const encryptResponse = await import('node-fetch').then(({ default: fetch }) =>
         fetch(cryptoApiEndpoint, fetchOptionsEncrypt)
       );
 
@@ -157,15 +154,18 @@ io.on('connection', (socket) => {
       const encryptResult = await encryptResponse.json();
       if (encryptResult.error) {
         throw new Error(encryptResult.error);
-      }      const sala = await prisma.salas.findUnique({
+      }
+      const sala = await prisma.salas.findUnique({
         where: { codigoSala: room },
       });
 
-      console.log('[DEBUG] Sala encontrada:', !!sala, sala ? sala.codigoSala : 'N/A');      if (!sala) {
+      console.log('[DEBUG] Sala encontrada:', !!sala, sala ? sala.codigoSala : 'N/A');
+      if (!sala) {
         console.log('[DEBUG] Sala não encontrada, emitindo erro');
         socket.emit('error', getTranslation(userLanguage, 'roomNotFound'));
         return;
-      }const isHost = parsedUserData.userToken === sala.hostToken;
+      }
+      const isHost = parsedUserData.userToken === sala.hostToken;
       console.log('[DEBUG] Verificando se é host:', isHost, {
         userToken: parsedUserData.userToken?.substring(0, 10) + '...',
         hostToken: sala.hostToken?.substring(0, 10) + '...'
@@ -175,7 +175,8 @@ io.on('connection', (socket) => {
         where: { codigoSala_userData: { codigoSala: room, userData: encryptResult.data } },
       });
 
-      console.log('[DEBUG] Usuário já está na sala?', !!isUserInRoom);      if (!isUserInRoom) {
+      console.log('[DEBUG] Usuário já está na sala?', !!isUserInRoom);
+      if (!isUserInRoom) {
         try {
           console.log('[DEBUG] Criando entrada na tabela salas_Usuarios...');
           await prisma.salas_Usuarios.create({
@@ -187,26 +188,27 @@ io.on('connection', (socket) => {
           });
           console.log('[DEBUG] Usuário inserido na base de dados com sucesso');
         } catch (createError) {
-          // Handle unique constraint error - user might already be in room
           if (createError.code === 'P2002') {
-            console.log('[DEBUG] Usuário já existe na sala (constraint violation), continuando...');
+            console.log('[DEBUG] Usuário já existe na sala (violação de restrição), continuando...');
           } else {
-            console.error('[DEBUG] Erro ao inserir usuário:', createError);            socket.emit('error', getTranslation(userLanguage, 'errorJoiningRoom'));
+            console.error('[DEBUG] Erro ao inserir usuário:', createError);
+            socket.emit('error', getTranslation(userLanguage, 'errorJoiningRoom'));
             return;
           }
         }
       } else {
         console.log('[DEBUG] Usuário já está na sala');
-      }      console.log('[DEBUG] Buscando usuários da sala...');
+      }
+      console.log('[DEBUG] Buscando usuários da sala...');
       const roomUsers = await prisma.salas_Usuarios.findMany({
         where: { codigoSala: room },
       });
 
       console.log('[DEBUG] Usuários na sala:', roomUsers.length);
-      console.log('[DEBUG] Dados dos usuários:', roomUsers.map(u => ({ userData: u.userData.substring(0, 20) + '...', host: u.host })));      // Verificar limite de usuários (máximo 4)
+      console.log('[DEBUG] Dados dos usuários:', roomUsers.map(u => ({ userData: u.userData.substring(0, 20) + '...', host: u.host })));
       const isUserAlreadyInRoom = roomUsers.some(user => user.userData === encryptResult.data);
       console.log('[DEBUG] Usuário já está na sala?', isUserAlreadyInRoom);
-        if (!isUserAlreadyInRoom && roomUsers.length >= 4) {
+      if (!isUserAlreadyInRoom && roomUsers.length >= 4) {
         console.log('[DEBUG] Sala está cheia! Rejeitando entrada (máximo 4 usuários).');
         socket.emit('error', getTranslation(userLanguage, 'roomFull'));
         return;
@@ -233,7 +235,8 @@ io.on('connection', (socket) => {
           ) {
             const agent = new http.Agent({ rejectUnauthorized: false });
             fetchOptionsDecrypt.agent = agent;
-          }          const decryptResponse = await import('node-fetch').then(({ default: fetch }) =>
+          }
+          const decryptResponse = await import('node-fetch').then(({ default: fetch }) =>
             fetch(cryptoApiEndpoint, fetchOptionsDecrypt)
           );
 
@@ -252,11 +255,11 @@ io.on('connection', (socket) => {
             host: user.host,
           };
         })
-      );      socket.join(room);
+      );
+      socket.join(room);
       userRoom = room;
       userData = encryptResult.data;
 
-      // Atualizar timestamp da sala para indicar atividade
       await prisma.salas.update({
         where: { codigoSala: room },
         data: { updateAt: new Date() }
@@ -269,21 +272,22 @@ io.on('connection', (socket) => {
         userToken: u.userData?.userToken?.substring(0, 10) + '...'
       })));
       
-      io.to(room).emit('users-update', decryptedUsers);    } catch (error) {
+      io.to(room).emit('users-update', decryptedUsers);
+    } catch (error) {
       console.error('[DEBUG] Erro ao processar entrada do usuário:', error);
       socket.emit('error', getTranslation(userLanguage, 'errorJoiningRoom'));
     }
   });
   socket.on('disconnect', async () => {
     if (userRoom && userData) {
-      try {        await prisma.salas_Usuarios.deleteMany({
+      try {
+        await prisma.salas_Usuarios.deleteMany({
           where: {
             codigoSala: userRoom,
             userData: userData,
           },
         });
 
-        // Atualizar timestamp da sala após desconexão
         await prisma.salas.update({
           where: { codigoSala: userRoom },
           data: { updateAt: new Date() }
@@ -291,12 +295,10 @@ io.on('connection', (socket) => {
 
         socket.to(userRoom).emit('user-disconnected', userData);
 
-        // Get updated room users
         const roomUsers = await prisma.salas_Usuarios.findMany({
           where: { codigoSala: userRoom },
         });
 
-        // Decrypt user data before sending update
         const decryptedUsers = await Promise.all(
           roomUsers.map(async (user) => {
             try {
@@ -353,7 +355,6 @@ io.on('connection', (socket) => {
           })
         );
 
-        // Filter out null entries
         const validDecryptedUsers = decryptedUsers.filter(user => user !== null);
         
         console.log('[DEBUG] Enviando users-update após desconexão:', validDecryptedUsers.length, 'usuários');
@@ -373,7 +374,8 @@ io.on('connection', (socket) => {
   socket.on('sendMessage', async (message, userToken, color, apelido, avatar, room, lingua, type) => {
     const actualDate = new Date().toISOString();
     console.log('[SERVER] Mensagem recebida: ' + message);
-    try {      let cryptoApiBaseUrlSendMessage;
+    try {
+      let cryptoApiBaseUrlSendMessage;
       if (process.env.NEXT_PUBLIC_VERCEL_URL) {
         const domain = process.env.NEXT_PUBLIC_VERCEL_URL.replace(/^http[s]?:\/\//, '');
         cryptoApiBaseUrlSendMessage = `${process.env.NEXT_PUBLIC_PROTOCOL || 'https'}://${domain}`;
@@ -401,7 +403,8 @@ io.on('connection', (socket) => {
       ) {
         const agent = new http.Agent({ rejectUnauthorized: false });
         fetchOptionsMessage.agent = agent;
-      }      const encryptedMessage = await import('node-fetch')
+      }
+      const encryptedMessage = await import('node-fetch')
         .then(({ default: fetch }) => fetch(cryptoApiEndpointSendMessage, fetchOptionsMessage))
         .then((res) => {
           if (!res.ok) {
@@ -477,29 +480,24 @@ io.engine.on('connection_error', (err) => {
 
 async function checkRooms() {
   try {
-    // Check if Prisma is connected before running cleanup
     if (!prisma) {
-      console.log('[DEBUG] Prisma not available, skipping room cleanup');
+      console.log('[DEBUG] Prisma não disponível, pulando limpeza de salas');
       return;
     }
 
     console.log('[DEBUG] Iniciando verificação de salas...');
 
-    // Verificar salas vazias (sem usuários por 5 minutos)
-    const emptyRoomsThreshold = 1000 * 60 * 5; // 5 minutos
+    const emptyRoomsThreshold = 1000 * 60 * 5;
     
-    // Buscar todas as salas
     const allRooms = await prisma.salas.findMany();
     console.log(`[DEBUG] Total de salas encontradas: ${allRooms.length}`);
 
     for (const room of allRooms) {
       try {
-        // Verificar se a sala tem usuários
         const roomUsers = await prisma.salas_Usuarios.findMany({
           where: { codigoSala: room.codigoSala },
         });
 
-        // Se a sala está vazia e foi atualizada há mais de 5 minutos
         if (roomUsers.length === 0) {
           const timeSinceUpdate = Date.now() - new Date(room.updateAt).getTime();
           
@@ -530,8 +528,7 @@ async function checkRooms() {
       }
     }
 
-    // Também verificar salas muito antigas (24 horas) como backup
-    const inactivityThreshold = 1000 * 60 * 60 * 24; // 24 horas
+    const inactivityThreshold = 1000 * 60 * 60 * 24;
     const oldInactiveRooms = await prisma.salas.findMany({
       where: {
         updateAt: {
@@ -561,13 +558,13 @@ async function checkRooms() {
           console.error(`[DEBUG] Erro ao deletar sala antiga ${room.codigoSala}:`, error);
         }
       }
-    }} catch (error) {
+    }
+  } catch (error) {
     console.error('Erro ao deletar salas inativas:', error);
   }
-  // Don't disconnect Prisma here as it's used throughout the app lifecycle
 }
 
-setInterval(checkRooms, 1000 * 60 * 5); // Verificar salas vazias a cada 5 minutos
+setInterval(checkRooms, 1000 * 60 * 5);
 
 app.get('/', (req, res) => {
   res.send('Servidor http funcionando corretamente');
@@ -577,11 +574,10 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor Socket.IO rodando na porta ${PORT}`);
 });
 
-// Add global error handlers to prevent crashes
 process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
+  console.error('Exceção não capturada:', error);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  console.error('Rejeição não tratada em:', promise, 'motivo:', reason);
 });

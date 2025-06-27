@@ -1022,7 +1022,7 @@ export default function RoomPage() {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/6 to-primary-400/6 rounded-full blur-2xl"></div>
       </div>
 
-      <div className="relative z-10 p-2 sm:p-4 h-screen flex flex-col lg:flex-row gap-2 sm:gap-4 max-w-full overflow-hidden">
+      <div className="relative z-10 p-2 sm:p-4 h-[calc(100vh-4rem)] flex flex-col lg:flex-row gap-2 sm:gap-4 max-w-full overflow-hidden">
         <Modal
           isOpen={hostModal}
           backdrop="opaque"

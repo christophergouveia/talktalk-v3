@@ -1,7 +1,10 @@
 {
     "i18n-ally.localesPaths": [
         "app/i18n",
-        "app/locales",
-        "app/api/messages"
+        "app/locales/en-US",
+        "app/locales/pt-BR",
+        "app/locales/es-ES",
+        "app/api/messages",
+        "app/locales"
     ]
 }

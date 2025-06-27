@@ -1,4 +1,5 @@
-{  "navbar": {
+{
+  "navbar": {
     "pagina_inicial": "Home",
     "sobre_ferramenta": "About",
     "conversar": "Chat"
@@ -30,18 +31,21 @@
         "titulo": "No need to create accounts",
         "descricao": "Accounts? Registration? Forget complicated registrations. Our tool allows you to start chatting immediately, without needing to create an account."
       }
-    },    "desenvolvedores": {
+    },
+    "desenvolvedores": {
       "titulo": "Developers",
       "cargos": {
         "frontend": "Frontend developer",
         "backend": "Backend developer"
       }
-    },    "highlights": {
+    },
+    "highlights": {
       "gratuito": "100% free",
       "sem_cadastro": "No registration",
       "traducao_instantanea": "Instant translation",
       "totalmente_seguro": "Totally secure"
-    },    "botoes": {
+    },
+    "botoes": {
       "saiba_mais": "Learn more"
     }
   },
@@ -49,7 +53,8 @@
     "copyright": "Copyright © 2025 - All rights reserved. ",
     "desenvolvido_por": "Developed by <strong>Christopher</strong>, <strong>Gustavo</strong> and <strong>Kaike</strong>.",
     "campus": "Federal Institute of Education, Science and Technology of Assis Chateaubriand"
-  },  "sobre": {
+  },
+  "sobre": {
     "hero": {
       "badge": "Connecting the world through communication",
       "titulo": {
@@ -61,7 +66,8 @@
         "comecar_conversar": "Start chatting",
         "conhecer_equipe": "Meet the team"
       }
-    },    "privacidade": {
+    },
+    "privacidade": {
       "badge": "Security first",
       "titulo": {
         "parte1": "Your",
@@ -76,7 +82,8 @@
         "conformidade_lgpd": "GDPR compliance"
       },
       "imagem_alt": "Safe conversation"
-    },    "diferenciais": {
+    },
+    "diferenciais": {
       "titulo": "Our differentials",
       "subtitulo": "What makes us unique in the world of global communication",
       "seguranca": {
@@ -93,7 +100,8 @@
         "titulo": "No registration",
         "descricao": "Enter and start chatting immediately. No need to create an account, provide email or go through bureaucratic processes."
       }
-    },    "recursos": {
+    },
+    "recursos": {
       "titulo": "Innovative features",
       "subtitulo": "Cutting-edge technologies that make global communication accessible, fast and secure for everyone",
       "traducao_tempo_real": {
@@ -120,10 +128,13 @@
         "titulo": "Total customization",
         "descricao": "Customize the interface, colors, themes and settings to create your unique experience."
       }
-    },    "evolucao": {
+    },
+    "evolucao": {
       "badge": "Our journey",
       "titulo": "Our evolution",
-      "subtitulo": "Follow each step of our journey, from the initial idea to today's revolutionary product","timeline": {        "janeiro_2024": {
+      "subtitulo": "Follow each step of our journey, from the initial idea to today's revolutionary product",
+      "timeline": {
+        "janeiro_2024": {
           "data": "October 2023",
           "titulo": "Birth of the idea",
           "descricao": "The journey began with the vision of creating a platform that could connect people from different cultures and languages naturally and inclusively, breaking language barriers found with exchange students at IFPR - Assis Chateaubriand campus. With this, encouraged by the project advisor, the development of TalkTalk began."
@@ -169,33 +180,39 @@
           "descricao": "TalkTalk is made available to the public, marking the beginning of a new era in inclusive global communication."
         }
       }
-    },    "equipe": {
+    },
+    "equipe": {
       "badge": "Meet the team",
       "titulo": "Meet our team",
       "subtitulo": "The visionaries and developers behind the revolution in global communication",
-      "membros": {        "gustavo": {
+      "membros": {
+        "gustavo": {
           "nome": "Gustavo Preti",
           "cargo": "Developer",
           "descricao": "Specialist in modern web development, focusing on React, Next.js and translation technologies. Responsible for the complete system architecture and user experience.",
           "tags": []
-        },        "christopher": {
+        },
+        "christopher": {
           "nome": "Christopher Gouveia",
           "cargo": "Developer",
           "descricao": "Specialist in infrastructure, security and performance optimization. Responsible for implementing the robust backend and scalable deployment of the application.",
           "tags": []
-        },        "kaike": {
+        },
+        "kaike": {
           "nome": "Kaike Sathler",
           "cargo": "Developer",
           "descricao": "Specialist in frontend development and interface design, focusing on user experience and accessibility. Responsible for creating reusable components and design system.",
           "tags": []
-        },        "michelli": {
+        },
+        "michelli": {
           "nome": "Michelli Cristina Galli",
           "cargo": "Project Advisor",
           "descricao": "Professor and researcher with extensive experience in software engineering and academic project supervision. Responsible for academic guidance and methodology validation of the project.",
           "tags": []
         }
       }
-    },"missao": {
+    },
+    "missao": {
       "titulo": "Our mission",
       "texto": {
         "quebrar_barreiras": "Break down language barriers and connect people from all cultures through instant, inclusive and accessible communication.",
@@ -209,7 +226,8 @@
         "privacidade": "Privacy and security",
         "experiencia": "Exceptional user experience"
       }
-    },    "cta": {
+    },
+    "cta": {
       "titulo": "Ready to break barriers?",
       "descricao": "Join thousands of people who are already experiencing a new way to communicate globally.",
       "botoes": {
@@ -224,14 +242,14 @@
         "backend": "Backend developer"
       }
     }
-  },  "conversar": {
+  },
+  "conversar": {
     "hero": {
       "titulo": {
         "parte1": "A",
         "parte2": "powerful",
         "parte3": "real-time translation tool. No need to switch tabs."
-      },
-      "subtitulo": "Connect instantly with people around the world"
+      }
     },
     "criar_sala": {
       "titulo": "Create a room",
@@ -242,14 +260,16 @@
         "erro_max": "The nickname must contain at most 32 characters.",
         "erro_caracteres": "The nickname must contain only letters, numbers, spaces, _ and -"
       },
-      "avatar_alt": "Your avatar",      "carregando": "Creating room...",
+      "avatar_alt": "Your avatar",
+      "carregando": "Creating room...",
       "criando_sala": "Creating your room...",
       "botao_criar": "CREATE A ROOM",
       "dica": {
         "parte1": "TIP:",
         "parte2": "You can change the color of your avatar! Try clicking/tapping on your animal icon. 😉"
       }
-    },    "entrar_sala": {
+    },
+    "entrar_sala": {
       "titulo": "Join a room",
       "subtitulo": "Enter the room code to participate in an existing conversation",
       "codigo": {
@@ -257,7 +277,8 @@
         "placeholder": "Enter the room code"
       },
       "botao_entrar": "Join room"
-    },    "botoes_avatar": {
+    },
+    "botoes_avatar": {
       "escolher_avatar": "Choose avatar",
       "escolher_avatar_aleatorio": "Choose random avatar",
       "escolha_seu_avatar": "Choose your avatar",
@@ -273,13 +294,15 @@
       "para_entrar_saia_outros": "To enter the room, you must exit from other devices.",
       "usuario_desconectado": "user disconnected",
       "audio_nao_suportado": "Your browser does not support the audio element."
-    },    "configuracoes": {
+    },
+    "configuracoes": {
       "titulo": "Settings",
       "titulo_sala": "ROOM SETTINGS",
       "subtitulo": "Customize your TalkTalk experience",
-      "categorias": "Categories",      "abas": {
+      "categorias": "Categories",
+      "abas": {
         "perfil": "Profile",
-        "idioma": "Language", 
+        "idioma": "Language",
         "audio": "Audio",
         "acessibilidade": "Accessibility",
         "aparencia": "Appearance"
@@ -298,7 +321,8 @@
         "email": {
           "label": "Email",
           "placeholder": "your.email@example.com"
-        },        "avatar": {
+        },
+        "avatar": {
           "titulo": "Avatar",
           "descricao": "Choose your avatar",
           "gerar_aleatorio": "Generate random"
@@ -306,21 +330,24 @@
         "apelido": {
           "label": "Nickname",
           "placeholder": "Enter your nickname"
-        },        "cor": {
+        },
+        "cor": {
           "titulo": "Avatar color",
           "descricao": "Choose your avatar color"
         }
       },
       "idioma": {
-        "titulo": "Language settings", 
+        "titulo": "Language settings",
         "subtitulo": "Set your preferred language and translations",
         "idioma_principal": {
           "label": "Primary language",
           "descricao": "This is the language you want to receive translations in"
-        },        "label": "Language",
+        },
+        "label": "Language",
         "descricao_selecao": "Select which language messages will be translated to",
         "pesquisar": "Search languages...",
-        "nenhum_encontrado": "No language found",        "traducao_automatica": {
+        "nenhum_encontrado": "No language found",
+        "traducao_automatica": {
           "titulo": "Automatic translation",
           "quando_ativado": "When enabled",
           "descricao_ativado": "messages will be displayed already translated",
@@ -338,7 +365,7 @@
           "desconhecido": "Unknown"
         },
         "volume": "Volume",
-        "velocidade": "Speed", 
+        "velocidade": "Speed",
         "tom": "Pitch",
         "teste": {
           "label": "Test text",
@@ -346,7 +373,8 @@
           "texto_padrao": "Hello! This is a test message for voice settings.",
           "instrucao": "Press Enter to hear the text or use the button below",
           "botao": "Test voice settings"
-        },        "leitura_automatica": {
+        },
+        "leitura_automatica": {
           "titulo": "Automatic reading",
           "descricao": "When enabled:",
           "observacao1": "Your own messages will never be read automatically.",
@@ -378,7 +406,8 @@
           "exemplo": "Example text with selected size",
           "texto_exemplo": "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         }
-      },      "acessibilidade": {
+      },
+      "acessibilidade": {
         "titulo": "Accessibility settings",
         "subtitulo": "Make your experience more accessible",
         "daltonismo": {
@@ -430,7 +459,8 @@
               "numeros": "The numbers should be visible as \"6\", \"8\" and \"5\"."
             },
             "modo_ativo": "{tipo} mode active"
-          },          "info": "These settings help improve color visualization for people with different types of color blindness. Select the option that best suits your needs."
+          },
+          "info": "These settings help improve color visualization for people with different types of color blindness. Select the option that best suits your needs."
         },
         "cores": {
           "titulo": "Select a color",
@@ -517,12 +547,13 @@
   "cookies": {
     "titulo": "Cookie consent",
     "descricao": "This site uses cookies to improve your experience and to ensure your messages are secure. Learn more by accessing the",
-    "politica_cookies": "Cookie policy",    "politica_privacidade": "Privacy policy",
+    "politica_cookies": "Cookie policy",
+    "politica_privacidade": "Privacy policy",
     "aceitar": "Accept all cookies"
   },
   "avatares": {
     "jacare": "Anonymous Alligator",
-    "tamia": "Anonymous Chipmunk", 
+    "tamia": "Anonymous Chipmunk",
     "esquilo_gopher": "Anonymous Gopher",
     "ligre": "Anonymous Liger",
     "quagga": "Anonymous Quagga",
