@@ -487,18 +487,25 @@
       "chat_compacto": {
         "titulo": "Chat compacto",
         "descricao": "Mensajes en formato condensado para ahorrar espacio"
-      },
-      "botoes": {
+      },      "botoes": {
         "salvar": "Guardar cambios",
-        "salvando": "Guardando..."
+        "salvando": "Guardando...",
+        "reconectar": "Reconectar"
       }
-    },
-    "status_conexao": {
+    },    "status_conexao": {
       "titulo": "Estado de la conexión",
       "conectado": "Conectado al servidor",
       "conectando": "Conectando...",
       "erro": "Error en la conexión",
-      "desconectado": "Desconectado"
+      "desconectado": "Desconectado",
+      "conectado_sucesso": "¡Conectado con éxito!",
+      "desconectado_aviso": "Conexión perdida. Intentando reconectar...",
+      "reconectando": "Reconectando al servidor...",
+      "erro_persistente": "Error de conexión persistente. Verifica tu internet.",
+      "tentativa_reconexao_inicial": "Verificando conexión al entrar a la sala...",
+      "reconexao_inicial_sucesso": "¡Reconectado con éxito! Bienvenido a la sala.",
+      "reconexao_inicial_falha": "Falló la reconexión inicial. Los intentos automáticos continuarán.",
+      "erro_reconexao_inicial": "Error durante verificación inicial de conexión."
     },
     "usuarios_online": {
       "titulo": "Usuarios en línea",
@@ -529,13 +536,13 @@
     "dicas": {
       "nao_se_preocupe_apelido": "No te preocupes si no ingresas un apodo.",
       "avatar_gerado_automaticamente": "Se generará un avatar automáticamente para ti."
-    },
-    "erros": {
+    },    "erros": {
       "sala_nao_encontrada": "¡Sala no encontrada!",
       "erro_conectar_sala": "Error al conectar en la sala:",
       "sala_cheia": "¡Sala está llena! Máximo de 4 usuarios permitidos.",
       "erro_conexao_servidor": "Error de conexión con el servidor. Verifica tu internet.",
-      "servidor_indisponivel": "No fue posible conectar al servidor de chat. Verifica si el servidor está funcionando."
+      "servidor_indisponivel": "No fue posible conectar al servidor de chat. Verifica si el servidor está funcionando.",
+      "reconexao_falhada": "Falló la reconexión automática. Intenta recargar la página."
     }
   },
   "cookies": {

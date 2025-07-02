@@ -44,8 +44,7 @@ export default function RoomPage() {
     value: 'pt-BR',
     flag: 'BR',
   });
-  const [socketClient, setSocketClient] = useState<Socket | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error'>(
+  const [socketClient, setSocketClient] = useState<Socket | null>(null);  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error' | 'checking'>(
     'disconnected'
   );
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -459,11 +458,33 @@ export default function RoomPage() {
       }
     };
   }, [fetchSala, socketClient]);
-
   useEffect(() => {
     if (!socketClient) return;
+    
+    // Função para verificar status e reconectar se necessário
+    const ensureConnection = () => {
+      if (socketClient.disconnected) {
+        console.log('[DEBUG] Socket desconectado detectado, tentando reconectar...');
+        setConnectionStatus('connecting');
+        socketClient.connect();
+        
+        // Aguarda um pouco e verifica se conseguiu conectar
+        setTimeout(() => {
+          if (socketClient.connected && userData) {
+            console.log('[DEBUG] Reconexão bem-sucedida, reentrando na sala...');
+            const userDataString = JSON.stringify(userData);
+            socketClient.emit('join-room', codigo, userDataString, locale);
+          }
+        }, 1000);
+      }
+    };
+
+    // Verifica conexão imediatamente
+    ensureConnection();
+    
     const handleConnect = () => {
       console.log('Conectado ao servidor');
+      setConnectionStatus('connected');
       if (userData) {
         const userDataString = JSON.stringify(userData);
         socketClient.emit('join-room', codigo, userDataString, locale);
@@ -790,11 +811,71 @@ export default function RoomPage() {
       socketClient.off('connect_error', handleConnectError);
       socketClient.off('reconnect_error');
     };
-  }, [socketClient, codigo]);
+  }, [socketClient, codigo]);  // Verificação automática do status de conexão na entrada da sala
+  useEffect(() => {
+    if (!socketClient || !userData) return;
 
-  // Verificação periódica do status real da conexão
+    // Função para verificar status inicial e tentar reconexão se necessário
+    const checkInitialConnectionStatus = () => {
+      const realStatus = socketClient.connected
+        ? 'connected'
+        : socketClient.disconnected
+          ? 'disconnected'
+          : 'connecting';
+
+      console.log('[DEBUG] Verificação inicial de status:', realStatus);
+        // Se o usuário entrou na sala desconectado, tenta reconectar automaticamente
+      if (realStatus === 'disconnected') {
+        console.log('[DEBUG] Usuário entrou na sala desconectado. Iniciando reconexão automática...');
+        setConnectionStatus('checking');
+
+        try {
+          setConnectionStatus('connecting');
+          socketClient.connect();
+          
+          // Aguarda conexão e tenta entrar na sala
+          const reconnectionTimeout = setTimeout(() => {
+            if (socketClient.connected) {
+              console.log('[DEBUG] Reconexão inicial bem-sucedida. Entrando na sala...');
+              const userDataString = JSON.stringify(userData);
+              socketClient.emit('join-room', codigo, userDataString, locale);
+              setConnectionStatus('connected');
+            } else {
+              console.log('[DEBUG] Falha na reconexão inicial. Status será tratado pela verificação periódica.');
+              setConnectionStatus('error');
+            }
+          }, 2000);
+
+          // Limpeza do timeout se o componente for desmontado
+          return () => clearTimeout(reconnectionTimeout);
+          
+        } catch (error) {
+          console.error('[DEBUG] Erro durante reconexão inicial:', error);
+          setConnectionStatus('error');
+        }
+      } else if (realStatus === 'connected') {
+        console.log('[DEBUG] Usuário já está conectado na entrada da sala.');
+        setConnectionStatus('connected');
+      } else {
+        console.log('[DEBUG] Socket em estado de conexão. Aguardando...');
+        setConnectionStatus('connecting');
+      }
+    };
+
+    // Executa verificação inicial após um pequeno delay para garantir que o socket foi inicializado
+    const initialCheckTimeout = setTimeout(checkInitialConnectionStatus, 500);
+
+    return () => clearTimeout(initialCheckTimeout);
+  }, [socketClient, userData, codigo, locale, t]);
+
+  // Verificação periódica do status real da conexão e tentativa de reconexão automática
   useEffect(() => {
     if (!socketClient) return;
+
+    let disconnectedCount = 0;
+    const maxDisconnectedChecks = 3; // Permite 3 verificações consecutivas de desconexão antes de tentar reconectar
+    let reconnectionAttempts = 0;
+    const maxReconnectionAttempts = 3;
 
     const checkConnectionStatus = () => {
       const realStatus = socketClient.connected
@@ -806,14 +887,57 @@ export default function RoomPage() {
       setConnectionStatus((prevStatus) => {
         if (prevStatus !== realStatus) {
           console.log(`[DEBUG] Status corrigido: ${prevStatus} -> ${realStatus}`);
+          
+          // Se mudou para desconectado, incrementa contador
+          if (realStatus === 'disconnected') {
+            disconnectedCount++;
+            console.log(`[DEBUG] Usuario desconectado detectado. Contagem: ${disconnectedCount}/${maxDisconnectedChecks}`);
+          } else if (realStatus === 'connected') {
+            // Se conectou, reseta contadores
+            disconnectedCount = 0;
+            reconnectionAttempts = 0;
+            console.log('[DEBUG] Usuario reconectado com sucesso. Contadores resetados.');
+          }
+          
           return realStatus;
         }
         return prevStatus;
       });
+
+      // Se usuário está desconectado por várias verificações consecutivas, tenta reconectar
+      if (realStatus === 'disconnected' && disconnectedCount >= maxDisconnectedChecks && reconnectionAttempts < maxReconnectionAttempts) {
+        console.log(`[DEBUG] Iniciando tentativa de reconexão ${reconnectionAttempts + 1}/${maxReconnectionAttempts}`);
+        reconnectionAttempts++;
+        disconnectedCount = 0; // Reseta contador para dar nova chance
+        
+        setConnectionStatus('connecting');
+        
+        // Tenta reconectar
+        try {
+          if (socketClient.disconnected) {
+            console.log('[DEBUG] Executando reconexão do socket...');
+            socketClient.connect();
+            
+            // Se tiver userData, tenta reentrar na sala
+            setTimeout(() => {
+              if (socketClient.connected && userData) {
+                console.log('[DEBUG] Reentrando na sala após reconexão...');
+                const userDataString = JSON.stringify(userData);
+                socketClient.emit('join-room', codigo, userDataString, locale);
+              }
+            }, 1000);
+          }
+        } catch (error) {
+          console.error('[DEBUG] Erro durante tentativa de reconexão:', error);
+          setConnectionStatus('error');
+        }      } else if (realStatus === 'disconnected' && reconnectionAttempts >= maxReconnectionAttempts) {
+        console.log('[DEBUG] Número máximo de tentativas de reconexão atingido');
+        setConnectionStatus('error');
+      }
     };
 
-    // Verifica o status a cada 5 segundos
-    const statusInterval = setInterval(checkConnectionStatus, 5000);
+    // Verifica o status a cada 3 segundos (mais frequente para detecção rápida)
+    const statusInterval = setInterval(checkConnectionStatus, 3000);
 
     // Verifica imediatamente
     checkConnectionStatus();
@@ -821,7 +945,17 @@ export default function RoomPage() {
     return () => {
       clearInterval(statusInterval);
     };
-  }, [socketClient, codigo]);
+  }, [socketClient, codigo, userData, locale, t]);
+  // Toast notifications for connection status changes
+  useEffect(() => {
+    // Mantém apenas notificações para erros críticos persistentes
+    if (connectionStatus === 'error') {
+      toast.error(t('chat.status_conexao.erro_persistente'), {
+        position: 'bottom-right',
+        autoClose: 0, // Não remove automaticamente para erros críticos
+      });
+    }
+  }, [connectionStatus, t]);
 
   useEffect(() => {
     return () => {
@@ -830,7 +964,6 @@ export default function RoomPage() {
       }
     };
   }, [socketClient]);
-
   const handleLanguageChange = (language: string) => {
     const index = linguagens.findIndex((lang) => lang.value === language);
     if (index !== -1) {
@@ -845,6 +978,33 @@ export default function RoomPage() {
       localStorage.setItem('talktalk_user_settings', JSON.stringify(settings));
     }
   };
+
+  // Função para forçar reconexão manual
+  const forceReconnect = useCallback(() => {
+    if (!socketClient) return;
+    
+    console.log('[DEBUG] Forçando reconexão manual...');
+    setConnectionStatus('connecting');
+    
+    // Desconecta primeiro se ainda estiver conectado
+    if (socketClient.connected) {
+      socketClient.disconnect();
+    }
+    
+    // Aguarda um pouco e tenta reconectar
+    setTimeout(() => {
+      socketClient.connect();
+      
+      // Tenta reentrar na sala após conectar
+      setTimeout(() => {
+        if (socketClient.connected && userData) {
+          console.log('[DEBUG] Reentrando na sala após reconexão manual...');
+          const userDataString = JSON.stringify(userData);
+          socketClient.emit('join-room', codigo, userDataString, locale);
+        }
+      }, 1000);
+    }, 500);
+  }, [socketClient, userData, codigo, locale]);
   if (showErrorModal) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
@@ -1366,8 +1526,7 @@ export default function RoomPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                >
-                  {/* Connection Status */}
+                >                  {/* Connection Status */}
                   <div className="w-full">
                     <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border border-white/30 dark:border-gray-700/30 rounded-xl p-3 md:p-4 shadow-md">
                       <div className="flex items-center gap-3">
@@ -1383,7 +1542,6 @@ export default function RoomPage() {
                           }`}
                         ></div>
                         <div className="flex-1">
-                          {' '}
                           <p className="text-xs md:text-sm font-semibold text-gray-800 dark:text-gray-200">
                             {t('chat.status_conexao.titulo')}
                           </p>
@@ -1393,7 +1551,23 @@ export default function RoomPage() {
                             {connectionStatus === 'error' && t('chat.status_conexao.erro')}
                             {connectionStatus === 'disconnected' && t('chat.status_conexao.desconectado')}
                           </p>
-                        </div>
+                        </div>                        {/* Botão de reconexão manual para quando há erro */}
+                        {(connectionStatus === 'error' || connectionStatus === 'disconnected') && (
+                          <Button
+                            size="sm"
+                            color="primary"
+                            variant="flat"
+                            onPress={forceReconnect}
+                            className="text-xs px-3 py-1 min-w-0"
+                          >
+                            {t('chat.botoes.reconectar')}
+                          </Button>
+                        )}
+                        {connectionStatus === 'connecting' && (
+                          <div className="text-xs text-gray-600 dark:text-gray-400 animate-pulse">
+                            {t('chat.status_conexao.conectando')}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
