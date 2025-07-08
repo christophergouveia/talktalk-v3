@@ -1,3 +1,5 @@
+require('dotenv').config({ path: './.env.development' });
+require('dotenv').config({ path: '../.env.development' });
 require('dotenv').config({ path: './.env' });
 require('dotenv').config({ path: '../.env' });
 
@@ -7,18 +9,18 @@ const https = require("https");
 const http = require('http');
 const fs = require('fs');
 const cors = require('cors');
-const { PrismaClient } = require('@prisma/client');
 const { getTranslation } = require('./translations');
 
 console.log('[DEBUG] Verificação de ambiente:', {
   DATABASE_URL: process.env.DATABASE_URL,
-  SOCKET_PORT: process.env.SOCKET_PORT,
-  NODE_ENV: process.env.NODE_ENV
+  SOCKET_PORT: process.env.NEXT_PUBLIC_SOCKET_PORT,
+  NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV
 });
 
 let prisma;
 try {
-  const { PrismaClient } = require('@prisma/client');
+  // Try to import from parent directory first (where prisma generate was run)
+  const { PrismaClient } = require('../node_modules/@prisma/client');
   prisma = new PrismaClient({
     log: ['error'],
   });
@@ -87,9 +89,14 @@ io.on('connection', (socket) => {
   console.log('Novo cliente conectado:', socket.id);
 
   let userRoom = null;
-  let userData = null;
-  socket.on('join-room', async (room, userDataParam, userLanguage = 'pt-BR') => {
+  let userData = null;  socket.on('join-room', async (room, userDataParam, userLanguage = 'pt-BR') => {
     try {
+      if (!prisma) {
+        console.error('[DEBUG] Banco de dados não disponível');
+        socket.emit('error', getTranslation(userLanguage, 'databaseUnavailable'));
+        return;
+      }
+
       if (!room || !userDataParam) {
         console.error('[DEBUG] Dados inválidos:', { room, userDataParam });
         socket.emit('error', getTranslation(userLanguage, 'userDataError'));
@@ -277,9 +284,8 @@ io.on('connection', (socket) => {
       console.error('[DEBUG] Erro ao processar entrada do usuário:', error);
       socket.emit('error', getTranslation(userLanguage, 'errorJoiningRoom'));
     }
-  });
-  socket.on('disconnect', async () => {
-    if (userRoom && userData) {
+  });  socket.on('disconnect', async () => {
+    if (userRoom && userData && prisma) {
       try {
         await prisma.salas_Usuarios.deleteMany({
           where: {

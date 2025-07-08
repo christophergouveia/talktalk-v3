@@ -3,6 +3,7 @@
 import ChatComponent from '@/app/components/chat/Chat.tsx';
 import Message from '@/app/components/chat/Message.tsx';
 import MessageList from '@/app/components/chat/MessageList.tsx';
+import EmojiPicker from '@/app/components/chat/EmojiPicker.tsx';
 import { CountryFlag } from '@/app/components/countryFlags.tsx';
 import CopyButton from '@/app/components/functionals/CopyButton.tsx';
 import linguagens from '@/app/locales/languages.json';
@@ -618,10 +619,13 @@ export default function RoomPage() {
       setShiftPressed(true);
     }
   }, []);
-
   const handleNameInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setUserName(e.target.value);
   }, []);
+
+  const handleEmojiSelect = useCallback((emoji: string) => {
+    setMensagem(prev => prev + emoji);
+  }, [setMensagem]);
 
   const recAudio = async () => {
     try {
@@ -1431,8 +1435,7 @@ export default function RoomPage() {
                 value={mensagem}
                 size="lg"
               />
-            </div>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            </div>            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 isIconOnly
                 onClick={sendMessage}
@@ -1441,7 +1444,11 @@ export default function RoomPage() {
               >
                 <IoIosSend className={'text-xl sm:text-2xl'} />
               </Button>
-            </motion.div>{' '}
+            </motion.div>
+            <EmojiPicker 
+              onEmojiSelect={handleEmojiSelect}
+              className=""
+            />
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               {' '}
               <Button

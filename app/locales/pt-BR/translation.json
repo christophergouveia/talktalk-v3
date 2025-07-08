@@ -269,9 +269,13 @@
       "selecionado": "SELECIONADO"
     }
   },
-  "chat": {
-    "interface": {
+  "chat": {    "interface": {
       "digite_mensagem": "Digite uma mensagem...",
+      "emoji_picker": {
+        "botao_abrir": "Abrir seletor de emojis",
+        "botao_fechar": "Fechar seletor de emojis",
+        "adicionar_emoji": "Adicionar emoji à mensagem"
+      },
       "sala_indisponivel": "Sala indisponível ou erro desconhecido",
       "voltar_pagina_sala": "Voltar para a página de sala",
       "usuario_ja_na_sala": "Você já está nesta sala em outro dispositivo!",

@@ -285,9 +285,13 @@
       "selecionado": "SELECTED"
     }
   },
-  "chat": {
-    "interface": {
+  "chat": {    "interface": {
       "digite_mensagem": "Type a message...",
+      "emoji_picker": {
+        "botao_abrir": "Open emoji picker",
+        "botao_fechar": "Close emoji picker",
+        "adicionar_emoji": "Add emoji to message"
+      },
       "sala_indisponivel": "Room unavailable or unknown error",
       "voltar_pagina_sala": "Back to room page",
       "usuario_ja_na_sala": "You are already in this room on another device!",
