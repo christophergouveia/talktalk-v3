@@ -70,7 +70,7 @@ export default function Home({}) {
   const [flags, setFlags] = useState<FlagData[]>([]);
   const params = useParams();
   const locale = params?.locale as string || 'pt-BR';
-  const t = useTranslation('', { keyPrefix: 'pagina_inicial' }).t;
+  const { t } = useTranslation('translation', { keyPrefix: 'pagina_inicial' });
   
   useEffect(() => {
     const novasBandeiras = Array.from({ length: 5 }).map(() => ({

@@ -269,9 +269,13 @@
       "selecionado": "SELECIONADO"
     }
   },
-  "chat": {
-    "interface": {
+  "chat": {    "interface": {
       "digite_mensagem": "Digite uma mensagem...",
+      "emoji_picker": {
+        "botao_abrir": "Abrir seletor de emojis",
+        "botao_fechar": "Fechar seletor de emojis",
+        "adicionar_emoji": "Adicionar emoji à mensagem"
+      },
       "sala_indisponivel": "Sala indisponível ou erro desconhecido",
       "voltar_pagina_sala": "Voltar para a página de sala",
       "usuario_ja_na_sala": "Você já está nesta sala em outro dispositivo!",
@@ -477,18 +481,25 @@
       "chat_compacto": {
         "titulo": "Chat compacto",
         "descricao": "Mensagens em formato condensado para economizar espaço"
-      },
-      "botoes": {
+      },      "botoes": {
         "salvar": "Salvar alterações",
-        "salvando": "Salvando..."
+        "salvando": "Salvando...",
+        "reconectar": "Reconectar"
       }
-    },
-    "status_conexao": {
+    },    "status_conexao": {
       "titulo": "Status da conexão",
       "conectado": "Conectado ao servidor",
       "conectando": "Conectando...",
       "erro": "Erro na conexão",
-      "desconectado": "Desconectado"
+      "desconectado": "Desconectado",
+      "conectado_sucesso": "Conectado com sucesso!",
+      "desconectado_aviso": "Conexão perdida. Tentando reconectar...",
+      "reconectando": "Reconectando ao servidor...",
+      "erro_persistente": "Erro de conexão persistente. Verifique sua internet.",
+      "tentativa_reconexao_inicial": "Verificando conexão na entrada da sala...",
+      "reconexao_inicial_sucesso": "Reconectado com sucesso! Bem-vindo à sala.",
+      "reconexao_inicial_falha": "Falha na reconexão inicial. Tentativas automáticas continuarão.",
+      "erro_reconexao_inicial": "Erro durante verificação inicial de conexão."
     },
     "usuarios_online": {
       "titulo": "Usuários online",
@@ -519,13 +530,13 @@
     "dicas": {
       "nao_se_preocupe_apelido": "Não se preocupe caso não insira um apelido.",
       "avatar_gerado_automaticamente": "Um avatar será gerado automaticamente para você."
-    },
-    "erros": {
+    },    "erros": {
       "sala_nao_encontrada": "Sala não encontrada!",
       "erro_conectar_sala": "Erro ao conectar na sala:",
       "sala_cheia": "Sala está cheia! Máximo de 4 usuários permitidos.",
       "erro_conexao_servidor": "Erro de conexão com o servidor. Verifique sua internet.",
-      "servidor_indisponivel": "Não foi possível conectar ao servidor de chat. Verifique se o servidor está funcionando."
+      "servidor_indisponivel": "Não foi possível conectar ao servidor de chat. Verifique se o servidor está funcionando.",
+      "reconexao_falhada": "Falha na reconexão automática. Tente recarregar a página."
     }
   },
   "cookies": {

@@ -285,9 +285,13 @@
       "selecionado": "SELECTED"
     }
   },
-  "chat": {
-    "interface": {
+  "chat": {    "interface": {
       "digite_mensagem": "Type a message...",
+      "emoji_picker": {
+        "botao_abrir": "Open emoji picker",
+        "botao_fechar": "Close emoji picker",
+        "adicionar_emoji": "Add emoji to message"
+      },
       "sala_indisponivel": "Room unavailable or unknown error",
       "voltar_pagina_sala": "Back to room page",
       "usuario_ja_na_sala": "You are already in this room on another device!",
@@ -493,18 +497,25 @@
       "chat_compacto": {
         "titulo": "Compact chat",
         "descricao": "Messages in condensed format to save space"
-      },
-      "botoes": {
+      },      "botoes": {
         "salvar": "Save changes",
-        "salvando": "Saving..."
+        "salvando": "Saving...",
+        "reconectar": "Reconnect"
       }
-    },
-    "status_conexao": {
+    },    "status_conexao": {
       "titulo": "Connection status",
       "conectado": "Connected to server",
       "conectando": "Connecting...",
       "erro": "Connection error",
-      "desconectado": "Disconnected"
+      "desconectado": "Disconnected",
+      "conectado_sucesso": "Successfully connected!",
+      "desconectado_aviso": "Connection lost. Trying to reconnect...",
+      "reconectando": "Reconnecting to server...",
+      "erro_persistente": "Persistent connection error. Check your internet.",
+      "tentativa_reconexao_inicial": "Checking connection on room entry...",
+      "reconexao_inicial_sucesso": "Successfully reconnected! Welcome to the room.",
+      "reconexao_inicial_falha": "Initial reconnection failed. Automatic attempts will continue.",
+      "erro_reconexao_inicial": "Error during initial connection check."
     },
     "usuarios_online": {
       "titulo": "Online users",
@@ -535,13 +546,13 @@
     "dicas": {
       "nao_se_preocupe_apelido": "Don't worry if you don't enter a nickname.",
       "avatar_gerado_automaticamente": "An avatar will be generated automatically for you."
-    },
-    "erros": {
+    },    "erros": {
       "sala_nao_encontrada": "Room not found!",
       "erro_conectar_sala": "Error connecting to room:",
       "sala_cheia": "Room is full! Maximum of 4 users allowed.",
       "erro_conexao_servidor": "Server connection error. Check your internet.",
-      "servidor_indisponivel": "Could not connect to chat server. Check if server is running."
+      "servidor_indisponivel": "Could not connect to chat server. Check if server is running.",
+      "reconexao_falhada": "Automatic reconnection failed. Try reloading the page."
     }
   },
   "cookies": {

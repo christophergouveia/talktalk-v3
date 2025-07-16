@@ -6,22 +6,26 @@ import resourcesToBackend from 'i18next-resources-to-backend';
 // Define supported languages
 const supportedLanguages = ['pt-BR', 'en-US', 'es-ES'];
 
+// Language mapping
+const languageMap = {
+  'pt': 'pt-BR',
+  'pt-PT': 'pt-BR',
+  'en': 'en-US', 
+  'en-GB': 'en-US',
+  'es': 'es-ES',
+  'es-MX': 'es-ES'
+};
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .use(resourcesToBackend((language, namespace, callback) => {
-    // Normalize language code
-    let mappedLanguage = language;
+    // Normalize language code using the mapping
+    let mappedLanguage = languageMap[language] || language;
     
-    // Map common language variations
-    if (language === 'pt' || language === 'pt-PT') {
+    // If not in supported languages, default to pt-BR
+    if (!supportedLanguages.includes(mappedLanguage)) {
       mappedLanguage = 'pt-BR';
-    } else if (language === 'en' || language === 'en-GB') {
-      mappedLanguage = 'en-US';
-    } else if (language === 'es' || language === 'es-MX') {
-      mappedLanguage = 'es-ES';
-    } else if (!supportedLanguages.includes(language)) {
-      mappedLanguage = 'pt-BR'; // Default fallback
     }
     
     import(`./app/locales/${mappedLanguage}/${namespace}.json`)
@@ -45,29 +49,32 @@ i18n
         }
       })
   }))  .init({
-    lng: 'pt-BR', // Set default language
+    lng: 'pt-BR',
     fallbackLng: 'pt-BR',
     supportedLngs: supportedLanguages,
     nonExplicitSupportedLngs: false,
-    debug: process.env.NODE_ENV === 'development', // Enable debug in development
+    load: 'all',
+    debug: process.env.NODE_ENV === 'development',
     interpolation: {
       escapeValue: false,
     },
     detection: {
-      order: ['path', 'localStorage', 'navigator', 'htmlTag'],
+      order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage'],
       lookupLocalStorage: 'i18nextLng',
-      lookupFromPathIndex: 0,
-      lookupFromSubdomainIndex: 0,
+      excludeCacheFor: ['cimode'],
     },
     react: {
-      useSuspense: false, // Prevent hydration issues
-      bindI18n: 'languageChanged loaded', // Bind to both events
+      useSuspense: false,
+      bindI18n: 'languageChanged loaded',
       bindI18nStore: 'added removed',
-      transEmptyNodeValue: '', // Return empty string for empty trans
+      transEmptyNodeValue: '',
       transSupportBasicHtmlNodes: true,
       transKeepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p'],
-    }
+    },
+    // Add default namespace
+    defaultNS: 'translation',
+    ns: ['translation'],
   });
 
 export default i18n;

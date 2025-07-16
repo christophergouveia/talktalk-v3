@@ -32,7 +32,7 @@ export default function NavBar() {
 
   useEffect(() => setHasMounted(true), []);
 
-  const { t } = useTranslation('', { keyPrefix: 'navbar' });
+  const { t } = useTranslation('translation', { keyPrefix: 'navbar' });
 
   const listaItems = useMemo<NavbarItem[]>(
     () => [
