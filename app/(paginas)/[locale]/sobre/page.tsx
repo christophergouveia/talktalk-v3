@@ -62,7 +62,7 @@ function FeatureCard({ icon, title, description, color, delay = 0 }: FeatureCard
         opacity: 1,
         y: 0,
       }}
-      viewport={{ once: false, amount: 0.3 }}
+      viewport={{ once: true, amount: 0.3 }}
       transition={{
         duration: 0.4,
         delay,
@@ -76,7 +76,6 @@ function FeatureCard({ icon, title, description, color, delay = 0 }: FeatureCard
       }}
       className="group relative rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5 shadow-sm hover:shadow-md transition-all duration-200"
     >
-      {/* Minimal icon */}
       <div
         className="inline-flex items-center justify-center w-10 h-10 rounded-md mb-3 text-white text-lg"
         style={{ backgroundColor: color }}
@@ -84,10 +83,8 @@ function FeatureCard({ icon, title, description, color, delay = 0 }: FeatureCard
         {icon}
       </div>
 
-      {/* Title */}
       <h3 className="text-base font-semibold mb-2 text-gray-900 dark:text-white">{title}</h3>
 
-      {/* Description */}
       <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{description}</p>
     </motion.div>
   );
@@ -114,7 +111,7 @@ function CardContent({
         opacity: 1,
         y: 0,
       }}
-      viewport={{ once: false, amount: 0.3 }}
+      viewport={{ once: true, amount: 0.3 }}
       transition={{
         duration: 0.4,
         ease: 'easeOut',
@@ -127,7 +124,6 @@ function CardContent({
       }}
       className="group relative rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-5 shadow-sm hover:shadow-md transition-all duration-200"
     >
-      {/* Profile section */}
       <div className="relative flex flex-col items-center mb-4">
         <div className="relative">
           {srcImagem ? (
@@ -148,7 +144,6 @@ function CardContent({
             />
           )}
 
-          {/* Social media icons */}
           <div className="absolute -top-1 -right-1 flex flex-col space-y-1">
             {icon?.map((value, index) => (
               <div
@@ -168,7 +163,6 @@ function CardContent({
           </div>
         </div>
 
-        {/* Name */}
         <h3 className="text-lg font-semibold mt-2 mb-1 text-gray-900 dark:text-white text-center">{nome}</h3>
 
         <p className="text-primary-600 dark:text-primary-400 font-medium text-sm mb-2 text-center">{cargo}</p>
@@ -178,7 +172,6 @@ function CardContent({
         )}
       </div>
 
-      {/* Tags */}
       <div className="flex flex-wrap justify-center gap-1">
         {tags.map((value, index) => (
           <span
@@ -257,7 +250,8 @@ export default function SobrePage() {
       color: '#38A3F5', // azul claro intenso
       image: '/images/pictures/vedang.jpg',
       imageAlt: 'Otimizações e segurança - proteção avançada',
-    },    {
+    },
+    {
       date: t('evolucao.timeline.dezembro_2024.data'),
       title: t('evolucao.timeline.dezembro_2024.titulo'),
       description: t('evolucao.timeline.dezembro_2024.descricao'),
@@ -271,7 +265,8 @@ export default function SobrePage() {
       icon: <HiSparkles size={20} />,
       color: '#6F90F2', // azul médio
     },
-  ];const features = [
+  ];
+  const features = [
     {
       icon: <BsTranslate />,
       title: t('recursos.traducao_tempo_real.titulo'),
@@ -308,7 +303,8 @@ export default function SobrePage() {
       description: t('recursos.personalizacao_total.descricao'),
       color: '#BFCCF2', // azul bem claro
     },
-  ];  const teamMembers = [
+  ];
+  const teamMembers = [
     {
       nome: t('equipe.membros.gustavo.nome'),
       srcImagem: '/images/pictures/imagemGustavo.png',
@@ -330,7 +326,8 @@ export default function SobrePage() {
       icon: [<FaGithub key="github" />, <FaLinkedin key="linkedin" />],
       linkGithub: 'https://github.com/christophergouveia',
       linkLinkedin: 'https://linkedin.com/in/christopher-oliveira',
-    },    {
+    },
+    {
       nome: t('equipe.membros.kaike.nome'),
       srcImagem: '/images/pictures/imagemKaike.png',
       altImagem: 'Foto do Kaike',
@@ -340,7 +337,8 @@ export default function SobrePage() {
       icon: [<FaGithub key="github" />, <FaLinkedin key="linkedin" />],
       linkGithub: 'https://github.com/KaikeSathler',
       linkLinkedin: 'https://linkedin.com/in/kaike-sathler',
-    },    {
+    },
+    {
       nome: t('equipe.membros.michelli.nome'),
       srcImagem: null, // Usar Avatar gerado
       altImagem: 'Avatar da Professora Michelli',
@@ -351,12 +349,11 @@ export default function SobrePage() {
       linkGithub: '#',
       linkLinkedin: '#',
     },
-  ];  return (
+  ];
+  return (
     <div className="min-h-screen bg-white dark:bg-gray-900 sobre-page" data-page="sobre">
       <LanguageDetector />
-      {/* Hero Section - Enhanced with better visual hierarchy */}
       <section className="relative py-24 bg-gradient-to-br from-primary-50 via-secondary-50 to-cyan-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
-        {/* Background decoration */}
         <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] dark:bg-grid-slate-700/25"></div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -380,7 +377,8 @@ export default function SobrePage() {
               className="text-5xl md:text-6xl lg:text-7xl font-extrabold mb-8 text-gray-900 dark:text-white tracking-tight"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}            >
+              transition={{ duration: 0.8, delay: 0.3 }}
+            >
               {t('hero.titulo.parte1')}{' '}
               <span className="bg-gradient-to-r from-primary-600 via-secondary-600 to-cyan-600 bg-clip-text text-transparent">
                 {t('hero.titulo.parte2')}
@@ -401,7 +399,9 @@ export default function SobrePage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
-            >              <Link
+            >
+              {' '}
+              <Link
                 href={`/${locale}/conversar`}
                 className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-xl hover:from-primary-700 hover:to-secondary-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold text-lg"
               >
@@ -419,14 +419,13 @@ export default function SobrePage() {
           </motion.div>
         </div>
       </section>{' '}
-      {/* Privacy Section - Improved layout and visual appeal */}
       <section className="py-20 bg-gradient-to-br from-primary-50 via-secondary-50 to-cyan-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
+              viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.7 }}
             >
               {' '}
@@ -464,7 +463,7 @@ export default function SobrePage() {
                     key={index}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: false }}
+                    viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     className="flex items-center gap-4 p-4 bg-white/60 dark:bg-gray-800/60 rounded-lg backdrop-blur-sm border border-white/20 dark:border-gray-700/20"
                   >
@@ -473,10 +472,11 @@ export default function SobrePage() {
                   </motion.div>
                 ))}
               </div>
-            </motion.div>            <motion.div
+            </motion.div>{' '}
+            <motion.div
               initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
+              viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.7 }}
               className="relative"
             >
@@ -486,20 +486,19 @@ export default function SobrePage() {
                   alt={t('privacidade.imagem_alt')}
                   width={500}
                   height={400}
-                  className="w-full h-auto rounded-xl shadow-lg"
+                  className="w-full h-auto rounded-xl"
                 />
               </div>
             </motion.div>
           </div>
         </div>
       </section>
-      {/* Key Benefits Section - Redesigned for better visual impact */}
       <section className="py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
@@ -514,11 +513,10 @@ export default function SobrePage() {
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Security - Enhanced design */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
+              viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6 }}
               className="group relative rounded-2xl bg-gradient-to-br from-red-50 via-pink-50 to-red-50 dark:from-red-900/20 dark:via-pink-900/20 dark:to-red-900/20 p-8 hover:shadow-2xl transition-all duration-500 border border-red-100 dark:border-red-800/30 hover:border-red-200 dark:hover:border-red-700/50 transform hover:-translate-y-2"
             >
@@ -528,14 +526,13 @@ export default function SobrePage() {
                 <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   <FaShieldAlt className="w-8 h-8 text-white" />
                 </div>
-
                 <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
                   {t('diferenciais.seguranca.titulo')}
                 </h3>
-
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
                   {t('diferenciais.seguranca.descricao')}
-                </p>                <div className="relative overflow-hidden rounded-xl">
+                </p>{' '}
+                <div className="relative overflow-hidden rounded-xl">
                   <Image
                     src="/images/pictures/security.png"
                     alt={t('diferenciais.seguranca.imagem_alt')}
@@ -547,11 +544,10 @@ export default function SobrePage() {
               </div>
             </motion.div>
 
-            {/* Free - Enhanced design */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
+              viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6, delay: 0.1 }}
               className="group relative rounded-2xl bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-50 dark:from-blue-900/20 dark:via-cyan-900/20 dark:to-blue-900/20 p-8 hover:shadow-2xl transition-all duration-500 border border-blue-100 dark:border-blue-800/30 hover:border-blue-200 dark:hover:border-blue-700/50 transform hover:-translate-y-2"
             >
@@ -561,14 +557,13 @@ export default function SobrePage() {
                 <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   <FaHeart className="w-8 h-8 text-white" />
                 </div>
-
                 <h3 className="text-2xl font-bold mb-4 text-blue-600 dark:text-blue-400">
                   {t('diferenciais.gratuito.titulo')}
                 </h3>
-
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
                   {t('diferenciais.gratuito.descricao')}
-                </p>                <div className="relative overflow-hidden rounded-xl">
+                </p>{' '}
+                <div className="relative overflow-hidden rounded-xl">
                   <Image
                     src="/images/pictures/Coins-amico.png"
                     alt={t('diferenciais.gratuito.imagem_alt')}
@@ -580,11 +575,10 @@ export default function SobrePage() {
               </div>
             </motion.div>
 
-            {/* No Account - Enhanced design */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
+              viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               className="group relative rounded-2xl bg-gradient-to-br from-purple-50 via-indigo-50 to-purple-50 dark:from-purple-900/20 dark:via-indigo-900/20 dark:to-purple-900/20 p-8 hover:shadow-2xl transition-all duration-500 border border-purple-100 dark:border-purple-800/30 hover:border-purple-200 dark:hover:border-purple-700/50 transform hover:-translate-y-2"
             >
@@ -613,25 +607,24 @@ export default function SobrePage() {
           </div>
         </div>
       </section>{' '}
-      {/* Features Section - Improved with better spacing and animations */}
       <section className="py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium mb-6">
               <HiSparkles className="w-4 h-4" />
               Recursos Avançados
-            </div>            <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-gray-900 dark:text-white">
+            </div>{' '}
+            <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-gray-900 dark:text-white">
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 {t('recursos.titulo')}
               </span>
             </h2>
-
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
               {t('recursos.subtitulo')}
             </p>
@@ -649,7 +642,7 @@ export default function SobrePage() {
                   opacity: 1,
                   y: 0,
                 }}
-                viewport={{ once: false, amount: 0.3 }}
+                viewport={{ once: true, amount: 0.3 }}
                 transition={{
                   duration: 0.5,
                   delay: index * 0.1,
@@ -663,11 +656,9 @@ export default function SobrePage() {
                 }}
                 className="group relative rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-8 shadow-sm hover:shadow-xl transition-all duration-300"
               >
-                {/* Background gradient on hover */}
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/10 dark:to-purple-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                 <div className="relative z-10">
-                  {/* Icon */}
                   <div
                     className="inline-flex items-center justify-center w-14 h-14 rounded-xl mb-6 text-white text-xl group-hover:scale-110 transition-transform duration-300 shadow-lg"
                     style={{ backgroundColor: feature.color }}
@@ -675,12 +666,10 @@ export default function SobrePage() {
                     {feature.icon}
                   </div>
 
-                  {/* Title */}
                   <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
                     {feature.title}
                   </h3>
 
-                  {/* Description */}
                   <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{feature.description}</p>
                 </div>
               </motion.div>
@@ -688,14 +677,13 @@ export default function SobrePage() {
           </div>
         </div>
       </section>{' '}
-      {/* Timeline Section - Enhanced visual presentation */}
       <section className="py-24 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-20"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.8 }}
           >
             {' '}
@@ -714,7 +702,6 @@ export default function SobrePage() {
           </motion.div>
 
           <div className="relative">
-            {/* Background decoration */}
             <div className="absolute inset-0 bg-gradient-to-r from-blue-100/20 via-purple-100/20 to-pink-100/20 dark:from-blue-900/10 dark:via-purple-900/10 dark:to-pink-900/10 rounded-3xl"></div>
 
             <div className="relative bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-xl border border-white/20 dark:border-gray-700/20">
@@ -723,14 +710,13 @@ export default function SobrePage() {
           </div>
         </div>
       </section>{' '}
-      {/* Team Section - Enhanced design with better cards */}
       <section id="equipe" className="py-20 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6 }}
           >
             {' '}
@@ -746,7 +732,8 @@ export default function SobrePage() {
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
               {t('equipe.subtitulo')}
             </p>
-          </motion.div>          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+          </motion.div>{' '}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
             {teamMembers.map((member, index) => (
               <motion.div
                 key={index}
@@ -758,7 +745,7 @@ export default function SobrePage() {
                   opacity: 1,
                   y: 0,
                 }}
-                viewport={{ once: false, amount: 0.3 }}
+                viewport={{ once: true, amount: 0.3 }}
                 transition={{
                   duration: 0.6,
                   delay: index * 0.1,
@@ -772,11 +759,9 @@ export default function SobrePage() {
                 }}
                 className="group relative rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 p-8 shadow-sm hover:shadow-2xl transition-all duration-500"
               >
-                {/* Background gradient on hover */}
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/10 dark:to-purple-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                 <div className="relative z-10">
-                  {/* Profile section */}
                   <div className="relative flex flex-col items-center mb-6">
                     <div className="relative mb-4">
                       {member.srcImagem ? (
@@ -800,7 +785,6 @@ export default function SobrePage() {
                         />
                       )}
 
-                      {/* Social media icons */}
                       <div className="absolute -bottom-2 -right-2 flex space-x-1">
                         {member.icon?.map((value, iconIndex) => (
                           <div
@@ -820,7 +804,6 @@ export default function SobrePage() {
                       </div>
                     </div>
 
-                    {/* Name and role */}
                     <h3 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white text-center group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
                       {member.nome}
                     </h3>
@@ -834,7 +817,6 @@ export default function SobrePage() {
                     )}
                   </div>
 
-                  {/* Tags */}
                   <div className="flex flex-wrap justify-center gap-2">
                     {member.tags.map((tag, tagIndex) => (
                       <span
@@ -851,14 +833,13 @@ export default function SobrePage() {
           </div>
         </div>
       </section>{' '}
-      {/* Mission Section - Redesigned with better visual impact */}
       <section className="py-20 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
+              viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.7 }}
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300 rounded-full text-sm font-medium mb-6">
@@ -876,7 +857,7 @@ export default function SobrePage() {
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false }}
+                  viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.1 }}
                 >
                   {t('missao.texto.quebrar_barreiras')}
@@ -885,7 +866,7 @@ export default function SobrePage() {
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false }}
+                  viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
                   {t('missao.texto.tecnologia_humanidade')}
@@ -894,7 +875,7 @@ export default function SobrePage() {
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false }}
+                  viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: 0.3 }}
                 >
                   {t('missao.texto.acessibilidade_total')}
@@ -905,12 +886,11 @@ export default function SobrePage() {
             <motion.div
               initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: false, amount: 0.3 }}
+              viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.7 }}
               className="relative"
             >
               <div className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-3xl p-8 text-white shadow-2xl">
-                {/* Background decoration */}
                 <div className="absolute inset-0 bg-black/10 rounded-3xl"></div>
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -m-8"></div>
                 <div className="absolute bottom-0 left-0 w-20 h-20 bg-white/5 rounded-full -m-4"></div>
@@ -931,7 +911,7 @@ export default function SobrePage() {
                         key={index}
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: false }}
+                        viewport={{ once: true }}
                         transition={{ duration: 0.5, delay: index * 0.1 }}
                         className="flex items-center gap-4 p-3 bg-white/10 rounded-lg backdrop-blur-sm"
                       >
@@ -945,9 +925,8 @@ export default function SobrePage() {
             </motion.div>
           </div>
         </div>
-      </section>      {/* CTA Section - Full Screen */}
+      </section>
       <section className="min-h-screen bg-gradient-to-br from-primary-600 via-secondary-600 to-cyan-600 relative overflow-hidden flex items-center justify-center">
-        {/* Background Effects */}
         <div className="absolute inset-0">
           <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
@@ -958,15 +937,14 @@ export default function SobrePage() {
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.8 }}
             className="space-y-12"
           >
-            {/* Badge */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: false }}
+              viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
               className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm text-white rounded-full text-sm font-medium border border-white/30"
             >
@@ -974,33 +952,30 @@ export default function SobrePage() {
               Pronto para começar?
             </motion.div>
 
-            {/* Main Title */}
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false }}
+              viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.3 }}
               className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-8 leading-tight"
             >
               {t('cta.titulo')}
             </motion.h2>
 
-            {/* Description */}
             <motion.p
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false }}
+              viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.4 }}
               className="text-xl md:text-2xl text-white/90 mb-12 leading-relaxed max-w-4xl mx-auto"
             >
               {t('cta.descricao')}
             </motion.p>
 
-            {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false }}
+              viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.5 }}
               className="flex flex-col sm:flex-row gap-6 justify-center items-center"
             >
@@ -1021,11 +996,10 @@ export default function SobrePage() {
               </Link>
             </motion.div>
 
-            {/* Additional Info */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false }}
+              viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.6 }}
               className="pt-12 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
             >

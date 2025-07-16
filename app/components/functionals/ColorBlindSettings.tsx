@@ -11,12 +11,8 @@ interface ColorBlindSettingsProps {
 
 const ColorBlindSettings = ({ onColorBlindChange, currentType: propCurrentType }: ColorBlindSettingsProps) => {
   const { t } = useTranslation();
-  // Use the global ColorBlind context
   const { colorBlindType, setColorBlindType } = useColorBlind();
-  
-  // Use context value but allow prop override
   const activeType = propCurrentType || colorBlindType;
-  
   const colorBlindOptions = [
     { 
       id: 'none', 
@@ -73,20 +69,21 @@ const ColorBlindSettings = ({ onColorBlindChange, currentType: propCurrentType }
               <button
                 key={option.id}
                 onClick={() => {
-                  // Update global context
                   setColorBlindType(option.id as ColorBlindType);
-                  // Call the prop callback if provided
                   if (onColorBlindChange) {
                     onColorBlindChange(option.id as ColorBlindType);
                   }
-                }}                className={`flex flex-col gap-2 p-4 rounded-lg border-2 transition-all text-left ${
+                }}
+                className={`flex flex-col gap-2 p-4 rounded-lg border-2 transition-all text-left ${
                   activeType === option.id
                     ? 'bg-primary-50 dark:bg-primary-900/30 border-primary-500 dark:border-primary-500'
                     : 'bg-white dark:bg-gray-800 border-transparent hover:bg-gray-50 dark:hover:bg-gray-750'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">{option.name}</span>                  {activeType === option.id && (                    <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-primary-500 text-white text-xs">
+                  <span className="font-medium">{option.name}</span>
+                  {activeType === option.id && (
+                    <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-primary-500 text-white text-xs">
                       ✓
                     </span>
                   )}
@@ -96,12 +93,11 @@ const ColorBlindSettings = ({ onColorBlindChange, currentType: propCurrentType }
             ))}
           </div>
 
-          {/* Color Test Section */}
           <div className="mt-8">
             <ColorBlindTest colorBlindType={activeType} />
           </div>
 
-          {/* Info Section */}          <div className="mt-4 p-4 rounded-lg" style={{ backgroundColor: '#BFCCF2', color: '#786FF2' }}>
+          <div className="mt-4 p-4 rounded-lg" style={{ backgroundColor: '#BFCCF2', color: '#786FF2' }}>
             <p className="text-sm">
               {t('chat.configuracoes.acessibilidade.daltonismo.info')}
             </p>

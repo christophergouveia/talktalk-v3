@@ -16,7 +16,6 @@ const ColorBlindTest = ({ colorBlindType = 'none' }: ColorTestProps) => {
         {t('chat.configuracoes.acessibilidade.daltonismo.teste.titulo')}
       </h4>
       
-      {/* Color Samples */}
       <div className="grid grid-cols-3 gap-4">
         <div className="space-y-2">          <div 
             className="h-16 rounded-lg shadow-sm border-2 border-transparent" 
@@ -45,11 +44,11 @@ const ColorBlindTest = ({ colorBlindType = 'none' }: ColorTestProps) => {
             {t('chat.configuracoes.acessibilidade.daltonismo.teste.cores.azul')}
           </p>
         </div>
-      </div>      {/* Ishihara Test */}
+      </div>
       <div className="mt-6">
         <h5 className="text-md font-medium mb-3">
           {t('chat.configuracoes.acessibilidade.daltonismo.teste.ishihara.titulo')}
-        </h5>        {/* Fixed colors for Ishihara test - these should never change */}
+        </h5>
         <div className="grid grid-cols-3 gap-4">
           <div className="aspect-square rounded-lg shadow-sm overflow-hidden border-2 border-transparent bg-red-100">
             <div className="h-full flex items-center justify-center">
@@ -72,7 +71,7 @@ const ColorBlindTest = ({ colorBlindType = 'none' }: ColorTestProps) => {
           {' '}
           {t('chat.configuracoes.acessibilidade.daltonismo.teste.ishihara.numeros')}
         </p>
-      </div>      {/* Active Mode Indicator */}
+      </div>
       {colorBlindType !== 'none' && (
         <div className="mt-4 p-3 bg-primary-50 dark:bg-primary-900/30 rounded-lg flex items-center gap-3">
           <div className="h-2 w-2 bg-primary-500 rounded-full animate-pulse"></div>

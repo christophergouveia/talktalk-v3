@@ -43,7 +43,6 @@ export default function TermosPage() {
             </p>
           </div>
 
-          {/* Termos de Uso */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -74,7 +73,6 @@ export default function TermosPage() {
             </label>
           </motion.div>
 
-          {/* Política de Privacidade */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -106,7 +104,6 @@ export default function TermosPage() {
             </label>
           </motion.div>
 
-          {/* Botões */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

@@ -872,163 +872,160 @@ export default function RoomPage() {
   }
   if (showNameInput) {
     return (
-      <div className="h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-cyan-50/40 dark:from-[#0f0f0f] dark:via-[#1a1a2e] dark:to-[#16213e] relative overflow-hidden flex items-center justify-center">
+      <div className="h-[calc(100vh-2rem)] m-2 bg-gradient-to-br from-gray-50 via-blue-50/30 to-cyan-50/40 dark:from-[#0f0f0f] dark:via-[#1a1a2e] dark:to-[#16213e] relative overflow-hidden flex items-center justify-center">
         <LanguageDetector />
-        {/* Background Effects */}
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-400/8 to-cyan-400/8 rounded-full blur-3xl"></div>
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-400/6 to-blue-400/6 rounded-full blur-3xl"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/6 to-blue-400/6 rounded-full blur-2xl"></div>{' '}
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/6 to-blue-400/6 rounded-full blur-2xl"></div>
         </div>
         <motion.div
-          className="w-fit max-w-md mx-auto p-8 rounded-3xl flex flex-col items-center justify-center gap-8 text-center bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-white/30 dark:border-gray-700/40 shadow-2xl relative overflow-hidden"
+          className="w-fit max-w-md mx-auto p-6 rounded-3xl flex flex-col items-center justify-center gap-6 text-center bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-white/30 dark:border-gray-700/40 shadow-2xl relative overflow-hidden"
           initial={{ opacity: 0, scale: 0.9, y: 50 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.8, type: 'spring', stiffness: 100 }}
         >
-          {/* Inner glow effect */}
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent rounded-full"></div>{' '}
+          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent rounded-full"></div>
           <motion.h2
-            className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent relative z-10"
-            initial={{ opacity: 0, y: -30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8, type: 'spring' }}
+        className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent relative z-10"
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.8, type: 'spring' }}
           >
-            Bem-vindo à sala!
+        Bem-vindo à sala!
           </motion.h2>
           <motion.div
-            className="relative group"
-            initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            transition={{ delay: 0.5, duration: 0.8, type: 'spring', stiffness: 120 }}
+        className="relative group"
+        initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
+        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+        transition={{ delay: 0.5, duration: 0.8, type: 'spring', stiffness: 120 }}
           >
-            <div
-              className="absolute inset-0 rounded-full animate-pulse"
-              style={{ backgroundColor: `${avatarColor}15` }}
-            ></div>
-            <Image
-              src={avatarDetails.avatarURL || '/images/avatars/default.png'}
-              alt="Avatar Preview"
-              width={140}
-              height={140}
-              className="rounded-full border-4 p-4 shadow-2xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 relative z-10"
-              style={{
-                borderColor: avatarColor,
-                backgroundColor: `${avatarColor}20`,
-                boxShadow: `0 10px 40px ${avatarColor}40, 0 0 0 1px ${avatarColor}20`,
-              }}
-            />
+        <div
+          className="absolute inset-0 rounded-full animate-pulse"
+          style={{ backgroundColor: `${avatarColor}15` }}
+        ></div>
+        <Image
+          src={avatarDetails.avatarURL || '/images/avatars/default.png'}
+          alt="Avatar Preview"
+          width={120}
+          height={120}
+          className="rounded-full border-4 p-3 shadow-2xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 relative z-10"
+          style={{
+            borderColor: avatarColor,
+            backgroundColor: `${avatarColor}20`,
+            boxShadow: `0 10px 40px ${avatarColor}40, 0 0 0 1px ${avatarColor}20`,
+          }}
+        />
 
-            <motion.button
-              onClick={() => setColorModalOpenned(true)}
-              className="absolute inset-0 flex items-center justify-center rounded-full bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+        <motion.button
+          onClick={() => setColorModalOpenned(true)}
+          className="absolute inset-0 flex items-center justify-center rounded-full bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <div className="flex flex-col items-center text-white">
+            <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
             >
-              <div className="flex flex-col items-center text-white">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
-                  />
-                </svg>{' '}
-                <span className="text-xs mt-1">Mudar cor</span>
-              </div>
-            </motion.button>
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+          />
+            </svg>
+            <span className="text-xs mt-1">Mudar cor</span>
+          </div>
+        </motion.button>
           </motion.div>
           <motion.div
-            className="flex items-center gap-2"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
+        className="flex items-center gap-2"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
           >
-            <div
-              className="w-4 h-4 rounded-full border-2 border-white shadow-md"
-              style={{ backgroundColor: avatarColor }}
-            />
-            <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">Cor selecionada</span>
-          </motion.div>{' '}
+        <div
+          className="w-3 h-3 rounded-full border-2 border-white shadow-md"
+          style={{ backgroundColor: avatarColor }}
+        />
+        <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">Cor selecionada</span>
+          </motion.div>
           <motion.p
-            className="text-gray-600 dark:text-gray-300 font-medium text-lg relative z-10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
+        className="text-gray-600 dark:text-gray-300 font-medium text-base relative z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7 }}
           >
-            Para entrar na sala, digite um apelido (opcional):
+        Para entrar na sala, digite um apelido (opcional):
           </motion.p>
           <motion.div
-            className="w-full relative"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, type: 'spring' }}
+        className="w-full relative"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8, type: 'spring' }}
           >
-            <input
-              type="text"
-              className="w-full px-6 py-4 rounded-2xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-white/40 dark:border-gray-600/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 focus:bg-white/90 dark:focus:bg-gray-800/90 transition-all duration-500 text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 text-lg shadow-lg hover:shadow-xl"
-              placeholder="Seu nome"
-              value={userName}
-              onChange={handleNameInputChange}
-            />
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 pointer-events-none"></div>
+        <input
+          type="text"
+          className="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-white/40 dark:border-gray-600/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 focus:bg-white/90 dark:focus:bg-gray-800/90 transition-all duration-500 text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 text-base shadow-lg hover:shadow-xl"
+          placeholder="Seu nome"
+          value={userName}
+          onChange={handleNameInputChange}
+        />
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 pointer-events-none"></div>
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.9, type: 'spring' }}
-            className="w-full"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.9, type: 'spring' }}
+        className="w-full"
           >
-            <AvatarSelector
-              onAvatarSelect={(avatar, url) => setAvatarDetails({ avatarURL: url, avatarName: avatar })}
-              color={avatarColor}
-              getRandomAvatar={getRandomAvatar}
-            />
+        <AvatarSelector
+          onAvatarSelect={(avatar, url) => setAvatarDetails({ avatarURL: url, avatarName: avatar })}
+          color={avatarColor}
+          getRandomAvatar={getRandomAvatar}
+        />
           </motion.div>
           <ColorSelector
-            onSelectColor={handleSelectColor}
-            isOpen={isColorModalOpenned}
-            onModalClose={() => setColorModalOpenned(false)}
+        onSelectColor={handleSelectColor}
+        isOpen={isColorModalOpenned}
+        onModalClose={() => setColorModalOpenned(false)}
           />
           <motion.div
-            className="text-sm text-gray-500 dark:text-gray-400 space-y-2 bg-blue-50/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-blue-200/30 dark:border-gray-700/30 relative z-10"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 1.0, type: 'spring' }}
+        className="text-xs text-gray-500 dark:text-gray-400 space-y-2 bg-blue-50/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-3 border border-blue-200/30 dark:border-gray-700/30 relative z-10"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 1.0, type: 'spring' }}
           >
-            {' '}
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-              <span>{t('chat.dicas.nao_se_preocupe_apelido')}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-              <span>{t('chat.dicas.avatar_gerado_automaticamente')}</span>
-            </div>
+        <div className="flex items-center gap-2">
+          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+          <span>{t('chat.dicas.nao_se_preocupe_apelido')}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+          <span>{t('chat.dicas.avatar_gerado_automaticamente')}</span>
+        </div>
           </motion.div>
           <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: 1.1, type: 'spring', stiffness: 120 }}
-            className="w-full"
+        initial={{ opacity: 0, y: 30, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ delay: 1.1, type: 'spring', stiffness: 120 }}
+        className="w-full"
           >
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button
-                onClick={() => connectToRoom(false)}
-                className="w-full bg-gradient-to-r from-blue-500 via-purple-600 to-blue-500 hover:from-blue-600 hover:via-purple-700 hover:to-blue-600 text-white font-bold py-4 px-8 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 border border-white/20 backdrop-blur-sm relative overflow-hidden group"
-                size="lg"
-              >
-                <span className="relative z-10 text-lg">Entrar na Sala</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </Button>
-            </motion.div>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <Button
+            onClick={() => connectToRoom(false)}
+            className="w-full bg-gradient-to-r from-blue-500 via-purple-600 to-blue-500 hover:from-blue-600 hover:via-purple-700 hover:to-blue-600 text-white font-bold py-3 px-6 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 border border-white/20 backdrop-blur-sm relative overflow-hidden group text-base"
+            size="md"
+          >
+            <span className="relative z-10">Entrar na Sala</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </Button>
+        </motion.div>
           </motion.div>
         </motion.div>
       </div>
@@ -1040,7 +1037,6 @@ export default function RoomPage() {
   return (
     <div className="h-screen bg-gradient-to-br from-gray-50 via-primary-50/30 to-cyan-50/40 dark:from-[#0f0f0f] dark:via-[#1a1a2e] dark:to-[#16213e] relative overflow-hidden prevent-mobile-scroll">
       <LanguageDetector />
-      {/* Background Effects */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-primary-400/8 to-cyan-400/8 rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-secondary-400/6 to-primary-400/6 rounded-full blur-3xl"></div>
@@ -1071,13 +1067,8 @@ export default function RoomPage() {
                   className="text-center space-y-6"
                 >
                   <div className="relative">
-                    <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg animate-pulse">
-                        <span className="text-lg">👑</span>
-                      </div>
-                    </div>
                     <h1 className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent pt-4">
-                      VOCÊ É O ANFITRIÃO DA SALA!
+                      VOCÊ É O ANFITRIÃO DA SALA! <span className="text-white">👑</span>
                     </h1>
                   </div>
                   <h2 className="text-xl text-gray-700 dark:text-gray-300">{t('chat.compartilhar.descricao')}</h2>
@@ -1090,7 +1081,7 @@ export default function RoomPage() {
                             initial={{ opacity: 0, scale: 0.5 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ delay: index * 0.1 }}
-                            className="w-12 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white p-2 uppercase shadow-lg"
+                            className="w-12 rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 uppercase shadow-lg"
                           >
                             {c}
                           </motion.span>
@@ -1367,7 +1358,6 @@ export default function RoomPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
                 >
-                  {/* Connection Status */}
                   <div className="w-full">
                     <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border border-white/30 dark:border-gray-700/30 rounded-xl p-3 md:p-4 shadow-md">
                       <div className="flex items-center gap-3">
@@ -1397,7 +1387,6 @@ export default function RoomPage() {
                       </div>
                     </div>
                   </div>
-                  {/* Chat Compacto Switch */}
                   <div className="w-full">
                     <Switch
                       isSelected={chatCompacto}
@@ -1420,8 +1409,7 @@ export default function RoomPage() {
                         </p>
                       </div>
                     </Switch>
-                  </div>
-                  {/* Seletor de Língua */}{' '}
+                  </div>{' '}
                   <motion.div
                     className="w-full rounded-xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border border-white/30 dark:border-gray-700/30 p-3 md:p-4 shadow-md"
                     initial={{ opacity: 0, y: 20 }}

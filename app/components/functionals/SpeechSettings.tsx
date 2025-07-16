@@ -16,7 +16,7 @@ export default function SpeechSettings() {
 
   return (
     <div className="space-y-6 p-4 bg-white dark:bg-[#212121] rounded-lg shadow">
-      <h2 className="text-xl font-semibold mb-4">Configurações de Áudio</h2>      {/* Enable/Disable Speech */}
+      <h2 className="text-xl font-semibold mb-4">Configurações de Áudio</h2>
       <div className="inline-flex flex-row-reverse gap-2 w-full bg-[--chat-bg-buttons] hover:bg-content2 items-center cursor-pointer p-4 border-2 border-transparent rounded-md transition-all duration-200">
         <label className="relative inline-flex items-center cursor-pointer">
           <input 
@@ -38,7 +38,6 @@ export default function SpeechSettings() {
 
       {settings.enabled && (
         <div className="space-y-4 mt-4">
-          {/* Voice Selection */}
           <div>
             <label htmlFor="voice-select" className="block text-sm font-medium mb-2">
               Selecionar Voz
@@ -57,7 +56,6 @@ export default function SpeechSettings() {
             </select>
           </div>
 
-          {/* Volume Control */}
           <div>
             <label htmlFor="volume-slider" className="block text-sm font-medium mb-2">
               Volume
@@ -77,7 +75,6 @@ export default function SpeechSettings() {
             </div>
           </div>
 
-          {/* Rate Control */}
           <div>
             <label htmlFor="rate-slider" className="block text-sm font-medium mb-2">
               Velocidade
@@ -98,7 +95,6 @@ export default function SpeechSettings() {
             </div>
           </div>
 
-          {/* Pitch Control */}
           <div>
             <label htmlFor="pitch-slider" className="block text-sm font-medium mb-2">
               Tom
@@ -117,8 +113,7 @@ export default function SpeechSettings() {
               />
               <span className="text-sm text-gray-600 dark:text-gray-300">Agudo</span>
             </div>
-          </div>          
-            {/* Auto-read Toggle */}
+          </div>
           <div className="inline-flex flex-row-reverse gap-2 w-full bg-[--chat-bg-buttons] hover:bg-content2 items-center cursor-pointer p-4 border-2 border-transparent rounded-md transition-all duration-200">
             <label className="relative inline-flex items-center cursor-pointer">
               <input 
@@ -138,7 +133,6 @@ export default function SpeechSettings() {
             </div>
           </div>
 
-          {/* Test Voice Section */}
           <div className="space-y-2 p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg">
             <label htmlFor="test-text" className="block text-sm font-medium">
               Texto de Teste
