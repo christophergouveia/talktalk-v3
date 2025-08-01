@@ -17,7 +17,7 @@ export default function Footer({ className }: { className?: string }) {
 
   const { t } = useTranslation('translation', { keyPrefix: 'footer' });
 
-  return (    <footer className="relative mt-1 flex flex-col items-center justify-center gap-1 px-2 py-1 text-center text-gray-500 sm:flex-row sm:px-0">
+  return (    <footer className="relative mt-1 flex flex-col items-center justify-center gap-1 px-2 py-1 text-center text-gray-400 sm:flex-row sm:px-0">
       <Image
         className="left-2 top-2 w-[3rem] sm:w-[4rem]"
         src={imagemLogo}
