@@ -112,7 +112,6 @@ export default function ConversarHome() {
           userToken,
         };
         const userDataEncrypted = await criptografarUserData(userData);
-        console.log('userDataEncrypted:', userDataEncrypted);
 
         if (!userDataEncrypted?.data) {
           console.error('Falha ao criptografar dados do usuário');

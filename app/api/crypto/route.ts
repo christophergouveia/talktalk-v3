@@ -18,11 +18,7 @@ interface CryptoRequest {
 
 export async function POST(req: NextRequest) {
   try {
-    console.log('[DEBUG] Recebendo requisição para criptografia');
-
     const authorization = req.headers.get('authorization');
-
-    console.log('[DEBUG] Authorization: ', authorization);
 
     if (!authorization || authorization !== `Bearer ${API_KEY}`) {
       return new NextResponse(JSON.stringify({ error: 'Não autorizado' }), {
@@ -38,8 +34,6 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    console.log('[DEBUG] Request Body Action: ', body.action);
-    console.log('[DEBUG] Request Body Data: ', body.data);
 
     const jwtSecret = process.env.JWT_SECRET;
     const jwtSecretIv = process.env.JWT_SECRET_IV;

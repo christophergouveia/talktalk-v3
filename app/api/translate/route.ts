@@ -8,14 +8,6 @@ export async function POST(request: Request) {
   try {
     const { text, targetLanguage } = await request.json();
 
-    console.log('[DEBUG] Requisição de tradução recebida:', { 
-      text: text?.substring(0, 50) + '...',
-      targetLanguage,
-      textLength: text?.length || 0,
-      hasText: !!text,
-      hasTargetLanguage: !!targetLanguage,
-      targetLanguageType: typeof targetLanguage
-    });
 
     if (!text || !targetLanguage) {
       console.log('[ERROR] Missing text or targetLanguage:', { text: !!text, targetLanguage });
@@ -48,20 +40,11 @@ export async function POST(request: Request) {
 
     const mappedLanguage = languageMapping[targetLanguage.trim()] || targetLanguage.trim();
     
-    console.log('[DEBUG] Mapeamento de idioma:', { 
-      original: targetLanguage.trim(), 
-      mapped: mappedLanguage 
-    });
 
     const translation = await translate(text, { to: mappedLanguage, autoCorrect: true });
     const translationText = Array.isArray(translation) ? translation[0].text : translation.text;
     const translationTextStr = typeof translationText === 'string' ? translationText : String(translationText);
 
-    console.log('[DEBUG] Tradução realizada com sucesso:', {
-      originalLength: text.length,
-      translatedLength: translationTextStr.length,
-      targetLanguage: mappedLanguage
-    });
 
     return NextResponse.json({
       result: translationText,

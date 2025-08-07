@@ -33,7 +33,6 @@ i18n
         callback(null, resources)
       })
       .catch((error) => {
-        console.log(`Error loading translation for ${mappedLanguage}/${namespace}:`, error)
         // Fallback to pt-BR if the requested language fails
         if (mappedLanguage !== 'pt-BR') {
           import(`./app/locales/pt-BR/${namespace}.json`)
@@ -41,7 +40,6 @@ i18n
               callback(null, resources)
             })
             .catch((fallbackError) => {
-              console.log('Fallback to pt-BR also failed:', fallbackError)
               callback(fallbackError, null)
             })
         } else {

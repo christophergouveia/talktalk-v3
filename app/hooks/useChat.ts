@@ -28,10 +28,8 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
       const savedSettings = localStorage.getItem('talktalk_user_settings');
       if (savedSettings) {
         try {
-          const settings = JSON.parse(savedSettings);
-          if (settings.linguaSelecionada?.value) {
+          const settings = JSON.parse(savedSettings);          if (settings.linguaSelecionada?.value) {
             linguaSelecionadaRef.current = settings.linguaSelecionada.value;
-            console.log('Linguagem carregada do localStorage:', settings.linguaSelecionada.value);
           }
         } catch (error) {
           console.error('Erro ao carregar configurações:', error);
@@ -115,11 +113,7 @@ export function useChat({ socketClient, userData, codigo }: UseChatProps) {
     try {      // Só tenta traduzir se não for mensagem própria E idioma for diferente E targetLanguage não estiver vazio
       if (!isOwnMessage && message.lingua !== linguaSelecionadaRef.current && linguaSelecionadaRef.current.trim() !== '') {
         setMessageLoading(true);
-        console.log('Traduzindo mensagem:', {
-          text: message.message,
-          fromLanguage: message.lingua,
-          targetLanguage: linguaSelecionadaRef.current
-        });
+        
         
         const response = await fetch('/api/translate', {
           method: 'POST',

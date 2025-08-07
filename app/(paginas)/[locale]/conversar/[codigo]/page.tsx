@@ -107,10 +107,6 @@ export default function RoomPage() {
   });
 
   useEffect(() => {
-    console.log(mensagens);
-  }, [mensagens]);
-
-  useEffect(() => {
     if (isOpen && languagesFilterRef.current) {
       languagesFilterRef.current?.focus();
     }
@@ -144,27 +140,14 @@ export default function RoomPage() {
   const connectToRoom = useCallback(
     async (bypass: boolean) => {
       try {
-        // Evita criar socket duplicado
         if (socketClient) {
-          console.log('[DEBUG] Socket já existe, reutilizando conexão');
           return;
         }
         if (bypass) {
-          console.log('[DEBUG] Bypass ativado, conectando diretamente ao socket');
-
-          // Add fallback values for environment variables
           const socketHost = process.env.NEXT_PUBLIC_SOCKET_URL || 'localhost';
           const socketPort = process.env.NEXT_PUBLIC_SOCKET_PORT || '3001';
           const socketProtocol = process.env.NEXT_PUBLIC_PROTOCOL || 'http';
           const socketUrl = `${socketProtocol}://${socketHost}:${socketPort}`;
-
-          console.log('[DEBUG] URL do Socket:', socketUrl);
-          console.log('[DEBUG] Env vars:', {
-            SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
-            SOCKET_PORT: process.env.NEXT_PUBLIC_SOCKET_PORT,
-            FALLBACK_HOST: socketHost,
-            FALLBACK_PORT: socketPort,
-          });
 
           setConnectionStatus('connecting');
 
@@ -179,7 +162,6 @@ export default function RoomPage() {
           });
 
           socket.once('connect', () => {
-            console.log('[DEBUG] Socket conectado com sucesso:', socket.id);
             setConnectionStatus('connected');
             setShowNameInput(false);
           });
@@ -206,7 +188,6 @@ export default function RoomPage() {
               Array.isArray(currentTransports) &&
               currentTransports.some((t) => t === 'websocket')
             ) {
-              console.log('[DEBUG] Tentando fallback para polling...');
               socket.io.opts.transports = ['polling'];
               setConnectionStatus('connecting');
               socket.connect();
@@ -229,17 +210,12 @@ export default function RoomPage() {
           });
 
           socket.on('disconnect', (reason) => {
-            console.log('[DEBUG] Socket desconectado:', reason);
             setConnectionStatus('disconnected');
           });
-
-          console.log('[DEBUG] Iniciando conexão do socket...');
           socket.connect();
           setSocketClient(socket);
           return;
         }
-
-        console.log('[DEBUG] Gerando novo usuário');
         const sala = await fetchRoom(codigo);
 
         if (!sala) {
@@ -276,26 +252,12 @@ export default function RoomPage() {
           path: '/',
         }); // Define os dados do usuário antes de criar o socket
         setUserData(payload);
-        // Cria e configura o socket apenas uma vez
-        console.log('[DEBUG] Environment variables no modo normal:', {
-          SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
-          SOCKET_PORT: process.env.NEXT_PUBLIC_SOCKET_PORT,
-          NODE_ENV: process.env.NODE_ENV,
-        });
 
         // Add fallback values for environment variables
         const socketHost = process.env.NEXT_PUBLIC_SOCKET_URL || 'localhost';
         const socketPort = process.env.NEXT_PUBLIC_SOCKET_PORT || '3001';
         const socketProtocol = process.env.NEXT_PUBLIC_PROTOCOL || 'http';
         const socketUrl = `${socketProtocol}://${socketHost}:${socketPort}`;
-
-        console.log('[DEBUG] Criando socket normal para:', socketUrl);
-        console.log('[DEBUG] Verificando se socketUrl é válido:', {
-          isValidUrl: socketUrl.includes('undefined') ? 'CONTÉM undefined!' : 'Parece válido',
-          length: socketUrl.length,
-          socketHost,
-          socketPort,
-        });
 
         const socket = io(socketUrl, {
           withCredentials: true,
@@ -311,9 +273,7 @@ export default function RoomPage() {
 
         // Configura os eventos antes de conectar
         socket.once('connect', () => {
-          console.log('[DEBUG] Socket conectado com sucesso:', socket.id);
           const userDataString = JSON.stringify(payload);
-          console.log('[DEBUG] Emitindo join-room para:', codigo);
           socket.emit('join-room', codigo, userDataString, locale);
           setShowNameInput(false);
         });
@@ -335,13 +295,6 @@ export default function RoomPage() {
           }
           setShowErrorModal(true);
         });
-
-        socket.on('disconnect', (reason) => {
-          console.log('[DEBUG] Socket desconectado:', reason);
-        });
-
-        console.log('[DEBUG] Iniciando conexão do socket...');
-        // Conecta o socket
         socket.connect();
         setSocketClient(socket);
       } catch (error) {
@@ -465,14 +418,12 @@ export default function RoomPage() {
     // Função para verificar status e reconectar se necessário
     const ensureConnection = () => {
       if (socketClient.disconnected) {
-        console.log('[DEBUG] Socket desconectado detectado, tentando reconectar...');
         setConnectionStatus('connecting');
         socketClient.connect();
         
         // Aguarda um pouco e verifica se conseguiu conectar
         setTimeout(() => {
           if (socketClient.connected && userData) {
-            console.log('[DEBUG] Reconexão bem-sucedida, reentrando na sala...');
             const userDataString = JSON.stringify(userData);
             socketClient.emit('join-room', codigo, userDataString, locale);
           }
@@ -484,7 +435,6 @@ export default function RoomPage() {
     ensureConnection();
     
     const handleConnect = () => {
-      console.log('Conectado ao servidor');
       setConnectionStatus('connected');
       if (userData) {
         const userDataString = JSON.stringify(userData);
@@ -492,7 +442,6 @@ export default function RoomPage() {
       }
     };
     const handleUsersUpdate = async (users: any[]) => {
-      console.log('[DEBUG] Users Update Received: ', users);
       const usersMap: { [key: string]: UserData } = {};
 
       for (const user of users) {
@@ -513,26 +462,18 @@ export default function RoomPage() {
                 isTyping: false,
                 lastActivity: new Date().toISOString(),
               };
-              console.log(
-                '[DEBUG] Usuário adicionado:',
-                userDataDecrypted.data.apelido,
-                userDataDecrypted.data.userToken
-              );
             }
           }
         } catch (error) {
           console.error('Erro ao processar dados do usuário:', error);
         }
       }
-
-      console.log('[DEBUG] Total de usuários processados:', Object.keys(usersMap).length);
       setUsersRoomData(usersMap);
       setPessoasConectadas(users.length);
     };
 
     const handleUsersTyping = async (data: { userToken: string; typing: boolean }) => {
       if (userData?.userToken === data.userToken) return;
-      console.log('[DEBUG] Users Typing Received: ', data);
       setUsersTyping((prev) => {
         const existingIndex = prev.findIndex((user) => user.userToken === data.userToken);
         if (existingIndex >= 0) {
@@ -749,13 +690,11 @@ export default function RoomPage() {
     const maxReconnectAttempts = 5;
 
     const handleDisconnect = (reason: string) => {
-      console.log('[DEBUG] Socket desconectado:', reason);
       setConnectionStatus('disconnected');
 
       // Se for desconexão por timeout, tenta reconectar
       if (reason === 'io server disconnect' || reason === 'transport close' || reason === 'ping timeout') {
         if (reconnectAttempts < maxReconnectAttempts) {
-          console.log(`[DEBUG] Tentativa de reconexão ${reconnectAttempts + 1} de ${maxReconnectAttempts}`);
           setConnectionStatus('connecting');
           setTimeout(
             () => {
@@ -765,26 +704,22 @@ export default function RoomPage() {
             1000 * Math.min(reconnectAttempts + 1, 5)
           ); // Backoff exponencial
         } else {
-          console.log('[DEBUG] Número máximo de tentativas de reconexão atingido');
           setConnectionStatus('error');
         }
       }
     };
 
     const handleReconnect = (attempt: number) => {
-      console.log('[DEBUG] Reconectado após tentativa:', attempt);
       reconnectAttempts = 0; // Reseta contador após reconexão bem sucedida
       setConnectionStatus('connected');
       socketClient.emit('join-room', codigo);
     };
 
     const handleConnect = () => {
-      console.log('[DEBUG] Socket conectado no useEffect');
       reconnectAttempts = 0;
       setConnectionStatus('connected');
     };
     const handleConnecting = () => {
-      console.log('[DEBUG] Socket tentando conectar...');
       setConnectionStatus('connecting');
     };
 
@@ -827,10 +762,8 @@ export default function RoomPage() {
           ? 'disconnected'
           : 'connecting';
 
-      console.log('[DEBUG] Verificação inicial de status:', realStatus);
         // Se o usuário entrou na sala desconectado, tenta reconectar automaticamente
       if (realStatus === 'disconnected') {
-        console.log('[DEBUG] Usuário entrou na sala desconectado. Iniciando reconexão automática...');
         setConnectionStatus('checking');
 
         try {
@@ -840,12 +773,10 @@ export default function RoomPage() {
           // Aguarda conexão e tenta entrar na sala
           const reconnectionTimeout = setTimeout(() => {
             if (socketClient.connected) {
-              console.log('[DEBUG] Reconexão inicial bem-sucedida. Entrando na sala...');
               const userDataString = JSON.stringify(userData);
               socketClient.emit('join-room', codigo, userDataString, locale);
               setConnectionStatus('connected');
             } else {
-              console.log('[DEBUG] Falha na reconexão inicial. Status será tratado pela verificação periódica.');
               setConnectionStatus('error');
             }
           }, 2000);
@@ -854,14 +785,11 @@ export default function RoomPage() {
           return () => clearTimeout(reconnectionTimeout);
           
         } catch (error) {
-          console.error('[DEBUG] Erro durante reconexão inicial:', error);
           setConnectionStatus('error');
         }
       } else if (realStatus === 'connected') {
-        console.log('[DEBUG] Usuário já está conectado na entrada da sala.');
         setConnectionStatus('connected');
       } else {
-        console.log('[DEBUG] Socket em estado de conexão. Aguardando...');
         setConnectionStatus('connecting');
       }
     };
@@ -890,17 +818,14 @@ export default function RoomPage() {
 
       setConnectionStatus((prevStatus) => {
         if (prevStatus !== realStatus) {
-          console.log(`[DEBUG] Status corrigido: ${prevStatus} -> ${realStatus}`);
           
           // Se mudou para desconectado, incrementa contador
           if (realStatus === 'disconnected') {
             disconnectedCount++;
-            console.log(`[DEBUG] Usuario desconectado detectado. Contagem: ${disconnectedCount}/${maxDisconnectedChecks}`);
           } else if (realStatus === 'connected') {
             // Se conectou, reseta contadores
             disconnectedCount = 0;
             reconnectionAttempts = 0;
-            console.log('[DEBUG] Usuario reconectado com sucesso. Contadores resetados.');
           }
           
           return realStatus;
@@ -910,7 +835,6 @@ export default function RoomPage() {
 
       // Se usuário está desconectado por várias verificações consecutivas, tenta reconectar
       if (realStatus === 'disconnected' && disconnectedCount >= maxDisconnectedChecks && reconnectionAttempts < maxReconnectionAttempts) {
-        console.log(`[DEBUG] Iniciando tentativa de reconexão ${reconnectionAttempts + 1}/${maxReconnectionAttempts}`);
         reconnectionAttempts++;
         disconnectedCount = 0; // Reseta contador para dar nova chance
         
@@ -919,13 +843,11 @@ export default function RoomPage() {
         // Tenta reconectar
         try {
           if (socketClient.disconnected) {
-            console.log('[DEBUG] Executando reconexão do socket...');
             socketClient.connect();
             
             // Se tiver userData, tenta reentrar na sala
             setTimeout(() => {
               if (socketClient.connected && userData) {
-                console.log('[DEBUG] Reentrando na sala após reconexão...');
                 const userDataString = JSON.stringify(userData);
                 socketClient.emit('join-room', codigo, userDataString, locale);
               }
@@ -935,7 +857,6 @@ export default function RoomPage() {
           console.error('[DEBUG] Erro durante tentativa de reconexão:', error);
           setConnectionStatus('error');
         }      } else if (realStatus === 'disconnected' && reconnectionAttempts >= maxReconnectionAttempts) {
-        console.log('[DEBUG] Número máximo de tentativas de reconexão atingido');
         setConnectionStatus('error');
       }
     };
@@ -987,7 +908,6 @@ export default function RoomPage() {
   const forceReconnect = useCallback(() => {
     if (!socketClient) return;
     
-    console.log('[DEBUG] Forçando reconexão manual...');
     setConnectionStatus('connecting');
     
     // Desconecta primeiro se ainda estiver conectado
@@ -1002,7 +922,6 @@ export default function RoomPage() {
       // Tenta reentrar na sala após conectar
       setTimeout(() => {
         if (socketClient.connected && userData) {
-          console.log('[DEBUG] Reentrando na sala após reconexão manual...');
           const userDataString = JSON.stringify(userData);
           socketClient.emit('join-room', codigo, userDataString, locale);
         }
