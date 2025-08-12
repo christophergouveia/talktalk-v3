@@ -31,18 +31,21 @@
         "titulo": "Sem necessidade de criação de contas",
         "descricao": "Contas? Registro? Esqueça cadastros complicados. Nossa ferramenta permite que você comece a conversar imediatamente, sem necessidade de criar uma conta."
       }
-    },    "desenvolvedores": {
+    },
+    "desenvolvedores": {
       "titulo": "Desenvolvedores",
       "cargos": {
         "frontend": "Desenvolvedor frontend",
         "backend": "Desenvolvedor backend"
       }
-    },    "highlights": {
+    },
+    "highlights": {
       "gratuito": "100% gratuito",
       "sem_cadastro": "Sem cadastro",
       "traducao_instantanea": "Tradução instantânea",
       "totalmente_seguro": "Totalmente seguro"
-    },    "botoes": {
+    },
+    "botoes": {
       "saiba_mais": "Saiba mais"
     }
   },
@@ -53,7 +56,8 @@
   },
   "sobre": {
     "hero": {
-      "badge": "Conectando o mundo através da comunicação",      "titulo": {
+      "badge": "Conectando o mundo através da comunicação",
+      "titulo": {
         "parte1": "Nossa jornada no ",
         "parte2": "TalkTalk"
       },
@@ -62,7 +66,8 @@
         "comecar_conversar": "Começar a conversar",
         "conhecer_equipe": "Conhecer a equipe"
       }
-    },    "privacidade": {
+    },
+    "privacidade": {
       "badge": "Segurança em primeiro lugar",
       "titulo": {
         "parte1": "Sua",
@@ -75,11 +80,13 @@
         "criptografia": "Criptografia de ponta a ponta",
         "dados_nao_armazenados": "Dados nunca armazenados",
         "conformidade_lgpd": "Conformidade com LGPD"
-      },      "imagem_alt": "Conversa segura"
+      },
+      "imagem_alt": "Conversa segura"
     },
     "diferenciais": {
       "titulo": "Nossos diferenciais",
-      "subtitulo": "O que nos torna únicos no mundo da comunicação global",      "seguranca": {
+      "subtitulo": "O que nos torna únicos no mundo da comunicação global",
+      "seguranca": {
         "titulo": "Segurança máxima",
         "descricao": "Proteção avançada com criptografia de ponta a ponta, garantindo que apenas você e seu interlocutor tenham acesso às mensagens.",
         "imagem_alt": "Segurança"
@@ -122,7 +129,8 @@
         "descricao": "Customize a interface, cores, temas e configurações para criar sua experiência única."
       }
     },
-    "evolucao": {      "badge": "Nossa jornada",
+    "evolucao": {
+      "badge": "Nossa jornada",
       "titulo": "Nossa evolução",
       "subtitulo": "Acompanhe cada etapa da nossa jornada, desde a ideia inicial até o produto revolucionário de hoje",
       "timeline": {
@@ -150,7 +158,8 @@
           "data": "Dezembro 2024",
           "titulo": "Final da primeira etapa do TalkTalk",
           "descricao": "A primeira parte do TalkTalk foi finalizada com sucesso, resultando em um sistema funcional de tradução em tempo real. Essa etapa representou o núcleo do desenvolvimento, reunindo as principais funcionalidades e definindo a identidade técnica do projeto."
-        },        "outubro_2024": {
+        },
+        "outubro_2024": {
           "data": "Fevereiro 2025",
           "titulo": "Segunda etapa: acessibilidade e inclusão",
           "descricao": "Na segunda etapa, o TalkTalk teve seu foco ampliado para incluir recursos de acessibilidade, com destaque para a integração da tradução em Libras via VLibras e adaptações visuais para diferentes necessidades dos usuários. Essa fase garantiu que a plataforma se tornasse mais inclusiva, promovendo uma comunicação efetiva para todos."
@@ -172,25 +181,30 @@
         }
       }
     },
-    "equipe": {      "badge": "Conheça a equipe",
+    "equipe": {
+      "badge": "Conheça a equipe",
       "titulo": "Conheça nossa equipe",
       "subtitulo": "Os visionários e desenvolvedores por trás da revolução na comunicação global",
-      "membros": {        "gustavo": {
+      "membros": {
+        "gustavo": {
           "nome": "Gustavo Preti",
           "cargo": "Desenvolvedor",
           "descricao": "Especialista em desenvolvimento web moderno, com foco em React, Next.js e tecnologias de tradução. Responsável pela arquitetura completa do sistema e experiência do usuário.",
           "tags": []
-        },        "christopher": {
+        },
+        "christopher": {
           "nome": "Christopher Gouveia",
           "cargo": "Desenvolvedor",
           "descricao": "Especialista em infraestrutura, segurança e otimização de performance. Responsável pela implementação do backend robusto e deployment escalável da aplicação.",
           "tags": []
-        },        "kaike": {
+        },
+        "kaike": {
           "nome": "Kaike Sathler",
           "cargo": "Desenvolvedor",
           "descricao": "Especialista em desenvolvimento frontend e design de interfaces, com foco em experiência do usuário e acessibilidade. Responsável pela criação de componentes reutilizáveis e design system.",
           "tags": []
-        },        "michelli": {
+        },
+        "michelli": {
           "nome": "Michelli Cristina Galli",
           "cargo": "Orientadora do Projeto",
           "descricao": "Professora e orientadora responsável pela supervisão acadêmica do projeto, fornecendo direcionamento técnico e metodológico para o desenvolvimento do TalkTalk.",
@@ -216,15 +230,11 @@
     "cta": {
       "titulo": "Pronto para quebrar barreiras?",
       "descricao": "Junte-se a milhares de pessoas que já estão experimentando uma nova forma de se comunicar globalmente.",
-      "botoes": {        "comecar_agora": "Começar agora",
-        "personalizar": "Personalizar"
-      }
+      "botoes": { "comecar_agora": "Começar agora", "personalizar": "Personalizar" }
     },
     "desenvolvedores": {
       "titulo": "Desenvolvedores",
-      "cargos": {        "frontend": "Desenvolvedor frontend",
-        "backend": "Desenvolvedor backend"
-      }
+      "cargos": { "frontend": "Desenvolvedor frontend", "backend": "Desenvolvedor backend" }
     }
   },
   "conversar": {
@@ -269,7 +279,8 @@
       "selecionado": "SELECIONADO"
     }
   },
-  "chat": {    "interface": {
+  "chat": {
+    "interface": {
       "digite_mensagem": "Digite uma mensagem...",
       "emoji_picker": {
         "botao_abrir": "Abrir seletor de emojis",
@@ -481,12 +492,14 @@
       "chat_compacto": {
         "titulo": "Chat compacto",
         "descricao": "Mensagens em formato condensado para economizar espaço"
-      },      "botoes": {
+      },
+      "botoes": {
         "salvar": "Salvar alterações",
         "salvando": "Salvando...",
         "reconectar": "Reconectar"
       }
-    },    "status_conexao": {
+    },
+    "status_conexao": {
       "titulo": "Status da conexão",
       "conectado": "Conectado ao servidor",
       "conectando": "Conectando...",
@@ -530,7 +543,8 @@
     "dicas": {
       "nao_se_preocupe_apelido": "Não se preocupe caso não insira um apelido.",
       "avatar_gerado_automaticamente": "Um avatar será gerado automaticamente para você."
-    },    "erros": {
+    },
+    "erros": {
       "sala_nao_encontrada": "Sala não encontrada!",
       "erro_conectar_sala": "Erro ao conectar na sala:",
       "sala_cheia": "Sala está cheia! Máximo de 4 usuários permitidos.",
@@ -617,5 +631,31 @@
     "leopardo": "Leopardo Anônimo",
     "python": "Python Anônimo",
     "wombat": "Wombat Anônimo"
+  },
+  "seo": {
+    "home": {
+      "title": "Talk-Talk! - Tradução em Tempo Real | Converse em Qualquer Idioma",
+      "description": "Talk-Talk! é uma ferramenta de tradução via bate-papo em tempo real. Quebre barreiras linguísticas e comunique-se facilmente com pessoas de todo o mundo."
+    },
+    "about": {
+      "title": "Sobre o Talk-Talk! - Ferramenta de Tradução em Tempo Real",
+      "description": "Conheça o Talk-Talk!, a inovadora ferramenta de tradução em tempo real que conecta pessoas ao redor do mundo, quebrando barreiras linguísticas."
+    },
+    "chat": {
+      "title": "Conversar - Talk-Talk! | Tradução em Tempo Real",
+      "description": "Inicie uma conversa com tradução em tempo real. Conecte-se com pessoas de qualquer lugar do mundo usando o Talk-Talk!"
+    },
+    "settings": {
+      "title": "Configurações - Talk-Talk!",
+      "description": "Personalize sua experiência no Talk-Talk!. Configure idiomas, temas e preferências de tradução."
+    },
+    "terms": {
+      "title": "Termos de Uso - Talk-Talk!",
+      "description": "Leia os termos de uso e políticas de privacidade do Talk-Talk!. Entenda como protegemos sua privacidade."
+    },
+    "chatroom": {
+      "title": "Sala de Conversa - Talk-Talk!",
+      "description": "Sala de conversa privada com tradução em tempo real."
+    }
   }
 }

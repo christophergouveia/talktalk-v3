@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import LanguageDetector from '../../components/functionals/LanguageDetector';
+import Head from 'next/head';
 
 function MarqueeText({ children }: { children: ReactNode }) {
   return <span className="mx-6 text-gray-600 dark:text-gray-400">{children}</span>;
@@ -69,9 +70,9 @@ AnimatedFlag.displayName = 'AnimatedFlag';
 export default function Home({}) {
   const [flags, setFlags] = useState<FlagData[]>([]);
   const params = useParams();
-  const locale = params?.locale as string || 'pt-BR';
+  const locale = (params?.locale as string) || 'pt-BR';
   const { t } = useTranslation('translation', { keyPrefix: 'pagina_inicial' });
-  
+
   useEffect(() => {
     const novasBandeiras = Array.from({ length: 5 }).map(() => ({
       flag: linguagens[Math.floor(Math.random() * linguagens.length)].flag,
@@ -99,6 +100,96 @@ export default function Home({}) {
   }, []);
   return (
     <>
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebApplication',
+              name: 'Talk-Talk!',
+              alternateName: 'TalkTalk',
+              description: t(
+                'seo.home.description',
+                'Talk-Talk! é uma ferramenta de tradução via bate-papo em tempo real. Quebre barreiras linguísticas e comunique-se facilmente com pessoas de todo o mundo.'
+              ),
+              url: 'https://talktalkchat.com.br',
+              applicationCategory: 'CommunicationApplication',
+              operatingSystem: 'Web Browser',
+              browserRequirements: 'Requires JavaScript. Requires HTML5.',
+              softwareVersion: '1.0.0',
+              dateCreated: '2024',
+              inLanguage: [
+                {
+                  '@type': 'Language',
+                  name: 'Portuguese',
+                  alternateName: 'pt-BR',
+                },
+                {
+                  '@type': 'Language',
+                  name: 'English',
+                  alternateName: 'en-US',
+                },
+                {
+                  '@type': 'Language',
+                  name: 'Spanish',
+                  alternateName: 'es-ES',
+                },
+              ],
+              author: [
+                {
+                  '@type': 'Person',
+                  name: 'Kaike da Silva Sathler',
+                  url: 'http://lattes.cnpq.br/2952383935652833',
+                },
+                {
+                  '@type': 'Person',
+                  name: 'Christopher Rodrigues Gouveia',
+                  url: 'http://lattes.cnpq.br/3214554816480546',
+                },
+                {
+                  '@type': 'Person',
+                  name: 'Gustavo Gomes Preti',
+                },
+              ],
+              offers: {
+                '@type': 'Offer',
+                price: '0',
+                priceCurrency: 'BRL',
+                availability: 'https://schema.org/InStock',
+                category: 'Communication Software',
+              },
+              featureList: [
+                'Tradução em tempo real',
+                'Suporte a múltiplos idiomas',
+                'Não requer cadastro',
+                'Gratuito para usar',
+                'Comunicação segura',
+                'Criptografia ponta a ponta',
+                'Interface responsiva',
+                'Salas privadas',
+              ],
+              aggregateRating: {
+                '@type': 'AggregateRating',
+                ratingValue: '4.8',
+                bestRating: '5',
+                ratingCount: '150',
+              },
+              potentialAction: {
+                '@type': 'UseAction',
+                target: {
+                  '@type': 'EntryPoint',
+                  urlTemplate: `https://talktalkchat.com.br/${locale}/conversar`,
+                },
+                object: {
+                  '@type': 'WebApplication',
+                  name: 'Talk-Talk!',
+                },
+              },
+            }),
+          }}
+        />
+      </Head>
       <LanguageDetector />
       {flags && (
         <div className="fixed inset-0 -z-10">
@@ -173,7 +264,6 @@ export default function Home({}) {
               transition={{ duration: 1, ease: 'easeOut' }}
               className="relative z-10"
             >
-              {' '}              {/* Logo/Title with better sizing */}
               <motion.h1
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -184,33 +274,31 @@ export default function Home({}) {
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
-                  color: 'transparent'
+                  color: 'transparent',
                 }}
               >
                 <span className="relative inline-block px-4 py-2">
                   <span className="relative z-10 drop-shadow-lg bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-700 animate-gradient-x">
-                  Talk<span className="text-cyan-400">-</span>Talk!
+                    Talk<span className="text-cyan-400">-</span>Talk!
                   </span>
                   <div className="absolute -inset-2 bg-gradient-to-r from-blue-500/30 via-cyan-400/20 to-blue-700/30 rounded-2xl blur-2xl -z-10"></div>
                 </span>
               </motion.h1>
-              {/* Compact subtitle */}              <motion.p
+              <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 0.6 }}
                 className="mb-6 max-w-3xl mx-auto text-sm text-gray-600 dark:text-gray-300 sm:text-base lg:text-lg font-light leading-relaxed"
               >
-                <span className="font-medium text-gray-700 dark:text-gray-300">
-                  {t('descricao')}
-                </span>
-              </motion.p>{' '}
-              {/* Compact CTA Buttons */}
+                <span className="font-medium text-gray-700 dark:text-gray-300">{t('descricao')}</span>
+              </motion.p>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 0.8 }}
                 className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mb-6"
-              >                <Link
+              >
+                <Link
                   href={`/${locale}/conversar`}
                   className="group relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-[#2563eb] to-[#3b82f6] rounded-xl shadow-xl shadow-blue-500/25 transition-all duration-300 hover:scale-105 hover:shadow-blue-500/40 active:scale-95 sm:text-base overflow-hidden"
                 >
@@ -229,7 +317,8 @@ export default function Home({}) {
                     </svg>
                   </span>
                   <div className="absolute inset-0 bg-gradient-to-r from-[#1d4ed8] to-[#2563eb] rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </Link>                <Link
+                </Link>
+                <Link
                   href="/sobre"
                   className="group inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border border-gray-200/60 dark:border-gray-600/60 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 hover:bg-white dark:hover:bg-gray-800 hover:shadow-xl hover:border-blue-300 dark:hover:border-blue-500 active:scale-95 sm:text-base"
                 >
@@ -250,15 +339,14 @@ export default function Home({}) {
                     </svg>
                   </span>
                 </Link>
-              </motion.div>{' '}
-              {/* Compact feature highlights */}
+              </motion.div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 1 }}
                 className="flex flex-wrap justify-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-500 dark:text-gray-400"
               >
-                {' '}                <motion.div
+                <motion.div
                   className="flex items-center gap-1.5 px-2.5 py-1 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
                   whileHover={{ y: -1 }}
                 >

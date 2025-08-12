@@ -45,9 +45,10 @@ export default function RoomPage() {
     value: 'pt-BR',
     flag: 'BR',
   });
-  const [socketClient, setSocketClient] = useState<Socket | null>(null);  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error' | 'checking'>(
-    'disconnected'
-  );
+  const [socketClient, setSocketClient] = useState<Socket | null>(null);
+  const [connectionStatus, setConnectionStatus] = useState<
+    'connecting' | 'connected' | 'disconnected' | 'error' | 'checking'
+  >('disconnected');
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [hostModal, setHostModal] = useState<boolean>(false);
@@ -414,13 +415,13 @@ export default function RoomPage() {
   }, [fetchSala, socketClient]);
   useEffect(() => {
     if (!socketClient) return;
-    
+
     // Função para verificar status e reconectar se necessário
     const ensureConnection = () => {
       if (socketClient.disconnected) {
         setConnectionStatus('connecting');
         socketClient.connect();
-        
+
         // Aguarda um pouco e verifica se conseguiu conectar
         setTimeout(() => {
           if (socketClient.connected && userData) {
@@ -433,7 +434,7 @@ export default function RoomPage() {
 
     // Verifica conexão imediatamente
     ensureConnection();
-    
+
     const handleConnect = () => {
       setConnectionStatus('connected');
       if (userData) {
@@ -564,9 +565,12 @@ export default function RoomPage() {
     setUserName(e.target.value);
   }, []);
 
-  const handleEmojiSelect = useCallback((emoji: string) => {
-    setMensagem(prev => prev + emoji);
-  }, [setMensagem]);
+  const handleEmojiSelect = useCallback(
+    (emoji: string) => {
+      setMensagem((prev) => prev + emoji);
+    },
+    [setMensagem]
+  );
 
   const recAudio = async () => {
     try {
@@ -750,7 +754,7 @@ export default function RoomPage() {
       socketClient.off('connect_error', handleConnectError);
       socketClient.off('reconnect_error');
     };
-  }, [socketClient, codigo]);  // Verificação automática do status de conexão na entrada da sala
+  }, [socketClient, codigo]); // Verificação automática do status de conexão na entrada da sala
   useEffect(() => {
     if (!socketClient || !userData) return;
 
@@ -762,14 +766,14 @@ export default function RoomPage() {
           ? 'disconnected'
           : 'connecting';
 
-        // Se o usuário entrou na sala desconectado, tenta reconectar automaticamente
+      // Se o usuário entrou na sala desconectado, tenta reconectar automaticamente
       if (realStatus === 'disconnected') {
         setConnectionStatus('checking');
 
         try {
           setConnectionStatus('connecting');
           socketClient.connect();
-          
+
           // Aguarda conexão e tenta entrar na sala
           const reconnectionTimeout = setTimeout(() => {
             if (socketClient.connected) {
@@ -783,7 +787,6 @@ export default function RoomPage() {
 
           // Limpeza do timeout se o componente for desmontado
           return () => clearTimeout(reconnectionTimeout);
-          
         } catch (error) {
           setConnectionStatus('error');
         }
@@ -818,7 +821,6 @@ export default function RoomPage() {
 
       setConnectionStatus((prevStatus) => {
         if (prevStatus !== realStatus) {
-          
           // Se mudou para desconectado, incrementa contador
           if (realStatus === 'disconnected') {
             disconnectedCount++;
@@ -827,24 +829,28 @@ export default function RoomPage() {
             disconnectedCount = 0;
             reconnectionAttempts = 0;
           }
-          
+
           return realStatus;
         }
         return prevStatus;
       });
 
       // Se usuário está desconectado por várias verificações consecutivas, tenta reconectar
-      if (realStatus === 'disconnected' && disconnectedCount >= maxDisconnectedChecks && reconnectionAttempts < maxReconnectionAttempts) {
+      if (
+        realStatus === 'disconnected' &&
+        disconnectedCount >= maxDisconnectedChecks &&
+        reconnectionAttempts < maxReconnectionAttempts
+      ) {
         reconnectionAttempts++;
         disconnectedCount = 0; // Reseta contador para dar nova chance
-        
+
         setConnectionStatus('connecting');
-        
+
         // Tenta reconectar
         try {
           if (socketClient.disconnected) {
             socketClient.connect();
-            
+
             // Se tiver userData, tenta reentrar na sala
             setTimeout(() => {
               if (socketClient.connected && userData) {
@@ -856,7 +862,8 @@ export default function RoomPage() {
         } catch (error) {
           console.error('[DEBUG] Erro durante tentativa de reconexão:', error);
           setConnectionStatus('error');
-        }      } else if (realStatus === 'disconnected' && reconnectionAttempts >= maxReconnectionAttempts) {
+        }
+      } else if (realStatus === 'disconnected' && reconnectionAttempts >= maxReconnectionAttempts) {
         setConnectionStatus('error');
       }
     };
@@ -907,18 +914,18 @@ export default function RoomPage() {
   // Função para forçar reconexão manual
   const forceReconnect = useCallback(() => {
     if (!socketClient) return;
-    
+
     setConnectionStatus('connecting');
-    
+
     // Desconecta primeiro se ainda estiver conectado
     if (socketClient.connected) {
       socketClient.disconnect();
     }
-    
+
     // Aguarda um pouco e tenta reconectar
     setTimeout(() => {
       socketClient.connect();
-      
+
       // Tenta reentrar na sala após conectar
       setTimeout(() => {
         if (socketClient.connected && userData) {
@@ -971,127 +978,127 @@ export default function RoomPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-purple-500/5 pointer-events-none"></div>
           <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent rounded-full"></div>
           <motion.h2
-        className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent relative z-10"
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.8, type: 'spring' }}
+            className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent relative z-10"
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.8, type: 'spring' }}
           >
-        Bem-vindo à sala!
+            Bem-vindo à sala!
           </motion.h2>
           <motion.div
-        className="relative group"
-        initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
-        animate={{ opacity: 1, scale: 1, rotate: 0 }}
-        transition={{ delay: 0.5, duration: 0.8, type: 'spring', stiffness: 120 }}
+            className="relative group"
+            initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ delay: 0.5, duration: 0.8, type: 'spring', stiffness: 120 }}
           >
-        <div
-          className="absolute inset-0 rounded-full animate-pulse"
-          style={{ backgroundColor: `${avatarColor}15` }}
-        ></div>
-        <Image
-          src={avatarDetails.avatarURL || '/images/avatars/default.png'}
-          alt="Avatar Preview"
-          width={120}
-          height={120}
-          className="rounded-full border-4 p-3 shadow-2xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 relative z-10"
-          style={{
-            borderColor: avatarColor,
-            backgroundColor: `${avatarColor}20`,
-            boxShadow: `0 10px 40px ${avatarColor}40, 0 0 0 1px ${avatarColor}20`,
-          }}
-        />
+            <div
+              className="absolute inset-0 rounded-full animate-pulse"
+              style={{ backgroundColor: `${avatarColor}15` }}
+            ></div>
+            <Image
+              src={avatarDetails.avatarURL || '/images/avatars/default.png'}
+              alt="Avatar Preview"
+              width={120}
+              height={120}
+              className="rounded-full border-4 p-3 shadow-2xl transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 relative z-10"
+              style={{
+                borderColor: avatarColor,
+                backgroundColor: `${avatarColor}20`,
+                boxShadow: `0 10px 40px ${avatarColor}40, 0 0 0 1px ${avatarColor}20`,
+              }}
+            />
 
-        <motion.button
-          onClick={() => setColorModalOpenned(true)}
-          className="absolute inset-0 flex items-center justify-center rounded-full bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <div className="flex flex-col items-center text-white">
-            <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+            <motion.button
+              onClick={() => setColorModalOpenned(true)}
+              className="absolute inset-0 flex items-center justify-center rounded-full bg-gradient-to-br from-black/60 to-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
-          />
-            </svg>
-            <span className="text-xs mt-1">Mudar cor</span>
-          </div>
-        </motion.button>
+              <div className="flex flex-col items-center text-white">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                  />
+                </svg>
+                <span className="text-xs mt-1">Mudar cor</span>
+              </div>
+            </motion.button>
           </motion.div>
           <motion.div
-        className="flex items-center gap-2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
+            className="flex items-center gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
           >
-        <div
-          className="w-3 h-3 rounded-full border-2 border-white shadow-md"
-          style={{ backgroundColor: avatarColor }}
-        />
-        <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">Cor selecionada</span>
+            <div
+              className="w-3 h-3 rounded-full border-2 border-white shadow-md"
+              style={{ backgroundColor: avatarColor }}
+            />
+            <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">Cor selecionada</span>
           </motion.div>
           <motion.p
-        className="text-gray-600 dark:text-gray-300 font-medium text-base relative z-10"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7 }}
+            className="text-gray-600 dark:text-gray-300 font-medium text-base relative z-10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
           >
-        Para entrar na sala, digite um apelido (opcional):
+            Para entrar na sala, digite um apelido (opcional):
           </motion.p>
           <motion.div
-        className="w-full relative"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, type: 'spring' }}
+            className="w-full relative"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, type: 'spring' }}
           >
-        <input
-          type="text"
-          className="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-white/40 dark:border-gray-600/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 focus:bg-white/90 dark:focus:bg-gray-800/90 transition-all duration-500 text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 text-base shadow-lg hover:shadow-xl"
-          placeholder="Seu nome"
-          value={userName}
-          onChange={handleNameInputChange}
-        />
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 pointer-events-none"></div>
+            <input
+              type="text"
+              className="w-full px-4 py-3 rounded-2xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border border-white/40 dark:border-gray-600/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 focus:bg-white/90 dark:focus:bg-gray-800/90 transition-all duration-500 text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 text-base shadow-lg hover:shadow-xl"
+              placeholder="Seu nome"
+              value={userName}
+              onChange={handleNameInputChange}
+            />
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 pointer-events-none"></div>
           </motion.div>
           <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.9, type: 'spring' }}
-        className="w-full"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.9, type: 'spring' }}
+            className="w-full"
           >
-        <AvatarSelector
-          onAvatarSelect={(avatar, url) => setAvatarDetails({ avatarURL: url, avatarName: avatar })}
-          color={avatarColor}
-          getRandomAvatar={getRandomAvatar}
-        />
+            <AvatarSelector
+              onAvatarSelect={(avatar, url) => setAvatarDetails({ avatarURL: url, avatarName: avatar })}
+              color={avatarColor}
+              getRandomAvatar={getRandomAvatar}
+            />
           </motion.div>
           <ColorSelector
-        onSelectColor={handleSelectColor}
-        isOpen={isColorModalOpenned}
-        onModalClose={() => setColorModalOpenned(false)}
+            onSelectColor={handleSelectColor}
+            isOpen={isColorModalOpenned}
+            onModalClose={() => setColorModalOpenned(false)}
           />
           <motion.div
-        className="text-xs text-gray-500 dark:text-gray-400 space-y-2 bg-blue-50/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-3 border border-blue-200/30 dark:border-gray-700/30 relative z-10"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 1.0, type: 'spring' }}
+            className="text-xs text-gray-500 dark:text-gray-400 space-y-2 bg-blue-50/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-3 border border-blue-200/30 dark:border-gray-700/30 relative z-10"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.0, type: 'spring' }}
           >
-        <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-          <span>{t('chat.dicas.nao_se_preocupe_apelido')}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
-          <span>{t('chat.dicas.avatar_gerado_automaticamente')}</span>
-        </div>
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+              <span>{t('chat.dicas.nao_se_preocupe_apelido')}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+              <span>{t('chat.dicas.avatar_gerado_automaticamente')}</span>
+            </div>
           </motion.div>
           <motion.div
         initial={{ opacity: 0, y: 30, scale: 0.9 }}
@@ -1345,7 +1352,8 @@ export default function RoomPage() {
                 value={mensagem}
                 size="lg"
               />
-            </div>            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            </div>{' '}
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button
                 isIconOnly
                 onClick={sendMessage}
@@ -1355,10 +1363,7 @@ export default function RoomPage() {
                 <IoIosSend className={'text-xl sm:text-2xl'} />
               </Button>
             </motion.div>
-            <EmojiPicker 
-              onEmojiSelect={handleEmojiSelect}
-              className=""
-            />
+            <EmojiPicker onEmojiSelect={handleEmojiSelect} className="" />
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               {' '}
               <Button
@@ -1397,8 +1402,8 @@ export default function RoomPage() {
               ? 'fixed inset-2 sm:inset-4 md:inset-6 lg:inset-auto z-50 lg:z-0 flex flex-col'
               : 'hidden lg:flex'
           }
-          bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-gray-700/30 
-          overflow-hidden shadow-2xl transition-all duration-300 ease-in-out 
+          bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-gray-700/30
+          overflow-hidden shadow-2xl transition-all duration-300 ease-in-out
           lg:bg-white/80 lg:dark:bg-gray-900/80 lg:backdrop-blur-md lg:shadow-2xl
           max-h-screen lg:max-h-none w-auto
         `}
@@ -1468,7 +1473,8 @@ export default function RoomPage() {
                             {connectionStatus === 'error' && t('chat.status_conexao.erro')}
                             {connectionStatus === 'disconnected' && t('chat.status_conexao.desconectado')}
                           </p>
-                        </div>                        {/* Botão de reconexão manual para quando há erro */}
+                        </div>{' '}
+                        {/* Botão de reconexão manual para quando há erro */}
                         {(connectionStatus === 'error' || connectionStatus === 'disconnected') && (
                           <Button
                             size="sm"
