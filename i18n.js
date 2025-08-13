@@ -8,49 +8,53 @@ const supportedLanguages = ['pt-BR', 'en-US', 'es-ES'];
 
 // Language mapping
 const languageMap = {
-  'pt': 'pt-BR',
+  pt: 'pt-BR',
   'pt-PT': 'pt-BR',
-  'en': 'en-US', 
+  en: 'en-US',
   'en-GB': 'en-US',
-  'es': 'es-ES',
-  'es-MX': 'es-ES'
+  es: 'es-ES',
+  'es-MX': 'es-ES',
 };
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
-  .use(resourcesToBackend((language, namespace, callback) => {
-    // Normalize language code using the mapping
-    let mappedLanguage = languageMap[language] || language;
-    
-    // If not in supported languages, default to pt-BR
-    if (!supportedLanguages.includes(mappedLanguage)) {
-      mappedLanguage = 'pt-BR';
-    }
-    
-    import(`./app/locales/${mappedLanguage}/${namespace}.json`)
-      .then((resources) => {
-        callback(null, resources)
-      })
-      .catch((error) => {
-        // Fallback to pt-BR if the requested language fails
-        if (mappedLanguage !== 'pt-BR') {
-          import(`./app/locales/pt-BR/${namespace}.json`)
-            .then((resources) => {
-              callback(null, resources)
-            })
-            .catch((fallbackError) => {
-              callback(fallbackError, null)
-            })
-        } else {
-          callback(error, null)
-        }
-      })
-  }))  .init({
+  .use(
+    resourcesToBackend((language, namespace, callback) => {
+      // Normalize language code using the mapping
+      let mappedLanguage = languageMap[language] || language;
+
+      // If not in supported languages, default to pt-BR
+      if (!supportedLanguages.includes(mappedLanguage)) {
+        mappedLanguage = 'pt-BR';
+      }
+
+      import(`./app/locales/${mappedLanguage}/${namespace}.json`)
+        .then((resources) => {
+          callback(null, resources);
+        })
+        .catch((error) => {
+          // Fallback to pt-BR if the requested language fails
+          if (mappedLanguage !== 'pt-BR') {
+            import(`./app/locales/pt-BR/${namespace}.json`)
+              .then((resources) => {
+                callback(null, resources);
+              })
+              .catch((fallbackError) => {
+                callback(fallbackError, null);
+              });
+          } else {
+            callback(error, null);
+          }
+        });
+    })
+  )
+  .init({
     lng: 'pt-BR',
     fallbackLng: 'pt-BR',
-    supportedLngs: supportedLanguages,
-    nonExplicitSupportedLngs: false,
+    supportedLngs: [...supportedLanguages, 'pt', 'en', 'es'],
+    nonExplicitSupportedLngs: true,
+    cleanCode: true,
     load: 'all',
     debug: process.env.NODE_ENV === 'development',
     interpolation: {
@@ -70,7 +74,6 @@ i18n
       transSupportBasicHtmlNodes: true,
       transKeepBasicHtmlNodesFor: ['br', 'strong', 'i', 'p'],
     },
-    // Add default namespace
     defaultNS: 'translation',
     ns: ['translation'],
   });

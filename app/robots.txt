@@ -1,0 +1,48 @@
+User-agent: *
+
+Allow: /
+Allow: /pt-BR/
+Allow: /en-US/
+Allow: /es-ES/
+Allow: /pt-BR/sobre
+Allow: /en-US/sobre
+Allow: /es-ES/sobre
+Allow: /pt-BR/termos
+Allow: /en-US/termos
+Allow: /es-ES/termos
+Allow: /pt-BR/configuracoes
+Allow: /en-US/configuracoes
+Allow: /es-ES/configuracoes
+Allow: /pt-BR/conversar
+Allow: /en-US/conversar
+Allow: /es-ES/conversar
+
+Disallow: /pt-BR/conversar/*
+Disallow: /en-US/conversar/*
+Disallow: /es-ES/conversar/*
+
+Disallow: /api/
+
+Disallow: /_next/
+Disallow: /_vercel/
+
+Disallow: /*.json$
+Disallow: /*.xml$
+Disallow: /*.txt$
+
+Allow: /favicon/
+Allow: /images/
+Allow: /icons/
+Allow: /*.css$
+Allow: /*.js$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.gif$
+Allow: /*.svg$
+Allow: /*.webp$
+Allow: /*.ico$
+
+Sitemap: https://talktalkchat.com.br/sitemap.xml
+
+Crawl-delay: 1

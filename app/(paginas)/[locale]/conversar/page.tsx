@@ -214,7 +214,7 @@ export default function ConversarHome() {
 
     return (
       <div className="flex flex-col items-center gap-4">
-        <div className="relative group">
+        <div className="group relative">
           <AvatarDropdown openModal={() => setColorModalOpenned((prev) => !prev)}>
             <div className="relative">
               <Image
@@ -228,7 +228,7 @@ export default function ConversarHome() {
                   boxShadow: `0 0 30px ${avatarColor || '#3b82f6'}30`,
                 }}
               />
-              <div className="absolute inset-0 rounded-full bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
             </div>
           </AvatarDropdown>
         </div>
@@ -250,22 +250,22 @@ export default function ConversarHome() {
   }, [codigoSala, router, locale]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-cyan-50/40 dark:from-[#0f0f0f] dark:via-[#1a1a2e] dark:to-[#16213e] relative">
+    <div className="relative min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-cyan-50/40 dark:from-[#0f0f0f] dark:via-[#1a1a2e] dark:to-[#16213e]">
       <LanguageDetector />
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-400/8 to-cyan-400/8 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-400/6 to-blue-400/6 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/6 to-blue-400/6 rounded-full blur-2xl"></div>
+        <div className="from-blue-400/8 to-cyan-400/8 absolute left-20 top-20 h-72 w-72 rounded-full bg-gradient-to-r blur-3xl"></div>
+        <div className="from-purple-400/6 to-blue-400/6 absolute bottom-20 right-20 h-96 w-96 rounded-full bg-gradient-to-r blur-3xl"></div>
+        <div className="from-cyan-400/6 to-blue-400/6 absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 transform rounded-full bg-gradient-to-r blur-2xl"></div>
       </div>
 
-      <div className="relative z-10 min-h-screen flex flex-col container mx-auto px-4 py-8">
+      <div className="container relative z-10 mx-auto flex min-h-screen flex-col px-4 py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-3"
+          className="mb-3 text-center"
         >
-          <h1 className="text-3xl md:text-5xl font-extrabold mb-6 leading-tight">
+          <h1 className="mb-6 text-3xl font-extrabold leading-tight md:text-5xl">
             {t('conversar.hero.titulo.parte1')}{' '}
             <span
               style={{
@@ -282,18 +282,18 @@ export default function ConversarHome() {
           </h1>
         </motion.div>
 
-        <div className="flex-1 flex flex-col items-center justify-center">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl w-full">
+        <div className="flex flex-1 flex-col items-center justify-center">
+          <div className="grid w-full max-w-6xl grid-cols-1 gap-8 md:grid-cols-2">
             <motion.section
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="bg-white/80 dark:bg-[#18181B]/80 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-8 hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] flex flex-col"
+              className="flex flex-col rounded-2xl border border-white/20 bg-white/80 p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl dark:border-gray-700/30 dark:bg-[#18181B]/80"
             >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl">
+              <div className="mb-6 flex items-center gap-3">
+                <div className="rounded-xl bg-gradient-to-r from-blue-500/20 to-cyan-500/20 p-3">
                   <svg
-                    className="w-6 h-6 text-blue-600 dark:text-blue-400"
+                    className="h-6 w-6 text-blue-600 dark:text-blue-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -306,7 +306,7 @@ export default function ConversarHome() {
                 </h2>
               </div>
 
-              <div className="flex flex-col items-center gap-6 flex-grow">
+              <div className="flex flex-grow flex-col items-center gap-6">
                 {AvatarComponent}
                 <ColorSelector
                   onSelectColor={handleSelectColor}
@@ -338,7 +338,7 @@ export default function ConversarHome() {
                     <motion.span
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="text-danger text-sm"
+                      className="text-sm text-danger"
                     >
                       * {t(errorInputs.errorApelidoMessage)}
                     </motion.span>
@@ -347,7 +347,7 @@ export default function ConversarHome() {
                 <Button
                   color="primary"
                   size="lg"
-                  className="w-full max-w-md text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 mt-auto"
+                  className="mt-auto w-full max-w-md bg-gradient-to-r from-blue-500 to-blue-600 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-blue-600 hover:to-blue-700 hover:shadow-xl"
                   onClick={handleCriarSala}
                   isLoading={isLoading}
                 >
@@ -360,12 +360,12 @@ export default function ConversarHome() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="bg-white/80 dark:bg-[#18181B]/80 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/30 p-8 hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] flex flex-col"
+              className="flex flex-col rounded-2xl border border-white/20 bg-white/80 p-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl dark:border-gray-700/30 dark:bg-[#18181B]/80"
             >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-xl">
+              <div className="mb-6 flex items-center gap-3">
+                <div className="rounded-xl bg-gradient-to-r from-purple-500/20 to-blue-500/20 p-3">
                   <svg
-                    className="w-6 h-6 text-purple-600 dark:text-purple-400"
+                    className="h-6 w-6 text-purple-600 dark:text-purple-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -383,14 +383,14 @@ export default function ConversarHome() {
                 </h2>
               </div>
 
-              <div className="flex flex-col items-center gap-6 flex-grow justify-between">
-                <div className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-xl p-4 border border-purple-200/50 dark:border-purple-700/50">
+              <div className="flex flex-grow flex-col items-center justify-between gap-6">
+                <div className="rounded-xl border border-purple-200/50 bg-gradient-to-r from-purple-500/10 to-blue-500/10 p-4 dark:border-purple-700/50">
                   <p className="text-center text-gray-600 dark:text-gray-300" style={{ fontSize: `${fontSize}px` }}>
                     {t('conversar.entrar_sala.subtitulo')}
                   </p>
                 </div>
 
-                <div className="w-full max-w-md flex flex-col gap-6">
+                <div className="flex w-full max-w-md flex-col gap-6">
                   <Input
                     type="text"
                     label={t('conversar.entrar_sala.codigo.label')}
@@ -399,7 +399,7 @@ export default function ConversarHome() {
                     onValueChange={setCodigoSala}
                     placeholder={t('conversar.entrar_sala.codigo.placeholder')}
                     classNames={{
-                      input: 'text-[1.2rem]',
+                      input: 'text-[1rem] !placeholder:text-base',
                       inputWrapper:
                         'bg-white/90 dark:bg-gray-700/90 backdrop-blur-sm border border-gray-200 dark:border-gray-600 hover:border-purple-500 dark:hover:border-purple-400 transition-colors',
                     }}
@@ -407,7 +407,7 @@ export default function ConversarHome() {
                   <Button
                     color="secondary"
                     size="lg"
-                    className="w-full max-w-md bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 mt-auto"
+                    className="mt-auto w-full max-w-md bg-gradient-to-r from-purple-500 to-blue-600 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-purple-600 hover:to-blue-700 hover:shadow-xl"
                     onClick={handleEntrarSala}
                   >
                     {t('conversar.entrar_sala.botao_entrar')}
@@ -421,10 +421,10 @@ export default function ConversarHome() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            className="mt-8 text-center w-full max-w-6xl"
+            className="mt-8 w-full max-w-6xl text-center"
           >
-            <div className="bg-gradient-to-r from-orange-500/10 to-amber-500/10 backdrop-blur-md rounded-xl p-6 mx-auto border border-orange-200/50 dark:border-orange-700/50">
-              <p className="font-bold text-lg" style={{ fontSize: `${fontSize}px` }}>
+            <div className="mx-auto rounded-xl border border-orange-200/50 bg-gradient-to-r from-orange-500/10 to-amber-500/10 p-6 backdrop-blur-md dark:border-orange-700/50">
+              <p className="text-lg font-bold" style={{ fontSize: `${fontSize}px` }}>
                 <span className="text-orange-500 dark:text-orange-400">{t('conversar.criar_sala.dica.parte1')}</span>{' '}
                 <span className="text-gray-700 dark:text-gray-300">{t('conversar.criar_sala.dica.parte2')}</span>
               </p>
